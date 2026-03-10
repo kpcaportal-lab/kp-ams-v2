@@ -1,0 +1,160 @@
+-- ============================================================
+-- KP AMS — Seed Data (Demo Users + Sample Data)
+-- ============================================================
+
+-- PASSWORDS: All demo users have password: KpAms@2025
+-- bcrypt hash of 'KpAms@2025' with salt rounds=10
+
+INSERT INTO profiles (id, email, password_hash, role, full_name, display_name) VALUES
+-- Admin
+('00000000-0000-0000-0000-000000000001', 'admin@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'admin', 'System Administrator', 'Admin'),
+
+-- Partners
+('00000000-0000-0000-0000-000000000002', 'partner1@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'partner', 'Partner 1', 'Partner 1'),
+('00000000-0000-0000-0000-000000000003', 'partner2@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'partner', 'Partner 2', 'Partner 2'),
+('00000000-0000-0000-0000-000000000004', 'partner3@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'partner', 'Partner 3', 'Partner 3'),
+
+-- Directors
+('00000000-0000-0000-0000-000000000005', 'director1@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'director', 'Director 1', 'Director 1'),
+('00000000-0000-0000-0000-000000000006', 'director2@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'director', 'Director 2', 'Director 2'),
+('00000000-0000-0000-0000-000000000007', 'director3@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'director', 'Director 3', 'Director 3'),
+
+-- Managers
+('00000000-0000-0000-0000-000000000008', 'manager1@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 1', 'Manager 1'),
+('00000000-0000-0000-0000-000000000009', 'manager2@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 2', 'Manager 2'),
+('00000000-0000-0000-0000-000000000010', 'manager3@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 3', 'Manager 3'),
+('00000000-0000-0000-0000-000000000011', 'manager4@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 4', 'Manager 4'),
+('00000000-0000-0000-0000-000000000012', 'manager5@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 5', 'Manager 5'),
+('00000000-0000-0000-0000-000000000013', 'manager6@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 6', 'Manager 6'),
+('00000000-0000-0000-0000-000000000014', 'manager7@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 7', 'Manager 7'),
+('00000000-0000-0000-0000-000000000015', 'manager8@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 8', 'Manager 8'),
+('00000000-0000-0000-0000-000000000016', 'manager9@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 9', 'Manager 9'),
+('00000000-0000-0000-0000-000000000017', 'manager10@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 10', 'Manager 10');
+
+-- CLIENTS
+INSERT INTO clients (id, name, gstn, status, added_by) VALUES
+('10000000-0000-0000-0000-000000000001', 'Meridian Technologies Pvt Ltd', '27AABCM1234A1Z5', 'active', '00000000-0000-0000-0000-000000000008'),
+('10000000-0000-0000-0000-000000000002', 'Apex Infrastructure Ltd', '29AABCA5678B2Z3', 'active', '00000000-0000-0000-0000-000000000009'),
+('10000000-0000-0000-0000-000000000003', 'Sterling Finance Corporation', '07AABCS9012C3Z1', 'active', '00000000-0000-0000-0000-000000000010'),
+('10000000-0000-0000-0000-000000000004', 'Nova Healthcare Systems', '24AABCN3456D4Z8', 'prospect', '00000000-0000-0000-0000-000000000011'),
+('10000000-0000-0000-0000-000000000005', 'Zenith Retail Ventures', '06AABCZ7890E5Z6', 'active', '00000000-0000-0000-0000-000000000012');
+
+-- SPOCS
+INSERT INTO client_spocs (client_id, contact_name, email, phone, designation, is_primary) VALUES
+('10000000-0000-0000-0000-000000000001', 'Rajesh Sharma', 'rajesh.sharma@meridian.com', '+91-9876543210', 'CFO', true),
+('10000000-0000-0000-0000-000000000001', 'Priya Mehta', 'priya.mehta@meridian.com', '+91-9876543211', 'Finance Manager', false),
+('10000000-0000-0000-0000-000000000002', 'Sunil Kapoor', 'sunil.kapoor@apexinfra.com', '+91-9876543220', 'CEO', true),
+('10000000-0000-0000-0000-000000000003', 'Anita Desai', 'anita.desai@sterlingfin.com', '+91-9876543230', 'MD', true),
+('10000000-0000-0000-0000-000000000004', 'Dr. Vikram Nair', 'vikram.nair@novahealthcare.com', '+91-9876543240', 'Director Finance', true),
+('10000000-0000-0000-0000-000000000005', 'Meera Joshi', 'meera.joshi@zenithretail.com', '+91-9876543250', 'Head Finance', true);
+
+-- PROPOSAL SEQUENCES
+INSERT INTO proposal_sequences (assignment_type, fiscal_year, last_sequence) VALUES
+('internal_audit', '2025-26', 3),
+('forensic', '2025-26', 1),
+('ifc', '2025-26', 2),
+('overseas', '2025-26', 0),
+('mcs', '2025-26', 1);
+
+-- PROPOSALS
+INSERT INTO proposals (id, number, client_id, proposal_type, assignment_type, quotation_amount, proposal_date, prepared_by, responsible_partner, status, status_date, fiscal_year, scope_areas) VALUES
+-- Won proposals
+('20000000-0000-0000-0000-000000000001', 'KP/IA/2025-26/001', '10000000-0000-0000-0000-000000000001', 'new', 'internal_audit', 1200000, '2025-04-15', '00000000-0000-0000-0000-000000000008', '00000000-0000-0000-0000-000000000002', 'won', '2025-05-01', '2025-26', 'Accounts Payable, Accounts Receivable, Inventory Management'),
+('20000000-0000-0000-0000-000000000002', 'KP/IFC/2025-26/001', '10000000-0000-0000-0000-000000000001', 'new', 'ifc', 800000, '2025-04-20', '00000000-0000-0000-0000-000000000009', '00000000-0000-0000-0000-000000000002', 'won', '2025-05-10', '2025-26', 'IFC Testing across all financial processes'),
+('20000000-0000-0000-0000-000000000003', 'KP/IA/2025-26/002', '10000000-0000-0000-0000-000000000002', 'renewal', 'internal_audit', 1500000, '2025-04-25', '00000000-0000-0000-0000-000000000010', '00000000-0000-0000-0000-000000000003', 'won', '2025-05-15', '2025-26', 'Full Scope Internal Audit - All Departments'),
+('20000000-0000-0000-0000-000000000004', 'KP/FOR/2025-26/001', '10000000-0000-0000-0000-000000000003', 'new', 'forensic', 2500000, '2025-05-01', '00000000-0000-0000-0000-000000000011', '00000000-0000-0000-0000-000000000003', 'won', '2025-05-20', '2025-26', 'Forensic Investigation - Revenue Leakage'),
+('20000000-0000-0000-0000-000000000005', 'KP/IA/2025-26/003', '10000000-0000-0000-0000-000000000005', 'new', 'internal_audit', 900000, '2025-05-10', '00000000-0000-0000-0000-000000000012', '00000000-0000-0000-0000-000000000002', 'won', '2025-06-01', '2025-26', 'Retail Operations, Supply Chain, IT Audit'),
+-- Pending proposals
+('20000000-0000-0000-0000-000000000006', 'KP/IFC/2025-26/002', '10000000-0000-0000-0000-000000000004', 'new', 'ifc', 600000, '2025-06-15', '00000000-0000-0000-0000-000000000013', '00000000-0000-0000-0000-000000000004', 'pending', NULL, '2025-26', 'IFC Testing - Manufacturing Processes'),
+-- Lost proposal
+('20000000-0000-0000-0000-000000000007', 'KP/MCS/2025-26/001', '10000000-0000-0000-0000-000000000004', 'new', 'mcs', 400000, '2025-05-20', '00000000-0000-0000-0000-000000000014', '00000000-0000-0000-0000-000000000004', 'lost', '2025-06-10', '2025-26', 'Management Consultancy - Process Improvement');
+
+-- ASSIGNMENTS (from won proposals)
+INSERT INTO assignments (id, proposal_id, client_id, gstn, category, total_fees, billing_cycle, partner_id, manager_id, status, start_date, fiscal_year, scope_areas) VALUES
+('30000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', '27AABCM1234A1Z5', 'A', 1200000, 'monthly', '00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000008', 'active', '2025-05-01', '2025-26', 'Accounts Payable, Accounts Receivable, Inventory Management'),
+('30000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', '27AABCM1234A1Z5', 'B', 800000, 'quarterly', '00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000009', 'active', '2025-05-10', '2025-26', 'IFC Testing across all financial processes'),
+('30000000-0000-0000-0000-000000000003', '20000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000002', '29AABCA5678B2Z3', 'A', 1500000, 'monthly', '00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000010', 'active', '2025-05-15', '2025-26', 'Full Scope Internal Audit - All Departments'),
+('30000000-0000-0000-0000-000000000004', '20000000-0000-0000-0000-000000000004', '10000000-0000-0000-0000-000000000003', '07AABCS9012C3Z1', 'C', 2500000, 'one_time', '00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000011', 'active', '2025-05-20', '2025-26', 'Forensic Investigation - Revenue Leakage'),
+('30000000-0000-0000-0000-000000000005', '20000000-0000-0000-0000-000000000005', '10000000-0000-0000-0000-000000000005', '06AABCZ7890E5Z6', 'A', 900000, 'monthly', '00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000012', 'active', '2025-06-01', '2025-26', 'Retail Operations, Supply Chain, IT Audit');
+
+-- FEE ALLOCATIONS (April=1 ... March=12, FY 2025-26)
+-- Assignment 1: 1,200,000 across 12 months = 100,000/month
+INSERT INTO fee_allocations (assignment_id, month, fiscal_year, amount, billed_amount) VALUES
+('30000000-0000-0000-0000-000000000001', 1, '2025-26', 100000, 100000),
+('30000000-0000-0000-0000-000000000001', 2, '2025-26', 100000, 100000),
+('30000000-0000-0000-0000-000000000001', 3, '2025-26', 100000, 100000),
+('30000000-0000-0000-0000-000000000001', 4, '2025-26', 100000, 100000),
+('30000000-0000-0000-0000-000000000001', 5, '2025-26', 100000, 100000),
+('30000000-0000-0000-0000-000000000001', 6, '2025-26', 100000, 50000),
+('30000000-0000-0000-0000-000000000001', 7, '2025-26', 100000, 0),
+('30000000-0000-0000-0000-000000000001', 8, '2025-26', 100000, 0),
+('30000000-0000-0000-0000-000000000001', 9, '2025-26', 100000, 0),
+('30000000-0000-0000-0000-000000000001', 10, '2025-26', 100000, 0),
+('30000000-0000-0000-0000-000000000001', 11, '2025-26', 100000, 0),
+('30000000-0000-0000-0000-000000000001', 12, '2025-26', 100000, 0);
+
+-- Assignment 2: 800,000 quarterly (Q1=200k, Q2=200k, Q3=200k, Q4=200k)
+INSERT INTO fee_allocations (assignment_id, month, fiscal_year, amount, billed_amount) VALUES
+('30000000-0000-0000-0000-000000000002', 1, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000002', 2, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000002', 3, '2025-26', 200000, 200000),
+('30000000-0000-0000-0000-000000000002', 4, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000002', 5, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000002', 6, '2025-26', 200000, 200000),
+('30000000-0000-0000-0000-000000000002', 7, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000002', 8, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000002', 9, '2025-26', 200000, 0),
+('30000000-0000-0000-0000-000000000002', 10, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000002', 11, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000002', 12, '2025-26', 200000, 0);
+
+-- Assignment 3: 1,500,000 monthly = 125,000/month
+INSERT INTO fee_allocations (assignment_id, month, fiscal_year, amount, billed_amount) VALUES
+('30000000-0000-0000-0000-000000000003', 1, '2025-26', 125000, 125000),
+('30000000-0000-0000-0000-000000000003', 2, '2025-26', 125000, 125000),
+('30000000-0000-0000-0000-000000000003', 3, '2025-26', 125000, 125000),
+('30000000-0000-0000-0000-000000000003', 4, '2025-26', 125000, 125000),
+('30000000-0000-0000-0000-000000000003', 5, '2025-26', 125000, 0),
+('30000000-0000-0000-0000-000000000003', 6, '2025-26', 125000, 0),
+('30000000-0000-0000-0000-000000000003', 7, '2025-26', 125000, 0),
+('30000000-0000-0000-0000-000000000003', 8, '2025-26', 125000, 0),
+('30000000-0000-0000-0000-000000000003', 9, '2025-26', 125000, 0),
+('30000000-0000-0000-0000-000000000003', 10, '2025-26', 125000, 0),
+('30000000-0000-0000-0000-000000000003', 11, '2025-26', 125000, 0),
+('30000000-0000-0000-0000-000000000003', 12, '2025-26', 125000, 0);
+
+-- Assignment 4: 2,500,000 one-time in month 2 (May)
+INSERT INTO fee_allocations (assignment_id, month, fiscal_year, amount, billed_amount) VALUES
+('30000000-0000-0000-0000-000000000004', 1, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000004', 2, '2025-26', 2500000, 2500000),
+('30000000-0000-0000-0000-000000000004', 3, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000004', 4, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000004', 5, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000004', 6, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000004', 7, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000004', 8, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000004', 9, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000004', 10, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000004', 11, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000004', 12, '2025-26', 0, 0);
+
+-- Assignment 5: 900,000 monthly from month 3 = 100,000/month for 9 months
+INSERT INTO fee_allocations (assignment_id, month, fiscal_year, amount, billed_amount) VALUES
+('30000000-0000-0000-0000-000000000005', 1, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000005', 2, '2025-26', 0, 0),
+('30000000-0000-0000-0000-000000000005', 3, '2025-26', 100000, 100000),
+('30000000-0000-0000-0000-000000000005', 4, '2025-26', 100000, 100000),
+('30000000-0000-0000-0000-000000000005', 5, '2025-26', 100000, 100000),
+('30000000-0000-0000-0000-000000000005', 6, '2025-26', 100000, 0),
+('30000000-0000-0000-0000-000000000005', 7, '2025-26', 100000, 0),
+('30000000-0000-0000-0000-000000000005', 8, '2025-26', 100000, 0),
+('30000000-0000-0000-0000-000000000005', 9, '2025-26', 100000, 0),
+('30000000-0000-0000-0000-000000000005', 10, '2025-26', 100000, 0),
+('30000000-0000-0000-0000-000000000005', 11, '2025-26', 100000, 0),
+('30000000-0000-0000-0000-000000000005', 12, '2025-26', 0, 0);
+
+-- SAMPLE INVOICES
+INSERT INTO invoices (id, assignment_id, invoice_date, kind_attention, reference, address, gst_no, narration, professional_fees, out_of_pocket, net_amount, generated_by) VALUES
+('40000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', '2025-05-31', 'Rajesh Sharma', 'KP/IA/2025-26/001', '123 Business Park, Mumbai 400001', '27AABCM1234A1Z5', 'Professional fees for Internal Audit services for the month of April 2025', 100000, 0, 100000, '00000000-0000-0000-0000-000000000008'),
+('40000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000001', '2025-06-30', 'Rajesh Sharma', 'KP/IA/2025-26/001', '123 Business Park, Mumbai 400001', '27AABCM1234A1Z5', 'Professional fees for Internal Audit services for the month of May 2025', 100000, 0, 100000, '00000000-0000-0000-0000-000000000008'),
+('40000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000004', '2025-06-15', 'Anita Desai', 'KP/FOR/2025-26/001', '456 Finance Tower, Delhi 110001', '07AABCS9012C3Z1', 'Professional fees for Forensic Investigation - Revenue Leakage Analysis', 2500000, 15000, 2515000, '00000000-0000-0000-0000-000000000011');
