@@ -34,17 +34,28 @@ const PORT = process.env.PORT || 4000;
 
 // ── Middleware ──────────────────────────────────────────────────────
 app.use(cors({
-    origin: [
-        process.env.CLIENT_URL || 'http://localhost:3000',
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-        'http://localhost:5173',
-        'http://127.0.0.1:5173',
-        'http://localhost:5174',
-        'http://127.0.0.1:5174',
-        'https://kp-ams.vercel.app',
-        /\.vercel\.app$/,
-    ],
+    origin: (origin, callback) => {
+        const allowedOrigins = [
+            process.env.CLIENT_URL,
+            'http://localhost:3000',
+            'http://127.0.0.1:3000',
+            'http://localhost:3001',
+            'https://kp-ams-v2.vercel.app/'
+        ].filter(Boolean) as string[];
+
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+
+        const isAllowed = allowedOrigins.includes(origin) ||
+            origin.endsWith('.vercel.app');
+
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            console.warn(`⚠️ CORS blocked origin: ${origin}`);
+            callback(null, false); // Don't allow, but don't error out entirely
+        }
+    },
     credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));
