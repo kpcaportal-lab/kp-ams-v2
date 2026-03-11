@@ -3,12 +3,23 @@
 import { useEffect, useState } from 'react';
 import {
   UserPlus, Search, Shield, Mail, MoreVertical,
-  UserCircle, BadgeCheck
+  UserCircle, BadgeCheck, Plus
 } from 'lucide-react';
 import api from '@/lib/api';
 import type { User, UserRole } from '@/types';
 import toast from 'react-hot-toast';
 import AddUserModal from '@/components/modals/AddUserModal';
+import { useUserStore } from '@/store/userStore';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 18 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0,
+    transition: { delay: i * 0.05, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }
+  })
+};
 
 export default function UsersPage() {
   const [profiles, setProfiles] = useState<User[]>([]);
@@ -54,19 +65,21 @@ export default function UsersPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Page Header */}
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">User Management</h1>
-          <p className="text-slate-500 mt-1">Control access levels and manage team profiles across the organization.</p>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">User Management</h1>
+          <p className="text-sm text-slate-400 mt-1 font-medium">Manage team members and their roles</p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="btn btn-primary flex items-center gap-2"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-bold shadow-[0_4px_12px_rgba(37,99,235,0.25)] hover:shadow-[0_8px_24px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 transition-all active:scale-95"
         >
-          <UserPlus className="w-4 h-4" />
-          <span>Invite User</span>
+          <Plus size={18} />
+          Add User
         </button>
-      </header>
+      </motion.div>
 
       <div className="relative">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -80,10 +93,17 @@ export default function UsersPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filtered.map((user) => (
-          <div key={user.id} className="card p-6 flex flex-col group hover:border-blue-300 transition-colors">
+        {filtered.map((user, i) => (
+          <motion.div
+            key={user.id}
+            custom={i}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            className="card p-6 flex flex-col group hover:border-blue-300 transition-colors bg-white/80 backdrop-blur-sm border-slate-200/80 shadow-sm"
+          >
             <div className="flex items-start justify-between">
-              <div className="w-12 h-12 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-bold text-xl">
+              <div className="w-12 h-12 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-blue-700 font-bold text-xl ring-4 ring-blue-50/50">
                 {user.full_name.charAt(0).toUpperCase()}
               </div>
               <div className={`badge ${roleStyles[user.role]}`}>
@@ -113,7 +133,7 @@ export default function UsersPage() {
                 <MoreVertical className="w-4 h-4" />
               </button>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 

@@ -1,0 +1,21 @@
+﻿src/app/(dashboard)/admin/page.tsx(151,5): error TS2657: JSX expressions must have one parent element.
+src/app/(dashboard)/admin/page.tsx(154,9): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/app/(dashboard)/admin/page.tsx(154,10): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+src/app/(dashboard)/admin/page.tsx(154,11): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+src/app/(dashboard)/admin/page.tsx(165,7): error TS1005: ')' expected.
+src/app/(dashboard)/admin/page.tsx(168,12): error TS1005: ';' expected.
+src/app/(dashboard)/admin/page.tsx(168,19): error TS1136: Property assignment expected.
+src/app/(dashboard)/admin/page.tsx(169,29): error TS1005: ';' expected.
+src/app/(dashboard)/admin/page.tsx(169,44): error TS1005: ';' expected.
+src/app/(dashboard)/admin/page.tsx(169,76): error TS1005: ';' expected.
+src/app/(dashboard)/admin/page.tsx(170,16): error TS1005: ';' expected.
+src/app/(dashboard)/admin/page.tsx(170,33): error TS1005: ';' expected.
+src/app/(dashboard)/admin/page.tsx(170,45): error TS1005: ';' expected.
+src/app/(dashboard)/admin/page.tsx(170,79): error TS1005: ';' expected.
+src/app/(dashboard)/admin/page.tsx(171,9): error TS1109: Expression expected.
+src/app/(dashboard)/admin/page.tsx(176,9): error TS1109: Expression expected.
+src/app/(dashboard)/admin/page.tsx(176,10): error TS1005: ':' expected.
+src/app/(dashboard)/admin/page.tsx(192,7): error TS1128: Declaration or statement expected.
+src/app/(dashboard)/admin/page.tsx(623,5): error TS1128: Declaration or statement expected.
+src/app/(dashboard)/admin/page.tsx(624,3): error TS1109: Expression expected.
+src/app/(dashboard)/admin/page.tsx(625,1): error TS1128: Declaration or statement expected.

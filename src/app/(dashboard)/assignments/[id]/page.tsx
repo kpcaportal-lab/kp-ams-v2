@@ -1,245 +1,280 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import {
+  ArrowLeft, Briefcase, Calendar, Users, DollarSign, FileText,
+  CheckCircle, Clock, Edit2, AlertCircle, TrendingUp
+} from 'lucide-react';
 import { useAssignmentStore } from '@/store/assignmentStore';
-import { ArrowLeft, Building, Mail, Phone, Calendar, MoreVertical, Edit, FileText, CheckCircle, Clock } from 'lucide-react';
-import { CATEGORY_LABELS, SUBCATEGORY_LABELS, formatCurrency } from '@/types';
+import { useBillingStore } from '@/store/billingStore';
+import {
+  SUBCATEGORY_LABELS, CATEGORY_LABELS, BILLING_CYCLE_LABELS,
+  FISCAL_MONTHS, formatDate, formatCurrency
+} from '@/types';
+import { formatIndianCurrency, cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
-export default function AssignmentDetailsPage() {
-  const params = useParams();
+export default function AssignmentDetailPage() {
+  const { id } = useParams();
   const router = useRouter();
   const { assignments } = useAssignmentStore();
-  
-  const assignment = assignments.find(a => a.id === params.id);
-  const [activeTab, setActiveTab] = useState('overview');
+  const { invoices } = useBillingStore();
+
+  const assignment = assignments.find(a => a.id === id);
+  const assignmentInvoices = invoices.filter(inv => inv.assignment_id === id);
 
   if (!assignment) {
     return (
-      <div style={{ padding: '3rem', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Assignment not found</h2>
-        <button className="btn btn-secondary" onClick={() => router.push('/assignments')}>Back to Assignments</button>
+      <div className="flex flex-col items-center justify-center py-20 space-y-4">
+        <Briefcase size={48} className="text-slate-300" />
+        <p className="text-lg font-semibold text-slate-500">Assignment not found</p>
+        <button onClick={() => router.push('/assignments')}
+          className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors">
+          Back to Assignments
+        </button>
       </div>
     );
   }
 
-  const tabs = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'team', label: 'Team' },
-    { id: 'financials', label: 'Financials' },
-    { id: 'workpapers', label: 'Workpapers' },
-  ];
+  const totalBilled = assignmentInvoices.reduce((sum, inv) => sum + inv.net_amount, 0);
+  const billingPct = assignment.total_fees > 0 ? (totalBilled / assignment.total_fees) * 100 : 0;
+
+  const statusBadge = (() => {
+    switch (assignment.status) {
+      case 'active':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+            <CheckCircle size={13} /> Active
+          </span>
+        );
+      case 'draft':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">
+            <Clock size={13} /> Draft
+          </span>
+        );
+      case 'completed':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-600 border border-blue-500/20">
+            <CheckCircle size={13} /> Completed
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-600">
+            {assignment.status}
+          </span>
+        );
+    }
+  })();
+
+  // Build fee allocation progress from store data
+  const allocations = assignment.allocations || [];
 
   return (
-    <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-        <button 
-          onClick={() => router.push('/assignments')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', borderRadius: '50%' }}
-          className="hover:bg-gray-100 dark:hover:bg-gray-800"
-        >
-          <ArrowLeft size={20} />
+    <div className="space-y-6">
+      {/* Back + Header */}
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+        <button onClick={() => router.push('/assignments')}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors mb-4">
+          <ArrowLeft size={16} /> Back to Assignments
         </button>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-              {assignment.client_name} - {SUBCATEGORY_LABELS[assignment.subcategory]}
-            </h2>
-            <span className={`badge ${assignment.status === 'active' ? 'badge-success' : ''}`} style={
-              assignment.status === 'completed' ? { backgroundColor: '#e2e8f0', color: '#475569' } : 
-              assignment.status === 'draft' ? { backgroundColor: '#fef3c7', color: '#b45309' } : {}
-            }>
-              {assignment.status.charAt(0).toUpperCase() + assignment.status.slice(1)}
-            </span>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">{assignment.client_name}</h1>
+            <p className="text-sm text-slate-400 mt-0.5 font-medium">
+              {assignment.scope_item || SUBCATEGORY_LABELS[assignment.subcategory]} • {assignment.fiscal_year}
+            </p>
           </div>
-          <p style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
-            <Calendar size={14} /> Fiscal Year: {assignment.fiscal_year} • Category: {CATEGORY_LABELS[assignment.category]}
-          </p>
+          <div className="flex items-center gap-3">
+            {statusBadge}
+            <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
+              <Edit2 size={14} /> Edit
+            </button>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Edit size={16} /> Edit
-          </button>
-          <button className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <FileText size={16} /> Generate Invoice
-          </button>
-        </div>
-      </div>
+      </motion.div>
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: '2rem', borderBottom: '1px solid var(--border)', marginBottom: '0.5rem' }}>
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            style={{
-              background: 'none',
-              border: 'none',
-              padding: '0.75rem 0',
-              cursor: 'pointer',
-              fontSize: '1rem',
-              fontWeight: activeTab === tab.id ? 600 : 500,
-              color: activeTab === tab.id ? 'var(--color-primary)' : 'var(--text-muted)',
-              borderBottom: activeTab === tab.id ? '2px solid var(--color-primary)' : '2px solid transparent',
-              transition: 'all 0.2s'
-            }}
-          >
-            {tab.label}
-          </button>
+      {/* Stats Row */}
+      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.5 }}
+        className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Total Fees', value: formatIndianCurrency(assignment.total_fees), icon: DollarSign, color: 'text-blue-600', bg: 'bg-blue-500/10', accent: 'from-blue-600 to-indigo-600' },
+          { label: 'Billed', value: formatIndianCurrency(totalBilled), icon: FileText, color: 'text-emerald-600', bg: 'bg-emerald-500/10', accent: 'from-emerald-500 to-teal-500' },
+          { label: 'Billing %', value: `${billingPct.toFixed(1)}%`, icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-500/10', accent: 'from-violet-500 to-purple-600' },
+          { label: 'Invoices', value: assignmentInvoices.length.toString(), icon: FileText, color: 'text-amber-600', bg: 'bg-amber-500/10', accent: 'from-amber-500 to-orange-500' },
+        ].map((card, i) => (
+          <div key={card.label}
+            className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-4 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+            <div className={cn("absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r", card.accent)} />
+            <div className="flex items-center gap-3">
+              <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center", card.bg)}>
+                <card.icon size={18} className={card.color} />
+              </div>
+              <div>
+                <div className="text-lg font-extrabold text-slate-900">{card.value}</div>
+                <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{card.label}</div>
+              </div>
+            </div>
+          </div>
         ))}
+      </motion.div>
+
+      {/* Two-column: Details + Billing Progress */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Assignment Details */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.5 }}
+          className="rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Assignment Details</h3>
+          <div className="space-y-3">
+            {[
+              { label: 'Category', value: `${assignment.category} — ${CATEGORY_LABELS[assignment.category]}` },
+              { label: 'Subcategory', value: SUBCATEGORY_LABELS[assignment.subcategory] },
+              { label: 'Billing Cycle', value: BILLING_CYCLE_LABELS[assignment.billing_cycle] },
+              { label: 'Partner', value: assignment.partner_name || '—' },
+              { label: 'Manager', value: assignment.manager_name || '—' },
+              { label: 'Fiscal Year', value: assignment.fiscal_year },
+              { label: 'Proposal', value: assignment.proposal_number || '—', isLink: !!assignment.proposal_id, href: `/proposals/${assignment.proposal_id}` },
+              { label: 'Start Date', value: assignment.start_date ? formatDate(assignment.start_date) : '—' },
+              { label: 'End Date', value: assignment.end_date ? formatDate(assignment.end_date) : '—' },
+            ].map(row => (
+              <div key={row.label} className="flex items-center justify-between py-1 border-b border-slate-50 last:border-0">
+                <span className="text-sm text-slate-500">{row.label}</span>
+                {row.isLink && row.href ? (
+                  <Link href={row.href} className="text-sm font-semibold text-blue-600 hover:underline font-mono text-xs">{row.value}</Link>
+                ) : (
+                  <span className="text-sm font-semibold text-slate-800">{row.value}</span>
+                )}
+              </div>
+            ))}
+          </div>
+          {assignment.notes && (
+            <div className="mt-4 pt-3 border-t border-slate-100">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Notes</p>
+              <p className="text-sm text-slate-600 leading-relaxed">{assignment.notes}</p>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Billing Progress */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.5 }}
+          className="rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Billing Progress</h3>
+          {/* Overall Progress Bar */}
+          <div className="mb-5">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-slate-500">Overall Progress</span>
+              <span className="text-sm font-bold text-slate-900">{billingPct.toFixed(1)}%</span>
+            </div>
+            <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min(billingPct, 100)}%` }}
+                transition={{ delay: 0.5, duration: 0.8, ease: 'easeOut' }}
+                className={cn("h-full rounded-full",
+                  billingPct >= 80 ? "bg-gradient-to-r from-emerald-500 to-teal-400" :
+                  billingPct >= 40 ? "bg-gradient-to-r from-blue-500 to-indigo-500" :
+                  "bg-gradient-to-r from-amber-400 to-orange-400"
+                )}
+              />
+            </div>
+          </div>
+          {/* Monthly Allocations */}
+          {allocations.length > 0 ? (
+            <div className="space-y-2">
+              {allocations.map((alloc) => {
+                const pct = alloc.amount > 0 ? (alloc.billed_amount / alloc.amount) * 100 : 0;
+                return (
+                  <div key={alloc.id} className="flex items-center gap-3">
+                    <span className="text-xs font-medium text-slate-500 w-12 shrink-0">{FISCAL_MONTHS[alloc.month - 1]?.slice(0, 3)}</span>
+                    <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-full rounded-full bg-blue-500" style={{ width: `${Math.min(pct, 100)}%` }} />
+                    </div>
+                    <span className="text-[11px] font-semibold text-slate-500 w-16 text-right">
+                      {formatIndianCurrency(alloc.billed_amount, true, true)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400 text-center py-6">No fee allocations defined</p>
+          )}
+        </motion.div>
       </div>
 
-      {/* Tab Content */}
-      {activeTab === 'overview' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: '1.5rem' }}>
-          
-          {/* Main Info */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div className="card">
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--text-primary)' }}>Key Metrics</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
-                <div style={{ padding: '1rem', background: 'var(--bg-card-hover)', borderRadius: '8px' }}>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Total Fees</p>
-                  <p style={{ fontSize: '1.5rem', fontWeight: 700 }}>{formatCurrency(assignment.total_fees)}</p>
-                </div>
-                <div style={{ padding: '1rem', background: 'var(--bg-card-hover)', borderRadius: '8px' }}>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Billing Cycle</p>
-                  <p style={{ fontSize: '1.25rem', fontWeight: 700, textTransform: 'capitalize' }}>{assignment.billing_cycle.replace('_', ' ')}</p>
-                </div>
-                <div style={{ padding: '1rem', background: 'var(--bg-card-hover)', borderRadius: '8px' }}>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Progress</p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
-                    <div style={{ flex: 1, height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: '45%', height: '100%', background: 'var(--color-primary)' }}></div>
-                    </div>
-                    <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>45%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-primary)' }}>Timeline & Stages</h3>
-                <button className="btn btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}>Update Progress</button>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '2rem' }}>
-                    <div style={{ width: '2rem', height: '2rem', borderRadius: '50%', background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <CheckCircle size={16} />
-                    </div>
-                    <div style={{ width: '2px', flex: 1, background: '#e2e8f0', margin: '0.25rem 0' }}></div>
-                  </div>
-                  <div style={{ paddingBottom: '1rem', flex: 1 }}>
-                    <h4 style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--text-primary)' }}>Planning Phase</h4>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '0.25rem' }}>Kickoff meeting completed. Information Request List shared with client.</p>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.5rem' }}>Completed on {new Date(assignment.created_at).toLocaleDateString()}</p>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '2rem' }}>
-                    <div style={{ width: '2rem', height: '2rem', borderRadius: '50%', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Clock size={16} />
-                    </div>
-                    <div style={{ width: '2px', flex: 1, background: '#e2e8f0', margin: '0.25rem 0' }}></div>
-                  </div>
-                  <div style={{ paddingBottom: '1rem', flex: 1 }}>
-                    <h4 style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--text-primary)' }}>Fieldwork</h4>
-                    <span className="badge badge-warning" style={{ marginTop: '0.25rem', marginBottom: '0.5rem', display: 'inline-block' }}>In Progress</span>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Vouching and verification of Q1 & Q2 transactions.</p>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '2rem' }}>
-                    <div style={{ width: '2rem', height: '2rem', borderRadius: '50%', background: '#e2e8f0', color: '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'currentColor' }}></div>
-                    </div>
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <h4 style={{ fontWeight: 600, fontSize: '1rem', color: '#94a3b8' }}>Reporting</h4>
-                    <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginTop: '0.25rem' }}>Pending Fieldwork completion.</p>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          {/* Sidebar Info */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div className="card">
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--text-primary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                Assignment Team
-                <button style={{ background: 'none', border: 'none', color: 'var(--color-primary)', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500 }}>Manage</button>
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Engagement Partner</p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--color-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
-                      {assignment.partner_name?.charAt(0)}
-                    </div>
-                    <span style={{ fontWeight: 500 }}>{assignment.partner_name}</span>
-                  </div>
-                </div>
-                
-                <div>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem', marginTop: '0.5rem' }}>Manager</p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e2e8f0', color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
-                      {assignment.manager_name?.charAt(0)}
-                    </div>
-                    <div>
-                      <span style={{ fontWeight: 500, display: 'block' }}>{assignment.manager_name}</span>
-                      {assignment.manager_email && <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{assignment.manager_email}</span>}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="card">
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--text-primary)' }}>Details</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>GSTN</span>
-                  <span style={{ fontWeight: 500, fontSize: '0.875rem' }}>{assignment.gstn}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Start Date</span>
-                  <span style={{ fontWeight: 500, fontSize: '0.875rem' }}>{assignment.start_date ? new Date(assignment.start_date).toLocaleDateString() : '-'}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>End Date</span>
-                  <span style={{ fontWeight: 500, fontSize: '0.875rem' }}>{assignment.end_date ? new Date(assignment.end_date).toLocaleDateString() : '-'}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Proposal ID</span>
-                  <span style={{ fontWeight: 500, fontSize: '0.875rem', color: 'var(--color-primary)' }}>{assignment.proposal_id || 'N/A'}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Invoices Table */}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 0.5 }}
+        className="rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm shadow-[0_1px_3px_rgba(15,23,42,0.06)] overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <FileText size={16} className="text-blue-600" /> Invoices
+          </h2>
+          <span className="text-xs font-semibold text-slate-400">{assignmentInvoices.length} total</span>
         </div>
-      )}
+        {assignmentInvoices.length === 0 ? (
+          <div className="px-5 py-10 text-center">
+            <FileText size={32} className="mx-auto text-slate-300 mb-2" />
+            <p className="text-sm text-slate-400">No invoices generated yet</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gradient-to-b from-slate-50 to-slate-100/80 border-b border-slate-200/60">
+                  <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Date</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Narration</th>
+                  <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Prof. Fees</th>
+                  <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">OOP</th>
+                  <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Net Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100/80">
+                {assignmentInvoices.map(inv => (
+                  <tr key={inv.id} className="hover:bg-blue-50/30 transition-colors">
+                    <td className="px-5 py-3 text-slate-600">{formatDate(inv.invoice_date)}</td>
+                    <td className="px-5 py-3 font-medium text-slate-800">{inv.narration}</td>
+                    <td className="px-5 py-3 text-right text-slate-600">{formatIndianCurrency(inv.professional_fees)}</td>
+                    <td className="px-5 py-3 text-right text-slate-600">{formatIndianCurrency(inv.out_of_pocket)}</td>
+                    <td className="px-5 py-3 text-right font-bold text-slate-900">{formatIndianCurrency(inv.net_amount)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </motion.div>
 
-      {activeTab !== 'overview' && (
-        <div className="card" style={{ padding: '3rem', textAlign: 'center' }}>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-muted)' }}>{tabTitle(activeTab)} Tab Area</h3>
-          <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>This section is under construction.</p>
-        </div>
+      {/* Change History */}
+      {assignment.history && assignment.history.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.5 }}
+          className="rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Change History</h3>
+          <div className="space-y-3">
+            {assignment.history.map(entry => (
+              <div key={entry.id} className="flex items-start gap-3 pb-3 border-b border-slate-50 last:border-0 last:pb-0">
+                <div className="w-2 h-2 rounded-full bg-blue-400 mt-1.5 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-semibold text-slate-700">{entry.field_name}</span>
+                    {entry.old_value && (
+                      <span className="text-xs text-slate-400 line-through">{entry.old_value}</span>
+                    )}
+                    <span className="text-xs text-slate-400">→</span>
+                    <span className="text-xs font-semibold text-blue-600">{entry.new_value}</span>
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">
+                    {entry.changed_by_name || 'System'} • {formatDate(entry.changed_at)}
+                    {entry.reason && ` — ${entry.reason}`}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       )}
-
     </div>
   );
-}
-
-function tabTitle(id: string) {
-  return id.charAt(0).toUpperCase() + id.slice(1);
 }

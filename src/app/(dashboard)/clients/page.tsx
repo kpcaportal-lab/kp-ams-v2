@@ -1,193 +1,270 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { Search, Plus, Users, Building2, Phone, Mail, MoreHorizontal, CheckCircle, XCircle } from 'lucide-react';
 import { useClientStore } from '@/store/clientStore';
-import { useRouter } from 'next/navigation';
-import { Search, Plus, MoreVertical, Edit, FileText, Trash2 } from 'lucide-react';
-import type { Client } from '@/types';
+import { formatDate } from '@/types';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
-// Simple Add Client Modal (inline for simplicity in this prototype)
-function AddClientModal({ 
-  isOpen, 
-  onClose, 
-  onAdd 
-}: { 
-  isOpen: boolean; 
-  onClose: () => void; 
-  onAdd: (c: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>) => void 
-}) {
-  const [formData, setFormData] = useState({
-    name: '',
-    industry: '',
-    status: 'active' as 'active' | 'inactive',
-    spocName: '',
-    spocEmail: '',
-    spocPhone: ''
-  });
+const fadeUp = {
+  hidden: { opacity: 0, y: 18 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0,
+    transition: { delay: i * 0.06, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }
+  })
+};
 
-  if (!isOpen) return null;
+export default function ClientsPage() {
+  const { clients } = useClientStore();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [showAddModal, setShowAddModal] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onAdd(formData);
-    onClose();
-    // Reset
-    setFormData({ name: '', industry: '', status: 'active', spocName: '', spocEmail: '', spocPhone: '' });
+  const filteredClients = useMemo(() => {
+    return clients.filter((c) => {
+      const matchesSearch =
+        c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.spocName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.industry.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [clients, searchTerm, statusFilter]);
+
+  const stats = useMemo(() => ({
+    total: clients.length,
+    active: clients.filter(c => c.status === 'active').length,
+    inactive: clients.filter(c => c.status === 'inactive').length,
+  }), [clients]);
+
+  const statusBadge = (status: string) => {
+    if (status === 'active') {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+          <CheckCircle size={12} /> Active
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-200/80 text-slate-500 border border-slate-300/40">
+        <XCircle size={12} /> Inactive
+      </span>
+    );
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-      <div className="card" style={{ width: '100%', maxWidth: 500, padding: '2rem' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem' }}>Add New Client</h3>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Clients</h1>
+          <p className="text-sm text-slate-400 mt-1 font-medium">Manage your client portfolio</p>
+        </div>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold shadow-[0_2px_8px_rgba(37,99,235,0.3)] hover:shadow-[0_4px_16px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 transition-all duration-200"
+        >
+          <Plus size={16} /> Add Client
+        </button>
+      </motion.div>
+
+      {/* KPI Strip */}
+      <div className="grid grid-cols-3 gap-4">
+        {[
+          { label: 'Total Clients', value: stats.total, icon: Users, color: 'text-blue-600', bg: 'bg-blue-500/10', accent: 'from-blue-600 to-indigo-600' },
+          { label: 'Active', value: stats.active, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-500/10', accent: 'from-emerald-500 to-teal-500' },
+          { label: 'Inactive', value: stats.inactive, icon: XCircle, color: 'text-slate-500', bg: 'bg-slate-200/80', accent: 'from-slate-400 to-slate-500' },
+        ].map((card, i) => (
+          <motion.div key={card.label} custom={i} variants={fadeUp} initial="hidden" animate="visible"
+            className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-4 shadow-[0_1px_3px_rgba(15,23,42,0.06)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.08)] transition-all duration-300">
+            <div className={cn("absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r", card.accent)} />
+            <div className="flex items-center gap-3">
+              <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center", card.bg)}>
+                <card.icon size={18} className={card.color} />
+              </div>
+              <div>
+                <div className="text-xl font-extrabold text-slate-900">{card.value}</div>
+                <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{card.label}</div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Filters & Search */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}
+        className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search clients, SPOC, industry..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white/80 backdrop-blur-sm text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all"
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white/80 text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all min-w-[140px]"
+        >
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </motion.div>
+
+      {/* Client Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {filteredClients.map((client, i) => (
+          <motion.div key={client.id} custom={i} variants={fadeUp} initial="hidden" animate="visible">
+            <Link href={`/clients/${client.id}`}
+              className="group block rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)] hover:shadow-[0_8px_24px_rgba(15,23,42,0.1)] hover:border-slate-300/60 hover:-translate-y-0.5 transition-all duration-300">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                    {client.name.charAt(0)}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-bold text-slate-900 truncate group-hover:text-blue-700 transition-colors">
+                      {client.name}
+                    </h3>
+                    <span className="text-xs text-slate-400 font-medium">{client.industry}</span>
+                  </div>
+                </div>
+                {statusBadge(client.status)}
+              </div>
+
+              <div className="space-y-2 mt-4 pt-3 border-t border-slate-100">
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <Users size={13} className="text-slate-400 shrink-0" />
+                  <span className="font-medium text-slate-700">{client.spocName}</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <Mail size={13} className="text-slate-400 shrink-0" />
+                  <span className="truncate">{client.spocEmail}</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <Phone size={13} className="text-slate-400 shrink-0" />
+                  <span>{client.spocPhone}</span>
+                </div>
+              </div>
+            </Link>
+          </motion.div>
+        ))}
+      </div>
+
+      {filteredClients.length === 0 && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          className="text-center py-16 rounded-2xl border border-dashed border-slate-200 bg-white/50">
+          <Building2 size={40} className="mx-auto text-slate-300 mb-3" />
+          <p className="text-sm font-semibold text-slate-500">No clients found</p>
+          <p className="text-xs text-slate-400 mt-1">Try adjusting your search or filters</p>
+        </motion.div>
+      )}
+
+      {/* Add Client Modal */}
+      {showAddModal && <AddClientModal open={showAddModal} setOpen={setShowAddModal} />}
+    </div>
+  );
+}
+
+interface AddClientModalProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+function AddClientModal({ open, setOpen }: AddClientModalProps) {
+  const { addClient } = useClientStore();
+  const [form, setForm] = useState({ 
+    name: '', 
+    industry: '', 
+    status: 'active' as 'active' | 'inactive', 
+    spocName: '', 
+    spocEmail: '', 
+    spocPhone: '' 
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addClient(form);
+    setOpen(false);
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4" onClick={() => setOpen(false)}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 12 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] }}
+        className="w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-[0_20px_60px_rgba(15,23,42,0.18)] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white">
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight">Add New Client</h2>
+          <button onClick={() => setOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all text-xl leading-none">&times;</button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="label">Client Name</label>
-            <input required type="text" className="input" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="e.g. Acme Corp" />
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Client Name</label>
+            <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium placeholder:text-slate-300"
+              placeholder="e.g. Acme Corporation" />
           </div>
-          <div>
-            <label className="label">Industry</label>
-            <input required type="text" className="input" value={formData.industry} onChange={e => setFormData({...formData, industry: e.target.value})} placeholder="e.g. Manufacturing" />
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="label">SPOC Name</label>
-              <input required type="text" className="input" value={formData.spocName} onChange={e => setFormData({...formData, spocName: e.target.value})} placeholder="John Doe" />
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Industry</label>
+              <input required value={form.industry} onChange={(e) => setForm({ ...form, industry: e.target.value })}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium placeholder:text-slate-300"
+                placeholder="e.g. Manufacturing" />
             </div>
             <div>
-              <label className="label">Status</label>
-              <select className="input" value={formData.status} onChange={e => setFormData({...formData, status: e.target.value as any})}>
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Status</label>
+              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as 'active' | 'inactive' })}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium bg-white">
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">SPOC Name</label>
+            <input required value={form.spocName} onChange={(e) => setForm({ ...form, spocName: e.target.value })}
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium placeholder:text-slate-300"
+              placeholder="Primary contact name" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="label">SPOC Email</label>
-              <input required type="email" className="input" value={formData.spocEmail} onChange={e => setFormData({...formData, spocEmail: e.target.value})} placeholder="john@acme.com" />
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Email</label>
+              <input type="email" required value={form.spocEmail} onChange={(e) => setForm({ ...form, spocEmail: e.target.value })}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium placeholder:text-slate-300"
+                placeholder="contact@email.com" />
             </div>
             <div>
-              <label className="label">SPOC Phone</label>
-              <input required type="text" className="input" value={formData.spocPhone} onChange={e => setFormData({...formData, spocPhone: e.target.value})} placeholder="+91..." />
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Phone</label>
+              <input required value={form.spocPhone} onChange={(e) => setForm({ ...form, spocPhone: e.target.value })}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium placeholder:text-slate-300"
+                placeholder="+91..." />
             </div>
           </div>
-          
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' }}>
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn btn-primary">Save Client</button>
+          <div className="flex justify-end gap-3 pt-3">
+            <button type="button" onClick={() => setOpen(false)}
+              className="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors">
+              Cancel
+            </button>
+            <button type="submit"
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-bold shadow-[0_2px_8px_rgba(37,99,235,0.3)] hover:shadow-[0_4px_16px_rgba(37,99,235,0.4)] transition-all">
+              Add Client
+            </button>
           </div>
         </form>
-      </div>
-    </div>
-  );
-}
-
-export default function ClientsPage() {
-  const { clients, addClient } = useClientStore();
-  const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Filter clients
-  const filteredClients = clients.filter(c => 
-    c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    c.industry.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return (
-    <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      
-      {/* Header & Actions */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)' }}>Clients</h2>
-          <p style={{ color: 'var(--text-muted)' }}>Manage client profiles and their contacts.</p>
-        </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <div style={{ position: 'relative', width: 300 }}>
-            <div style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}>
-              <Search size={18} />
-            </div>
-            <input 
-              type="text" 
-              className="input" 
-              placeholder="Search clients..." 
-              style={{ paddingLeft: '2.5rem' }}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <button className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={() => setIsModalOpen(true)}>
-            <Plus size={18} /> Add Client
-          </button>
-        </div>
-      </div>
-
-      {/* Table */}
-      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ overflowX: 'auto' }}>
-          <table className="table" style={{ width: '100%', minWidth: 800 }}>
-            <thead>
-              <tr>
-                <th>Client Name</th>
-                <th>Industry</th>
-                <th>SPOC</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th style={{ width: 80, textAlign: 'center' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredClients.map(client => (
-                <tr key={client.id} onClick={(e) => {
-                  // Only navigate if clicking on the row, not the action buttons
-                  const target = e.target as HTMLElement;
-                  if (!target.closest('button')) {
-                    router.push(`/clients/${client.id}`);
-                  }
-                }} style={{ cursor: 'pointer' }} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                  <td>
-                    <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{client.name}</div>
-                  </td>
-                  <td style={{ color: 'var(--text-muted)' }}>{client.industry}</td>
-                  <td>
-                    <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{client.spocName}</div>
-                    <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{client.spocEmail}</div>
-                  </td>
-                  <td>
-                    <span className={`badge ${client.status === 'active' ? 'badge-success' : ''}`} style={client.status === 'inactive' ? { backgroundColor: '#e2e8f0', color: '#475569' } : {}}>
-                      {client.status.charAt(0).toUpperCase() + client.status.slice(1)}
-                    </span>
-                  </td>
-                  <td style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                    {new Date(client.createdAt).toLocaleDateString()}
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
-                      <button className="btn btn-secondary" style={{ padding: '0.5rem', background: 'transparent' }} onClick={() => router.push(`/clients/${client.id}`)} title="View Details">
-                        <FileText size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {filteredClients.length === 0 && (
-                <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-                    No clients found matching "{searchTerm}"
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <AddClientModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onAdd={addClient} 
-      />
+      </motion.div>
     </div>
   );
 }
