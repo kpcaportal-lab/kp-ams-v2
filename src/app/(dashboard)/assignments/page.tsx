@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, Plus, Filter, Briefcase, CheckCircle, Clock, AlertCircle, XCircle, LayoutGrid, List, IndianRupee, TrendingUp, Calendar } from 'lucide-react';
 import { useAssignmentStore } from '@/store/assignmentStore';
@@ -25,7 +25,11 @@ const item = {
 };
 
 export default function AssignmentsPage() {
-  const { assignments } = useAssignmentStore();
+  const { assignments, fetchAssignments } = useAssignmentStore();
+
+  useEffect(() => {
+    fetchAssignments();
+  }, [fetchAssignments]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');

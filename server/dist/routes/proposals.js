@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import pool from '../db/pool.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, getVisibleUserIds } from '../middleware/auth.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -80,8 +80,6 @@ router.get('/subcategories', async (_req, res) => {
 router.get('/', async (req, res) => {
     try {
         const { status, assignment_type, fiscal_year, partner_id, search } = req.query;
-        const role = req.user.role;
-        const userId = req.user.id;
         let query = `
       SELECT p.*, c.name as client_name, 
         pr.full_name as prepared_by_name, pa.full_name as partner_name
@@ -91,9 +89,11 @@ router.get('/', async (req, res) => {
       LEFT JOIN profiles pa ON pa.id = p.responsible_partner
       WHERE 1=1`;
         const params = [];
-        if (role === 'manager') {
-            params.push(userId);
-            query += ` AND p.prepared_by = $${params.length}`;
+        // ── RBAC filtering ──
+        const visibleIds = await getVisibleUserIds(req.user);
+        if (visibleIds !== null) {
+            params.push(visibleIds);
+            query += ` AND (p.prepared_by = ANY($${params.length}) OR p.responsible_partner = ANY($${params.length}))`;
         }
         if (status) {
             params.push(status);

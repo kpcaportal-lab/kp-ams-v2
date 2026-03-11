@@ -1,0 +1,660 @@
+﻿diff --git a/server/dist/db/migrate.js b/server/dist/db/migrate.js
+index f41b347..89e731a 100644
+--- a/server/dist/db/migrate.js
++++ b/server/dist/db/migrate.js
+@@ -22,6 +22,14 @@ async function migrate() {
+         const caWorkflowSQL = fs.readFileSync(path.join(__dirname, '../../migrations/004_ca_workflow.sql'), 'utf8');
+         await pool.query(caWorkflowSQL);
+         console.log('Γ£à CA workflow migration complete');
++        console.log('≡ƒöº Step 5: RBAC migration...');
++        const rbacSQL = fs.readFileSync(path.join(__dirname, '../../migrations/005_rbac.sql'), 'utf8');
++        await pool.query(rbacSQL);
++        console.log('Γ£à RBAC migration complete');
++        console.log('≡ƒöº Step 6: Staff role migration...');
++        const staffSQL = fs.readFileSync(path.join(__dirname, '../../migrations/006_staff_role.sql'), 'utf8');
++        await pool.query(staffSQL);
++        console.log('Γ£à Staff role migration complete');
+     }
+     catch (err) {
+         console.error('Γ¥î Migration failed:', err.message);
+diff --git a/server/dist/index.js b/server/dist/index.js
+index 5cdd827..59a2095 100644
+--- a/server/dist/index.js
++++ b/server/dist/index.js
+@@ -12,6 +12,7 @@ import assignmentRoutes from './routes/assignments.js';
+ import invoiceRoutes from './routes/invoices.js';
+ import dashboardRoutes from './routes/dashboard.js';
+ import userRoutes from './routes/users.js';
++import auditRoutes from './routes/audit.js';
+ // Route registration helper
+ const registerRoutes = (app) => {
+     app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
+@@ -22,23 +23,34 @@ const registerRoutes = (app) => {
+     app.use('/api/invoices', invoiceRoutes);
+     app.use('/api/dashboard', dashboardRoutes);
+     app.use('/api/users', userRoutes);
++    app.use('/api/audit', auditRoutes);
+     console.log('Γ£à All routes loaded successfully');
+ };
+ const app = express();
+ const PORT = process.env.PORT || 4000;
+ // ΓöÇΓöÇ Middleware ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+ app.use(cors({
+-    origin: [
+-        process.env.CLIENT_URL || 'http://localhost:3000',
+-        'http://localhost:3000',
+-        'http://127.0.0.1:3000',
+-        'http://localhost:5173',
+-        'http://127.0.0.1:5173',
+-        'http://localhost:5174',
+-        'http://127.0.0.1:5174',
+-        'https://kp-ams.vercel.app',
+-        /\.vercel\.app$/,
+-    ],
++    origin: (origin, callback) => {
++        const allowedOrigins = [
++            process.env.CLIENT_URL,
++            'http://localhost:3000',
++            'http://127.0.0.1:3000',
++            'http://localhost:3001',
++            'https://kp-ams-v2.vercel.app/'
++        ].filter(Boolean);
++        // Allow requests with no origin (like mobile apps or curl)
++        if (!origin)
++            return callback(null, true);
++        const isAllowed = allowedOrigins.includes(origin) ||
++            origin.endsWith('.vercel.app');
++        if (isAllowed) {
++            callback(null, true);
++        }
++        else {
++            console.warn(`ΓÜá∩╕Å CORS blocked origin: ${origin}`);
++            callback(null, false); // Don't allow, but don't error out entirely
++        }
++    },
+     credentials: true,
+ }));
+ app.use(express.json({ limit: '10mb' }));
+diff --git a/server/dist/middleware/auth.js b/server/dist/middleware/auth.js
+index 5ef2890..a32c523 100644
+--- a/server/dist/middleware/auth.js
++++ b/server/dist/middleware/auth.js
+@@ -1,4 +1,5 @@
+ import jwt from 'jsonwebtoken';
++import pool from '../db/pool.js';
+ export const authenticate = (req, res, next) => {
+     const header = req.headers.authorization;
+     if (!header || !header.startsWith('Bearer ')) {
+@@ -24,3 +25,95 @@ export const requireRole = (...roles) => {
+         next();
+     };
+ };
++/**
++ * Get the list of user IDs that the logged-in user is allowed to see data for.
++ * - admin / partner ΓåÆ null (= no filter, see everything)
++ * - director ΓåÆ [self, ...managers reporting to self]
++ * - manager ΓåÆ [self]
++ */
++export const getVisibleUserIds = async (user) => {
++    if (user.role === 'admin' || user.role === 'partner') {
++        return null; // No filter ΓÇö see all
++    }
++    if (user.role === 'director') {
++        const result = await pool.query('SELECT id FROM profiles WHERE reports_to = $1 AND is_active = true', [user.id]);
++        const subordinateIds = result.rows.map((r) => r.id);
++        return [user.id, ...subordinateIds];
++    }
++    if (user.role === 'staff') {
++        const result = await pool.query('SELECT reports_to FROM profiles WHERE id = $1', [user.id]);
++        if (result.rows.length > 0 && result.rows[0].reports_to) {
++            return [user.id, result.rows[0].reports_to];
++        }
++        return [user.id];
++    }
++    // Manager: only self
++    return [user.id];
++};
++/**
++ * Build a SQL WHERE clause fragment for filtering by visible user IDs.
++ * Returns { clause: string, params: any[] } to inject into queries.
++ *
++ * Usage:
++ *   const vis = await getVisibleUserFilter(user, 'a.manager_id', 'a.partner_id');
++ *   query += vis.clause;
++ *   params.push(...vis.params);
++ */
++export const getVisibleUserFilter = async (user, managerCol, partnerCol, paramOffset = 0) => {
++    const ids = await getVisibleUserIds(user);
++    if (ids === null) {
++        return { clause: '', params: [] }; // No filter needed
++    }
++    const paramIdx = paramOffset + 1;
++    return {
++        clause: ` AND (${managerCol} = ANY($${paramIdx}) OR ${partnerCol} = ANY($${paramIdx}))`,
++        params: [ids],
++    };
++};
++/**
++ * Middleware to auto-log mutating API requests to audit_logs.
++ * Attach after authenticate middleware.
++ */
++export const auditLog = (action, entityType) => {
++    return async (req, _res, next) => {
++        // Log asynchronously ΓÇö don't block the request
++        if (req.user) {
++            const entityId = req.params.id || req.body?.id || null;
++            pool.query(`INSERT INTO audit_logs (user_id, user_email, user_role, action, entity_type, entity_id, details, ip_address, user_agent)
++                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`, [
++                req.user.id,
++                req.user.email,
++                req.user.role,
++                action,
++                entityType,
++                entityId,
++                JSON.stringify({ method: req.method, path: req.path, body: req.body }),
++                req.ip || req.headers['x-forwarded-for'] || 'unknown',
++                req.headers['user-agent'] || 'unknown'
++            ]).catch(err => console.error('Audit log error:', err));
++        }
++        next();
++    };
++};
++/**
++ * Helper to log a single audit event (for use inside route handlers).
++ */
++export const logAuditEvent = async (user, action, entityType, entityId, details = {}, req) => {
++    try {
++        await pool.query(`INSERT INTO audit_logs (user_id, user_email, user_role, action, entity_type, entity_id, details, ip_address, user_agent)
++             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`, [
++            user.id,
++            user.email,
++            user.role,
++            action,
++            entityType,
++            entityId,
++            JSON.stringify(details),
++            req?.ip || req?.headers['x-forwarded-for'] || 'unknown',
++            req?.headers['user-agent'] || 'unknown'
++        ]);
++    }
++    catch (err) {
++        console.error('Audit log error:', err);
++    }
++};
+diff --git a/server/dist/routes/assignments.js b/server/dist/routes/assignments.js
+index 0312186..5c5c64e 100644
+--- a/server/dist/routes/assignments.js
++++ b/server/dist/routes/assignments.js
+@@ -1,9 +1,9 @@
+ import { Router } from 'express';
+ import pool from '../db/pool.js';
+-import { authenticate } from '../middleware/auth.js';
++import { authenticate, getVisibleUserIds, logAuditEvent } from '../middleware/auth.js';
+ const router = Router();
+ router.use(authenticate);
+-// GET /api/assignments
++// GET /api/assignments ΓÇö role-filtered
+ router.get('/', async (req, res) => {
+     try {
+         const role = req.user.role;
+@@ -20,9 +20,11 @@ router.get('/', async (req, res) => {
+       LEFT JOIN proposals p ON p.id = a.proposal_id
+       WHERE 1=1`;
+         const params = [];
+-        if (role === 'manager') {
+-            params.push(userId);
+-            query += ` AND a.manager_id = $${params.length}`;
++        // ΓöÇΓöÇ RBAC filtering ΓöÇΓöÇ
++        const visibleIds = await getVisibleUserIds(req.user);
++        if (visibleIds !== null) {
++            params.push(visibleIds);
++            query += ` AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}))`;
+         }
+         if (status) {
+             params.push(status);
+@@ -44,7 +46,6 @@ router.get('/', async (req, res) => {
+             params.push(manager_id);
+             query += ` AND a.manager_id = $${params.length}`;
+         }
+-        // New filters
+         if (subcategory) {
+             params.push(subcategory);
+             query += ` AND a.subcategory = $${params.length}`;
+@@ -95,7 +96,7 @@ router.get('/:id', async (req, res) => {
+         res.status(500).json({ error: 'Server error' });
+     }
+ });
+-// POST /api/assignments ΓÇö create from won proposal (updated for multi-assignment support)
++// POST /api/assignments
+ router.post('/', async (req, res) => {
+     try {
+         const { proposal_id, client_id, gstn, category, scope_areas, total_fees, billing_cycle, partner_id, manager_id, start_date, end_date, notes, fiscal_year, subcategory, assessment_year, scope_item } = req.body;
+@@ -112,6 +113,8 @@ router.post('/', async (req, res) => {
+         const fiscalYr = fiscal_year || '2025-26';
+         const allocationInserts = Array.from({ length: 12 }, (_, i) => pool.query('INSERT INTO fee_allocations (assignment_id,month,fiscal_year,amount) VALUES ($1,$2,$3,0) ON CONFLICT DO NOTHING', [result.rows[0].id, i + 1, fiscalYr]));
+         await Promise.all(allocationInserts);
++        // Audit log
++        await logAuditEvent(req.user, 'create', 'assignment', result.rows[0].id, { client_id, total_fees }, req);
+         res.status(201).json(result.rows[0]);
+     }
+     catch (err) {
+@@ -140,10 +143,11 @@ router.put('/:id', async (req, res) => {
+         if (updates.length) {
+             params.push(req.params.id);
+             await pool.query(`UPDATE assignments SET ${updates.join(', ')}, updated_at=NOW() WHERE id=$${params.length}`, params);
+-            // Log all changes
+             for (const ch of changedFields) {
+                 await pool.query('INSERT INTO change_history (entity_type,entity_id,field_name,old_value,new_value,changed_by,reason) VALUES ($1,$2,$3,$4,$5,$6,$7)', ['assignment', req.params.id, ch.field, String(ch.old), String(ch.new), req.user.id, req.body.reason || null]);
+             }
++            // Audit log
++            await logAuditEvent(req.user, 'update', 'assignment', req.params.id, { changedFields }, req);
+         }
+         const updated = await pool.query('SELECT * FROM assignments WHERE id=$1', [req.params.id]);
+         res.json(updated.rows[0]);
+@@ -158,6 +162,7 @@ router.patch('/:id/confirm', async (req, res) => {
+     try {
+         await pool.query('UPDATE assignments SET status=\'active\', updated_at=NOW() WHERE id=$1 AND status=\'draft\'', [req.params.id]);
+         await pool.query('INSERT INTO change_history (entity_type,entity_id,field_name,old_value,new_value,changed_by) VALUES ($1,$2,$3,$4,$5,$6)', ['assignment', req.params.id, 'status', 'draft', 'active', req.user.id]);
++        await logAuditEvent(req.user, 'update', 'assignment', req.params.id, { action: 'confirm', status: 'active' }, req);
+         res.json({ success: true });
+     }
+     catch (err) {
+@@ -165,11 +170,10 @@ router.patch('/:id/confirm', async (req, res) => {
+         res.status(500).json({ error: 'Server error' });
+     }
+ });
+-// PUT /api/assignments/:id/allocations ΓÇö update monthly fee allocation
++// PUT /api/assignments/:id/allocations
+ router.put('/:id/allocations', async (req, res) => {
+     try {
+         const { allocations, fiscal_year } = req.body;
+-        // allocations = [{ month: 1, amount: 100000 }, ...]
+         const assignment = await pool.query('SELECT total_fees FROM assignments WHERE id=$1', [req.params.id]);
+         if (!assignment.rows.length)
+             return res.status(404).json({ error: 'Not found' });
+@@ -185,6 +189,7 @@ router.put('/:id/allocations', async (req, res) => {
+          WHERE assignment_id=$2 AND month=$3 AND fiscal_year=$4`, [alloc.amount, req.params.id, alloc.month, fiscal_year || '2025-26']);
+         }
+         await pool.query('INSERT INTO change_history (entity_type,entity_id,field_name,old_value,new_value,changed_by) VALUES ($1,$2,$3,$4,$5,$6)', ['fee_allocation', req.params.id, 'monthly_allocation', 'previous', JSON.stringify(allocations), req.user.id]);
++        await logAuditEvent(req.user, 'update', 'fee_allocation', req.params.id, { allocations }, req);
+         res.json({ success: true });
+     }
+     catch (err) {
+diff --git a/server/dist/routes/auth.js b/server/dist/routes/auth.js
+index 5894df2..9e42f84 100644
+--- a/server/dist/routes/auth.js
++++ b/server/dist/routes/auth.js
+@@ -2,6 +2,7 @@ import { Router } from 'express';
+ import bcrypt from 'bcryptjs';
+ import jwt from 'jsonwebtoken';
+ import pool from '../db/pool.js';
++import { logAuditEvent } from '../middleware/auth.js';
+ const router = Router();
+ // POST /api/auth/login
+ router.post('/login', async (req, res) => {
+@@ -21,6 +22,8 @@ router.post('/login', async (req, res) => {
+             return res.status(401).json({ error: 'Invalid credentials' });
+         }
+         const token = jwt.sign({ id: user.id, email: user.email, role: user.role, full_name: user.full_name }, process.env.JWT_SECRET, { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') });
++        // Log login event for admin audit trail
++        await logAuditEvent({ id: user.id, email: user.email, role: user.role, full_name: user.full_name }, 'login', 'auth', user.id, { email: user.email }, req);
+         return res.json({
+             token,
+             user: {
+diff --git a/server/dist/routes/dashboard.js b/server/dist/routes/dashboard.js
+index c923d6a..5e5cbd1 100644
+--- a/server/dist/routes/dashboard.js
++++ b/server/dist/routes/dashboard.js
+@@ -1,6 +1,6 @@
+ import { Router } from 'express';
+ import pool from '../db/pool.js';
+-import { authenticate } from '../middleware/auth.js';
++import { authenticate, getVisibleUserIds } from '../middleware/auth.js';
+ const router = Router();
+ router.use(authenticate);
+ // GET /api/dashboard/summary ΓÇö role-aware aggregate dashboard data
+@@ -9,70 +9,111 @@ router.get('/summary', async (req, res) => {
+         const { fiscal_year = '2025-26' } = req.query;
+         const role = req.user.role;
+         const userId = req.user.id;
+-        // Total billed (all invoices)
+-        const totalBilled = await pool.query(`SELECT COALESCE(SUM(i.professional_fees),0) as total
+-       FROM invoices i
+-       JOIN assignments a ON a.id = i.assignment_id
+-       WHERE a.fiscal_year=$1`, [fiscal_year]);
+-        // Self billed
++        // Get visible user IDs for RBAC filtering
++        const visibleIds = await getVisibleUserIds(req.user);
++        // ΓöÇΓöÇ Total billed (scoped by role) ΓöÇΓöÇ
++        let totalBilledQuery = `
++            SELECT COALESCE(SUM(i.professional_fees),0) as total
++            FROM invoices i
++            JOIN assignments a ON a.id = i.assignment_id
++            WHERE a.fiscal_year=$1`;
++        const totalBilledParams = [fiscal_year];
++        if (visibleIds !== null) {
++            totalBilledParams.push(visibleIds);
++            totalBilledQuery += ` AND (a.manager_id = ANY($${totalBilledParams.length}) OR a.partner_id = ANY($${totalBilledParams.length}))`;
++        }
++        const totalBilled = await pool.query(totalBilledQuery, totalBilledParams);
++        // ΓöÇΓöÇ Self billed ΓöÇΓöÇ
+         const selfBilled = await pool.query(`SELECT COALESCE(SUM(i.professional_fees),0) as total
+-       FROM invoices i
+-       JOIN assignments a ON a.id = i.assignment_id
+-       WHERE a.fiscal_year=$1 AND a.${role === 'manager' ? 'manager_id' : 'partner_id'}=$2`, [fiscal_year, userId]);
+-        // Overdue: sum of allocations in past months where billed_amount < amount
++             FROM invoices i
++             JOIN assignments a ON a.id = i.assignment_id
++             WHERE a.fiscal_year=$1 AND a.${(role === 'manager' || role === 'staff') ? 'manager_id' : 'partner_id'}=$2`, [fiscal_year, userId]);
++        // ΓöÇΓöÇ Overdue ΓöÇΓöÇ
+         const currentDate = new Date();
+         const calMonth = currentDate.getMonth() + 1;
+         const currentFiscalMonth = calMonth >= 4 ? calMonth - 3 : calMonth + 9;
+-        const overdueQuery = await pool.query(`SELECT COALESCE(SUM(fa.amount - fa.billed_amount),0) as total
+-       FROM fee_allocations fa
+-       JOIN assignments a ON a.id = fa.assignment_id
+-       WHERE a.status='active' AND fa.fiscal_year=$1
+-       AND fa.month < $2 AND fa.amount > fa.billed_amount
+-       AND a.${role === 'manager' ? 'manager_id' : 'partner_id'}=$3`, [fiscal_year, currentFiscalMonth, userId]);
+-        // Per-partner breakdown (for admin/partner/director)
++        let overdueQuery = `
++            SELECT COALESCE(SUM(fa.amount - fa.billed_amount),0) as total
++            FROM fee_allocations fa
++            JOIN assignments a ON a.id = fa.assignment_id
++            WHERE a.status='active' AND fa.fiscal_year=$1
++            AND fa.month < $2 AND fa.amount > fa.billed_amount`;
++        const overdueParams = [fiscal_year, currentFiscalMonth];
++        if (visibleIds !== null) {
++            overdueParams.push(visibleIds);
++            overdueQuery += ` AND (a.manager_id = ANY($${overdueParams.length}) OR a.partner_id = ANY($${overdueParams.length}))`;
++        }
++        const overdueResult = await pool.query(overdueQuery, overdueParams);
++        // ΓöÇΓöÇ Per-partner breakdown (admin, partner, director) ΓöÇΓöÇ
+         let partnerBreakdown = [];
+-        if (role !== 'manager') {
+-            const pResult = await pool.query(`
+-        SELECT pp.id, pp.full_name, pp.display_name,
+-          COALESCE(SUM(i.professional_fees),0) as billed
+-        FROM profiles pp
+-        LEFT JOIN assignments a ON a.partner_id=pp.id AND a.status='active' AND a.fiscal_year=$1
+-        LEFT JOIN invoices i ON i.assignment_id=a.id
+-        WHERE pp.role='partner' AND pp.is_active=true
+-        GROUP BY pp.id, pp.full_name, pp.display_name
+-        ORDER BY pp.full_name`, [fiscal_year]);
++        if (role !== 'manager' && role !== 'staff') {
++            let pQuery = `
++                SELECT pp.id, pp.full_name, pp.display_name,
++                  COALESCE(SUM(i.professional_fees),0) as billed
++                FROM profiles pp
++                LEFT JOIN assignments a ON a.partner_id=pp.id AND a.status='active' AND a.fiscal_year=$1
++                LEFT JOIN invoices i ON i.assignment_id=a.id
++                WHERE pp.role='partner' AND pp.is_active=true`;
++            const pParams = [fiscal_year];
++            // Directors only see their own partner data (themselves if they're also a partner,
++            // or partners linked to their subordinates)
++            if (role === 'director' && visibleIds !== null) {
++                pParams.push(visibleIds);
++                // Show only partners whose assignments involve visible managers
++                pQuery = `
++                    SELECT pp.id, pp.full_name, pp.display_name,
++                      COALESCE(SUM(i.professional_fees),0) as billed
++                    FROM profiles pp
++                    LEFT JOIN assignments a ON a.partner_id=pp.id AND a.status='active' AND a.fiscal_year=$1
++                      AND a.manager_id = ANY($2)
++                    LEFT JOIN invoices i ON i.assignment_id=a.id
++                    WHERE pp.role='partner' AND pp.is_active=true`;
++            }
++            pQuery += ` GROUP BY pp.id, pp.full_name, pp.display_name ORDER BY pp.full_name`;
++            const pResult = await pool.query(pQuery, pParams);
+             partnerBreakdown = pResult.rows;
+         }
+-        // Manager breakdown table
+-        const managerBreakdown = await pool.query(`
+-      SELECT pm.id, pm.full_name, pm.display_name,
+-        COALESCE(SUM(i.professional_fees),0) as billed_amount,
+-        CASE WHEN SUM(a.total_fees) > 0 THEN ROUND(SUM(i.professional_fees)*100/SUM(a.total_fees),1) ELSE 0 END as billing_pct
+-      FROM profiles pm
+-      LEFT JOIN assignments a ON a.manager_id=pm.id AND a.status='active' AND a.fiscal_year=$1
+-      LEFT JOIN invoices i ON i.assignment_id=a.id
+-      WHERE pm.role='manager' AND pm.is_active=true
+-      GROUP BY pm.id, pm.full_name, pm.display_name
+-      ORDER BY billed_amount DESC`, [fiscal_year]);
+-        // Category breakdown (for manager view)
++        // ΓöÇΓöÇ Manager breakdown ΓöÇΓöÇ
++        let mQuery = `
++            SELECT pm.id, pm.full_name, pm.display_name,
++              COALESCE(SUM(i.professional_fees),0) as billed_amount,
++              CASE WHEN SUM(a.total_fees) > 0 THEN ROUND(SUM(i.professional_fees)*100/SUM(a.total_fees),1) ELSE 0 END as billing_pct
++            FROM profiles pm
++            LEFT JOIN assignments a ON a.manager_id=pm.id AND a.status='active' AND a.fiscal_year=$1
++            LEFT JOIN invoices i ON i.assignment_id=a.id
++            WHERE pm.role='manager' AND pm.is_active=true`;
++        const mParams = [fiscal_year];
++        if (visibleIds !== null) {
++            mParams.push(visibleIds);
++            mQuery += ` AND pm.id = ANY($${mParams.length})`;
++        }
++        mQuery += ` GROUP BY pm.id, pm.full_name, pm.display_name ORDER BY billed_amount DESC`;
++        const managerBreakdown = await pool.query(mQuery, mParams);
++        // ΓöÇΓöÇ Category breakdown (for focused views) ΓöÇΓöÇ
+         let categoryBreakdown = [];
+-        if (role === 'manager') {
+-            const catResult = await pool.query(`
+-        SELECT a.category,
+-          COALESCE(SUM(i.professional_fees),0) as billed,
+-          CASE WHEN SUM(a.total_fees)>0 THEN ROUND(SUM(i.professional_fees)*100/SUM(a.total_fees),1) ELSE 0 END as billing_pct
+-        FROM assignments a
+-        LEFT JOIN invoices i ON i.assignment_id=a.id
+-        WHERE a.manager_id=$1 AND a.status='active' AND a.fiscal_year=$2
+-        GROUP BY a.category ORDER BY a.category`, [userId, fiscal_year]);
++        if (role === 'manager' || role === 'staff' || role === 'director') {
++            let catQuery = `
++                SELECT a.category,
++                  COALESCE(SUM(i.professional_fees),0) as billed,
++                  CASE WHEN SUM(a.total_fees)>0 THEN ROUND(SUM(i.professional_fees)*100/SUM(a.total_fees),1) ELSE 0 END as billing_pct
++                FROM assignments a
++                LEFT JOIN invoices i ON i.assignment_id=a.id
++                WHERE a.status='active' AND a.fiscal_year=$1`;
++            const catParams = [fiscal_year];
++            if (visibleIds !== null) {
++                catParams.push(visibleIds);
++                catQuery += ` AND (a.manager_id = ANY($${catParams.length}) OR a.partner_id = ANY($${catParams.length}))`;
++            }
++            catQuery += ` GROUP BY a.category ORDER BY a.category`;
++            const catResult = await pool.query(catQuery, catParams);
+             categoryBreakdown = catResult.rows;
+         }
+         res.json({
+             totalBilled: Number(totalBilled.rows[0].total),
+             selfBilled: Number(selfBilled.rows[0].total),
+-            overdue: Number(overdueQuery.rows[0].total),
+-            billingPct: 0, // Simplified - will calculate based on available data if needed
+-            selfBillingPct: 0, // Simplified - will calculate based on available data if needed
++            overdue: Number(overdueResult.rows[0].total),
++            billingPct: 0,
++            selfBillingPct: 0,
+             partnerBreakdown,
+             managerBreakdown: managerBreakdown.rows,
+             categoryBreakdown,
+@@ -83,23 +124,35 @@ router.get('/summary', async (req, res) => {
+         res.status(500).json({ error: 'Server error' });
+     }
+ });
+-// GET /api/dashboard/work-progress ΓÇö User-specific work progress from database
++// GET /api/dashboard/work-progress ΓÇö role-aware work progress
+ router.get('/work-progress', async (req, res) => {
+     try {
+         const { fiscal_year = '2025-26' } = req.query;
++        const role = req.user.role;
+         const userId = req.user.id;
+-        // Get work progress for the authenticated user
+-        const workProgressResult = await pool.query(`
++        const visibleIds = await getVisibleUserIds(req.user);
++        // If admin/partner, get all users' work progress
++        // If director, get self + subordinates
++        // If manager, get only self
++        let workQuery = `
+             SELECT
+                 wp.*,
+                 p.full_name as user_name,
+-                p.display_name
++                p.display_name,
++                p.role as user_role
+             FROM work_progress wp
+             JOIN profiles p ON p.id = wp.user_id
+-            WHERE wp.user_id = $1 AND wp.fiscal_year = $2
+-        `, [userId, fiscal_year]);
++            WHERE wp.fiscal_year = $1`;
++        const workParams = [fiscal_year];
++        if (visibleIds !== null) {
++            workParams.push(visibleIds);
++            workQuery += ` AND wp.user_id = ANY($${workParams.length})`;
++        }
++        workQuery += ` ORDER BY p.role, p.full_name`;
++        const workProgressResult = await pool.query(workQuery, workParams);
+         if (workProgressResult.rows.length === 0) {
+-            return res.json({
++            // Return empty result for single user
++            return res.json((role === 'manager' || role === 'staff') ? {
+                 user_id: userId,
+                 user_name: req.user.full_name,
+                 total_proposals: 0,
+@@ -112,8 +165,29 @@ router.get('/work-progress', async (req, res) => {
+                 pending_amount: 0,
+                 completed_items: [],
+                 pending_items: []
+-            });
++            } : []);
++        }
++        // For admin/partner/director ΓÇö return array of all visible users' progress
++        if (role !== 'manager' && role !== 'staff') {
++            const allProgress = workProgressResult.rows.map(wp => ({
++                user_id: wp.user_id,
++                user_name: wp.user_name,
++                display_name: wp.display_name,
++                user_role: wp.user_role,
++                total_proposals: Number(wp.total_proposals),
++                completed_proposals: Number(wp.completed_proposals),
++                pending_proposals: Number(wp.pending_proposals),
++                completed_percentage: Number(wp.percentage_completed),
++                pending_percentage: 100 - Number(wp.percentage_completed),
++                total_amount: Number(wp.completed_amount) + Number(wp.pending_amount),
++                completed_amount: Number(wp.completed_amount),
++                pending_amount: Number(wp.pending_amount),
++                completed_items: [],
++                pending_items: []
++            }));
++            return res.json(allProgress);
+         }
++        // For manager ΓÇö return single object
+         const wp = workProgressResult.rows[0];
+         const totalAmount = Number(wp.completed_amount) + Number(wp.pending_amount);
+         res.json({
+@@ -128,8 +202,8 @@ router.get('/work-progress', async (req, res) => {
+             total_amount: totalAmount,
+             completed_amount: Number(wp.completed_amount),
+             pending_amount: Number(wp.pending_amount),
+-            completed_items: [], // TODO: Add detailed items if needed
+-            pending_items: [] // TODO: Add detailed items if needed
++            completed_items: [],
++            pending_items: []
+         });
+     }
+     catch (err) {
+diff --git a/server/dist/routes/invoices.js b/server/dist/routes/invoices.js
+index 0183447..9b4bedf 100644
+--- a/server/dist/routes/invoices.js
++++ b/server/dist/routes/invoices.js
+@@ -93,7 +93,7 @@ router.get('/', async (req, res) => {
+       LEFT JOIN email_logs el ON el.invoice_id = i.id
+       WHERE 1=1`;
+         const params = [];
+-        if (role === 'manager') {
++        if (role === 'manager' || role === 'staff') {
+             params.push(userId);
+             query += ` AND i.generated_by = $${params.length}`;
+         }
+diff --git a/server/dist/routes/proposals.js b/server/dist/routes/proposals.js
+index 9104250..02ace51 100644
+--- a/server/dist/routes/proposals.js
++++ b/server/dist/routes/proposals.js
+@@ -1,6 +1,6 @@
+ import { Router } from 'express';
+ import pool from '../db/pool.js';
+-import { authenticate } from '../middleware/auth.js';
++import { authenticate, getVisibleUserIds } from '../middleware/auth.js';
+ import path from 'path';
+ import { fileURLToPath } from 'url';
+ const __dirname = path.dirname(fileURLToPath(import.meta.url));
+@@ -80,8 +80,6 @@ router.get('/subcategories', async (_req, res) => {
+ router.get('/', async (req, res) => {
+     try {
+         const { status, assignment_type, fiscal_year, partner_id, search } = req.query;
+-        const role = req.user.role;
+-        const userId = req.user.id;
+         let query = `
+       SELECT p.*, c.name as client_name, 
+         pr.full_name as prepared_by_name, pa.full_name as partner_name
+@@ -91,9 +89,11 @@ router.get('/', async (req, res) => {
+       LEFT JOIN profiles pa ON pa.id = p.responsible_partner
+       WHERE 1=1`;
+         const params = [];
+-        if (role === 'manager') {
+-            params.push(userId);
+-            query += ` AND p.prepared_by = $${params.length}`;
++        // ΓöÇΓöÇ RBAC filtering ΓöÇΓöÇ
++        const visibleIds = await getVisibleUserIds(req.user);
++        if (visibleIds !== null) {
++            params.push(visibleIds);
++            query += ` AND (p.prepared_by = ANY($${params.length}) OR p.responsible_partner = ANY($${params.length}))`;
+         }
+         if (status) {
+             params.push(status);
+diff --git a/server/dist/routes/users.js b/server/dist/routes/users.js
+index 913b4ea..07ad3a5 100644
+--- a/server/dist/routes/users.js
++++ b/server/dist/routes/users.js
+@@ -1,12 +1,16 @@
+ import { Router } from 'express';
+ import pool from '../db/pool.js';
+-import { authenticate, requireRole } from '../middleware/auth.js';
++import { authenticate, requireRole, logAuditEvent } from '../middleware/auth.js';
+ const router = Router();
+ router.use(authenticate);
+ // GET /api/users ΓÇö all users (admin/partner/director)
+ router.get('/', requireRole('admin', 'partner', 'director'), async (_req, res) => {
+     try {
+-        const result = await pool.query('SELECT id, email, role, full_name, display_name, is_active, created_at FROM profiles ORDER BY role, full_name');
++        const result = await pool.query(`SELECT p.id, p.email, p.role, p.full_name, p.display_name, p.is_active, p.created_at, p.reports_to,
++                    rp.full_name as reports_to_name
++             FROM profiles p
++             LEFT JOIN profiles rp ON rp.id = p.reports_to
++             ORDER BY p.role, p.full_name`);
+         res.json(result.rows);
+     }
+     catch (err) {
+@@ -37,9 +41,10 @@ router.get('/partners', async (_req, res) => {
+ router.post('/', requireRole('admin'), async (req, res) => {
+     try {
+         const bcrypt = require('bcryptjs');
+-        const { email, full_name, display_name, role, password } = req.body;
++        const { email, full_name, display_name, role, password, reports_to } = req.body;
+         const hash = await bcrypt.hash(password || 'KpAms@2025', 10);
+-        const result = await pool.query('INSERT INTO profiles (email, password_hash, role, full_name, display_name) VALUES ($1,$2,$3,$4,$5) RETURNING id, email, role, full_name', [email, hash, role, full_name, display_name || full_name]);
++        const result = await pool.query('INSERT INTO profiles (email, password_hash, role, full_name, display_name, reports_to) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, email, role, full_name', [email, hash, role, full_name, display_name || full_name, reports_to || null]);
++        await logAuditEvent(req.user, 'create', 'user', result.rows[0].id, { email, role }, req);
+         res.status(201).json(result.rows[0]);
+     }
+     catch (err) {
+@@ -51,8 +56,9 @@ router.post('/', requireRole('admin'), async (req, res) => {
+ // PATCH /api/users/:id ΓÇö toggle active, update role
+ router.patch('/:id', requireRole('admin', 'partner', 'director'), async (req, res) => {
+     try {
+-        const { is_active, role, display_name } = req.body;
+-        await pool.query('UPDATE profiles SET is_active=COALESCE($1,is_active), role=COALESCE($2,role), display_name=COALESCE($3,display_name), updated_at=NOW() WHERE id=$4', [is_active, role, display_name, req.params.id]);
++        const { is_active, role, display_name, reports_to } = req.body;
++        await pool.query('UPDATE profiles SET is_active=COALESCE($1,is_active), role=COALESCE($2,role), display_name=COALESCE($3,display_name), reports_to=COALESCE($4,reports_to), updated_at=NOW() WHERE id=$5', [is_active, role, display_name, reports_to, req.params.id]);
++        await logAuditEvent(req.user, 'update', 'user', req.params.id, { is_active, role, reports_to }, req);
+         res.json({ success: true });
+     }
+     catch (err) {

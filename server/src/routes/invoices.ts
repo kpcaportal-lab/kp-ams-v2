@@ -145,4 +145,83 @@ router.post('/:id/retry-email', async (req: Request, res: Response) => {
     } catch (err) { res.status(500).json({ error: 'Failed to resend email' }); }
 });
 
+// GET /api/invoices/:id/download
+router.get('/:id/download', async (req: Request, res: Response) => {
+    try {
+        const result = await pool.query(`
+      SELECT i.*, a.category, a.billing_cycle, c.name as client_name, c.gstn as client_gstn,
+        pm.full_name as manager_name, a.proposal_number
+      FROM invoices i
+      LEFT JOIN assignments a ON a.id = i.assignment_id
+      LEFT JOIN clients c ON c.id = a.client_id
+      LEFT JOIN profiles pm ON pm.id = i.generated_by
+      WHERE i.id = $1`, [req.params.id]);
+
+        if (!result.rows.length) return res.status(404).json({ error: 'Not found' });
+        const inv = result.rows[0];
+
+        // Dynamic import for PDFKit (ESM)
+        const PDFDocument = (await import('pdfkit')).default;
+        const doc = new PDFDocument({ margin: 50 });
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="Invoice_${inv.id}.pdf"`);
+        doc.pipe(res);
+
+        // Header
+        doc.fontSize(20).font('Helvetica-Bold').text('Kirtane & Pandit LLP', { align: 'center' });
+        doc.fontSize(12).font('Helvetica').text('Chartered Accountants', { align: 'center' });
+        doc.moveDown(2);
+
+        // Title
+        doc.fontSize(16).font('Helvetica-Bold').text('INVOICE', { align: 'center' });
+        doc.moveDown();
+
+        // Invoice details
+        const details = [
+            ['Invoice ID', inv.id],
+            ['Invoice Date', inv.invoice_date ? new Date(inv.invoice_date).toLocaleDateString('en-IN') : 'N/A'],
+            ['Client Name', inv.client_name || 'N/A'],
+            ['GSTN', inv.gst_no || 'N/A'],
+            ['Kind Attention', inv.kind_attention || 'N/A'],
+            ['Reference', inv.reference || 'N/A'],
+            ['Address', inv.address || 'N/A'],
+            ['Category', (inv.category || '').replace(/_/g, ' ').toUpperCase()],
+            ['Billing Cycle', (inv.billing_cycle || '').toUpperCase()],
+            ['UDIN', inv.udin || 'N/A'],
+        ];
+
+        doc.fontSize(11).font('Helvetica');
+        for (const [label, value] of details) {
+            doc.font('Helvetica-Bold').text(`${label}: `, { continued: true });
+            doc.font('Helvetica').text(String(value));
+        }
+
+        doc.moveDown(2);
+
+        // Fees section
+        doc.fontSize(14).font('Helvetica-Bold').text('Fee Details');
+        doc.moveDown(0.5);
+        doc.fontSize(11).font('Helvetica');
+        
+        doc.font('Helvetica-Bold').text('Professional Fees: ', { continued: true });
+        doc.font('Helvetica').text(`₹${Number(inv.professional_fees).toLocaleString('en-IN')}`);
+        
+        doc.font('Helvetica-Bold').text('Out of Pocket Expenses: ', { continued: true });
+        doc.font('Helvetica').text(`₹${Number(inv.out_of_pocket).toLocaleString('en-IN')}`);
+        
+        doc.font('Helvetica-Bold').text('Net Amount: ', { continued: true });
+        doc.font('Helvetica').text(`₹${Number(inv.net_amount).toLocaleString('en-IN')}`);
+
+        if (inv.narration) {
+            doc.moveDown(2);
+            doc.fontSize(14).font('Helvetica-Bold').text('Narration');
+            doc.moveDown(0.5);
+            doc.fontSize(11).font('Helvetica').text(inv.narration);
+        }
+
+        doc.end();
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to generate PDF' }); }
+});
+
 export default router;

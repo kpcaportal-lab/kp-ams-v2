@@ -22,6 +22,14 @@ async function migrate() {
         const caWorkflowSQL = fs.readFileSync(path.join(__dirname, '../../migrations/004_ca_workflow.sql'), 'utf8');
         await pool.query(caWorkflowSQL);
         console.log('✅ CA workflow migration complete');
+        console.log('🔧 Step 5: RBAC migration...');
+        const rbacSQL = fs.readFileSync(path.join(__dirname, '../../migrations/005_rbac.sql'), 'utf8');
+        await pool.query(rbacSQL);
+        console.log('✅ RBAC migration complete');
+        console.log('🔧 Step 6: Staff role migration...');
+        const staffSQL = fs.readFileSync(path.join(__dirname, '../../migrations/006_staff_role.sql'), 'utf8');
+        await pool.query(staffSQL);
+        console.log('✅ Staff role migration complete');
     }
     catch (err) {
         console.error('❌ Migration failed:', err.message);

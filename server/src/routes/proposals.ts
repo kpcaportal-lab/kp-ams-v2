@@ -255,7 +255,7 @@ router.post('/:id/revise', async (req: Request, res: Response) => {
     try {
         await dbClient.query('BEGIN');
 
-        const { revision_details } = req.body;
+        const { revision_details, revised_fee } = req.body;
 
         // Get the current proposal
         const current = await dbClient.query('SELECT * FROM proposals WHERE id=$1', [req.params.id]);
@@ -287,7 +287,8 @@ router.post('/:id/revise', async (req: Request, res: Response) => {
       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,true,$13,$14,$15,$16,$17,$18) RETURNING *`,
             [newNumber, original.client_id, original.proposal_type, original.assignment_type,
                 original.scope_areas, original.quotation_amount, original.fee_category,
-                original.increment_details, original.revised_fee, new Date().toISOString().split('T')[0],
+                original.increment_details, revised_fee || original.revised_fee || null, 
+                new Date().toISOString().split('T')[0],
                 req.user!.id, original.responsible_partner,
                 revision_details || null, original.notes, original.fiscal_year,
                 currentVersion + 1, original.id, original.template_id]

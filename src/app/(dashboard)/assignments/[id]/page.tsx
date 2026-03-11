@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  ArrowLeft, Briefcase, Calendar, Users, DollarSign, FileText,
-  CheckCircle, Clock, Edit2, AlertCircle, TrendingUp
-} from 'lucide-react';
+import { ArrowLeft, Calendar, User, FileText, CheckCircle2, Clock, Pencil, Trash2, ChevronRight, PieChart, Briefcase, IndianRupee, Layout, MoreVertical, Search, Filter, Download } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import { useAssignmentStore } from '@/store/assignmentStore';
 import { useBillingStore } from '@/store/billingStore';
 import {
@@ -15,15 +13,37 @@ import {
 } from '@/types';
 import { formatIndianCurrency, cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import EditAssignmentModal from '@/components/modals/EditAssignmentModal';
 
 export default function AssignmentDetailPage() {
-  const { id } = useParams();
+  const params = useParams();
   const router = useRouter();
-  const { assignments } = useAssignmentStore();
+  const { id } = params;
+  const { assignments, fetchAssignmentById, isLoading } = useAssignmentStore();
   const { invoices } = useBillingStore();
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentAssignment, setCurrentAssignment] = useState<any>(null);
 
-  const assignment = assignments.find(a => a.id === id);
+  useEffect(() => {
+    if (id) {
+      fetchAssignmentById(id as string).then(data => {
+        if (data) setCurrentAssignment(data);
+      });
+    }
+  }, [id, fetchAssignmentById]);
+
+  const assignment = currentAssignment || assignments.find(a => a.id === id);
   const assignmentInvoices = invoices.filter(inv => inv.assignment_id === id);
+
+  if (isLoading && !assignment) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 space-y-4">
+        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <p className="text-slate-500 font-medium">Loading assignment details...</p>
+      </div>
+    );
+  }
 
   if (!assignment) {
     return (
@@ -46,7 +66,7 @@ export default function AssignmentDetailPage() {
       case 'active':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-            <CheckCircle size={13} /> Active
+            <CheckCircle2 size={13} /> Active
           </span>
         );
       case 'draft':
@@ -58,7 +78,7 @@ export default function AssignmentDetailPage() {
       case 'completed':
         return (
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-600 border border-blue-500/20">
-            <CheckCircle size={13} /> Completed
+            <CheckCircle2 size={13} /> Completed
           </span>
         );
       default:
@@ -85,14 +105,18 @@ export default function AssignmentDetailPage() {
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">{assignment.client_name}</h1>
             <p className="text-sm text-slate-400 mt-0.5 font-medium">
-              {assignment.scope_item || SUBCATEGORY_LABELS[assignment.subcategory]} • {assignment.fiscal_year}
+              {assignment.scope_item || (SUBCATEGORY_LABELS as any)[assignment.subcategory]} • {assignment.fiscal_year}
             </p>
           </div>
           <div className="flex items-center gap-3">
             {statusBadge}
-            <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
-              <Edit2 size={14} /> Edit
-            </button>
+                <button 
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="flex items-center gap-2 px-6 py-3 rounded-2xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all active:scale-95"
+                >
+                  <Pencil size={18} />
+                  Edit
+                </button>
           </div>
         </div>
       </motion.div>
@@ -101,9 +125,9 @@ export default function AssignmentDetailPage() {
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.5 }}
         className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Fees', value: formatIndianCurrency(assignment.total_fees), icon: DollarSign, color: 'text-blue-600', bg: 'bg-blue-500/10', accent: 'from-blue-600 to-indigo-600' },
+          { label: 'Total Fees', value: formatIndianCurrency(assignment.total_fees), icon: IndianRupee, color: 'text-blue-600', bg: 'bg-blue-500/10', accent: 'from-blue-600 to-indigo-600' },
           { label: 'Billed', value: formatIndianCurrency(totalBilled), icon: FileText, color: 'text-emerald-600', bg: 'bg-emerald-500/10', accent: 'from-emerald-500 to-teal-500' },
-          { label: 'Billing %', value: `${billingPct.toFixed(1)}%`, icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-500/10', accent: 'from-violet-500 to-purple-600' },
+          { label: 'Billing %', value: `${billingPct.toFixed(1)}%`, icon: PieChart, color: 'text-violet-600', bg: 'bg-violet-500/10', accent: 'from-violet-500 to-purple-600' },
           { label: 'Invoices', value: assignmentInvoices.length.toString(), icon: FileText, color: 'text-amber-600', bg: 'bg-amber-500/10', accent: 'from-amber-500 to-orange-500' },
         ].map((card, i) => (
           <div key={card.label}
@@ -130,9 +154,9 @@ export default function AssignmentDetailPage() {
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Assignment Details</h3>
           <div className="space-y-3">
             {[
-              { label: 'Category', value: `${assignment.category} — ${CATEGORY_LABELS[assignment.category]}` },
-              { label: 'Subcategory', value: SUBCATEGORY_LABELS[assignment.subcategory] },
-              { label: 'Billing Cycle', value: BILLING_CYCLE_LABELS[assignment.billing_cycle] },
+              { label: 'Category', value: `${assignment.category} — ${(CATEGORY_LABELS as any)[assignment.category]}` },
+              { label: 'Subcategory', value: (SUBCATEGORY_LABELS as any)[assignment.subcategory] },
+              { label: 'Billing Cycle', value: (BILLING_CYCLE_LABELS as any)[assignment.billing_cycle] },
               { label: 'Partner', value: assignment.partner_name || '—' },
               { label: 'Manager', value: assignment.manager_name || '—' },
               { label: 'Fiscal Year', value: assignment.fiscal_year },
@@ -184,7 +208,7 @@ export default function AssignmentDetailPage() {
           {/* Monthly Allocations */}
           {allocations.length > 0 ? (
             <div className="space-y-2">
-              {allocations.map((alloc) => {
+              {allocations.map((alloc: any) => {
                 const pct = alloc.amount > 0 ? (alloc.billed_amount / alloc.amount) * 100 : 0;
                 return (
                   <div key={alloc.id} className="flex items-center gap-3">
@@ -229,6 +253,7 @@ export default function AssignmentDetailPage() {
                   <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Prof. Fees</th>
                   <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">OOP</th>
                   <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Net Amount</th>
+                  <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100/80">
@@ -239,6 +264,35 @@ export default function AssignmentDetailPage() {
                     <td className="px-5 py-3 text-right text-slate-600">{formatIndianCurrency(inv.professional_fees)}</td>
                     <td className="px-5 py-3 text-right text-slate-600">{formatIndianCurrency(inv.out_of_pocket)}</td>
                     <td className="px-5 py-3 text-right font-bold text-slate-900">{formatIndianCurrency(inv.net_amount)}</td>
+                    <td className="px-5 py-3 text-right">
+                      <button 
+                        onClick={async () => {
+                          try {
+                            const res = await fetch(`/api/invoices/${inv.id}/download`, {
+                              headers: {
+                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                              }
+                            });
+                            if (!res.ok) throw new Error('Download failed');
+                            const blob = await res.blob();
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `Invoice_${inv.id}.pdf`;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(url);
+                          } catch (err) {
+                            toast.error('Failed to download invoice');
+                          }
+                        }}
+                        className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                        title="Download Invoice"
+                      >
+                        <Download size={14} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -253,7 +307,7 @@ export default function AssignmentDetailPage() {
           className="rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Change History</h3>
           <div className="space-y-3">
-            {assignment.history.map(entry => (
+            {assignment.history.map((entry: any) => (
               <div key={entry.id} className="flex items-start gap-3 pb-3 border-b border-slate-50 last:border-0 last:pb-0">
                 <div className="w-2 h-2 rounded-full bg-blue-400 mt-1.5 shrink-0" />
                 <div className="flex-1 min-w-0">
@@ -275,6 +329,15 @@ export default function AssignmentDetailPage() {
           </div>
         </motion.div>
       )}
+        {/* Task Creation Modal */}
+      {/* <AddTaskModal open={isTaskModalOpen} setOpen={setIsTaskModalOpen} /> */}
+
+      {/* Edit Assignment Modal */}
+      <EditAssignmentModal 
+        open={isEditModalOpen} 
+        setOpen={setIsEditModalOpen} 
+        assignment={assignment} 
+      />
     </div>
   );
 }

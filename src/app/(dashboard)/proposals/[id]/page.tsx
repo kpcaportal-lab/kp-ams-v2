@@ -1,38 +1,58 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useProposalStore } from '@/store/proposalStore';
 import { 
   ArrowLeft, CheckCircle2, Clock, FileText, Send, User, 
   Calendar, Edit, XCircle, History, RotateCcw, 
   Download, Briefcase, IndianRupee, MapPin, 
-  Building2, Users, FileCheck, Layers, Presentation, AlertCircle, Plus
+  Building2, Users, FileCheck, Layers, Presentation, AlertCircle, Plus, Edit2, Check, Loader2
 } from 'lucide-react';
-import { formatCurrency, formatDate, ASSIGNMENT_TYPE_LABELS, ProposalStatus } from '@/types';
+import { formatCurrency, formatDate, ASSIGNMENT_TYPE_LABELS, ProposalStatus, Proposal } from '@/types';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import pptxgen from 'pptxgenjs';
 import { mapProposalToAssignments } from '@/lib/assignmentMapper';
+import EditProposalModal from '@/components/modals/EditProposalModal';
 
 export default function ProposalDetailsPage() {
   const params = useParams();
   const router = useRouter();
-  const { proposals, updateProposalStatus, reviseProposal } = useProposalStore();
+  const { proposals, updateProposalStatus, reviseProposal, fetchProposalById, generateAssignments } = useProposalStore();
   
-  const [isRevisionModalOpen, setIsRevisionModalOpen] = React.useState(false);
-  const [revisionDetails, setRevisionDetails] = React.useState('');
-  const [revisedFee, setRevisedFee] = React.useState(0);
+  const [proposal, setProposal] = useState<Proposal | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
+  const [revisionDetails, setRevisionDetails] = useState('');
+  const [revisedFee, setRevisedFee] = useState(0);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const proposal = proposals.find(p => p.id === params.id);
+  useEffect(() => {
+    const loadProposal = async () => {
+      if (params.id) {
+        setLoading(true);
+        const data = await fetchProposalById(params.id as string);
+        if (data) {
+          setProposal(data);
+          setRevisedFee(data.revised_fee || data.quotation_amount);
+        }
+        setLoading(false);
+      }
+    };
+    loadProposal();
+  }, [params.id, fetchProposalById]);
 
-  React.useEffect(() => {
-    if (proposal) {
-      setRevisedFee(proposal.revised_fee || proposal.quotation_amount);
-    }
-  }, [proposal]);
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-12 h-12 text-primary-600 animate-spin mb-4" />
+        <p className="text-slate-500 font-bold animate-pulse">Fetching proposal details...</p>
+      </div>
+    );
+  }
 
   if (!proposal) {
     return (
@@ -65,9 +85,8 @@ export default function ProposalDetailsPage() {
     try {
       if (newStatus === 'won') {
         const assignments = mapProposalToAssignments(proposal);
-        // Logic to save assignments would go here if we had an assignment store
-        // For now, we update the status and notify the user
-        toast.success(`Proposal won! Generated ${assignments.length} assignments.`, { id: loadingToast });
+        await generateAssignments(proposal.id, { items: assignments });
+        toast.success(`Proposal won! Assignments Generated.`, { id: loadingToast });
       } else if (newStatus === 'lost') {
         toast.success('Proposal marked as lost.', { id: loadingToast });
       } else {
@@ -187,6 +206,17 @@ export default function ProposalDetailsPage() {
     )
     .sort((a, b) => b.version_number - a.version_number);
 
+  const handleGenerateAssignments = async () => {
+    const loadingToast = toast.loading('Synchronizing Assignments...');
+    try {
+      const assignments = mapProposalToAssignments(proposal);
+      await generateAssignments(proposal.id, { items: assignments });
+      toast.success('Assignments Synchronized Successfully', { id: loadingToast });
+    } catch (error) {
+      toast.error('Synchronization Failed', { id: loadingToast });
+    }
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -269,7 +299,7 @@ export default function ProposalDetailsPage() {
             PPT Deck
           </button>
 
-          {proposal.status === 'pending' && (
+          {(proposal.status === 'pending' || proposal.status === 'pending_revision') && (
             <>
               <button 
                 onClick={() => handleStatusUpdate('won')}
@@ -289,11 +319,11 @@ export default function ProposalDetailsPage() {
           )}
 
           <button 
-            onClick={() => setIsRevisionModalOpen(true)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-slate-900 border border-slate-800 text-white px-5 py-3 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 active:scale-95"
+            onClick={() => setIsEditModalOpen(true)}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-3 rounded-xl text-sm font-bold hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm active:scale-95"
           >
-            <RotateCcw size={18} />
-            Revise
+            <Edit2 size={18} className="text-slate-400" />
+            Edit
           </button>
           <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-95">
             <Send size={18} />
@@ -336,9 +366,9 @@ export default function ProposalDetailsPage() {
           {proposal.status === 'won' && (
             <button 
               className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary-100 flex items-center gap-2 active:scale-95"
-              onClick={() => toast.success('Assignments Generated!')}
+              onClick={handleGenerateAssignments}
             >
-              <RotateCcw size={14} /> Assignments
+              <RotateCcw size={14} /> Sync Assignments
             </button>
           )}
           <div className="h-8 w-px bg-slate-200 mx-2 hidden md:block"></div>
@@ -601,6 +631,12 @@ export default function ProposalDetailsPage() {
           </div>
         )}
       </AnimatePresence>
+
+      <EditProposalModal 
+        open={isEditModalOpen} 
+        setOpen={setIsEditModalOpen} 
+        proposal={proposal} 
+      />
     </motion.div>
   );
 }

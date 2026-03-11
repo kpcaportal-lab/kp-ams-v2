@@ -2,16 +2,26 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, Plus, Filter, MoreVertical, FileText, CheckCircle, XCircle, Clock, TrendingUp, DollarSign, Briefcase } from 'lucide-react';
+import { Search, Plus, Filter, MoreVertical, FileText, CheckCircle, XCircle, Clock, TrendingUp, DollarSign, Briefcase, RotateCcw } from 'lucide-react';
 import { useProposalStore } from '@/store/proposalStore';
 import { ASSIGNMENT_TYPE_LABELS, formatDate } from '@/types';
 import { formatIndianCurrency, cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import AddProposalModal from '@/components/modals/AddProposalModal';
+import EditProposalModal from '@/components/modals/EditProposalModal';
+import { Proposal } from '@/types';
 
 export default function ProposalListPage() {
-  const { proposals } = useProposalStore();
+  const { proposals, fetchProposals, isLoading, error } = useProposalStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
+
+  React.useEffect(() => {
+    fetchProposals();
+  }, [fetchProposals]);
 
   const filteredProposals = useMemo(() => {
     return proposals.filter((p) => {
@@ -57,6 +67,12 @@ export default function ProposalListPage() {
             <XCircle size={12} /> Lost
           </span>
         );
+      case 'pending_revision':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-500 border border-blue-500/20">
+            <RotateCcw size={12} /> Revision Pending
+          </span>
+        );
       case 'pending':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">
@@ -79,16 +95,15 @@ export default function ProposalListPage() {
           </h1>
           <p className="text-slate-500 mt-1 font-medium italic">Strategic business development and proposal lifecycle tracking</p>
         </div>
-        <Link href="/proposals/new">
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-slate-200 hover:shadow-slate-300 transition-all border border-slate-800"
-          >
-            <Plus size={20} className="text-amber-400" /> 
-            <span>Create Strategic Proposal</span>
-          </motion.button>
-        </Link>
+        <motion.button 
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => setIsAddModalOpen(true)}
+          className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-slate-200 hover:shadow-slate-300 transition-all border border-slate-800"
+        >
+          <Plus size={20} className="text-amber-400" /> 
+          <span>Create Strategic Proposal</span>
+        </motion.button>
       </div>
 
       {/* Modern Stats Grid */}
@@ -179,7 +194,7 @@ export default function ProposalListPage() {
                     transition={{ delay: 0.1 + (idx * 0.03) }}
                     className="hover:bg-amber-50/30 transition-all cursor-pointer group"
                     onClick={(e) => {
-                      if (!(e.target as HTMLElement).closest('button')) {
+                      if (!(e.target as HTMLElement).closest('button, a')) { // Added 'a' to prevent link clicks from triggering row click
                         window.location.href = `/proposals/${proposal.id}`;
                       }
                     }}
@@ -273,6 +288,15 @@ export default function ProposalListPage() {
           </table>
         </div>
       </div>
+
+      <AddProposalModal open={isAddModalOpen} setOpen={setIsAddModalOpen} />
+      {selectedProposal && (
+        <EditProposalModal 
+          open={isEditModalOpen} 
+          setOpen={setIsEditModalOpen} 
+          proposal={selectedProposal} 
+        />
+      )}
     </div>
   );
 }

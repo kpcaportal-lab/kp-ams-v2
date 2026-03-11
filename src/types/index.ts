@@ -43,7 +43,7 @@ export interface ClientSpoc {
 export type ProposalType = 'new' | 'renewal';
 export type AssignmentType = 'internal_audit' | 'forensic' | 'overseas' | 'mcs' | 'ifc';
 export type FeeCategory = 'continuation' | 'increment' | 'new';
-export type ProposalStatus = 'pending' | 'won' | 'lost';
+export type ProposalStatus = 'pending' | 'won' | 'lost' | 'pending_revision';
 
 export interface ProposalScope {
   scope_of_work: string;

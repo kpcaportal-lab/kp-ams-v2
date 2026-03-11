@@ -93,7 +93,7 @@ router.get('/', async (req, res) => {
       LEFT JOIN email_logs el ON el.invoice_id = i.id
       WHERE 1=1`;
         const params = [];
-        if (role === 'manager') {
+        if (role === 'manager' || role === 'staff') {
             params.push(userId);
             query += ` AND i.generated_by = $${params.length}`;
         }

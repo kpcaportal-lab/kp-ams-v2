@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../db/pool.js';
+import { logAuditEvent } from '../middleware/auth.js';
 const router = Router();
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
@@ -21,6 +22,8 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
         const token = jwt.sign({ id: user.id, email: user.email, role: user.role, full_name: user.full_name }, process.env.JWT_SECRET, { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') });
+        // Log login event for admin audit trail
+        await logAuditEvent({ id: user.id, email: user.email, role: user.role, full_name: user.full_name }, 'login', 'auth', user.id, { email: user.email }, req);
         return res.json({
             token,
             user: {

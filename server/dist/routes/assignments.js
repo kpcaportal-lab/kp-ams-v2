@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import pool from '../db/pool.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, getVisibleUserIds, logAuditEvent } from '../middleware/auth.js';
 const router = Router();
 router.use(authenticate);
-// GET /api/assignments
+// GET /api/assignments — role-filtered
 router.get('/', async (req, res) => {
     try {
         const role = req.user.role;
@@ -20,9 +20,11 @@ router.get('/', async (req, res) => {
       LEFT JOIN proposals p ON p.id = a.proposal_id
       WHERE 1=1`;
         const params = [];
-        if (role === 'manager') {
-            params.push(userId);
-            query += ` AND a.manager_id = $${params.length}`;
+        // ── RBAC filtering ──
+        const visibleIds = await getVisibleUserIds(req.user);
+        if (visibleIds !== null) {
+            params.push(visibleIds);
+            query += ` AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}))`;
         }
         if (status) {
             params.push(status);
@@ -44,7 +46,6 @@ router.get('/', async (req, res) => {
             params.push(manager_id);
             query += ` AND a.manager_id = $${params.length}`;
         }
-        // New filters
         if (subcategory) {
             params.push(subcategory);
             query += ` AND a.subcategory = $${params.length}`;
@@ -95,7 +96,7 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
-// POST /api/assignments — create from won proposal (updated for multi-assignment support)
+// POST /api/assignments
 router.post('/', async (req, res) => {
     try {
         const { proposal_id, client_id, gstn, category, scope_areas, total_fees, billing_cycle, partner_id, manager_id, start_date, end_date, notes, fiscal_year, subcategory, assessment_year, scope_item } = req.body;
@@ -112,6 +113,8 @@ router.post('/', async (req, res) => {
         const fiscalYr = fiscal_year || '2025-26';
         const allocationInserts = Array.from({ length: 12 }, (_, i) => pool.query('INSERT INTO fee_allocations (assignment_id,month,fiscal_year,amount) VALUES ($1,$2,$3,0) ON CONFLICT DO NOTHING', [result.rows[0].id, i + 1, fiscalYr]));
         await Promise.all(allocationInserts);
+        // Audit log
+        await logAuditEvent(req.user, 'create', 'assignment', result.rows[0].id, { client_id, total_fees }, req);
         res.status(201).json(result.rows[0]);
     }
     catch (err) {
@@ -140,10 +143,11 @@ router.put('/:id', async (req, res) => {
         if (updates.length) {
             params.push(req.params.id);
             await pool.query(`UPDATE assignments SET ${updates.join(', ')}, updated_at=NOW() WHERE id=$${params.length}`, params);
-            // Log all changes
             for (const ch of changedFields) {
                 await pool.query('INSERT INTO change_history (entity_type,entity_id,field_name,old_value,new_value,changed_by,reason) VALUES ($1,$2,$3,$4,$5,$6,$7)', ['assignment', req.params.id, ch.field, String(ch.old), String(ch.new), req.user.id, req.body.reason || null]);
             }
+            // Audit log
+            await logAuditEvent(req.user, 'update', 'assignment', req.params.id, { changedFields }, req);
         }
         const updated = await pool.query('SELECT * FROM assignments WHERE id=$1', [req.params.id]);
         res.json(updated.rows[0]);
@@ -158,6 +162,7 @@ router.patch('/:id/confirm', async (req, res) => {
     try {
         await pool.query('UPDATE assignments SET status=\'active\', updated_at=NOW() WHERE id=$1 AND status=\'draft\'', [req.params.id]);
         await pool.query('INSERT INTO change_history (entity_type,entity_id,field_name,old_value,new_value,changed_by) VALUES ($1,$2,$3,$4,$5,$6)', ['assignment', req.params.id, 'status', 'draft', 'active', req.user.id]);
+        await logAuditEvent(req.user, 'update', 'assignment', req.params.id, { action: 'confirm', status: 'active' }, req);
         res.json({ success: true });
     }
     catch (err) {
@@ -165,11 +170,10 @@ router.patch('/:id/confirm', async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
-// PUT /api/assignments/:id/allocations — update monthly fee allocation
+// PUT /api/assignments/:id/allocations
 router.put('/:id/allocations', async (req, res) => {
     try {
         const { allocations, fiscal_year } = req.body;
-        // allocations = [{ month: 1, amount: 100000 }, ...]
         const assignment = await pool.query('SELECT total_fees FROM assignments WHERE id=$1', [req.params.id]);
         if (!assignment.rows.length)
             return res.status(404).json({ error: 'Not found' });
@@ -185,6 +189,7 @@ router.put('/:id/allocations', async (req, res) => {
          WHERE assignment_id=$2 AND month=$3 AND fiscal_year=$4`, [alloc.amount, req.params.id, alloc.month, fiscal_year || '2025-26']);
         }
         await pool.query('INSERT INTO change_history (entity_type,entity_id,field_name,old_value,new_value,changed_by) VALUES ($1,$2,$3,$4,$5,$6)', ['fee_allocation', req.params.id, 'monthly_allocation', 'previous', JSON.stringify(allocations), req.user.id]);
+        await logAuditEvent(req.user, 'update', 'fee_allocation', req.params.id, { allocations }, req);
         res.json({ success: true });
     }
     catch (err) {

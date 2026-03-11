@@ -1,0 +1,8 @@
+src/components/modals/EditAssignmentModal.tsx(32,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/modals/EditAssignmentModal.tsx(37,9): error TS2322: Type 'BillingCycle' is not assignable to type '"monthly" | "quarterly" | "annually"'.
+  Type '"one_time"' is not assignable to type '"monthly" | "quarterly" | "annually"'.
+src/components/modals/EditAssignmentModal.tsx(46,37): error TS2352: Conversion of type '{ updated_at: string; client_name: string; category: "1" | "2" | "3"; subcategory: string; total_fees: number; status: "active" | "draft" | "completed"; billing_cycle: "monthly" | "quarterly" | "annually"; fiscal_year: string; scope_item: string; }' to type 'Partial<Assignment>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Types of property 'category' are incompatible.
+    Type '"1" | "2" | "3"' is not comparable to type 'AssignmentCategory | undefined'.
+      Type '"3"' is not comparable to type 'AssignmentCategory | undefined'.
