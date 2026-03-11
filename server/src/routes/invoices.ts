@@ -111,7 +111,7 @@ router.get('/', async (req: Request, res: Response) => {
       LEFT JOIN email_logs el ON el.invoice_id = i.id
       WHERE 1=1`;
         const params: any[] = [];
-        if (role === 'manager') { params.push(userId); query += ` AND i.generated_by = $${params.length}`; }
+        if (role === 'manager' || role === 'staff') { params.push(userId); query += ` AND i.generated_by = $${params.length}`; }
         query += ' ORDER BY i.created_at DESC';
         const result = await pool.query(query, params);
         res.json(result.rows);

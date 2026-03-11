@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 // ── User & Auth ─────────────────────────────────────────────────
-export type UserRole = 'admin' | 'partner' | 'director' | 'manager';
+export type UserRole = 'admin' | 'partner' | 'director' | 'manager' | 'staff';
 
 export interface User {
   id: string;

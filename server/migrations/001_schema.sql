@@ -21,7 +21,7 @@ DROP TABLE IF EXISTS profiles CASCADE;
 
 -- ENUM TYPES
 DO $$ BEGIN
-  CREATE TYPE user_role AS ENUM ('admin', 'partner', 'director', 'manager');
+  CREATE TYPE user_role AS ENUM ('admin', 'partner', 'director', 'manager', 'staff');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 DO $$ BEGIN

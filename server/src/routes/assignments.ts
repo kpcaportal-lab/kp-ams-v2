@@ -1,11 +1,11 @@
 import { Router, Request, Response } from 'express';
 import pool from '../db/pool.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, getVisibleUserIds, logAuditEvent } from '../middleware/auth.js';
 
 const router = Router();
 router.use(authenticate);
 
-// GET /api/assignments
+// GET /api/assignments — role-filtered
 router.get('/', async (req: Request, res: Response) => {
     try {
         const role = req.user!.role;
@@ -25,9 +25,11 @@ router.get('/', async (req: Request, res: Response) => {
 
         const params: any[] = [];
 
-        if (role === 'manager') {
-            params.push(userId);
-            query += ` AND a.manager_id = $${params.length}`;
+        // ── RBAC filtering ──
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            params.push(visibleIds);
+            query += ` AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}))`;
         }
 
         if (status) { params.push(status); query += ` AND a.status = $${params.length}`; }
@@ -35,8 +37,6 @@ router.get('/', async (req: Request, res: Response) => {
         if (fiscal_year) { params.push(fiscal_year); query += ` AND a.fiscal_year = $${params.length}`; }
         if (partner_id) { params.push(partner_id); query += ` AND a.partner_id = $${params.length}`; }
         if (manager_id) { params.push(manager_id); query += ` AND a.manager_id = $${params.length}`; }
-
-        // New filters
         if (subcategory) { params.push(subcategory); query += ` AND a.subcategory = $${params.length}`; }
         if (assessment_year) { params.push(assessment_year); query += ` AND a.assessment_year = $${params.length}`; }
 
@@ -89,7 +89,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
-// POST /api/assignments — create from won proposal (updated for multi-assignment support)
+// POST /api/assignments
 router.post('/', async (req: Request, res: Response) => {
     try {
         const {
@@ -119,6 +119,9 @@ router.post('/', async (req: Request, res: Response) => {
             )
         );
         await Promise.all(allocationInserts);
+
+        // Audit log
+        await logAuditEvent(req.user!, 'create', 'assignment', result.rows[0].id, { client_id, total_fees }, req);
 
         res.status(201).json(result.rows[0]);
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
@@ -150,13 +153,14 @@ router.put('/:id', async (req: Request, res: Response) => {
                 `UPDATE assignments SET ${updates.join(', ')}, updated_at=NOW() WHERE id=$${params.length}`,
                 params
             );
-            // Log all changes
             for (const ch of changedFields) {
                 await pool.query(
                     'INSERT INTO change_history (entity_type,entity_id,field_name,old_value,new_value,changed_by,reason) VALUES ($1,$2,$3,$4,$5,$6,$7)',
                     ['assignment', req.params.id, ch.field, String(ch.old), String(ch.new), req.user!.id, req.body.reason || null]
                 );
             }
+            // Audit log
+            await logAuditEvent(req.user!, 'update', 'assignment', req.params.id, { changedFields }, req);
         }
 
         const updated = await pool.query('SELECT * FROM assignments WHERE id=$1', [req.params.id]);
@@ -175,15 +179,15 @@ router.patch('/:id/confirm', async (req: Request, res: Response) => {
             'INSERT INTO change_history (entity_type,entity_id,field_name,old_value,new_value,changed_by) VALUES ($1,$2,$3,$4,$5,$6)',
             ['assignment', req.params.id, 'status', 'draft', 'active', req.user!.id]
         );
+        await logAuditEvent(req.user!, 'update', 'assignment', req.params.id, { action: 'confirm', status: 'active' }, req);
         res.json({ success: true });
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
-// PUT /api/assignments/:id/allocations — update monthly fee allocation
+// PUT /api/assignments/:id/allocations
 router.put('/:id/allocations', async (req: Request, res: Response) => {
     try {
         const { allocations, fiscal_year } = req.body;
-        // allocations = [{ month: 1, amount: 100000 }, ...]
         const assignment = await pool.query('SELECT total_fees FROM assignments WHERE id=$1', [req.params.id]);
         if (!assignment.rows.length) return res.status(404).json({ error: 'Not found' });
 
@@ -208,6 +212,7 @@ router.put('/:id/allocations', async (req: Request, res: Response) => {
             'INSERT INTO change_history (entity_type,entity_id,field_name,old_value,new_value,changed_by) VALUES ($1,$2,$3,$4,$5,$6)',
             ['fee_allocation', req.params.id, 'monthly_allocation', 'previous', JSON.stringify(allocations), req.user!.id]
         );
+        await logAuditEvent(req.user!, 'update', 'fee_allocation', req.params.id, { allocations }, req);
 
         res.json({ success: true });
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }

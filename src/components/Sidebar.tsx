@@ -10,7 +10,8 @@ import {
   FileText, 
   ClipboardList, 
   Receipt,
-  Settings,
+  Shield,
+  UserCog,
   ChevronLeft,
   ChevronRight,
   LogOut
@@ -18,12 +19,13 @@ import {
 import { useAuthStore } from '@/store/authStore';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'partner', 'director', 'manager'] },
-  { name: 'Clients', href: '/clients', icon: Users, roles: ['admin', 'partner', 'director', 'manager'] },
-  { name: 'Proposals', href: '/proposals', icon: FileText, roles: ['admin', 'partner', 'director', 'manager'] },
-  { name: 'Assignments', href: '/assignments', icon: ClipboardList, roles: ['admin', 'partner', 'director', 'manager'] },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'partner', 'director', 'manager', 'staff'] },
+  { name: 'Clients', href: '/clients', icon: Users, roles: ['admin', 'partner', 'director', 'manager', 'staff'] },
+  { name: 'Proposals', href: '/proposals', icon: FileText, roles: ['admin', 'partner', 'director', 'manager', 'staff'] },
+  { name: 'Assignments', href: '/assignments', icon: ClipboardList, roles: ['admin', 'partner', 'director', 'manager', 'staff'] },
   { name: 'Billing', href: '/billing', icon: Receipt, roles: ['admin', 'partner', 'director'] },
-  { name: 'Organization', href: '/organization', icon: Settings, roles: ['admin'] },
+  { name: 'Users', href: '/users', icon: UserCog, roles: ['admin', 'partner'] },
+  { name: 'Admin Panel', href: '/admin', icon: Shield, roles: ['admin'] },
 ];
 
 export function Sidebar({ 

@@ -15,6 +15,7 @@ import assignmentRoutes from './routes/assignments.js';
 import invoiceRoutes from './routes/invoices.js';
 import dashboardRoutes from './routes/dashboard.js';
 import userRoutes from './routes/users.js';
+import auditRoutes from './routes/audit.js';
 
 // Route registration helper
 const registerRoutes = (app: express.Express) => {
@@ -26,6 +27,7 @@ const registerRoutes = (app: express.Express) => {
     app.use('/api/invoices', invoiceRoutes);
     app.use('/api/dashboard', dashboardRoutes);
     app.use('/api/users', userRoutes);
+    app.use('/api/audit', auditRoutes);
     console.log('✅ All routes loaded successfully');
 };
 

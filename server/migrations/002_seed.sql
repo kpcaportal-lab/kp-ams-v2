@@ -29,7 +29,10 @@ INSERT INTO profiles (id, email, password_hash, role, full_name, display_name) V
 ('00000000-0000-0000-0000-000000000014', 'manager7@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 7', 'Manager 7'),
 ('00000000-0000-0000-0000-000000000015', 'manager8@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 8', 'Manager 8'),
 ('00000000-0000-0000-0000-000000000016', 'manager9@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 9', 'Manager 9'),
-('00000000-0000-0000-0000-000000000017', 'manager10@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 10', 'Manager 10');
+('00000000-0000-0000-0000-000000000017', 'manager10@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'manager', 'Manager 10', 'Manager 10'),
+
+-- Staff
+('00000000-0000-0000-0000-000000000018', 'staff1@kirtanepandit.com', '$2a$10$xWCoSeTFNUX2XB2dBLYixe5Te3A7lqbeUbpiPm2oTvcnCK3dvtf3a', 'staff', 'Staff 1', 'Staff 1');
 
 -- CLIENTS
 INSERT INTO clients (id, name, gstn, status, added_by) VALUES
