@@ -26,8 +26,7 @@ export default function RootLayout({
           />
         </head>
         <body>
-          <LayoutLoadingOverlay />
-          {children}
+          <ClientLayout>{children}</ClientLayout>
           <Toaster
             position="top-right"
             toastOptions={{
@@ -52,9 +51,4 @@ export default function RootLayout({
       </html>
     </LoadingProvider>
   );
-}
-
-function LayoutLoadingOverlay() {
-  const { loading } = useLoading();
-  return loading ? <LoadingOverlay message="Loading..." /> : null;
 }
