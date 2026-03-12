@@ -27,8 +27,8 @@ export default function ClientsPage() {
     return clients.filter((c) => {
       const matchesSearch =
         c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.spocName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.industry.toLowerCase().includes(searchTerm.toLowerCase());
+        (c.spocName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (c.industry?.toLowerCase() || '').includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
       return matchesSearch && matchesStatus;
     });

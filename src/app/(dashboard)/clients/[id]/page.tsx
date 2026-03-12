@@ -55,6 +55,144 @@ export default function ClientDetailPage() {
   );
 
   return (
+    <div className="space-y-6">
+      {/* Back + Header */}
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+        <button onClick={() => router.push('/clients')}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors mb-4">
+          <ArrowLeft size={16} /> Back to Clients
+        </button>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+              {client.name.charAt(0)}
+            </div>
+            <div>
+              <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">{client.name}</h1>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-sm text-slate-400 font-medium">{client.industry}</span>
+                <span className="w-1 h-1 rounded-full bg-slate-300" />
+                {statusBadge}
+              </div>
+            </div>
+          </div>
+          <button onClick={() => setIsEditModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 transition-all active:scale-95 shadow-sm">
+            <Edit2 size={16} /> Edit Client
+          </button>
+        </div>
+      </motion.div>
+
+      {/* KPI + Info Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Contact Info Card */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }}
+          className="lg:col-span-2 rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-6 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-5">Contact Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                  <Users size={16} />
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">SPOC Name</div>
+                  <div className="text-sm font-semibold text-slate-800">{client.spocName}</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                  <Mail size={16} />
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">SPOC Email</div>
+                  <div className="text-sm font-semibold text-slate-800">{client.spocEmail}</div>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                  <Phone size={16} />
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">SPOC Phone</div>
+                  <div className="text-sm font-semibold text-slate-800">{client.spocPhone}</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
+                  <Calendar size={16} />
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Created At</div>
+                  <div className="text-sm font-semibold text-slate-800">{formatDate(client.created_at)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {client.gstn && (
+            <div className="mt-6 pt-5 border-t border-slate-100/60 flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                <Globe size={16} />
+              </div>
+              <div>
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">GSTN</div>
+                <div className="text-sm font-medium text-slate-600 leading-relaxed">{client.gstn}</div>
+              </div>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Quick Stats */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.5 }}
+          className="space-y-4">
+          <div className="p-5 rounded-2xl border border-blue-100 bg-blue-50/50 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-200">
+              <Briefcase size={20} />
+            </div>
+            <div>
+              <div className="text-2xl font-black text-slate-900 leading-none">{clientAssignments.length}</div>
+              <div className="text-xs font-bold text-blue-600/70 uppercase tracking-wide mt-1">Assignments</div>
+            </div>
+          </div>
+          <div className="p-5 rounded-2xl border border-violet-100 bg-violet-50/50 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center text-white shadow-md shadow-violet-200">
+              <FileText size={20} />
+            </div>
+            <div>
+              <div className="text-2xl font-black text-slate-900 leading-none">{clientProposals.length}</div>
+              <div className="text-xs font-bold text-violet-600/70 uppercase tracking-wide mt-1">Proposals</div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Assignments Table */}
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5 }}
+        className="rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm shadow-[0_1px_3px_rgba(15,23,42,0.06)] overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <Briefcase size={16} className="text-blue-600" /> Active Assignments
+          </h2>
+          <span className="text-xs font-semibold text-slate-400">{clientAssignments.length} total</span>
+        </div>
+        {clientAssignments.length === 0 ? (
+          <div className="px-5 py-10 text-center">
+            <Briefcase size={32} className="mx-auto text-slate-300 mb-2" />
+            <p className="text-sm text-slate-400">No assignments for this client</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gradient-to-b from-slate-50 to-slate-100/80 border-b border-slate-200/60">
+                  <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Project / Scope</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Type</th>
+                  <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Fees</th>
+                  <th className="text-center px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Fiscal Year</th>
+                </tr>
               </thead>
               <tbody className="divide-y divide-slate-100/80">
                 {clientAssignments.map(a => (

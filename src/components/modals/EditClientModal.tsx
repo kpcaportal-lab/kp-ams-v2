@@ -27,11 +27,11 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
     if (client) {
       setForm({
         name: client.name,
-        industry: client.industry,
+        industry: client.industry || '',
         status: client.status as 'active' | 'inactive',
-        spocName: client.spocName,
-        spocEmail: client.spocEmail,
-        spocPhone: client.spocPhone,
+        spocName: client.spocName || '',
+        spocEmail: client.spocEmail || '',
+        spocPhone: client.spocPhone || '',
       });
     }
   }, [client]);

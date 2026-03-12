@@ -12,8 +12,8 @@ const initialClients: Client[] = [
     spocName: 'Anand Kumar',
     spocEmail: 'anand@techcorp.in',
     spocPhone: '+91 9876543210',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
   {
     id: 'c2',
@@ -23,8 +23,8 @@ const initialClients: Client[] = [
     spocName: 'Rajesh Sharma',
     spocEmail: 'rajesh@globallogistics.com',
     spocPhone: '+91 9876512345',
-    createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 2).toISOString(),
   },
   {
     id: 'c3',
@@ -34,15 +34,15 @@ const initialClients: Client[] = [
     spocName: 'Priya Desai',
     spocEmail: 'priya@innovateretail.com',
     spocPhone: '+91 9988776655',
-    createdAt: new Date(Date.now() - 86400000 * 30).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000 * 30).toISOString(),
+    created_at: new Date(Date.now() - 86400000 * 30).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 30).toISOString(),
   }
 ];
 
 interface ClientState {
   clients: Client[];
   isLoading: boolean;
-  addClient: (client: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  addClient: (client: Omit<Client, 'id' | 'created_at' | 'updated_at'>) => void;
   updateClient: (id: string, client: Partial<Client>) => void;
   deleteClient: (id: string) => void;
 }
@@ -59,15 +59,15 @@ export const useClientStore = create<ClientState>()(
             {
               ...newClient,
               id: `c${Date.now()}`,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
             } as Client
           ]
         })),
       updateClient: (id, updatedFields) =>
         set((state) => ({
           clients: state.clients.map(c => 
-            c.id === id ? { ...c, ...updatedFields, updatedAt: new Date().toISOString() } : c
+            c.id === id ? { ...c, ...updatedFields, updated_at: new Date().toISOString() } : c
           )
         })),
       deleteClient: (id) =>
