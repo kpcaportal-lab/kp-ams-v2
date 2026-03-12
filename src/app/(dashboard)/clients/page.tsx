@@ -2,11 +2,12 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, Plus, Users, Building2, Phone, Mail, MoreHorizontal, CheckCircle, XCircle } from 'lucide-react';
+import { Search, Plus, Users, Building2, Phone, Mail, CheckCircle, XCircle } from 'lucide-react';
 import { useClientStore } from '@/store/clientStore';
 import { formatDate } from '@/types';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import AddClientModal from '@/components/modals/AddClientModal';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 18 },
@@ -168,103 +169,8 @@ export default function ClientsPage() {
       )}
 
       {/* Add Client Modal */}
-      {showAddModal && <AddClientModal open={showAddModal} setOpen={setShowAddModal} />}
+      <AddClientModal open={showAddModal} setOpen={setShowAddModal} />
     </div>
   );
 }
 
-interface AddClientModalProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-}
-
-function AddClientModal({ open, setOpen }: AddClientModalProps) {
-  const { addClient } = useClientStore();
-  const [form, setForm] = useState({ 
-    name: '', 
-    industry: '', 
-    status: 'active' as 'active' | 'inactive', 
-    spocName: '', 
-    spocEmail: '', 
-    spocPhone: '' 
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    addClient(form);
-    setOpen(false);
-  };
-
-  if (!open) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4" onClick={() => setOpen(false)}>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 12 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] }}
-        className="w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-[0_20px_60px_rgba(15,23,42,0.18)] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white">
-          <h2 className="text-lg font-bold text-slate-900 tracking-tight">Add New Client</h2>
-          <button onClick={() => setOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all text-xl leading-none">&times;</button>
-        </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Client Name</label>
-            <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium placeholder:text-slate-300"
-              placeholder="e.g. Acme Corporation" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Industry</label>
-              <input required value={form.industry} onChange={(e) => setForm({ ...form, industry: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium placeholder:text-slate-300"
-                placeholder="e.g. Manufacturing" />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Status</label>
-              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as 'active' | 'inactive' })}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium bg-white">
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">SPOC Name</label>
-            <input required value={form.spocName} onChange={(e) => setForm({ ...form, spocName: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium placeholder:text-slate-300"
-              placeholder="Primary contact name" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Email</label>
-              <input type="email" required value={form.spocEmail} onChange={(e) => setForm({ ...form, spocEmail: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium placeholder:text-slate-300"
-                placeholder="contact@email.com" />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Phone</label>
-              <input required value={form.spocPhone} onChange={(e) => setForm({ ...form, spocPhone: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium placeholder:text-slate-300"
-                placeholder="+91..." />
-            </div>
-          </div>
-          <div className="flex justify-end gap-3 pt-3">
-            <button type="button" onClick={() => setOpen(false)}
-              className="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors">
-              Cancel
-            </button>
-            <button type="submit"
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-bold shadow-[0_2px_8px_rgba(37,99,235,0.3)] hover:shadow-[0_4px_16px_rgba(37,99,235,0.4)] transition-all">
-              Add Client
-            </button>
-          </div>
-        </form>
-      </motion.div>
-    </div>
-  );
-}

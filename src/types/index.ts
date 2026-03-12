@@ -19,13 +19,20 @@ export type ClientStatus = 'prospect' | 'active' | 'inactive';
 export interface Client {
   id: string;
   name: string;
-  industry: string;
-  status: 'active' | 'inactive';
-  spocName: string;
-  spocEmail: string;
-  spocPhone: string;
-  createdAt: string;
-  updatedAt: string;
+  gstn?: string;
+  status: ClientStatus;
+  notes?: string;
+  added_by?: string;
+  added_by_name?: string;
+  created_at: string;
+  updated_at: string;
+  
+  // UI-specific or joined fields
+  industry?: string;
+  spocName?: string;
+  spocEmail?: string;
+  spocPhone?: string;
+  spocs?: ClientSpoc[];
 }
 
 export interface ClientSpoc {

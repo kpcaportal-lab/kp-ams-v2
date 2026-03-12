@@ -161,7 +161,11 @@ router.post('/', async (req: Request, res: Response) => {
         const {
             client_id, proposal_type, assignment_type, scope_areas, quotation_amount,
             fee_category, increment_details, revised_fee, proposal_date, responsible_partner,
-            revision_flag, revision_details, notes, fiscal_year, template_id
+            status,
+            revision_flag,
+            revision_details,
+            notes,
+            fiscal_year, template_id
         } = req.body;
 
         const number = await getNextProposalNumber(assignment_type, fiscal_year || '2025-26');
@@ -171,13 +175,13 @@ router.post('/', async (req: Request, res: Response) => {
         number, client_id, proposal_type, assignment_type, scope_areas, quotation_amount,
         fee_category, increment_details, revised_fee, proposal_date, prepared_by,
         responsible_partner, revision_flag, revision_details, notes, fiscal_year,
-        version_number, template_id
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18) RETURNING *`,
+        version_number, template_id, status
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING *`,
             [number, client_id, proposal_type || 'new', assignment_type, scope_areas,
                 quotation_amount, fee_category || null, increment_details || null, revised_fee || null,
                 proposal_date, req.user!.id, responsible_partner, revision_flag || false,
                 revision_details || null, notes || null, fiscal_year || '2025-26',
-                1, template_id || null]
+                1, template_id || null, status || 'pending']
         );
         res.status(201).json(result.rows[0]);
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
@@ -188,7 +192,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     try {
         const fields = ['client_id', 'proposal_type', 'assignment_type', 'scope_areas', 'quotation_amount',
             'fee_category', 'increment_details', 'revised_fee', 'proposal_date', 'responsible_partner',
-            'revision_flag', 'revision_details', 'file_url', 'notes', 'template_id'];
+            'status', 'fiscal_year', 'revision_flag', 'revision_details', 'file_url', 'notes', 'template_id'];
         const updates: string[] = [];
         const params: any[] = [];
 
@@ -371,19 +375,20 @@ router.post('/:id/generate-assignments', async (req: Request, res: Response) => 
         INSERT INTO assignments (
           proposal_id, client_id, gstn, category, scope_areas, total_fees,
           billing_cycle, partner_id, manager_id, fiscal_year, status,
-          subcategory, assessment_year, scope_item
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'draft',$11,$12,$13) RETURNING *`,
-                [p.id, p.client_id, p.gstn || item.gstn || '',
-                item.category || 'A', item.scope_item || '',
-                item.fees || 0,
-                billing_cycle || item.billing_cycle || 'monthly',
-                partner_id || p.responsible_partner,
-                manager_id || req.user!.id,
-                item.assessment_year || p.fiscal_year,
-                item.subcategory || 'other',
-                item.assessment_year || p.fiscal_year,
-                item.scope_item || ''
-                ]
+          subcategory, assessment_year, scope_item, notes
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'draft',$11,$12,$13,$14) RETURNING *`,
+                                [p.id, p.client_id, p.gstn || item.gstn || '',
+                                item.category || 'A', item.scope_areas || '',
+                                item.fees || 0,
+                                billing_cycle || item.billing_cycle || 'monthly',
+                                partner_id || p.responsible_partner,
+                                manager_id || req.user!.id,
+                                item.assessment_year || p.fiscal_year,
+                                item.subcategory || 'other',
+                                item.assessment_year || p.fiscal_year,
+                                item.scope_item || '',
+                                item.notes || null
+                                ]
             );
 
             const assignment = result.rows[0];

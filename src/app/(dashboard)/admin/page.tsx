@@ -66,6 +66,11 @@ const roleColors: Record<string, string> = {
 };
 
 export default function AdminPage() {
+    // Handler for admin impersonation
+    const handleImpersonateUser = (userId: string) => {
+      // TODO: Implement backend call to impersonate user and update auth state
+      alert(`Impersonate user: ${userId}`);
+    } 
   const { user, token } = useAuthStore();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'logs' | 'users' | 'stats'>('logs');
@@ -371,7 +376,7 @@ export default function AdminPage() {
       {activeTab === 'users' && (
         <div style={{ display: 'grid', gap: 16 }}>
           {activeUsers.map(u => {
-            const isOnlineRecently = u.last_active && (Date.now() - new Date(u.last_active).getTime()) < 15 * 60 * 1000;
+            const isOnlineRecently = u.last_active && (Date.now() - new Date(u.last_active).getTime()) < 15 * 60 * 60 * 1000;
             return (
               <div key={u.id} style={{
                 background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)',
@@ -418,6 +423,17 @@ export default function AdminPage() {
                     {u.total_actions_today}
                     <div style={{ fontSize: '0.6rem', fontWeight: 500, opacity: 0.7 }}>today</div>
                   </div>
+                  {/* Login as User button for admin */}
+                  <button
+                    style={{
+                      padding: '8px 16px', borderRadius: 10, border: 'none', background: 'linear-gradient(90deg,#3b82f6,#06b6d4)',
+                      color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', boxShadow: '0 2px 8px #3b82f633',
+                      marginLeft: 12
+                    }}
+                    onClick={() => handleImpersonateUser(u.id)}
+                  >
+                    <LogIn size={16} style={{ marginRight: 8 }} /> Login as User
+                  </button>
                 </div>
               </div>
             );
