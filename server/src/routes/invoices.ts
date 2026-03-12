@@ -162,19 +162,28 @@ router.get('/:id/download', async (req: Request, res: Response) => {
 
         // Dynamic import for PDFKit (ESM)
         const PDFDocument = (await import('pdfkit')).default;
+        const fs = (await import('fs')).default;
+        const path = (await import('path')).default;
         const doc = new PDFDocument({ margin: 50 });
 
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="Invoice_${inv.id}.pdf"`);
         doc.pipe(res);
 
-        // Header
-        doc.fontSize(20).font('Helvetica-Bold').text('Kirtane & Pandit LLP', { align: 'center' });
-        doc.fontSize(12).font('Helvetica').text('Chartered Accountants', { align: 'center' });
+        // Header with logo and color
+        const logoPath = path.join(process.cwd(), 'public', 'logo.png');
+        if (fs.existsSync(logoPath)) {
+            doc.image(logoPath, doc.page.width / 2 - 40, 30, { width: 80 });
+        }
         doc.moveDown(2);
+        doc.rect(0, 0, doc.page.width, 80).fill('#003366');
+        doc.fillColor('#fff').fontSize(24).font('Helvetica-Bold').text('Kirtane & Pandit LLP', 0, 50, { align: 'center' });
+        doc.fillColor('#fff').fontSize(14).font('Helvetica').text('Chartered Accountants', { align: 'center' });
+        doc.moveDown(2);
+        doc.fillColor('#000');
 
         // Title
-        doc.fontSize(16).font('Helvetica-Bold').text('INVOICE', { align: 'center' });
+        doc.fontSize(18).font('Helvetica-Bold').text('INVOICE', { align: 'center' });
         doc.moveDown();
 
         // Invoice details
@@ -191,36 +200,42 @@ router.get('/:id/download', async (req: Request, res: Response) => {
             ['UDIN', inv.udin || 'N/A'],
         ];
 
-        doc.fontSize(11).font('Helvetica');
+        doc.fontSize(12).font('Helvetica');
+        doc.moveDown();
+        doc.lineWidth(1).strokeColor('#003366').moveTo(50, doc.y).lineTo(doc.page.width - 50, doc.y).stroke();
+        doc.moveDown();
         for (const [label, value] of details) {
-            doc.font('Helvetica-Bold').text(`${label}: `, { continued: true });
-            doc.font('Helvetica').text(String(value));
+            doc.font('Helvetica-Bold').fillColor('#003366').text(`${label}: `, { continued: true });
+            doc.font('Helvetica').fillColor('#000').text(String(value));
         }
-
         doc.moveDown(2);
 
         // Fees section
-        doc.fontSize(14).font('Helvetica-Bold').text('Fee Details');
+        doc.fontSize(14).font('Helvetica-Bold').fillColor('#003366').text('Fee Details');
         doc.moveDown(0.5);
-        doc.fontSize(11).font('Helvetica');
-        
-        doc.font('Helvetica-Bold').text('Professional Fees: ', { continued: true });
-        doc.font('Helvetica').text(`₹${Number(inv.professional_fees).toLocaleString('en-IN')}`);
-        
-        doc.font('Helvetica-Bold').text('Out of Pocket Expenses: ', { continued: true });
-        doc.font('Helvetica').text(`₹${Number(inv.out_of_pocket).toLocaleString('en-IN')}`);
-        
-        doc.font('Helvetica-Bold').text('Net Amount: ', { continued: true });
-        doc.font('Helvetica').text(`₹${Number(inv.net_amount).toLocaleString('en-IN')}`);
+        doc.fontSize(12).font('Helvetica').fillColor('#000');
+        doc.lineWidth(0.5).strokeColor('#003366').moveTo(50, doc.y).lineTo(doc.page.width - 50, doc.y).stroke();
+        doc.moveDown();
+        doc.font('Helvetica-Bold').fillColor('#003366').text('Professional Fees: ', { continued: true });
+        doc.font('Helvetica').fillColor('#000').text(`₹${Number(inv.professional_fees).toLocaleString('en-IN')}`);
+        doc.font('Helvetica-Bold').fillColor('#003366').text('Out of Pocket Expenses: ', { continued: true });
+        doc.font('Helvetica').fillColor('#000').text(`₹${Number(inv.out_of_pocket).toLocaleString('en-IN')}`);
+        doc.font('Helvetica-Bold').fillColor('#003366').text('Net Amount: ', { continued: true });
+        doc.font('Helvetica').fillColor('#000').text(`₹${Number(inv.net_amount).toLocaleString('en-IN')}`);
 
         if (inv.narration) {
             doc.moveDown(2);
-            doc.fontSize(14).font('Helvetica-Bold').text('Narration');
+            doc.fontSize(14).font('Helvetica-Bold').fillColor('#003366').text('Narration');
             doc.moveDown(0.5);
-            doc.fontSize(11).font('Helvetica').text(inv.narration);
+            doc.fontSize(12).font('Helvetica').fillColor('#000').text(inv.narration);
         }
 
         doc.end();
+        // Footer
+        doc.moveDown(4);
+        doc.lineWidth(1).strokeColor('#003366').moveTo(50, doc.y).lineTo(doc.page.width - 50, doc.y).stroke();
+        doc.moveDown();
+        doc.fontSize(10).font('Helvetica').fillColor('#003366').text('Kirtane & Pandit LLP | www.kirtanepandit.com | Pune, India', { align: 'center' });
     } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to generate PDF' }); }
 });
 

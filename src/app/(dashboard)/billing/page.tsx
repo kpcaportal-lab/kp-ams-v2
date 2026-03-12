@@ -1,16 +1,15 @@
 'use client';
 
-import React, { useState, useMemo, useRef } from 'react';
-import { Search, DollarSign, FileText, Download, Calendar, CheckCircle, Clock, TrendingUp, Filter, Plus } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Plus, Search, DollarSign, FileText, TrendingUp, Download } from 'lucide-react';
+import { formatIndianCurrency, cn } from '@/lib/utils';
+import { formatDate } from '@/types';
+import { AddInvoiceModal } from '@/components/billing/AddInvoiceModal';
+import { InvoiceDownloadButton } from '@/components/billing/InvoiceDownloadButton';
+import { type Invoice, type Assignment } from '@/types';
 import { useBillingStore } from '@/store/billingStore';
 import { useAssignmentStore } from '@/store/assignmentStore';
-import { formatDate } from '@/types';
-import { formatIndianCurrency, cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import { InvoiceTemplate } from './InvoiceTemplate';
-import { type Invoice } from '@/types';
 import toast from 'react-hot-toast';
 
 const fadeUp = {
@@ -25,54 +24,7 @@ export default function BillingPage() {
   const { invoices } = useBillingStore();
   const { assignments } = useAssignmentStore();
   const [searchTerm, setSearchTerm] = useState('');
-  const [dateRange, setDateRange] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const printRef = useRef<HTMLDivElement>(null);
-  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
-
-  const handleDownloadPDF = async (invoice: Invoice) => {
-    try {
-      setIsGeneratingPDF(true);
-      setSelectedInvoice(invoice);
-      
-      // Wait for state update and render
-      await new Promise(resolve => setTimeout(resolve, 150));
-
-      if (!printRef.current) {
-        throw new Error('Print reference not found');
-      }
-
-      const canvas = await html2canvas(printRef.current, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff'
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`Invoice_${invoice.id}_${invoice.client_name?.replace(/\s+/g, '_')}.pdf`);
-      
-      toast.success('Invoice downloaded successfully');
-    } catch (error) {
-      console.error('PDF Generation Error:', error);
-      toast.error('Failed to generate PDF');
-    } finally {
-      setIsGeneratingPDF(false);
-      setSelectedInvoice(null);
-    }
-  };
 
   const filteredInvoices = useMemo(() => {
     return invoices.filter((inv) => {
@@ -219,14 +171,7 @@ export default function BillingPage() {
                       )}
                     </td>
                     <td className="px-5 py-3.5 text-right">
-                      <button
-                        onClick={() => handleDownloadPDF(inv)}
-                        disabled={isGeneratingPDF}
-                        className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all disabled:opacity-50"
-                        title="Download PDF"
-                      >
-                        <Download size={16} />
-                      </button>
+                      <InvoiceDownloadButton invoice={inv} />
                     </td>
                   </motion.tr>
                 ))}
@@ -236,133 +181,6 @@ export default function BillingPage() {
         )}
       </motion.div>
       <AddInvoiceModal open={isModalOpen} setOpen={setIsModalOpen} />
-
-      {/* Off-screen PDF content */}
-      <div className="fixed -left-[9999px] top-0">
-        {selectedInvoice && (
-          <div ref={printRef} className="w-[210mm] bg-white">
-            <InvoiceTemplate invoice={selectedInvoice} />
-          </div>
-        )}
-      </div>
-
-      {/* Global Loading Indicator for PDF */}
-      <AnimatePresence>
-        {isGeneratingPDF && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 backdrop-blur-[2px]"
-          >
-            <div className="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center gap-3 border border-slate-100">
-              <div className="w-10 h-10 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
-              <p className="text-sm font-bold text-slate-700">Generating Invoice PDF...</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-function AddInvoiceModal({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
-  const { addInvoice } = useBillingStore();
-  const { assignments } = useAssignmentStore();
-  const [form, setForm] = useState({
-    assignment_id: '',
-    professional_fees: 0,
-    out_of_pocket: 0,
-    narration: '',
-    udin: '',
-    invoice_date: new Date().toISOString().split('T')[0]
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const assignment = assignments.find(a => a.id === form.assignment_id);
-    if (!assignment) return;
-
-    addInvoice({
-      ...form,
-      id: Math.random().toString(36).substr(2, 9),
-      client_id: assignment.client_id,
-      client_name: assignment.client_name,
-      net_amount: form.professional_fees + form.out_of_pocket,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    } as any);
-    setOpen(false);
-  };
-
-  if (!open) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4" onClick={() => setOpen(false)}>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 12 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.25, ease: [0.34, 1.56, 0.64, 1] as [number, number, number, number] }}
-        className="w-full max-w-lg rounded-2xl bg-white border border-slate-200 shadow-[0_20px_60px_rgba(15,23,42,0.18)] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white">
-          <h2 className="text-lg font-bold text-slate-900 tracking-tight">Generate New Invoice</h2>
-          <button onClick={() => setOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-all text-xl leading-none">&times;</button>
-        </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Select Assignment</label>
-            <select required value={form.assignment_id} onChange={(e) => setForm({ ...form, assignment_id: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium bg-white">
-              <option value="">Select an assignment</option>
-              {assignments.map(a => (
-                <option key={a.id} value={a.id}>{a.client_name} - {a.scope_item || a.subcategory}</option>
-              ))}
-            </select>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Professional Fees</label>
-              <input type="number" required value={form.professional_fees} onChange={(e) => setForm({ ...form, professional_fees: Number(e.target.value) })}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium" />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Out of Pocket</label>
-              <input type="number" required value={form.out_of_pocket} onChange={(e) => setForm({ ...form, out_of_pocket: Number(e.target.value) })}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium" />
-            </div>
-          </div>
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Narration</label>
-            <textarea required value={form.narration} onChange={(e) => setForm({ ...form, narration: e.target.value })}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium min-h-[80px]"
-              placeholder="Enter invoice details..." />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">UDIN (Optional)</label>
-              <input value={form.udin} onChange={(e) => setForm({ ...form, udin: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium" />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 px-1">Invoice Date</label>
-              <input type="date" required value={form.invoice_date} onChange={(e) => setForm({ ...form, invoice_date: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all font-medium" />
-            </div>
-          </div>
-          <div className="flex justify-end gap-3 pt-3">
-            <button type="button" onClick={() => setOpen(false)}
-              className="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors">
-              Cancel
-            </button>
-            <button type="submit"
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-bold shadow-[0_2px_8_rgba(37,99,235,0.3)] hover:shadow-[0_4px_16px_rgba(37,99,235,0.4)] transition-all">
-              Generate Invoice
-            </button>
-          </div>
-        </form>
-      </motion.div>
     </div>
   );
 }
