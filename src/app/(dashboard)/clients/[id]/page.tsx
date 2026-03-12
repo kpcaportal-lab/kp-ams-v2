@@ -203,7 +203,7 @@ export default function ClientDetailPage() {
                       </Link>
                     </td>
                     <td className="px-5 py-3 text-slate-500">{SUBCATEGORY_LABELS[a.subcategory]}</td>
-                    <td className="px-5 py-3 text-right font-bold text-slate-800">{formatIndianCurrency(a.total_fees)}</td>
+                    <td className="px-5 py-3 text-right font-bold text-slate-800">{formatIndianCurrency(a.fees ?? a.total_fees ?? 0)}</td>
                     <td className="px-5 py-3 text-center">
                       {a.status === 'active' ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Active</span>

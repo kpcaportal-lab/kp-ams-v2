@@ -55,7 +55,8 @@ export function mapProposalToAssignments(proposal: Proposal): Omit<Assignment, '
       category,
       subcategory,
       scope_areas: proposal.scope_areas,
-      notes: proposal.notes,
+      scope_item: proposal.notes || '',
+      fees: proposal.quotation_amount,
     }
   ];
 }

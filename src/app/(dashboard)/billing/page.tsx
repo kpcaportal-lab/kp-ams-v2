@@ -1,12 +1,17 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { Search, DollarSign, FileText, Download, Calendar, CheckCircle, Clock, TrendingUp, Filter, Plus } from 'lucide-react';
 import { useBillingStore } from '@/store/billingStore';
 import { useAssignmentStore } from '@/store/assignmentStore';
 import { formatDate } from '@/types';
 import { formatIndianCurrency, cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { InvoiceTemplate } from './InvoiceTemplate';
+import { type Invoice } from '@/types';
+import toast from 'react-hot-toast';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 18 },
@@ -22,6 +27,52 @@ export default function BillingPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+
+  const handleDownloadPDF = async (invoice: Invoice) => {
+    try {
+      setIsGeneratingPDF(true);
+      setSelectedInvoice(invoice);
+      
+      // Wait for state update and render
+      await new Promise(resolve => setTimeout(resolve, 150));
+
+      if (!printRef.current) {
+        throw new Error('Print reference not found');
+      }
+
+      const canvas = await html2canvas(printRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Invoice_${invoice.id}_${invoice.client_name?.replace(/\s+/g, '_')}.pdf`);
+      
+      toast.success('Invoice downloaded successfully');
+    } catch (error) {
+      console.error('PDF Generation Error:', error);
+      toast.error('Failed to generate PDF');
+    } finally {
+      setIsGeneratingPDF(false);
+      setSelectedInvoice(null);
+    }
+  };
 
   const filteredInvoices = useMemo(() => {
     return invoices.filter((inv) => {
@@ -37,7 +88,7 @@ export default function BillingPage() {
     const totalBilled = invoices.reduce((sum, inv) => sum + inv.net_amount, 0);
     const totalProfFees = invoices.reduce((sum, inv) => sum + inv.professional_fees, 0);
     const totalOOP = invoices.reduce((sum, inv) => sum + inv.out_of_pocket, 0);
-    const totalFees = assignments.reduce((sum, a) => sum + a.total_fees, 0);
+    const totalFees = assignments.reduce((sum, a) => sum + (a.total_fees || 0), 0);
     const billingPct = totalFees > 0 ? (totalBilled / totalFees) * 100 : 0;
     return { totalBilled, totalProfFees, totalOOP, billingPct, count: invoices.length };
   }, [invoices, assignments]);
@@ -107,7 +158,7 @@ export default function BillingPage() {
         </div>
         <div className="flex items-center justify-between mt-2 text-xs text-slate-400">
           <span>{formatIndianCurrency(stats.totalBilled, true, true)} billed</span>
-          <span>{formatIndianCurrency(assignments.reduce((s, a) => s + a.total_fees, 0), true, true)} total fees</span>
+          <span>{formatIndianCurrency(assignments.reduce((s, a) => s + (a.total_fees || 0), 0), true, true)} total fees</span>
         </div>
       </motion.div>
 
@@ -147,6 +198,7 @@ export default function BillingPage() {
                   <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">OOP</th>
                   <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Net Amount</th>
                   <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">UDIN</th>
+                  <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100/80">
@@ -163,8 +215,18 @@ export default function BillingPage() {
                       {inv.udin ? (
                         <span className="font-mono text-[11px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded">{inv.udin}</span>
                       ) : (
-                        <span className="text-xs text-slate-400">—</span>
+                         <span className="text-xs text-slate-400">—</span>
                       )}
+                    </td>
+                    <td className="px-5 py-3.5 text-right">
+                      <button
+                        onClick={() => handleDownloadPDF(inv)}
+                        disabled={isGeneratingPDF}
+                        className="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all disabled:opacity-50"
+                        title="Download PDF"
+                      >
+                        <Download size={16} />
+                      </button>
                     </td>
                   </motion.tr>
                 ))}
@@ -174,6 +236,32 @@ export default function BillingPage() {
         )}
       </motion.div>
       <AddInvoiceModal open={isModalOpen} setOpen={setIsModalOpen} />
+
+      {/* Off-screen PDF content */}
+      <div className="fixed -left-[9999px] top-0">
+        {selectedInvoice && (
+          <div ref={printRef} className="w-[210mm] bg-white">
+            <InvoiceTemplate invoice={selectedInvoice} />
+          </div>
+        )}
+      </div>
+
+      {/* Global Loading Indicator for PDF */}
+      <AnimatePresence>
+        {isGeneratingPDF && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 backdrop-blur-[2px]"
+          >
+            <div className="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center gap-3 border border-slate-100">
+              <div className="w-10 h-10 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
+              <p className="text-sm font-bold text-slate-700">Generating Invoice PDF...</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

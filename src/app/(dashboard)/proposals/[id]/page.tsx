@@ -85,7 +85,7 @@ export default function ProposalDetailsPage() {
     try {
       if (newStatus === 'won') {
         const assignments = mapProposalToAssignments(proposal);
-        await generateAssignments(proposal.id, { items: assignments });
+        await generateAssignments(proposal.id, { scope_items: assignments });
         toast.success(`Proposal won! Assignments Generated.`, { id: loadingToast });
       } else if (newStatus === 'lost') {
         toast.success('Proposal marked as lost.', { id: loadingToast });
@@ -210,7 +210,7 @@ export default function ProposalDetailsPage() {
     const loadingToast = toast.loading('Synchronizing Assignments...');
     try {
       const assignments = mapProposalToAssignments(proposal);
-      await generateAssignments(proposal.id, { items: assignments });
+      await generateAssignments(proposal.id, { scope_items: assignments });
       toast.success('Assignments Synchronized Successfully', { id: loadingToast });
     } catch (error) {
       toast.error('Synchronization Failed', { id: loadingToast });

@@ -135,7 +135,8 @@ export interface Assignment {
   assessment_year?: string;
   scope_item?: string;
   scope_areas?: string;
-  total_fees: number;
+  total_fees?: number;
+  fees?: number;
   billing_cycle: BillingCycle;
   partner_id: string;
   partner_name?: string;

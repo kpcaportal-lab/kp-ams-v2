@@ -50,8 +50,8 @@ export default function AssignmentsPage() {
 
   const stats = useMemo(() => {
     const active = assignments.filter(a => a.status === 'active');
-    const totalFees = assignments.reduce((sum, a) => sum + (a.total_fees || 0), 0);
-    const activeFees = active.reduce((sum, a) => sum + (a.total_fees || 0), 0);
+    const totalFees = assignments.reduce((sum, a) => sum + (a.fees ?? a.total_fees ?? 0), 0);
+    const activeFees = active.reduce((sum, a) => sum + (a.fees ?? a.total_fees ?? 0), 0);
     return {
       total: assignments.length,
       active: active.length,
@@ -239,7 +239,7 @@ export default function AssignmentsPage() {
                           </div>
                         </td>
                         <td className="px-6 py-6 text-right">
-                          <div className="font-black text-slate-900 text-base">{formatIndianCurrency(a.total_fees || 0, true, true)}</div>
+                          <div className="font-black text-slate-900 text-base">{formatIndianCurrency(a.fees ?? a.total_fees ?? 0, true, true)}</div>
                         </td>
                         <td className="px-6 py-6 text-center">
                           <span className="text-[11px] font-black text-slate-500 uppercase tracking-tighter bg-slate-100 px-2.5 py-1 rounded-md">
@@ -281,7 +281,7 @@ export default function AssignmentsPage() {
                    <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-50">
                       <div>
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Proposed Fee</div>
-                        <div className="font-black text-slate-900 text-lg">{formatIndianCurrency(a.total_fees || 0, true, true)}</div>
+                        <div className="font-black text-slate-900 text-lg">{formatIndianCurrency(a.fees ?? a.total_fees ?? 0, true, true)}</div>
                       </div>
                       <div className="text-right">
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Billing</div>
