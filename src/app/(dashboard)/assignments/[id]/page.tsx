@@ -59,7 +59,8 @@ export default function AssignmentDetailPage() {
   }
 
   const totalBilled = assignmentInvoices.reduce((sum, inv) => sum + inv.net_amount, 0);
-  const billingPct = assignment.total_fees > 0 ? (totalBilled / assignment.total_fees) * 100 : 0;
+  const totalFeesVal = assignment.total_fees || 0;
+  const billingPct = totalFeesVal > 0 ? (totalBilled / totalFeesVal) * 100 : 0;
 
   const statusBadge = (() => {
     switch (assignment.status) {
@@ -125,7 +126,7 @@ export default function AssignmentDetailPage() {
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.5 }}
         className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total Fees', value: formatIndianCurrency(assignment.total_fees), icon: IndianRupee, color: 'text-blue-600', bg: 'bg-blue-500/10', accent: 'from-blue-600 to-indigo-600' },
+          { label: 'Total Fees', value: formatIndianCurrency(assignment.total_fees || 0), icon: IndianRupee, color: 'text-blue-600', bg: 'bg-blue-500/10', accent: 'from-blue-600 to-indigo-600' },
           { label: 'Billed', value: formatIndianCurrency(totalBilled), icon: FileText, color: 'text-emerald-600', bg: 'bg-emerald-500/10', accent: 'from-emerald-500 to-teal-500' },
           { label: 'Billing %', value: `${billingPct.toFixed(1)}%`, icon: PieChart, color: 'text-violet-600', bg: 'bg-violet-500/10', accent: 'from-violet-500 to-purple-600' },
           { label: 'Invoices', value: assignmentInvoices.length.toString(), icon: FileText, color: 'text-amber-600', bg: 'bg-amber-500/10', accent: 'from-amber-500 to-orange-500' },

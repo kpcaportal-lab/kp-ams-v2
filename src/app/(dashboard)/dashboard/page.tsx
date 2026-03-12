@@ -30,7 +30,7 @@ export default function DashboardPage() {
 
   const stats = useMemo(() => {
     const activeAssignments = assignments.filter(a => a.status === 'active').length;
-    const totalFees = assignments.reduce((sum, a) => sum + a.total_fees, 0);
+    const totalFees = assignments.reduce((sum, a) => sum + (a.total_fees || 0), 0);
     const totalBilled = invoices.reduce((sum, inv) => sum + inv.net_amount, 0);
     const pendingProposals = proposals.filter(p => p.status === 'pending').length;
     const wonProposals = proposals.filter(p => p.status === 'won').length;
@@ -230,7 +230,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-3 ml-3 shrink-0">
-                    <span className="text-sm font-bold text-slate-700">{formatIndianCurrency(a.total_fees, true, true)}</span>
+                    <span className="text-sm font-bold text-slate-700">{formatIndianCurrency(a.total_fees || 0, true, true)}</span>
                     {getStatusBadge(a.status)}
                   </div>
                 </Link>

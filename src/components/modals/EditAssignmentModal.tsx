@@ -32,7 +32,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
         client_name: assignment.client_name || '',
         category: assignment.category as any,
         subcategory: assignment.subcategory || ('internal_audit' as any),
-        total_fees: assignment.total_fees,
+        total_fees: assignment.total_fees ?? assignment.fees ?? 0,
         status: assignment.status as any,
         billing_cycle: assignment.billing_cycle || ('monthly' as any),
         fiscal_year: assignment.fiscal_year,
