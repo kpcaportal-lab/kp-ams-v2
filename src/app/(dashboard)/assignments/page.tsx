@@ -8,6 +8,7 @@ import { SUBCATEGORY_LABELS, CATEGORY_LABELS, BILLING_CYCLE_LABELS, formatDate }
 import { formatIndianCurrency, cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import AddAssignmentModal from '@/components/modals/AddAssignmentModal';
+import LoadingScreen from '@/components/ui/LoadingScreen';
 
 const container = {
   hidden: { opacity: 0 },
@@ -25,7 +26,7 @@ const item = {
 };
 
 export default function AssignmentsPage() {
-  const { assignments, fetchAssignments } = useAssignmentStore();
+  const { assignments, fetchAssignments, isLoading } = useAssignmentStore();
 
   useEffect(() => {
     fetchAssignments();
@@ -96,6 +97,7 @@ export default function AssignmentsPage() {
 
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto pb-12">
+      <LoadingScreen isLoading={isLoading} />
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1">
         <motion.div initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>

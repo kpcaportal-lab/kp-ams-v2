@@ -7,8 +7,10 @@ import {
   ArrowLeft, CheckCircle2, Clock, FileText, Send, User, 
   Calendar, Edit, XCircle, History, RotateCcw, 
   Download, Briefcase, IndianRupee, MapPin, 
-  Building2, Users, FileCheck, Layers, Presentation, AlertCircle, Plus, Edit2, Check, Loader2
+  Building2, Users, FileCheck, Layers, Presentation, AlertCircle, Plus, Edit2, Check, Loader2,
+  Trash2, Shield, Clock3, Tag, Smartphone, Mail, Hash, UserCircle, Calculator, ChevronRight, LayoutTemplate, Activity
 } from 'lucide-react';
+import LoadingScreen from '@/components/ui/LoadingScreen';
 import { formatCurrency, formatDate, ASSIGNMENT_TYPE_LABELS, ProposalStatus, Proposal } from '@/types';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -240,6 +242,7 @@ export default function ProposalDetailsPage() {
       variants={containerVariants}
       className="max-w-7xl mx-auto flex flex-col gap-6 pb-20 relative px-4 sm:px-0"
     >
+      <LoadingScreen isLoading={loading} />
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary-100/30 blur-[120px] rounded-full"></div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, Plus, Filter, MoreVertical, FileText, CheckCircle, XCircle, Clock, TrendingUp, DollarSign, Briefcase, RotateCcw } from 'lucide-react';
 import { useProposalStore } from '@/store/proposalStore';
@@ -11,17 +11,23 @@ import AddProposalModal from '@/components/modals/AddProposalModal';
 import EditProposalModal from '@/components/modals/EditProposalModal';
 import { Proposal } from '@/types';
 
+import LoadingScreen from '@/components/ui/LoadingScreen';
+
 export default function ProposalListPage() {
-  const { proposals, fetchProposals, isLoading, error } = useProposalStore();
+  const { proposals, isLoading, fetchProposals } = useProposalStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchProposals();
   }, [fetchProposals]);
+
+  if (isLoading) {
+    return <LoadingScreen message="Fetching Proposals..." submessage="Synchronizing with the proposal intelligence core" />;
+  }
 
   const filteredProposals = useMemo(() => {
     return proposals.filter((p) => {
