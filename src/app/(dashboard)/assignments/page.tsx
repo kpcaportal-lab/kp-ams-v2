@@ -95,16 +95,16 @@ export default function AssignmentsPage() {
     { label: 'Total Volume', value: stats.total.toString(), icon: Briefcase, color: 'text-violet-600', bg: 'bg-violet-50', subValue: 'Lifetime assignments' },
   ];
 
+  if (isLoading) return <LoadingScreen message="Fetching assignment intelligence..." />;
+
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto pb-12">
-      <LoadingScreen isLoading={isLoading} />
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1">
-        <motion.div initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tightest">Assignments</h1>
-          <p className="text-slate-500 font-medium mt-1 text-lg flex items-center gap-2">
-            Professional engagement management <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> <span className="text-blue-600/80 font-bold">{stats.total} Total</span>
-          </p>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 drop-shadow-sm">
+            Assignment <span className="text-primary-600">Control Center</span>
+          </h1>
+          <p className="text-slate-500 mt-1 font-medium italic">Operational oversight and assignment performance tracking</p>
         </motion.div>
         
         <motion.div initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="flex items-center gap-3">

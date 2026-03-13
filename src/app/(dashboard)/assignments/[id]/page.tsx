@@ -20,7 +20,7 @@ export default function AssignmentDetailPage() {
   const router = useRouter();
   const { id } = params;
   const { assignments, fetchAssignmentById, isLoading } = useAssignmentStore();
-  const { invoices } = useBillingStore();
+  const { invoices, fetchInvoices } = useBillingStore();
   const [activeTab, setActiveTab] = useState('overview');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentAssignment, setCurrentAssignment] = useState<any>(null);
@@ -31,7 +31,8 @@ export default function AssignmentDetailPage() {
         if (data) setCurrentAssignment(data);
       });
     }
-  }, [id, fetchAssignmentById]);
+    fetchInvoices();
+  }, [id, fetchAssignmentById, fetchInvoices]);
 
   const assignment = currentAssignment || assignments.find(a => a.id === id);
   const assignmentInvoices = invoices.filter(inv => inv.assignment_id === id);

@@ -5,16 +5,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   Building2, 
-  LayoutDashboard, 
+  LayoutDashboard,
   Users, 
   FileText, 
   ClipboardList, 
   Receipt,
   Shield,
   UserCog,
+  LogOut,
   ChevronLeft,
-  ChevronRight,
-  LogOut
+  ChevronRight
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 

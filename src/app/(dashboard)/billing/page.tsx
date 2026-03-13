@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Plus, Search, DollarSign, FileText, TrendingUp, Download } from 'lucide-react';
 import { formatIndianCurrency, cn } from '@/lib/utils';
 import { formatDate } from '@/types';
@@ -21,10 +21,14 @@ const fadeUp = {
 };
 
 export default function BillingPage() {
-  const { invoices } = useBillingStore();
+  const { invoices, loading, fetchInvoices } = useBillingStore();
   const { assignments } = useAssignmentStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    fetchInvoices();
+  }, [fetchInvoices]);
 
   const filteredInvoices = useMemo(() => {
     return invoices.filter((inv) => {

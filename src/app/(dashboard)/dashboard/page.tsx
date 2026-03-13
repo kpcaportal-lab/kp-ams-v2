@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import {
   TrendingUp, TrendingDown, DollarSign, Briefcase, Users, FileText,
@@ -26,7 +26,11 @@ export default function DashboardPage() {
   const { assignments } = useAssignmentStore();
   const { proposals } = useProposalStore();
   const { clients } = useClientStore();
-  const { invoices } = useBillingStore();
+  const { invoices, fetchInvoices } = useBillingStore();
+
+  useEffect(() => {
+    fetchInvoices();
+  }, [fetchInvoices]);
 
   const stats = useMemo(() => {
     const activeAssignments = assignments.filter(a => a.status === 'active').length;

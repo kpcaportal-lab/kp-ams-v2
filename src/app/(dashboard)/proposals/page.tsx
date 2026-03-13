@@ -25,9 +25,7 @@ export default function ProposalListPage() {
     fetchProposals();
   }, [fetchProposals]);
 
-  if (isLoading) {
-    return <LoadingScreen message="Fetching Proposals..." submessage="Synchronizing with the proposal intelligence core" />;
-  }
+  // Move loading screen inside the main return to avoid hook violations
 
   const filteredProposals = useMemo(() => {
     return proposals.filter((p) => {
@@ -96,6 +94,8 @@ export default function ProposalListPage() {
     }
   };
 
+  if (isLoading) return <LoadingScreen message="Strategic intelligence is being gathered..." />;
+
   return (
     <div className="max-w-[1600px] mx-auto space-y-8 pb-12">
       
@@ -140,34 +140,34 @@ export default function ProposalListPage() {
                 <p className="text-2xl font-black text-slate-900 tabular-nums">{stat.value}</p>
               </div>
               <div className={cn(
-                "p-3 rounded-2xl transition-colors duration-300",
-                `bg-${stat.color}-50 text-${stat.color}-600 group-hover:bg-${stat.color}-100`
+                "p-3 rounded-2xl bg-white shadow-sm border border-slate-100 transition-transform group-hover:scale-110 group-hover:rotate-3",
+                `text-${stat.color}-500`
               )}>
-                <stat.icon size={22} className="stroke-[2.5]" />
+                <stat.icon size={24} strokeWidth={2.5} />
               </div>
             </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Actions & Filters Bar */}
-      <div className="flex flex-col lg:flex-row gap-4">
-        <div className="relative flex-1 group">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-amber-500 transition-colors" />
+      {/* Search & Filter Bar */}
+      <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+        <div className="relative flex-1 w-full lg:max-w-md group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-amber-500 transition-colors" size={20} />
           <input
             type="text"
-            placeholder="Search by client, number, or signing partner..."
+            placeholder="Search proposals, clients, or numbers..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-100 pl-12 pr-4 py-3.5 rounded-2xl bg-white/50 backdrop-blur-md border border-slate-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition-all font-medium text-slate-700 shadow-sm"
+            className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white/50 backdrop-blur-md border border-slate-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition-all font-medium text-slate-700 shadow-sm"
           />
         </div>
         
-        <div className="flex gap-3">
+        <div className="flex gap-3 w-full lg:w-auto">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-3.5 rounded-2xl bg-white/50 backdrop-blur-md border border-slate-200 focus:border-amber-400 outline-none transition-all font-bold text-slate-600 shadow-sm min-w-[180px]"
+            className="flex-1 lg:flex-none px-4 py-3.5 rounded-2xl bg-white/50 backdrop-blur-md border border-slate-200 focus:border-amber-400 outline-none transition-all font-bold text-slate-600 shadow-sm min-w-[180px]"
           >
             <option value="all">All Statuses</option>
             <option value="pending">🟡 Pending Pipeline</option>
@@ -175,7 +175,7 @@ export default function ProposalListPage() {
             <option value="lost">🔴 Lost Opportunities</option>
           </select>
           
-          <button className="flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-all shadow-sm active:scale-95 text-sm">
+          <button className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-50 transition-all shadow-sm active:scale-95 text-sm">
             <Filter size={18} />
             <span>Advanced Filters</span>
           </button>

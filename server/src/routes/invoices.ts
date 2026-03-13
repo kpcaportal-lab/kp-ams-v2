@@ -156,7 +156,7 @@ router.get('/:id/download', async (req: Request, res: Response) => {
     try {
         const result = await pool.query(`
       SELECT i.*, a.category, a.billing_cycle, c.name as client_name, c.gstn as client_gstn,
-        pm.full_name as manager_name, a.proposal_number
+        pm.full_name as manager_name
       FROM invoices i
       LEFT JOIN assignments a ON a.id = i.assignment_id
       LEFT JOIN clients c ON c.id = a.client_id
@@ -170,79 +170,177 @@ router.get('/:id/download', async (req: Request, res: Response) => {
         const PDFDocument = (await import('pdfkit')).default;
         const fs = (await import('fs')).default;
         const path = (await import('path')).default;
-        const doc = new PDFDocument({ margin: 50 });
+        
+        const MARGIN = 50;
+        const doc = new PDFDocument({ margin: MARGIN, size: 'A4' });
 
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="Invoice_${inv.id}.pdf"`);
+        res.setHeader('Content-Disposition', `attachment; filename="Invoice_${inv.id.substring(0,8)}.pdf"`);
         doc.pipe(res);
 
-        // Header with logo and color
+        const primaryColor = '#0f172a'; // slate-900
+        const secondaryColor = '#64748b'; // slate-500
+        const lightGray = '#f8fafc'; // slate-50
+        const borderColor = '#e2e8f0'; // slate-200
+
+        // --- 1. HEADER ---
         const logoPath = path.join(process.cwd(), '..', 'public', 'logo.png');
         if (fs.existsSync(logoPath)) {
-            doc.image(logoPath, doc.page.width / 2 - 40, 30, { width: 80 });
+            doc.image(logoPath, MARGIN, MARGIN, { width: 140 });
+        } else {
+            doc.fillColor(primaryColor).fontSize(24).font('Helvetica-Bold')
+               .text('Kirtane & Pandit LLP', MARGIN, MARGIN);
         }
+        
+        doc.fillColor(secondaryColor).fontSize(10).font('Helvetica')
+           .text('Chartered Accountants', doc.page.width - MARGIN - 200, MARGIN, { width: 200, align: 'right' })
+           .text('123 Business Park', { width: 200, align: 'right' })
+           .text('Mumbai, MH 400001', { width: 200, align: 'right' })
+           .text('contact@kirtanepandit.com', { width: 200, align: 'right' });
+
         doc.moveDown(2);
-        doc.rect(0, 0, doc.page.width, 80).fill('#003366');
-        doc.fillColor('#fff').fontSize(24).font('Helvetica-Bold').text('Kirtane & Pandit LLP', 0, 50, { align: 'center' });
-        doc.fillColor('#fff').fontSize(14).font('Helvetica').text('Chartered Accountants', { align: 'center' });
-        doc.moveDown(2);
-        doc.fillColor('#000');
+        
+        // Separator line
+        doc.lineWidth(1).strokeColor(borderColor)
+           .moveTo(MARGIN, Math.max(doc.y, MARGIN + 60)).lineTo(doc.page.width - MARGIN, Math.max(doc.y, MARGIN + 60)).stroke();
+        doc.y = Math.max(doc.y, MARGIN + 60) + 20;
 
-        // Title
-        doc.fontSize(18).font('Helvetica-Bold').text('INVOICE', { align: 'center' });
-        doc.moveDown();
+        // --- 2. TITLE & META ---
+        const invoiceStartY = doc.y;
+        
+        doc.fillColor(primaryColor).fontSize(28).font('Helvetica-Bold')
+           .text('INVOICE', MARGIN, invoiceStartY);
+           
+        const shortId = inv.id.split('-')[0].toUpperCase();
+        const invoiceDate = inv.invoice_date ? new Date(inv.invoice_date).toLocaleDateString('en-IN') : 'N/A';
 
-        // Invoice details
-        const details = [
-            ['Invoice ID', inv.id],
-            ['Invoice Date', inv.invoice_date ? new Date(inv.invoice_date).toLocaleDateString('en-IN') : 'N/A'],
-            ['Client Name', inv.client_name || 'N/A'],
-            ['GSTN', inv.gst_no || 'N/A'],
-            ['Kind Attention', inv.kind_attention || 'N/A'],
-            ['Reference', inv.reference || 'N/A'],
-            ['Address', inv.address || 'N/A'],
-            ['Category', (inv.category || '').replace(/_/g, ' ').toUpperCase()],
-            ['Billing Cycle', (inv.billing_cycle || '').toUpperCase()],
-            ['UDIN', inv.udin || 'N/A'],
-        ];
+        doc.fillColor(primaryColor).fontSize(10).font('Helvetica-Bold')
+           .text('Invoice Number:', doc.page.width - MARGIN - 200, invoiceStartY + 5)
+           .font('Helvetica').fillColor(secondaryColor).text(`INV-${shortId}`, doc.page.width - MARGIN - 100, invoiceStartY + 5, { width: 100, align: 'right' });
+           
+        doc.fillColor(primaryColor).font('Helvetica-Bold')
+           .text('Date:', doc.page.width - MARGIN - 200, invoiceStartY + 20)
+           .font('Helvetica').fillColor(secondaryColor).text(invoiceDate, doc.page.width - MARGIN - 100, invoiceStartY + 20, { width: 100, align: 'right' });
 
-        doc.fontSize(12).font('Helvetica');
-        doc.moveDown();
-        doc.lineWidth(1).strokeColor('#003366').moveTo(50, doc.y).lineTo(doc.page.width - 50, doc.y).stroke();
-        doc.moveDown();
-        for (const [label, value] of details) {
-            doc.font('Helvetica-Bold').fillColor('#003366').text(`${label}: `, { continued: true });
-            doc.font('Helvetica').fillColor('#000').text(String(value));
+        if (inv.reference) {
+            doc.fillColor(primaryColor).font('Helvetica-Bold')
+               .text('Reference:', doc.page.width - MARGIN - 200, invoiceStartY + 35)
+               .font('Helvetica').fillColor(secondaryColor).text(inv.reference, doc.page.width - MARGIN - 100, invoiceStartY + 35, { width: 100, align: 'right' });
         }
-        doc.moveDown(2);
 
-        // Fees section
-        doc.fontSize(14).font('Helvetica-Bold').fillColor('#003366').text('Fee Details');
+        doc.y = invoiceStartY + 70;
+        
+        // --- 3. TWO COLUMNS (BILL TO & PROJECT DETAILS) ---
+        const detailsY = doc.y;
+        const colWidth = (doc.page.width - (MARGIN * 2) - 40) / 2;
+
+        // Column 1: Bill To
+        doc.fillColor(primaryColor).fontSize(12).font('Helvetica-Bold')
+           .text('Bill To:', MARGIN, detailsY);
         doc.moveDown(0.5);
-        doc.fontSize(12).font('Helvetica').fillColor('#000');
-        doc.lineWidth(0.5).strokeColor('#003366').moveTo(50, doc.y).lineTo(doc.page.width - 50, doc.y).stroke();
-        doc.moveDown();
-        doc.font('Helvetica-Bold').fillColor('#003366').text('Professional Fees: ', { continued: true });
-        doc.font('Helvetica').fillColor('#000').text(`₹${Number(inv.professional_fees).toLocaleString('en-IN')}`);
-        doc.font('Helvetica-Bold').fillColor('#003366').text('Out of Pocket Expenses: ', { continued: true });
-        doc.font('Helvetica').fillColor('#000').text(`₹${Number(inv.out_of_pocket).toLocaleString('en-IN')}`);
-        doc.font('Helvetica-Bold').fillColor('#003366').text('Net Amount: ', { continued: true });
-        doc.font('Helvetica').fillColor('#000').text(`₹${Number(inv.net_amount).toLocaleString('en-IN')}`);
+        
+        doc.fontSize(10).font('Helvetica-Bold').fillColor(primaryColor)
+           .text(inv.client_name || 'N/A', MARGIN, doc.y, { width: colWidth });
+        
+        doc.font('Helvetica').fillColor(secondaryColor);
+        if (inv.kind_attention) doc.text(`Attn: ${inv.kind_attention}`, { width: colWidth });
+        if (inv.address) doc.text(inv.address, { width: colWidth });
+        if (inv.client_gstn) doc.text(`GSTN: ${inv.client_gstn}`, { width: colWidth });
 
-        if (inv.narration) {
-            doc.moveDown(2);
-            doc.fontSize(14).font('Helvetica-Bold').fillColor('#003366').text('Narration');
-            doc.moveDown(0.5);
-            doc.fontSize(12).font('Helvetica').fillColor('#000').text(inv.narration);
+        // Column 2: Project Details
+        doc.fillColor(primaryColor).fontSize(12).font('Helvetica-Bold')
+           .text('Project Details:', MARGIN + colWidth + 40, detailsY);
+        doc.moveDown(0.5);
+        doc.fontSize(10);
+        
+        const projY = doc.y;
+        doc.font('Helvetica-Bold').fillColor(primaryColor).text('Category:', MARGIN + colWidth + 40, projY, { continued: true })
+           .font('Helvetica').fillColor(secondaryColor).text(` ${(inv.category || '').replace(/_/g, ' ').toUpperCase()}`);
+           
+        doc.font('Helvetica-Bold').fillColor(primaryColor).text('Billing Cycle:', MARGIN + colWidth + 40, doc.y, { continued: true })
+           .font('Helvetica').fillColor(secondaryColor).text(` ${(inv.billing_cycle || '').toUpperCase()}`);
+           
+        if (inv.udin) {
+            doc.font('Helvetica-Bold').fillColor(primaryColor).text('UDIN:', MARGIN + colWidth + 40, doc.y, { continued: true })
+               .font('Helvetica').fillColor(secondaryColor).text(` ${inv.udin}`);
         }
+
+        doc.moveDown(4);
+
+        // --- 4. FEE TABLE ---
+        const tableTop = Math.max(doc.y, detailsY + 80) + 10;
+        
+        // Table Header
+        doc.rect(MARGIN, tableTop, doc.page.width - MARGIN * 2, 25).fill(lightGray);
+        doc.fillColor(primaryColor).fontSize(10).font('Helvetica-Bold');
+        doc.text('Description', MARGIN + 15, tableTop + 8);
+        doc.text('Amount (INR)', doc.page.width - MARGIN - 110, tableTop + 8, { width: 95, align: 'right' });
+        
+        // Table Rows
+        let rowY = tableTop + 35;
+        doc.fontSize(10).font('Helvetica');
+        
+        const drawRow = (desc: string, amount: string | number, isTotal = false) => {
+            if (isTotal) {
+                doc.lineWidth(1).strokeColor(borderColor)
+                   .moveTo(MARGIN, rowY - 10).lineTo(doc.page.width - MARGIN, rowY - 10).stroke();
+                doc.font('Helvetica-Bold').fillColor(primaryColor);
+            } else {
+                doc.font('Helvetica').fillColor(secondaryColor);
+            }
+            
+            doc.text(desc, MARGIN + 15, rowY);
+            doc.text(amount.toLocaleString('en-IN'), doc.page.width - MARGIN - 110, rowY, { width: 95, align: 'right' });
+            
+            if (isTotal) {
+                doc.lineWidth(2).strokeColor(primaryColor)
+                   .moveTo(MARGIN, rowY + 20).lineTo(doc.page.width - MARGIN, rowY + 20).stroke();
+            }
+            rowY += 30;
+        };
+
+        const profFees = Number(inv.professional_fees);
+        const oop = Number(inv.out_of_pocket);
+        const net = Number(inv.net_amount);
+
+        drawRow('Professional Fees', `Rs. ${profFees.toLocaleString('en-IN')}`);
+        if (oop > 0) {
+            drawRow('Out of Pocket Expenses', `Rs. ${oop.toLocaleString('en-IN')}`);
+        }
+        
+        rowY += 5;
+        drawRow('Total Net Amount', `Rs. ${net.toLocaleString('en-IN')}`, true);
+
+        // --- 5. NARRATION / NOTES ---
+        if (inv.narration) {
+            doc.y = rowY + 10;
+            doc.fontSize(11).font('Helvetica-Bold').fillColor(primaryColor).text('Narration / Notes');
+            doc.moveDown(0.5);
+            doc.fontSize(10).font('Helvetica').fillColor(secondaryColor).text(inv.narration, { lineGap: 4 });
+        }
+
+        // --- 6. FOOTER ---
+        const bottomY = doc.page.height - 70;
+        doc.lineWidth(1).strokeColor(borderColor)
+           .moveTo(MARGIN, bottomY).lineTo(doc.page.width - MARGIN, bottomY).stroke();
+           
+        doc.fontSize(9).font('Helvetica').fillColor(secondaryColor)
+           .text('Kirtane & Pandit LLP  •  Chartered Accountants  •  www.kirtanepandit.com', MARGIN, bottomY + 15, { align: 'center', width: doc.page.width - MARGIN * 2 });
+           
+        doc.fontSize(8).fillColor('#94a3b8')
+           .text('This is a computer-generated document. No signature is required.', MARGIN, bottomY + 30, { align: 'center', width: doc.page.width - MARGIN * 2 });
 
         doc.end();
-        // Footer
-        doc.moveDown(4);
-        doc.lineWidth(1).strokeColor('#003366').moveTo(50, doc.y).lineTo(doc.page.width - 50, doc.y).stroke();
-        doc.moveDown();
-        doc.fontSize(10).font('Helvetica').fillColor('#003366').text('Kirtane & Pandit LLP | www.kirtanepandit.com | Pune, India', { align: 'center' });
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to generate PDF' }); }
+    } catch (err: any) {
+        console.error('=== INVOICE DOWNLOAD ERROR ===');
+        console.error('Error message:', err?.message);
+        console.error('Error detail:', err?.detail);
+        console.error('Error code:', err?.code);
+        console.error('Error stack:', err?.stack);
+        if (!res.headersSent) {
+            res.status(500).json({ error: 'Failed to generate PDF', detail: err?.message });
+        }
+    }
 });
 
 export default router;
