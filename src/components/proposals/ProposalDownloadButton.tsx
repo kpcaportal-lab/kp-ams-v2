@@ -5,6 +5,8 @@ import { Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Proposal } from '@/types';
 
+import api from '@/lib/api';
+
 interface ProposalDownloadButtonProps {
   proposal: Proposal;
   variant?: 'icon' | 'full';
@@ -19,13 +21,11 @@ export function ProposalDownloadButton({ proposal, variant = 'icon', className }
     const toastId = toast.loading('Downloading proposal PDF...');
     setIsDownloading(true);
     try {
-      const response = await fetch(`/api/proposals/${proposal.id}/export/pdf`, {
-        method: 'GET',
+      const response = await api.get(`/api/proposals/${proposal.id}/export/pdf`, {
+        responseType: 'blob',
       });
-      if (!response.ok) {
-        throw new Error('Failed to download PDF');
-      }
-      const blob = await response.blob();
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' });
       const fileName = `Proposal_${proposal.number?.replace(/\//g, '_') || proposal.id}.pdf`;
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -51,7 +51,11 @@ export function ProposalDownloadButton({ proposal, variant = 'icon', className }
       disabled={isDownloading}
       title="Download Proposal PDF"
     >
-      {variant === 'icon' ? <Download /> : 'Download Proposal PDF'}
+      {isDownloading ? (
+        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mx-auto" />
+      ) : (
+        variant === 'icon' ? <Download /> : 'Download Proposal PDF'
+      )}
     </button>
   );
 }

@@ -73,6 +73,12 @@ export default function ProposalListPage() {
             <RotateCcw size={12} /> Revision Pending
           </span>
         );
+      case 'revised':
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
+            <RotateCcw size={12} /> Revised
+          </span>
+        );
       case 'pending':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">

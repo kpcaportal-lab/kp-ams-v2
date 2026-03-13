@@ -61,6 +61,12 @@ router.post('/', requireRole('admin'), async (req: Request, res: Response) => {
 router.patch('/:id', requireRole('admin', 'partner', 'director'), async (req: Request, res: Response) => {
     try {
         const { is_active, role, display_name, reports_to } = req.body;
+
+        // Only allow admins to change the reporting structure
+        if (reports_to !== undefined && req.user?.role !== 'admin') {
+            return res.status(403).json({ error: 'Only administrators can change reporting relationships' });
+        }
+
         await pool.query(
             'UPDATE profiles SET is_active=COALESCE($1,is_active), role=COALESCE($2,role), display_name=COALESCE($3,display_name), reports_to=COALESCE($4,reports_to), updated_at=NOW() WHERE id=$5',
             [is_active, role, display_name, reports_to, req.params.id]

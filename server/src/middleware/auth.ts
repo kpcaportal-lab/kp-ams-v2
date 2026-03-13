@@ -54,15 +54,6 @@ export const getVisibleUserIds = async (user: AuthUser): Promise<string[] | null
         return null; // No filter — see all
     }
 
-    if (user.role === 'director') {
-        const result = await pool.query(
-            'SELECT id FROM profiles WHERE reports_to = $1 AND is_active = true',
-            [user.id]
-        );
-        const subordinateIds = result.rows.map((r: { id: string }) => r.id);
-        return [user.id, ...subordinateIds];
-    }
-
     if (user.role === 'staff') {
         const result = await pool.query(
             'SELECT reports_to FROM profiles WHERE id = $1',
@@ -74,8 +65,21 @@ export const getVisibleUserIds = async (user: AuthUser): Promise<string[] | null
         return [user.id];
     }
 
-    // Manager: only self
-    return [user.id];
+    // Recursive lookup for subordinates (for directors, managers, or any role)
+    const result = await pool.query(
+        `WITH RECURSIVE subordinates AS (
+            SELECT id FROM profiles WHERE reports_to = $1 AND is_active = true
+            UNION
+            SELECT p.id FROM profiles p
+            INNER JOIN subordinates s ON p.reports_to = s.id
+            WHERE p.is_active = true
+        )
+        SELECT id FROM subordinates`,
+        [user.id]
+    );
+
+    const subordinateIds = result.rows.map((r: { id: string }) => r.id);
+    return [user.id, ...subordinateIds];
 };
 
 /**

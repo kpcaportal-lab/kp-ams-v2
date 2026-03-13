@@ -71,12 +71,15 @@ export default function ProposalDetailsPage() {
     );
   }
 
-  const handleRevise = () => {
+  const handleRevise = async () => {
     if (revisionDetails) {
-      reviseProposal(proposal.id, revisionDetails, revisedFee);
+      const newProposal = await reviseProposal(proposal.id, revisionDetails, revisedFee);
       setIsRevisionModalOpen(false);
       setRevisionDetails('');
-      toast.success('Revision v' + (proposal.version_number + 1) + ' Generated');
+      if (newProposal) {
+        toast.success('Revision v' + newProposal.version_number + ' Generated');
+        router.push(`/proposals/${newProposal.id}`);
+      }
     }
   };
 
@@ -258,9 +261,10 @@ export default function ProposalDetailsPage() {
             <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-sm border ${
               proposal.status === 'won' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
               proposal.status === 'lost' ? 'bg-rose-50 text-rose-700 border-rose-200' : 
+              proposal.status === 'revised' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
               'bg-amber-50 text-amber-700 border-amber-200'
             }`}>
-              {proposal.status}
+              {proposal.status === 'revised' ? 'REVISED & SUPERSEDED' : proposal.status}
             </span>
           </div>
 
@@ -301,6 +305,13 @@ export default function ProposalDetailsPage() {
 
           {(proposal.status === 'pending' || proposal.status === 'pending_revision') && (
             <>
+              <button 
+                onClick={() => setIsRevisionModalOpen(true)}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-indigo-200 text-indigo-600 px-5 py-3 rounded-xl text-sm font-bold hover:bg-indigo-50 hover:border-indigo-300 transition-all active:scale-95"
+              >
+                <RotateCcw size={18} />
+                Revise
+              </button>
               <button 
                 onClick={() => handleStatusUpdate('won')}
                 className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-emerald-600 border border-emerald-500 text-white px-5 py-3 rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-95"
@@ -484,6 +495,7 @@ export default function ProposalDetailsPage() {
                         <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-full border shadow-sm ${
                           v.status === 'won' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 
                           v.status === 'lost' ? 'bg-rose-50 text-rose-700 border-rose-100' : 
+                          v.status === 'revised' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' :
                           'bg-amber-50 text-amber-700 border-amber-100'
                         }`}>
                           {v.status}

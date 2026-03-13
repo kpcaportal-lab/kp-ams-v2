@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useLoadingStore } from '@/store/loadingStore';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
@@ -10,6 +11,7 @@ const api = axios.create({
 
 // Attach JWT token from localStorage on every request
 api.interceptors.request.use((config) => {
+  useLoadingStore.getState().startLoading();
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('kp_token');
     if (token) {
@@ -17,12 +19,19 @@ api.interceptors.request.use((config) => {
     }
   }
   return config;
+}, (error) => {
+  useLoadingStore.getState().stopLoading();
+  return Promise.reject(error);
 });
 
-// On 401 — clear token and redirect to login
+// Response interceptor
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    useLoadingStore.getState().stopLoading();
+    return res;
+  },
   (error) => {
+    useLoadingStore.getState().stopLoading();
     if (error.response?.status === 401) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('kp_token');

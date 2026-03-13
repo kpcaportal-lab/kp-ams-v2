@@ -11,6 +11,9 @@ export interface User {
   role: UserRole;
   full_name: string;
   display_name?: string;
+  reports_to?: string;
+  reports_to_name?: string;
+  is_active?: boolean;
 }
 
 // ── Client ──────────────────────────────────────────────────────
@@ -50,7 +53,7 @@ export interface ClientSpoc {
 export type ProposalType = 'new' | 'renewal';
 export type AssignmentType = 'internal_audit' | 'forensic' | 'overseas' | 'mcs' | 'ifc';
 export type FeeCategory = 'continuation' | 'increment' | 'new';
-export type ProposalStatus = 'pending' | 'won' | 'lost' | 'pending_revision';
+export type ProposalStatus = 'pending' | 'won' | 'lost' | 'revised' | 'pending_revision';
 
 export interface ProposalScope {
   scope_of_work: string;

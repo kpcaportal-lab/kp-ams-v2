@@ -298,6 +298,12 @@ router.post('/:id/revise', async (req: Request, res: Response) => {
                 currentVersion + 1, original.id, original.template_id]
         );
 
+        // Update the original proposal status to 'revised'
+        await dbClient.query(
+            "UPDATE proposals SET status = 'revised', updated_at = NOW() WHERE id = $1",
+            [original.id]
+        );
+
         await dbClient.query('COMMIT');
         res.status(201).json(newProposal.rows[0]);
     } catch (err) {
@@ -444,10 +450,19 @@ router.get('/:id/export/pdf', async (req: Request, res: Response) => {
         res.setHeader('Content-Disposition', `attachment; filename="Proposal_${p.number.replace(/\//g, '_')}.pdf"`);
         doc.pipe(res);
 
-        // Header
+        // Header with logo
+        const fs = (await import('fs')).default;
+        const path = (await import('path')).default;
+        const logoPath = path.join(process.cwd(), '..', 'public', 'logo.png');
+        if (fs.existsSync(logoPath)) {
+            doc.image(logoPath, doc.page.width / 2 - 40, 30, { width: 80 });
+        }
+        doc.moveDown(4);
         doc.fontSize(20).font('Helvetica-Bold').text('Kirtane & Pandit LLP', { align: 'center' });
         doc.fontSize(12).font('Helvetica').text('Chartered Accountants', { align: 'center' });
-        doc.moveDown(2);
+        doc.moveDown(1);
+        doc.rect(50, doc.y, doc.page.width - 100, 2).fill('#1a3a5c');
+        doc.moveDown(1.5);
 
         // Title
         doc.fontSize(16).font('Helvetica-Bold').text('PROPOSAL', { align: 'center' });

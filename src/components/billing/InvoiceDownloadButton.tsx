@@ -9,6 +9,7 @@ import { type Invoice } from '@/types';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import api from '@/lib/api';
 
 interface InvoiceDownloadButtonProps {
   invoice: Invoice;
@@ -24,13 +25,11 @@ export function InvoiceDownloadButton({ invoice, variant = 'icon', className }: 
     const toastId = toast.loading('Downloading invoice PDF...');
     setIsDownloading(true);
     try {
-      const response = await fetch(`/api/invoices/${invoice.id}/download`, {
-        method: 'GET',
+      const response = await api.get(`/api/invoices/${invoice.id}/download`, {
+        responseType: 'blob',
       });
-      if (!response.ok) {
-        throw new Error('Failed to download PDF');
-      }
-      const blob = await response.blob();
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const fileName = `Invoice_${invoice.id}_${invoice.client_name?.replace(/\s+/g, '_') || 'Draft'}.pdf`;
       const link = document.createElement('a');

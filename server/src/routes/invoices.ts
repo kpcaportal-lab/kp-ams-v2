@@ -101,6 +101,9 @@ router.get('/', async (req: Request, res: Response) => {
     try {
         const role = req.user!.role;
         const userId = req.user!.id;
+        const { getVisibleUserIds } = await import('../middleware/auth.js');
+        const visibleIds = await getVisibleUserIds(req.user!);
+
         let query = `
       SELECT i.*, c.name as client_name, a.category, pm.full_name as manager_name,
         el.status as email_status
@@ -111,7 +114,10 @@ router.get('/', async (req: Request, res: Response) => {
       LEFT JOIN email_logs el ON el.invoice_id = i.id
       WHERE 1=1`;
         const params: any[] = [];
-        if (role === 'manager' || role === 'staff') { params.push(userId); query += ` AND i.generated_by = $${params.length}`; }
+        if (visibleIds) {
+            params.push(visibleIds);
+            query += ` AND i.generated_by = ANY($${params.length})`;
+        }
         query += ' ORDER BY i.created_at DESC';
         const result = await pool.query(query, params);
         res.json(result.rows);
@@ -171,7 +177,7 @@ router.get('/:id/download', async (req: Request, res: Response) => {
         doc.pipe(res);
 
         // Header with logo and color
-        const logoPath = path.join(process.cwd(), 'public', 'logo.png');
+        const logoPath = path.join(process.cwd(), '..', 'public', 'logo.png');
         if (fs.existsSync(logoPath)) {
             doc.image(logoPath, doc.page.width / 2 - 40, 30, { width: 80 });
         }
