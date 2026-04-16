@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save, FileText, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { useProposalStore } from '@/store/proposalStore';
 import { ASSIGNMENT_TYPE_LABELS, Proposal, ProposalType, AssignmentType, ProposalStatus } from '@/types';
+import api from '@/lib/api';
 
 interface EditProposalModalProps {
   open: boolean;
@@ -12,10 +13,16 @@ interface EditProposalModalProps {
   proposal: Proposal;
 }
 
+interface ClientOption {
+  id: string;
+  name: string;
+}
+
 export default function EditProposalModal({ open, setOpen, proposal }: EditProposalModalProps) {
   const { updateProposal } = useProposalStore();
+  const [clients, setClients] = useState<ClientOption[]>([]);
   const [form, setForm] = useState({
-    client_name: proposal?.client_name || '',
+    client_id: proposal?.client_id || '',
     proposal_type: proposal?.proposal_type || 'new' as ProposalType,
     assignment_type: proposal?.assignment_type || 'internal_audit' as AssignmentType,
     quotation_amount: proposal?.quotation_amount || 0,
@@ -25,9 +32,17 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
   });
 
   useEffect(() => {
+    if (open) {
+      api.get('/api/clients').then(res => {
+        setClients(res.data.map((c: any) => ({ id: c.id, name: c.name })));
+      }).catch(() => setClients([]));
+    }
+  }, [open]);
+
+  useEffect(() => {
     if (proposal) {
       setForm({
-        client_name: proposal.client_name || '',
+        client_id: proposal.client_id || '',
         proposal_type: proposal.proposal_type,
         assignment_type: proposal.assignment_type,
         quotation_amount: proposal.quotation_amount,
@@ -41,7 +56,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await updateProposal(proposal.id, {
-      client_name: form.client_name,
+      client_id: form.client_id,
       proposal_type: form.proposal_type,
       assignment_type: form.assignment_type,
       quotation_amount: form.quotation_amount,
@@ -91,15 +106,20 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
 
             <form onSubmit={handleSubmit} className="p-8 space-y-5">
               <div className="space-y-4">
-                {/* Client Name */}
+                {/* Client Selection */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Client Name</label>
-                  <input
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Client</label>
+                  <select
                     required
-                    value={form.client_name}
-                    onChange={(e) => setForm({ ...form, client_name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
-                  />
+                    value={form.client_id}
+                    onChange={(e) => setForm({ ...form, client_id: e.target.value })}
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                  >
+                    <option value="">Select a client</option>
+                    {clients.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Status Selection */}

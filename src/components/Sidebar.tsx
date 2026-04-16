@@ -14,17 +14,19 @@ import {
   UserCog,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  LifeBuoy
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'partner', 'director', 'manager', 'staff'] },
-  { name: 'Clients', href: '/clients', icon: Users, roles: ['admin', 'partner', 'director', 'manager', 'staff'] },
-  { name: 'Proposals', href: '/proposals', icon: FileText, roles: ['admin', 'partner', 'director', 'manager', 'staff'] },
-  { name: 'Assignments', href: '/assignments', icon: ClipboardList, roles: ['admin', 'partner', 'director', 'manager', 'staff'] },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
+  { name: 'Clients', href: '/clients', icon: Users, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
+  { name: 'Proposals', href: '/proposals', icon: FileText, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
+  { name: 'Assignments', href: '/assignments', icon: ClipboardList, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Billing', href: '/billing', icon: Receipt, roles: ['admin', 'partner', 'director'] },
-  { name: 'Users', href: '/users', icon: UserCog, roles: ['admin', 'partner'] },
+  { name: 'Tickets', href: '/tickets', icon: LifeBuoy, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
+  { name: 'Users', href: '/users', icon: UserCog, roles: ['admin', 'partner', 'director'] },
   { name: 'Admin Panel', href: '/admin', icon: Shield, roles: ['admin'] },
 ];
 
@@ -136,23 +138,23 @@ export function Sidebar({
         })}
       </nav>
 
-      {/* Bottom Profile / Logout */}
+      {/* Bottom Profile */}
       <div style={{ padding: '16px', borderTop: '1px solid var(--border)' }}>
-        <button
-          onClick={logout}
+        <Link
+          href="/profile"
           style={{
             display: 'flex', alignItems: 'center', justifyContent: isCollapsed ? 'center' : 'flex-start',
             width: '100%', padding: '12px', borderRadius: '12px',
             color: 'var(--text-secondary)', background: 'transparent',
-            border: 'none', cursor: 'pointer', transition: 'all 0.2s ease', fontWeight: 500
+            textDecoration: 'none', cursor: 'pointer', transition: 'all 0.2s ease', fontWeight: 500
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--color-danger)'; e.currentTarget.style.background = 'var(--bg-danger-light)'; }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = '#2563EB'; e.currentTarget.style.background = 'var(--bg-primary-light)'; }}
           onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'transparent'; }}
-          title={isCollapsed ? "Log out" : undefined}
+          title={isCollapsed ? "Profile" : undefined}
         >
-          <LogOut size={20} style={{ flexShrink: 0 }} />
-          {(!isCollapsed || isMobileOpen) && <span style={{ marginLeft: 16 }}>Log out</span>}
-        </button>
+          <UserCog size={20} style={{ flexShrink: 0 }} />
+          {(!isCollapsed || isMobileOpen) && <span style={{ marginLeft: 16 }}>Profile</span>}
+        </Link>
       </div>
 
       {/* Collapse Toggle - hide on mobile */}

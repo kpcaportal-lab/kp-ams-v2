@@ -17,6 +17,8 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
   const [form, setForm] = useState({
     name: '',
     industry: '',
+    address: '',
+    billing_details: '',
     status: 'active' as 'active' | 'inactive',
     spocName: '',
     spocEmail: '',
@@ -28,6 +30,8 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
       setForm({
         name: client.name,
         industry: client.industry || '',
+        address: client.address || '',
+        billing_details: client.billing_details || '',
         status: client.status as 'active' | 'inactive',
         spocName: client.spocName || '',
         spocEmail: client.spocEmail || '',
@@ -137,6 +141,30 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
                     </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Address */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Address</label>
+                    <textarea
+                      value={form.address}
+                      onChange={(e) => setForm({ ...form, address: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all placeholder:text-slate-300 shadow-sm resize-none h-20"
+                      placeholder="Client's office address"
+                    />
+                  </div>
+
+                  {/* Billing Details */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Billing Details</label>
+                    <textarea
+                      value={form.billing_details}
+                      onChange={(e) => setForm({ ...form, billing_details: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all placeholder:text-slate-300 shadow-sm resize-none h-20"
+                      placeholder="Specific billing instructions"
+                    />
                   </div>
                 </div>
 

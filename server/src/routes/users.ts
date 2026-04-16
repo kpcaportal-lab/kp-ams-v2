@@ -23,7 +23,7 @@ router.get('/', requireRole('admin', 'partner', 'director'), async (_req: Reques
 router.get('/managers', async (_req: Request, res: Response) => {
     try {
         const result = await pool.query(
-            "SELECT id, full_name, display_name FROM profiles WHERE role='manager' AND is_active=true ORDER BY full_name"
+            "SELECT id, full_name, display_name FROM profiles WHERE role IN ('manager', 'assistant_manager') AND is_active=true ORDER BY full_name"
         );
         res.json(result.rows);
     } catch (err) { res.status(500).json({ error: 'Server error' }); }
@@ -39,11 +39,17 @@ router.get('/partners', async (_req: Request, res: Response) => {
     } catch (err) { res.status(500).json({ error: 'Server error' }); }
 });
 
-// POST /api/users — admin only
-router.post('/', requireRole('admin'), async (req: Request, res: Response) => {
+// POST /api/users — admin, partner, director
+router.post('/', requireRole('admin', 'partner', 'director'), async (req: Request, res: Response) => {
     try {
         const bcrypt = require('bcryptjs');
         const { email, full_name, display_name, role, password, reports_to } = req.body;
+        
+        // Prevent partners and directors from making admins
+        if (req.user?.role !== 'admin' && role === 'admin') {
+            return res.status(403).json({ error: 'Only admins can create other admins' });
+        }
+
         const hash = await bcrypt.hash(password || 'KpAms@2025', 10);
         const result = await pool.query(
             'INSERT INTO profiles (email, password_hash, role, full_name, display_name, reports_to) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, email, role, full_name',

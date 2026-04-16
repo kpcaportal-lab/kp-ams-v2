@@ -38,11 +38,11 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST /api/clients
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const { name, gstn, notes } = req.body;
+        const { name, gstn, notes, industry, address, billing_details } = req.body;
         if (!name) return res.status(400).json({ error: 'Client name required' });
         const result = await pool.query(
-            'INSERT INTO clients (name, gstn, notes, added_by) VALUES ($1,$2,$3,$4) RETURNING *',
-            [name, gstn || null, notes || null, req.user!.id]
+            'INSERT INTO clients (name, gstn, notes, industry, address, billing_details, added_by) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
+            [name, gstn || null, notes || null, industry || null, address || null, billing_details || null, req.user!.id]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
@@ -51,10 +51,10 @@ router.post('/', async (req: Request, res: Response) => {
 // PUT /api/clients/:id
 router.put('/:id', async (req: Request, res: Response) => {
     try {
-        const { name, gstn, notes, status } = req.body;
+        const { name, gstn, notes, industry, address, billing_details, status } = req.body;
         const result = await pool.query(
-            'UPDATE clients SET name=COALESCE($1,name), gstn=COALESCE($2,gstn), notes=COALESCE($3,notes), status=COALESCE($4,status), updated_at=NOW() WHERE id=$5 RETURNING *',
-            [name, gstn, notes, status, req.params.id]
+            'UPDATE clients SET name=COALESCE($1,name), gstn=COALESCE($2,gstn), notes=COALESCE($3,notes), industry=COALESCE($4,industry), address=COALESCE($5,address), billing_details=COALESCE($6,billing_details), status=COALESCE($7,status), updated_at=NOW() WHERE id=$8 RETURNING *',
+            [name, gstn, notes, industry, address, billing_details, status, req.params.id]
         );
         res.json(result.rows[0]);
     } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }

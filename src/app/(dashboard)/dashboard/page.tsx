@@ -4,7 +4,7 @@ import React, { useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import {
   TrendingUp, TrendingDown, DollarSign, Briefcase, Users, FileText,
-  ArrowUpRight, CheckCircle, Clock, AlertCircle
+  ArrowUpRight, CheckCircle, Clock, AlertCircle, Search
 } from 'lucide-react';
 import { useAssignmentStore } from '@/store/assignmentStore';
 import { useProposalStore } from '@/store/proposalStore';
@@ -27,6 +27,10 @@ export default function DashboardPage() {
   const { proposals } = useProposalStore();
   const { clients } = useClientStore();
   const { invoices, fetchInvoices } = useBillingStore();
+  
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [isSearchFocused, setIsSearchFocused] = React.useState(false);
+  const [dashboardTab, setDashboardTab] = React.useState<'revenue' | 'billing'>('revenue');
 
   useEffect(() => {
     fetchInvoices();
@@ -49,6 +53,14 @@ export default function DashboardPage() {
       .slice(0, 5);
   }, [assignments]);
 
+  const searchResults = useMemo(() => {
+    if (!searchTerm) return assignments.slice(0, 5);
+    return assignments.filter(a => 
+      a.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      a.proposal_number?.toLowerCase().includes(searchTerm.toLowerCase())
+    ).slice(0, 5);
+  }, [assignments, searchTerm]);
+
   const recentProposals = useMemo(() => {
     return [...proposals]
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
@@ -56,18 +68,6 @@ export default function DashboardPage() {
   }, [proposals]);
 
   const kpiCards = [
-    {
-      label: 'Total Revenue',
-      value: formatIndianCurrency(stats.totalFees, true, true),
-      icon: DollarSign,
-      trend: '+12.3%',
-      trendUp: true,
-      color: 'blue',
-      accent: 'from-blue-600 to-indigo-600',
-      bg: 'bg-blue-500/8',
-      iconBg: 'bg-blue-500/10',
-      iconColor: 'text-blue-600',
-    },
     {
       label: 'Active Assignments',
       value: stats.activeAssignments.toString(),
@@ -81,18 +81,6 @@ export default function DashboardPage() {
       iconColor: 'text-emerald-600',
     },
     {
-      label: 'Billing Progress',
-      value: `${stats.billingPct.toFixed(1)}%`,
-      icon: TrendingUp,
-      trend: formatIndianCurrency(stats.totalBilled, true, true) + ' billed',
-      trendUp: stats.billingPct > 30,
-      color: 'violet',
-      accent: 'from-violet-500 to-purple-600',
-      bg: 'bg-violet-500/8',
-      iconBg: 'bg-violet-500/10',
-      iconColor: 'text-violet-600',
-    },
-    {
       label: 'Pending Proposals',
       value: stats.pendingProposals.toString(),
       icon: Clock,
@@ -103,6 +91,30 @@ export default function DashboardPage() {
       bg: 'bg-amber-500/8',
       iconBg: 'bg-amber-500/10',
       iconColor: 'text-amber-600',
+    },
+    {
+      label: 'Total Clients',
+      value: stats.totalClients.toString(),
+      icon: Users,
+      trend: `${clients.length} registered`,
+      trendUp: true,
+      color: 'blue',
+      accent: 'from-blue-600 to-indigo-600',
+      bg: 'bg-blue-500/8',
+      iconBg: 'bg-blue-500/10',
+      iconColor: 'text-blue-600',
+    },
+    {
+      label: 'Total Invoices',
+      value: invoices.length.toString(),
+      icon: FileText,
+      trend: 'Finalized',
+      trendUp: true,
+      color: 'violet',
+      accent: 'from-violet-500 to-purple-600',
+      bg: 'bg-violet-500/8',
+      iconBg: 'bg-violet-500/10',
+      iconColor: 'text-violet-600',
     },
   ];
 
@@ -163,9 +175,151 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Dashboard</h1>
-        <p className="text-sm text-slate-400 mt-1 font-medium">Overview of your practice management</p>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Dashboard</h1>
+          <p className="text-sm text-slate-400 mt-1 font-medium">Overview of your practice management</p>
+        </div>
+        <div className="relative w-full lg:max-w-md group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={20} />
+          <input
+            type="text"
+            placeholder="Search active assignments, clients, or numbers..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+            className="w-full pl-12 pr-4 py-4 rounded-[1.25rem] bg-white border border-slate-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-400/10 outline-none transition-all font-medium text-slate-700 shadow-sm shadow-slate-200/50"
+          />
+          
+          {/* Search Dropdown Overlay */}
+          {isSearchFocused && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-slate-200 shadow-2xl z-50 overflow-hidden"
+            >
+              <div className="px-4 py-2 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                  {searchTerm ? 'Search Results' : 'Recent Assignments'}
+                </span>
+              </div>
+              <div className="max-h-[300px] overflow-y-auto">
+                {searchResults.length > 0 ? (
+                  searchResults.map((a) => (
+                    <Link 
+                      key={a.id} 
+                      href={`/assignments/${a.id}`}
+                      className="flex items-center gap-3 p-4 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">
+                        {a.proposal_number?.slice(-3) || 'AS'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-bold text-slate-900 truncate">{a.client_name}</div>
+                        <div className="text-xs text-slate-500">{a.proposal_number || 'No Proposal #'}</div>
+                      </div>
+                      <div className="text-[10px] font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded-md uppercase">
+                        {a.status}
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <div className="p-8 text-center text-slate-400 italic text-sm">
+                    No matching assignments found.
+                  </div>
+                )}
+              </div>
+              <div className="p-3 bg-slate-50 border-t border-slate-100 text-center">
+                <Link href="/assignments" className="text-xs font-bold text-blue-600 hover:underline">
+                  View all tactical assignments
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Revenue vs Billing Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="card p-0 overflow-hidden"
+      >
+        <div className="flex border-b border-slate-100 bg-slate-50/50">
+          <button 
+            onClick={() => setDashboardTab('revenue')}
+            className={cn(
+              "px-6 py-4 text-sm font-bold transition-all border-b-2",
+              dashboardTab === 'revenue' 
+                ? "border-blue-600 text-blue-600 bg-white" 
+                : "border-transparent text-slate-500 hover:text-slate-700"
+            )}
+          >
+            Total Revenue
+          </button>
+          <button 
+            onClick={() => setDashboardTab('billing')}
+            className={cn(
+              "px-6 py-4 text-sm font-bold transition-all border-b-2",
+              dashboardTab === 'billing' 
+                ? "border-blue-600 text-blue-600 bg-white" 
+                : "border-transparent text-slate-500 hover:text-slate-700"
+            )}
+          >
+            Billing Progress
+          </button>
+        </div>
+        
+        <div className="p-6">
+          {dashboardTab === 'revenue' ? (
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="flex-1">
+                <div className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-1">Total Estimated Revenue</div>
+                <div className="text-4xl font-black text-slate-900 tracking-tighter">
+                  {formatIndianCurrency(stats.totalFees, true, true)}
+                </div>
+                <p className="text-sm text-slate-500 mt-2 max-w-md">
+                  Aggregate value of all active and completed assignments based on total agreed fees.
+                </p>
+              </div>
+              <div className="w-full md:w-64 h-32 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-white shadow-lg overflow-hidden relative">
+                <div className="relative z-10">
+                  <div className="text-[10px] font-bold uppercase opacity-80 mb-1">Total Billed</div>
+                  <div className="text-xl font-bold">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
+                </div>
+                <TrendingUp size={80} className="absolute -bottom-4 -right-4 opacity-10" />
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <div className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-1">Billing Achievement</div>
+                  <div className="text-4xl font-black text-slate-900 tracking-tighter">
+                    {stats.billingPct.toFixed(1)}%
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-bold text-slate-700">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
+                  <div className="text-xs text-slate-400">out of {formatIndianCurrency(stats.totalFees, true, true)}</div>
+                </div>
+              </div>
+              <div className="w-full h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${stats.billingPct}%` }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-600"
+                />
+              </div>
+              <p className="text-xs text-slate-500 font-medium italic">
+                * Percentages reflect total billed vs total agreed fees across all practice areas.
+              </p>
+            </div>
+          )}
+        </div>
       </motion.div>
 
       {/* KPI Cards */}

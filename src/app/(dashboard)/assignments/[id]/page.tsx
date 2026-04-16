@@ -272,7 +272,7 @@ export default function AssignmentDetailPage() {
                           try {
                             const res = await fetch(`/api/invoices/${inv.id}/download`, {
                               headers: {
-                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                Authorization: `Bearer ${localStorage.getItem('kp_token')}`
                               }
                             });
                             if (!res.ok) throw new Error('Download failed');

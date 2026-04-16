@@ -8,6 +8,7 @@ const initialPartners: User[] = [
   { id: 'p2', full_name: 'Sameer Shah', email: 'sameer@kandp.in', role: 'partner', display_name: 'Sameer Shah (Partner)' },
   { id: 'p3', full_name: 'Anjali Sharma', email: 'anjali@kandp.in', role: 'partner', display_name: 'Anjali Sharma (Partner)' },
   { id: 'p4', full_name: 'Vikram Mehta', email: 'vikram@kandp.in', role: 'partner', display_name: 'Vikram Mehta' },
+  { id: 'p5', full_name: 'Hamza Momin', email: 'hamza.momin@kpis.co.in', role: 'partner', display_name: 'Hamza Momin (Partner)' },
   { id: 'd1', full_name: 'Amit Verma', email: 'amit@kandp.in', role: 'director', display_name: 'Amit Verma (Director)' },
 ];
 

@@ -60,6 +60,10 @@ export default function UsersPage() {
     partner: 'bg-blue-50 text-blue-700 border-blue-200',
     director: 'bg-amber-50 text-amber-700 border-amber-200',
     manager: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    assistant_manager: 'bg-teal-50 text-teal-700 border-teal-200',
+    sr_executive: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    executive: 'bg-violet-50 text-violet-700 border-violet-200',
+    analyst: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200',
     staff: 'bg-gray-50 text-gray-700 border-gray-200'
   };
 
@@ -149,12 +153,32 @@ export default function UsersPage() {
                 <Shield className="w-3.5 h-3.5" />
                 {user.role} Access
               </div>
-              <button 
-                onClick={() => handleEdit(user)}
-                className="p-2 -mr-2 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors group/edit"
-              >
-                <Edit3 className="w-4 h-4 group-hover/edit:text-blue-600" />
-              </button>
+              <div className="flex items-center gap-2">
+                {isAdmin && user.id !== currentUser?.id && (
+                  <button 
+                    onClick={async () => {
+                      if (confirm(`Are you sure you want to login as ${user.full_name}?`)) {
+                        try {
+                          await useAuthStore.getState().loginAs(user.id);
+                          window.location.href = '/dashboard';
+                        } catch (err) {
+                          toast.error('Failed to impersonate user');
+                        }
+                      }
+                    }}
+                    className="p-2 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 transition-colors"
+                    title="Login As"
+                  >
+                    <UserCircle className="w-4 h-4" />
+                  </button>
+                )}
+                <button 
+                  onClick={() => handleEdit(user)}
+                  className="p-2 -mr-2 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors group/edit"
+                >
+                  <Edit3 className="w-4 h-4 group-hover/edit:text-blue-600" />
+                </button>
+              </div>
             </div>
           </motion.div>
         ))}

@@ -1,49 +1,55 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, AlertCircle } from 'lucide-react';
 import { useAssignmentStore } from '@/store/assignmentStore';
-import { CATEGORY_LABELS } from '@/types';
+import { CATEGORY_LABELS, AssignmentCategory, AssignmentSubcategory, BillingCycle } from '@/types';
+import api from '@/lib/api';
 
 interface AddAssignmentModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
+interface ClientOption {
+  id: string;
+  name: string;
+}
+
 export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModalProps) {
   const { addAssignment } = useAssignmentStore();
+  const [clients, setClients] = useState<ClientOption[]>([]);
   const [form, setForm] = useState({
-    client_name: '',
-    category: '1' as '1' | '2' | '3',
-    subcategory: 'audit',
+    client_id: '',
+    category: 'A' as AssignmentCategory,
+    subcategory: 'statutory_audit' as AssignmentSubcategory,
     total_fees: 0,
-    status: 'draft' as 'active' | 'draft' | 'completed',
-    billing_cycle: 'monthly' as 'monthly' | 'quarterly' | 'annually',
-    fiscal_year: '2023-24',
+    billing_cycle: 'monthly' as BillingCycle,
+    fiscal_year: '2025-26',
     scope_item: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (open) {
+      api.get('/api/clients').then(res => {
+        setClients(res.data.map((c: any) => ({ id: c.id, name: c.name })));
+      }).catch(() => setClients([]));
+    }
+  }, [open]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addAssignment({
-      ...form,
-      id: Math.random().toString(36).substr(2, 9),
-      partner_id: 'default',
-      partner_name: 'Unassigned',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    } as any);
+    await addAssignment(form);
     setOpen(false);
     // Reset form
     setForm({
-      client_name: '',
-      category: '1',
-      subcategory: 'audit',
+      client_id: '',
+      category: 'A' as AssignmentCategory,
+      subcategory: 'statutory_audit' as AssignmentSubcategory,
       total_fees: 0,
-      status: 'draft',
-      billing_cycle: 'monthly',
-      fiscal_year: '2023-24',
+      billing_cycle: 'monthly' as BillingCycle,
+      fiscal_year: '2025-26',
       scope_item: ''
     });
   };
@@ -82,16 +88,20 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
 
             <form onSubmit={handleSubmit} className="p-8 space-y-5">
               <div className="space-y-4">
-                {/* Client Name */}
+                {/* Client Selection */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Client Name</label>
-                  <input
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Client</label>
+                  <select
                     required
-                    value={form.client_name}
-                    onChange={(e) => setForm({ ...form, client_name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
-                    placeholder="Enter client name"
-                  />
+                    value={form.client_id}
+                    onChange={(e) => setForm({ ...form, client_id: e.target.value })}
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                  >
+                    <option value="">Select a client</option>
+                    {clients.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Scope Item */}
@@ -120,17 +130,17 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     </select>
                   </div>
 
-                  {/* Status */}
+                  {/* Fiscal Year */}
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Initial Status</label>
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Fiscal Year</label>
                     <select
-                      value={form.status}
-                      onChange={(e) => setForm({ ...form, status: e.target.value as any })}
+                      value={form.fiscal_year}
+                      onChange={(e) => setForm({ ...form, fiscal_year: e.target.value })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                     >
-                      <option value="draft">Draft</option>
-                      <option value="active">Active</option>
-                      <option value="completed">Completed</option>
+                      <option value="2024-25">2024-25</option>
+                      <option value="2025-26">2025-26</option>
+                      <option value="2026-27">2026-27</option>
                     </select>
                   </div>
                 </div>

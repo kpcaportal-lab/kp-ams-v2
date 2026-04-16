@@ -16,38 +16,34 @@ interface EditAssignmentModalProps {
 export default function EditAssignmentModal({ open, setOpen, assignment }: EditAssignmentModalProps) {
   const { updateAssignment } = useAssignmentStore();
   const [form, setForm] = useState({
-    client_name: '',
     category: 'A' as any,
     subcategory: 'internal_audit' as any,
     total_fees: 0,
-    status: 'draft' as any,
     billing_cycle: 'monthly' as any,
-    fiscal_year: '2023-24',
     scope_item: ''
   });
 
   useEffect(() => {
     if (assignment) {
       setForm({
-        client_name: assignment.client_name || '',
         category: assignment.category as any,
         subcategory: assignment.subcategory || ('internal_audit' as any),
-        total_fees: assignment.total_fees ?? assignment.fees ?? 0,
-        status: assignment.status as any,
+        total_fees: assignment.total_fees ?? (assignment as any).fees ?? 0,
         billing_cycle: assignment.billing_cycle || ('monthly' as any),
-        fiscal_year: assignment.fiscal_year,
-        scope_item: assignment.subcategory || '' // subcategory is often used as scope in this app
+        scope_item: assignment.scope_item || assignment.subcategory || ''
       });
     }
   }, [assignment]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateAssignment(assignment.id, {
-      ...form,
-      updated_at: new Date().toISOString()
+    await updateAssignment(assignment.id, {
+      category: form.category,
+      subcategory: form.subcategory,
+      total_fees: form.total_fees,
+      billing_cycle: form.billing_cycle,
+      scope_item: form.scope_item,
     } as Partial<Assignment>);
-    toast.success('Assignment updated successfully');
     setOpen(false);
   };
 
@@ -85,16 +81,12 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
 
             <form onSubmit={handleSubmit} className="p-8 space-y-5">
               <div className="space-y-4">
-                {/* Client Name */}
+                {/* Client Name (read-only) */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Client Name</label>
-                  <input
-                    required
-                    value={form.client_name}
-                    onChange={(e) => setForm({ ...form, client_name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
-                    placeholder="Enter client name"
-                  />
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Client</label>
+                  <div className="w-full px-4 py-3 rounded-2xl border border-slate-100 bg-slate-50 text-sm font-medium text-slate-600">
+                    {assignment.client_name || 'N/A'}
+                  </div>
                 </div>
 
                 {/* Scope Item */}
@@ -123,17 +115,22 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                     </select>
                   </div>
 
-                  {/* Status */}
+                  {/* Subcategory */}
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Status</label>
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Subcategory</label>
                     <select
-                      value={form.status}
-                      onChange={(e) => setForm({ ...form, status: e.target.value as any })}
+                      value={form.subcategory}
+                      onChange={(e) => setForm({ ...form, subcategory: e.target.value as any })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                     >
-                      <option value="draft">Draft</option>
-                      <option value="active">Active</option>
-                      <option value="completed">Completed</option>
+                      <option value="internal_audit">Internal Audit</option>
+                      <option value="statutory_audit">Statutory Audit</option>
+                      <option value="compliance">Compliance</option>
+                      <option value="tax_filing">Tax Filing</option>
+                      <option value="advisory">Advisory</option>
+                      <option value="ifc_testing">IFC Testing</option>
+                      <option value="forensic_investigation">Forensic Investigation</option>
+                      <option value="other">Other</option>
                     </select>
                   </div>
                 </div>

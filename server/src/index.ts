@@ -16,6 +16,9 @@ import invoiceRoutes from './routes/invoices.js';
 import dashboardRoutes from './routes/dashboard.js';
 import userRoutes from './routes/users.js';
 import auditRoutes from './routes/audit.js';
+import ticketRoutes from './routes/tickets.js';
+import notificationRoutes from './routes/notifications.js';
+import profileRoutes from './routes/profile.js';
 
 // Route registration helper
 const registerRoutes = (app: express.Express) => {
@@ -28,6 +31,9 @@ const registerRoutes = (app: express.Express) => {
     app.use('/api/dashboard', dashboardRoutes);
     app.use('/api/users', userRoutes);
     app.use('/api/audit', auditRoutes);
+    app.use('/api/tickets', ticketRoutes);
+    app.use('/api/notifications', notificationRoutes);
+    app.use('/api/profile', profileRoutes);
     console.log('✅ All routes loaded successfully');
 };
 

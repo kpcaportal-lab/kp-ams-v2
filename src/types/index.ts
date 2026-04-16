@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 // ── User & Auth ─────────────────────────────────────────────────
-export type UserRole = 'admin' | 'partner' | 'director' | 'manager' | 'staff';
+export type UserRole = 'admin' | 'partner' | 'director' | 'manager' | 'assistant_manager' | 'staff' | 'sr_executive' | 'executive' | 'analyst';
 
 export interface User {
   id: string;
@@ -11,6 +11,7 @@ export interface User {
   role: UserRole;
   full_name: string;
   display_name?: string;
+  phone_number?: string;
   reports_to?: string;
   reports_to_name?: string;
   is_active?: boolean;
@@ -32,6 +33,8 @@ export interface Client {
   
   // UI-specific or joined fields
   industry?: string;
+  address?: string;
+  billing_details?: string;
   spocName?: string;
   spocEmail?: string;
   spocPhone?: string;
@@ -116,7 +119,7 @@ export interface Proposal {
 }
 
 // ── Assignment ──────────────────────────────────────────────────
-export type AssignmentCategory = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+export type AssignmentCategory = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K';
 export type AssignmentSubcategory =
   | 'compliance' | 'tax_filing' | 'statutory_audit' | 'internal_audit'
   | 'advisory' | 'ifc_testing' | 'forensic_investigation'
@@ -280,6 +283,11 @@ export const CATEGORY_LABELS: Record<AssignmentCategory, string> = {
   D: 'One Time Assignments',
   E: 'Africa Assignments',
   F: 'Special Assignments',
+  G: 'SOP Designing',
+  H: 'Management Consulting',
+  I: 'Direct (Standard)',
+  J: 'Direct (Special)',
+  K: 'Direct (Private)',
 };
 
 export const SUBCATEGORY_LABELS: Record<AssignmentSubcategory, string> = {

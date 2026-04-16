@@ -22,20 +22,21 @@ export function AddInvoiceModal({ open, setOpen }: AddInvoiceModalProps) {
     invoice_date: new Date().toISOString().split('T')[0]
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const assignment = assignments.find(a => a.id === form.assignment_id);
     if (!assignment) return;
 
-    addInvoice({
-      ...form,
-      id: Math.random().toString(36).substr(2, 9),
+    await addInvoice({
+      assignment_id: form.assignment_id,
       client_id: assignment.client_id,
-      client_name: assignment.client_name,
+      professional_fees: form.professional_fees,
+      out_of_pocket: form.out_of_pocket,
+      narration: form.narration,
+      udin: form.udin || null,
+      invoice_date: form.invoice_date,
       net_amount: form.professional_fees + form.out_of_pocket,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    } as any);
+    });
     setOpen(false);
   };
 

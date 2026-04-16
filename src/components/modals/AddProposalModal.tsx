@@ -1,26 +1,41 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, IndianRupee, FileText } from 'lucide-react';
+import { X, Save, FileText } from 'lucide-react';
 import { useProposalStore } from '@/store/proposalStore';
-import { ASSIGNMENT_TYPE_LABELS, Proposal, ProposalType, AssignmentType, ProposalStatus } from '@/types';
+import { ASSIGNMENT_TYPE_LABELS, ProposalType, AssignmentType } from '@/types';
+import api from '@/lib/api';
 
 interface AddProposalModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
+interface ClientOption {
+  id: string;
+  name: string;
+}
+
 export default function AddProposalModal({ open, setOpen }: AddProposalModalProps) {
   const { addProposal } = useProposalStore();
+  const [clients, setClients] = useState<ClientOption[]>([]);
   const [form, setForm] = useState({
-    client_name: '',
+    client_id: '',
     proposal_type: 'new' as ProposalType,
     assignment_type: 'internal_audit' as AssignmentType,
     quotation_amount: 0,
     fiscal_year: '2025-26',
     notes: ''
   });
+
+  useEffect(() => {
+    if (open) {
+      api.get('/api/clients').then(res => {
+        setClients(res.data.map((c: any) => ({ id: c.id, name: c.name })));
+      }).catch(() => setClients([]));
+    }
+  }, [open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +44,7 @@ export default function AddProposalModal({ open, setOpen }: AddProposalModalProp
     setOpen(false);
     // Reset form
     setForm({
-      client_name: '',
+      client_id: '',
       proposal_type: 'new',
       assignment_type: 'internal_audit',
       quotation_amount: 0,
@@ -77,16 +92,20 @@ export default function AddProposalModal({ open, setOpen }: AddProposalModalProp
 
             <form onSubmit={handleSubmit} className="p-8 space-y-5">
               <div className="space-y-4">
-                {/* Client Name */}
+                {/* Client Selection */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Client Name</label>
-                  <input
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Client</label>
+                  <select
                     required
-                    value={form.client_name}
-                    onChange={(e) => setForm({ ...form, client_name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
-                    placeholder="Enter client name"
-                  />
+                    value={form.client_id}
+                    onChange={(e) => setForm({ ...form, client_id: e.target.value })}
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                  >
+                    <option value="">Select a client</option>
+                    {clients.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

@@ -1,11 +1,13 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
-import { Bell, Search, User as UserIcon, Menu } from 'lucide-react';
+import { Search, User as UserIcon, Menu } from 'lucide-react';
+import { NotificationCenter } from './NotificationCenter';
 
 export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { user } = useAuthStore();
 
   // Simple breadcrumb logic based on pathname
@@ -61,28 +63,14 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           />
         </div>
 
-        {/* Notifications */}
-        <button style={{ 
-          position: 'relative', 
-          width: 40, height: 40, 
-          borderRadius: 8, 
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: 'var(--bg-surface)', 
-          border: '1px solid var(--border-default)',
-          cursor: 'pointer',
-          color: 'var(--text-secondary)'
-        }}>
-          <Bell size={20} />
-          <span style={{
-            position: 'absolute', top: 8, right: 8,
-            width: 8, height: 8, borderRadius: '50%',
-            background: 'var(--color-danger)',
-            border: '2px solid var(--bg-surface)'
-          }} />
-        </button>
+        <NotificationCenter />
 
         {/* User Profile */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingLeft: '1.5rem', borderLeft: '1px solid var(--border-default)' }} className="user-profile">
+        <div 
+          onClick={() => router.push('/profile')}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingLeft: '1.5rem', borderLeft: '1px solid var(--border-default)', cursor: 'pointer' }} 
+          className="user-profile"
+        >
           <div style={{ textAlign: 'right' }} className="hide-on-mobile">
             <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)', lineHeight: 1.2 }}>
               {user?.full_name || 'Guest User'}

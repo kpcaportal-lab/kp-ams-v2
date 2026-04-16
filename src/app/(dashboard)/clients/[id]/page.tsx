@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   ArrowLeft, Building2, Phone, Mail, Users, Briefcase, FileText,
-  CheckCircle, Clock, Calendar, Globe, Edit2
+  CheckCircle, Clock, Calendar, Globe, Edit2, MapPin, CreditCard
 } from 'lucide-react';
 import { useClientStore } from '@/store/clientStore';
 import { useAssignmentStore } from '@/store/assignmentStore';
@@ -131,15 +131,41 @@ export default function ClientDetailPage() {
               </div>
             </div>
           </div>
-          {client.gstn && (
-            <div className="mt-6 pt-5 border-t border-slate-100/60 flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
-                <Globe size={16} />
-              </div>
-              <div>
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">GSTN</div>
-                <div className="text-sm font-medium text-slate-600 leading-relaxed">{client.gstn}</div>
-              </div>
+          {(client.gstn || client.address || client.billing_details) && (
+            <div className="mt-6 pt-5 border-t border-slate-100/60 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {client.gstn && (
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                    <Globe size={16} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">GSTN</div>
+                    <div className="text-sm font-medium text-slate-600 leading-relaxed">{client.gstn}</div>
+                  </div>
+                </div>
+              )}
+              {client.address && (
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                    <MapPin size={16} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Address</div>
+                    <div className="text-sm font-medium text-slate-600 leading-relaxed max-w-[200px] break-words">{client.address}</div>
+                  </div>
+                </div>
+              )}
+              {client.billing_details && (
+                <div className="flex items-start gap-3 md:col-span-2">
+                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                    <CreditCard size={16} />
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Billing Details</div>
+                    <div className="text-sm font-medium text-slate-600 leading-relaxed whitespace-pre-wrap">{client.billing_details}</div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </motion.div>

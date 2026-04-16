@@ -2,9 +2,55 @@ import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../db/pool.js';
-import { logAuditEvent } from '../middleware/auth.js';
+import { logAuditEvent, authenticate, requireRole } from '../middleware/auth.js';
 
 const router = Router();
+
+// POST /api/auth/login-as/:userId
+router.post('/login-as/:userId', authenticate, requireRole('admin', 'director'), async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+        const result = await pool.query(
+            'SELECT * FROM profiles WHERE id = $1 AND is_active = true',
+            [userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found or inactive' });
+        }
+
+        const user = result.rows[0];
+        const token = jwt.sign(
+            { id: user.id, email: user.email, role: user.role, full_name: user.full_name },
+            process.env.JWT_SECRET as string,
+            { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any }
+        );
+
+        await logAuditEvent(
+            req.user!,
+            'login_as',
+            'auth',
+            userId,
+            { target_email: user.email },
+            req
+        );
+
+        return res.json({
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                role: user.role,
+                full_name: user.full_name,
+                display_name: user.display_name,
+            },
+        });
+    } catch (err: unknown) {
+        const error = err as Error;
+        console.error('Login-as Error:', error.message || error);
+        return res.status(500).json({ error: 'Server error' });
+    }
+});
 
 // POST /api/auth/login
 router.post('/login', async (req: Request, res: Response) => {
@@ -80,6 +126,47 @@ router.get('/me', async (req: Request, res: Response) => {
     } catch {
         return res.status(401).json({ error: 'Invalid token' });
     }
+});
+
+// POST /api/auth/login-as/:userId (Impersonation)
+router.post('/login-as/:userId', authenticate, requireRole('admin', 'director'), async (req: Request, res: Response) => {
+  try {
+    const targetUserId = req.params.userId;
+    
+    // Check if target user exists
+    const targetResult = await pool.query(
+      'SELECT id, email, role, full_name, display_name, reports_to, is_active FROM profiles WHERE id = $1',
+      [targetUserId]
+    );
+
+    if (targetResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Target user not found' });
+    }
+
+    const targetUser = targetResult.rows[0];
+
+    if (!targetUser.is_active) {
+      return res.status(403).json({ error: 'Cannot impersonate an inactive user' });
+    }
+
+    // Generate JWT for the target user but keep reference to real user (not strictly used yet, but good for future)
+    const token = jwt.sign(
+      { 
+        id: targetUser.id, 
+        role: targetUser.role
+      },
+      process.env.JWT_SECRET || 'fallback_secret',
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      token,
+      user: targetUser
+    });
+  } catch (err) {
+    console.error('Impersonation error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 export default router;

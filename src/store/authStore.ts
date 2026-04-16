@@ -11,8 +11,10 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginAs: (userId: string) => Promise<void>;
   logout: () => void;
   setUser: (user: User) => void;
+  fetchUser: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -48,6 +50,22 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      loginAs: async (userId: string) => {
+        set({ isLoading: true });
+        try {
+          const res = await api.post(`/api/auth/login-as/${userId}`);
+          const { token, user } = res.data;
+
+          localStorage.setItem('kp_token', token);
+          document.cookie = `kp_token=${token}; path=/; max-age=86400; SameSite=Lax`;
+
+          set({ user, token, isAuthenticated: true, isLoading: false });
+        } catch (err) {
+          set({ isLoading: false });
+          throw err;
+        }
+      },
+
       logout: () => {
         localStorage.removeItem('kp_token');
         document.cookie = 'kp_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
@@ -55,6 +73,15 @@ export const useAuthStore = create<AuthState>()(
       },
 
       setUser: (user) => set({ user }),
+
+      fetchUser: async () => {
+        try {
+          const res = await api.get('/api/auth/me');
+          set({ user: res.data });
+        } catch (err) {
+          console.error('Failed to fetch user:', err);
+        }
+      },
     }),
     {
       name: 'kp-auth',
