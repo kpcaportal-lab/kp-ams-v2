@@ -29,11 +29,11 @@ export function AddInvoiceModal({ open, setOpen }: AddInvoiceModalProps) {
 
     await addInvoice({
       assignment_id: form.assignment_id,
-      client_id: assignment.client_id,
+      client_name: assignment.client_name,
       professional_fees: form.professional_fees,
       out_of_pocket: form.out_of_pocket,
       narration: form.narration,
-      udin: form.udin || null,
+      udin: form.udin || undefined,
       invoice_date: form.invoice_date,
       net_amount: form.professional_fees + form.out_of_pocket,
     });
