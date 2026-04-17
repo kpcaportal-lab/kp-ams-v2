@@ -8,35 +8,30 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 async function migrate() {
     console.log('🔧 Running database migrations...');
     try {
-        console.log('🔧 Step 1: Schema migration...');
-        const schemaSQL = fs.readFileSync(path.join(__dirname, '../../migrations/001_schema.sql'), 'utf8');
-        await pool.query(schemaSQL);
-        console.log('✅ Schema migration complete');
+        const migrationsDir = path.join(__dirname, '../../migrations');
+        const files = fs.readdirSync(migrationsDir)
+            .filter(file => file.endsWith('.sql'))
+            .sort();
 
-        console.log('🔧 Step 2: Seed data migration...');
-        const seedSQL = fs.readFileSync(path.join(__dirname, '../../migrations/002_seed.sql'), 'utf8');
-        await pool.query(seedSQL);
-        console.log('✅ Seed data migration complete');
+        console.log(`📂 Found ${files.length} migration files`);
 
-        console.log('🔧 Step 3: Work progress migration...');
-        const workProgressSQL = fs.readFileSync(path.join(__dirname, '../../migrations/003_work_progress.sql'), 'utf8');
-        await pool.query(workProgressSQL);
-        console.log('✅ Work progress migration complete');
-
-        console.log('🔧 Step 4: CA workflow migration...');
-        const caWorkflowSQL = fs.readFileSync(path.join(__dirname, '../../migrations/004_ca_workflow.sql'), 'utf8');
-        await pool.query(caWorkflowSQL);
-        console.log('✅ CA workflow migration complete');
-
-        console.log('🔧 Step 5: RBAC migration...');
-        const rbacSQL = fs.readFileSync(path.join(__dirname, '../../migrations/005_rbac.sql'), 'utf8');
-        await pool.query(rbacSQL);
-        console.log('✅ RBAC migration complete');
-
-        console.log('🔧 Step 6: Staff role migration...');
-        const staffSQL = fs.readFileSync(path.join(__dirname, '../../migrations/006_staff_role.sql'), 'utf8');
-        await pool.query(staffSQL);
-        console.log('✅ Staff role migration complete');
+        for (const file of files) {
+            console.log(`🔧 Executing migration: ${file}...`);
+            const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
+            try {
+                await pool.query(sql);
+                console.log(`✅ ${file} complete`);
+            } catch (err: any) {
+                console.error(`❌ Error in ${file}:`, err.message);
+                // Continue if it's a "already exists" error, otherwise throw
+                if (err.message.includes('already exists') || err.message.includes('already a member')) {
+                   console.log(`⚠️  Skipping non-critical error in ${file}`);
+                } else {
+                    throw err;
+                }
+            }
+        }
+        console.log('🚀 All migrations finished successfully');
     } catch (err: any) {
         console.error('❌ Migration failed:', err.message);
         if (err.stack) console.error(err.stack);

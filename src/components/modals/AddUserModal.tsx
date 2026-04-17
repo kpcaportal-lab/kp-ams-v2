@@ -11,9 +11,14 @@ interface AddUserModalProps {
 }
 
 const ROLES: { value: UserRole; label: string; description: string }[] = [
-  { value: 'manager', label: 'Manager', description: 'Can manage assignments and billing' },
-  { value: 'director', label: 'Director', description: 'Can review and approve proposals' },
   { value: 'partner', label: 'Partner', description: 'Full access to client and user management' },
+  { value: 'director', label: 'Director', description: 'Can review and approve proposals' },
+  { value: 'manager', label: 'Manager', description: 'Can manage assignments and billing' },
+  { value: 'assistant_manager', label: 'Asst. Manager', description: 'Assists with operational management' },
+  { value: 'sr_executive', label: 'Sr. Executive', description: 'Senior level operations and reporting' },
+  { value: 'executive', label: 'Executive', description: 'General operations and execution' },
+  { value: 'staff', label: 'Staff', description: 'Standard platform access' },
+  { value: 'analyst', label: 'Analyst', description: 'Data analysis and research' },
   { value: 'admin', label: 'Administrator', description: 'System-wide configuration and security' },
 ];
 
@@ -22,7 +27,7 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
     email: '',
     full_name: '',
     display_name: '',
-    role: 'manager' as UserRole,
+    role: 'staff' as UserRole,
     password: '',
     reports_to: ''
   });
@@ -40,7 +45,7 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
       const res = await api.get('/api/users');
       // Filter for users who can be supervisors (Partners and Directors)
       const potentialSupervisors = res.data.filter((u: User) =>
-        u.role === 'partner' || u.role === 'director'
+        u.role === 'partner' || u.role === 'director' || u.role === 'manager'
       );
       setSupervisors(potentialSupervisors);
     } catch (err) {
@@ -72,7 +77,7 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
         email: '',
         full_name: '',
         display_name: '',
-        role: 'manager',
+        role: 'staff',
         password: '',
         reports_to: ''
       });
@@ -86,7 +91,7 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
-      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200 shadow-2xl">
+      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 shadow-2xl">
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-blue-100 border border-blue-200 flex items-center justify-center">
@@ -102,12 +107,14 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[calc(100vh-120px)]">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[85vh]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                <UserIcon className="w-3 h-3" />
-                Full Name *
+              <label className="label">
+                <div className="flex items-center gap-2">
+                  <UserIcon className="w-3 h-3" />
+                  Full Name *
+                </div>
               </label>
               <input
                 type="text"
@@ -120,9 +127,11 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
             </div>
 
             <div className="space-y-1">
-              <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                <Mail className="w-3 h-3" />
-                Email Address *
+              <label className="label">
+                <div className="flex items-center gap-2">
+                  <Mail className="w-3 h-3" />
+                  Email Address *
+                </div>
               </label>
               <input
                 type="email"
@@ -137,9 +146,11 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                <UserIcon className="w-3 h-3" />
-                Display Name
+              <label className="label">
+                <div className="flex items-center gap-2">
+                  <UserIcon className="w-3 h-3" />
+                  Display Name
+                </div>
               </label>
               <input
                 type="text"
@@ -151,9 +162,11 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
             </div>
 
             <div className="space-y-1">
-              <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                <Key className="w-3 h-3" />
-                Password
+              <label className="label">
+                <div className="flex items-center gap-2">
+                  <Key className="w-3 h-3" />
+                  Password
+                </div>
               </label>
               <input
                 type="password"
@@ -166,47 +179,51 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
           </div>
 
           <div className="space-y-1">
-            <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-              <Users className="w-3 h-3" />
-              Reporting To (Supervisor)
+            <label className="label">
+              <div className="flex items-center gap-2">
+                <Users className="w-3 h-3" />
+                Reporting To (Supervisor)
+              </div>
             </label>
             <select
-              className="input text-sm h-[42px]"
+              className="select text-sm h-[42px]"
               value={formData.reports_to}
               onChange={(e) => setFormData({ ...formData, reports_to: e.target.value })}
             >
               <option value="">No Supervisor (Direct Admin)</option>
               {supervisors.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.full_name} ({s.role})
+                  {s.full_name} ({s.role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')})
                 </option>
               ))}
             </select>
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-              <Shield className="w-3 h-3" />
-              Security Role
+            <label className="label">
+              <div className="flex items-center gap-2">
+                <Shield className="w-3 h-3" />
+                Security Role
+              </div>
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {ROLES.map((role) => (
                 <button
                   key={role.value}
                   type="button"
                   onClick={() => setFormData({ ...formData, role: role.value })}
-                  className={`flex flex-col items-start p-3 rounded-xl border transition-all text-left ${
+                  className={`flex flex-col items-start p-3 rounded-xl border transition-all text-left group ${
                     formData.role === role.value
                       ? 'bg-blue-50 border-blue-300 ring-1 ring-blue-300'
-                      : 'bg-white border-slate-200 hover:border-slate-300'
+                      : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
-                  <span className={`text-sm font-semibold ${
-                    formData.role === role.value ? 'text-blue-700' : 'text-slate-900'
+                  <span className={`text-[13px] font-bold ${
+                    formData.role === role.value ? 'text-blue-700' : 'text-slate-900 group-hover:text-blue-600'
                   }`}>
                     {role.label}
                   </span>
-                  <span className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                  <span className="text-[11px] text-slate-500 mt-0.5 line-clamp-1 leading-tight">
                     {role.description}
                   </span>
                 </button>

@@ -198,7 +198,7 @@ export default function AssignmentsPage() {
                   <Briefcase size={32} className="text-slate-300" strokeWidth={1.5} />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900">No Assignments Found</h3>
-                <p className="text-slate-500 mt-2 max-w-xs mx-auto text-sm leading-relaxed">We couldn't find any assignments matching your current search criteria.</p>
+                <p className="text-slate-500 mt-2 max-w-xs mx-auto text-sm leading-relaxed">We couldn&apos;t find any assignments matching your current search criteria.</p>
                 <button onClick={() => { setSearchTerm(''); setStatusFilter('all'); setCategoryFilter('all'); }} className="mt-6 text-blue-600 font-bold hover:underline text-sm">Clear all filters</button>
               </div>
             ) : (

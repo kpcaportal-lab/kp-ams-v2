@@ -13,9 +13,9 @@ router.post('/', async (req: Request, res: Response) => {
         const { invoices, batch } = req.body;
         // invoices = array of invoice objects
         const batchId = batch ? uuidv4() : undefined;
-        const results = [];
+        const results: unknown[] = [];
 
-        for (const inv of invoices) {
+        for (const inv of (invoices as any[])) {
             const { assignment_id, invoice_date, udin, kind_attention, reference, address,
                 gst_no, new_sales_ledger, narration, professional_fees, out_of_pocket } = inv;
 
@@ -81,19 +81,23 @@ router.post('/', async (req: Request, res: Response) => {
                         `Invoice Request – ${asgn.client_name} – ${invoice_date}`,
                         emailResult.stubbed ? 'sent' : 'sent']
                     );
-                } catch (emailErr: any) {
+                } catch (emailErr: unknown) {
+                    const errMsg = emailErr instanceof Error ? emailErr.message : 'Unknown email error';
                     await pool.query(
                         `INSERT INTO email_logs (invoice_id, recipient, subject, status, error_msg)
              VALUES ($1,$2,$3,'failed',$4)`,
                         [invoiceRow.id, process.env.ACCOUNTS_EMAIL,
-                        `Invoice Request – ${asgn.client_name} – ${invoice_date}`, emailErr.message]
+                        `Invoice Request – ${asgn.client_name} – ${invoice_date}`, errMsg]
                     );
                 }
             }
         }
 
         res.status(201).json({ success: true, invoices: results, batchId });
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) {
+        console.error('Invoice creation error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // GET /api/invoices — list invoices
@@ -113,7 +117,7 @@ router.get('/', async (req: Request, res: Response) => {
       LEFT JOIN profiles pm ON pm.id = i.generated_by
       LEFT JOIN email_logs el ON el.invoice_id = i.id
       WHERE 1=1`;
-        const params: any[] = [];
+        const params: unknown[] = [];
         if (visibleIds) {
             params.push(visibleIds);
             query += ` AND i.generated_by = ANY($${params.length})`;
@@ -121,7 +125,10 @@ router.get('/', async (req: Request, res: Response) => {
         query += ' ORDER BY i.created_at DESC';
         const result = await pool.query(query, params);
         res.json(result.rows);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) {
+        console.error('Invoice list error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // POST /api/invoices/:id/retry-email
@@ -148,7 +155,7 @@ router.post('/:id/retry-email', async (req: Request, res: Response) => {
         });
         await pool.query('UPDATE email_logs SET status=\'sent\', sent_at=NOW(), retry_count=retry_count+1 WHERE invoice_id=$1', [req.params.id]);
         res.json({ success: true });
-    } catch (err) { res.status(500).json({ error: 'Failed to resend email' }); }
+    } catch (err: unknown) { res.status(500).json({ error: 'Failed to resend email' }); }
 });
 
 // GET /api/invoices/:id/download
@@ -331,14 +338,13 @@ router.get('/:id/download', async (req: Request, res: Response) => {
            .text('This is a computer-generated document. No signature is required.', MARGIN, bottomY + 30, { align: 'center', width: doc.page.width - MARGIN * 2 });
 
         doc.end();
-    } catch (err: any) {
+    } catch (err: unknown) {
+        const error = err as Error;
         console.error('=== INVOICE DOWNLOAD ERROR ===');
-        console.error('Error message:', err?.message);
-        console.error('Error detail:', err?.detail);
-        console.error('Error code:', err?.code);
-        console.error('Error stack:', err?.stack);
+        console.error('Error message:', error?.message);
+        console.error('Error stack:', error?.stack);
         if (!res.headersSent) {
-            res.status(500).json({ error: 'Failed to generate PDF', detail: err?.message });
+            res.status(500).json({ error: 'Failed to generate PDF', detail: error?.message });
         }
     }
 });

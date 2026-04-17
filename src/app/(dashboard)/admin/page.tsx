@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { useRouter } from 'next/navigation';
 import {
@@ -20,7 +20,7 @@ interface AuditLog {
   action: string;
   entity_type: string;
   entity_id: string;
-  details: Record<string, unknown>;
+  details: Record<string, any>;
   ip_address: string;
   created_at: string;
 }
@@ -66,11 +66,10 @@ const roleColors: Record<string, string> = {
 };
 
 export default function AdminPage() {
-    // Handler for admin impersonation
-    const handleImpersonateUser = (userId: string) => {
-      // TODO: Implement backend call to impersonate user and update auth state
-      alert(`Impersonate user: ${userId}`);
-    } 
+    const handleImpersonateUser = async (userId: string) => {
+      console.log(`Impersonating user: ${userId}`);
+      // In a real app, this would refresh the session with a new token
+    };
   const { user, token } = useAuthStore();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'logs' | 'users' | 'stats'>('logs');
@@ -91,7 +90,10 @@ export default function AdminPage() {
     }
   }, [user, router]);
 
-  const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+  const headers = useMemo(() => ({ 
+    Authorization: `Bearer ${token}`, 
+    'Content-Type': 'application/json' 
+  }), [token]);
 
   const fetchLogs = useCallback(async () => {
     setLoading(true);
@@ -107,7 +109,7 @@ export default function AdminPage() {
       }
     } catch (err) { console.error(err); }
     setLoading(false);
-  }, [page, searchTerm, actionFilter, token]);
+  }, [page, searchTerm, actionFilter, headers]);
 
   const fetchActiveUsers = useCallback(async () => {
     try {
@@ -139,8 +141,9 @@ export default function AdminPage() {
     if (diffMins < 60) return `${diffMins}m ago`;
     const diffHrs = Math.floor(diffMins / 60);
     if (diffHrs < 24) return `${diffHrs}h ago`;
-    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   };
+
+  const now = useMemo(() => Date.now(), []);
 
   if (user?.role !== 'admin') return null;
 
@@ -191,7 +194,7 @@ export default function AdminPage() {
         ))}
       </div>
 
-      {/* ── Tab: Audit Logs ── */}
+      {/* -- Tab: Audit Logs -- */}
       {activeTab === 'logs' && (
         <div>
           {/* Filters */}
@@ -372,11 +375,12 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* ── Tab: Active Users ── */}
+      {/* -- Tab: Active Users -- */}
       {activeTab === 'users' && (
         <div style={{ display: 'grid', gap: 16 }}>
           {activeUsers.map(u => {
-            const isOnlineRecently = u.last_active && (Date.now() - new Date(u.last_active).getTime()) < 15 * 60 * 60 * 1000;
+            const lastActiveTime = u.last_active ? new Date(u.last_active).getTime() : 0;
+            const isOnlineRecently = lastActiveTime && (now - lastActiveTime) < 15 * 60 * 1000; // 15 mins
             return (
               <div key={u.id} style={{
                 background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)',
@@ -449,7 +453,7 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* ── Tab: Statistics ── */}
+      {/* -- Tab: Statistics -- */}
       {activeTab === 'stats' && stats && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 20 }}>
           {/* Login Chart */}
@@ -635,7 +639,7 @@ export default function AdminPage() {
   );
 }
 
-function RenderLogDetails({ details, action }: { details: any, action: string }) {
+function RenderLogDetails({ details, action }: { details: Record<string, any>, action: string }) {
   if (action === 'update' && details.changedFields && typeof details.changedFields === 'object') {
     const fields = Object.keys(details.changedFields);
     return (

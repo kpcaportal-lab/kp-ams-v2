@@ -2,31 +2,43 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { User } from '@/types';
 
-// Mock Profiles (Partners) based on schema
-const initialPartners: User[] = [
-  { id: 'p1', full_name: 'Sneha Patel', email: 'sneha@kandp.in', role: 'partner', display_name: 'Sneha Patel (Partner)' },
-  { id: 'p2', full_name: 'Sameer Shah', email: 'sameer@kandp.in', role: 'partner', display_name: 'Sameer Shah (Partner)' },
-  { id: 'p3', full_name: 'Anjali Sharma', email: 'anjali@kandp.in', role: 'partner', display_name: 'Anjali Sharma (Partner)' },
-  { id: 'p4', full_name: 'Vikram Mehta', email: 'vikram@kandp.in', role: 'partner', display_name: 'Vikram Mehta' },
-  { id: 'p5', full_name: 'Hamza Momin', email: 'hamza.momin@kpis.co.in', role: 'partner', display_name: 'Hamza Momin (Partner)' },
-  { id: 'd1', full_name: 'Amit Verma', email: 'amit@kandp.in', role: 'director', display_name: 'Amit Verma (Director)' },
-];
+import api from '@/lib/api';
 
 interface UserState {
   partners: User[];
+  managers: User[];
   isLoading: boolean;
+  error: string | null;
+  fetchPartners: () => Promise<void>;
+  fetchManagers: () => Promise<void>;
   getPartnerById: (id: string) => User | undefined;
 }
 
-export const useUserStore = create<UserState>()(
-  persist(
-    (set, get) => ({
-      partners: initialPartners,
-      isLoading: false,
-      getPartnerById: (id) => get().partners.find(p => p.id === id),
-    }),
-    {
-      name: 'kp-users',
+export const useUserStore = create<UserState>()((set, get) => ({
+  partners: [],
+  managers: [],
+  isLoading: false,
+  error: null,
+
+  fetchPartners: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.get('/api/users/partners');
+      set({ partners: response.data, isLoading: false });
+    } catch (err: unknown) {
+      set({ error: (err as Error).message, isLoading: false });
     }
-  )
-);
+  },
+
+  fetchManagers: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.get('/api/users/managers');
+      set({ managers: response.data, isLoading: false });
+    } catch (err: unknown) {
+      set({ error: (err as Error).message, isLoading: false });
+    }
+  },
+
+  getPartnerById: (id) => get().partners.find(p => p.id === id),
+}));

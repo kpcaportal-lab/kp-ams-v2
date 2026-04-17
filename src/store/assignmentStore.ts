@@ -23,8 +23,8 @@ export const useAssignmentStore = create<AssignmentStore>((set, get) => ({
     try {
       const response = await api.get('/api/assignments');
       set({ assignments: response.data, isLoading: false });
-    } catch (err: any) {
-      const message = err.response?.data?.message || 'Failed to fetch assignments';
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.message || 'Failed to fetch assignments';
       set({ error: message, isLoading: false });
       toast.error(message);
     }
@@ -36,8 +36,8 @@ export const useAssignmentStore = create<AssignmentStore>((set, get) => ({
       const response = await api.get(`/api/assignments/${id}`);
       set({ isLoading: false });
       return response.data;
-    } catch (err: any) {
-      const message = err.response?.data?.message || 'Failed to fetch assignment details';
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.message || 'Failed to fetch assignment details';
       set({ error: message, isLoading: false });
       toast.error(message);
       return null;
@@ -53,8 +53,8 @@ export const useAssignmentStore = create<AssignmentStore>((set, get) => ({
         isLoading: false
       }));
       toast.success('Assignment created successfully');
-    } catch (err: any) {
-      const message = err.response?.data?.message || 'Failed to create assignment';
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.message || 'Failed to create assignment';
       set({ error: message, isLoading: false });
       toast.error(message);
     }
@@ -69,8 +69,8 @@ export const useAssignmentStore = create<AssignmentStore>((set, get) => ({
         isLoading: false
       }));
       toast.success('Assignment updated successfully');
-    } catch (err: any) {
-      const message = err.response?.data?.message || 'Failed to update assignment';
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.message || 'Failed to update assignment';
       set({ error: message, isLoading: false });
       toast.error(message);
     }

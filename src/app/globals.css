@@ -27,8 +27,8 @@
   --text-secondary: #475569; /* slate-600 */
   --text-muted: #94a3b8; /* slate-400 */
   --text-light: #64748b; /* slate-500 */
-  --text-inverted: #FFFFFF; /* Kept for compatibility with existing components */
-  --text-placeholder: #A8B8CC; /* Kept for compatibility with existing components */
+  --text-inverted: #FFFFFF;
+  --text-placeholder: #94a3b8;
   
   /* Primary colors - blue-600 */
   --color-primary: #2563eb;
@@ -140,6 +140,45 @@ body {
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+/* ── Custom Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 20px;
+  border: 2px solid var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ── Animations ──────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 ::selection {

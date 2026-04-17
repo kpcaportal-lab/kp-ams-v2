@@ -23,7 +23,7 @@ router.get('/', async (req: Request, res: Response) => {
       LEFT JOIN proposals p ON p.id = a.proposal_id
       WHERE 1=1`;
 
-        const params: any[] = [];
+        const params: unknown[] = [];
 
         // ── RBAC filtering ──
         const visibleIds = await getVisibleUserIds(req.user!);
@@ -43,7 +43,7 @@ router.get('/', async (req: Request, res: Response) => {
         query += ' ORDER BY a.created_at DESC';
         const result = await pool.query(query, params);
         res.json(result.rows);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // GET /api/assignments/:id
@@ -86,7 +86,7 @@ router.get('/:id', async (req: Request, res: Response) => {
             invoices: invoices.rows,
             history: history.rows
         });
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // POST /api/assignments
@@ -124,7 +124,7 @@ router.post('/', async (req: Request, res: Response) => {
         await logAuditEvent(req.user!, 'create', 'assignment', result.rows[0].id, { client_id, total_fees }, req);
 
         res.status(201).json(result.rows[0]);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // PUT /api/assignments/:id
@@ -136,8 +136,8 @@ router.put('/:id', async (req: Request, res: Response) => {
         const fields = ['category', 'scope_areas', 'total_fees', 'billing_cycle', 'partner_id',
             'manager_id', 'start_date', 'end_date', 'notes', 'gstn', 'subcategory', 'assessment_year', 'scope_item'];
         const updates: string[] = [];
-        const params: any[] = [];
-        const changedFields: Array<{ field: string; old: any; new: any }> = [];
+        const params: unknown[] = [];
+        const changedFields: Array<{ field: string; old: unknown; new: unknown }> = [];
 
         for (const f of fields) {
             if (req.body[f] !== undefined && req.body[f] !== old.rows[0][f]) {
@@ -165,7 +165,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 
         const updated = await pool.query('SELECT * FROM assignments WHERE id=$1', [req.params.id]);
         res.json(updated.rows[0]);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // PATCH /api/assignments/:id/confirm
@@ -181,7 +181,7 @@ router.patch('/:id/confirm', async (req: Request, res: Response) => {
         );
         await logAuditEvent(req.user!, 'update', 'assignment', req.params.id, { action: 'confirm', status: 'active' }, req);
         res.json({ success: true });
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // PUT /api/assignments/:id/allocations
@@ -191,7 +191,7 @@ router.put('/:id/allocations', async (req: Request, res: Response) => {
         const assignment = await pool.query('SELECT total_fees FROM assignments WHERE id=$1', [req.params.id]);
         if (!assignment.rows.length) return res.status(404).json({ error: 'Not found' });
 
-        const totalAllocated = allocations.reduce((sum: number, a: any) => sum + Number(a.amount), 0);
+        const totalAllocated = allocations.reduce((sum: number, a: { amount: number }) => sum + Number(a.amount), 0);
         const totalFees = Number(assignment.rows[0].total_fees);
 
         if (Math.abs(totalAllocated - totalFees) > 1) {
@@ -215,7 +215,7 @@ router.put('/:id/allocations', async (req: Request, res: Response) => {
         await logAuditEvent(req.user!, 'update', 'fee_allocation', req.params.id, { allocations }, req);
 
         res.json({ success: true });
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 export default router;

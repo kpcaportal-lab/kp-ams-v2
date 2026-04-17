@@ -7,7 +7,7 @@ interface BillingStore {
   invoices: Invoice[];
   loading: boolean;
   fetchInvoices: () => Promise<void>;
-  addInvoice: (invoiceData: any) => Promise<Invoice | null>;
+  addInvoice: (invoiceData: Partial<Invoice>) => Promise<Invoice | null>;
   updateInvoice: (id: string, updates: Partial<Invoice>) => void;
 }
 
@@ -40,8 +40,8 @@ export const useBillingStore = create<BillingStore>((set) => ({
         set({ loading: false });
       }
       return createdInvoice;
-    } catch (err: any) {
-      const message = err.response?.data?.error || 'Failed to generate invoice';
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.error || 'Failed to generate invoice';
       console.error('Failed to create invoice:', err);
       set({ loading: false });
       toast.error(message);

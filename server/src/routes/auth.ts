@@ -23,7 +23,7 @@ router.post('/login-as/:userId', authenticate, requireRole('admin', 'director'),
         const token = jwt.sign(
             { id: user.id, email: user.email, role: user.role, full_name: user.full_name },
             process.env.JWT_SECRET as string,
-            { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any }
+            { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any } // expiresIn can be string or number, library needs this cast sometimes if type is strict
         );
 
         await logAuditEvent(
@@ -128,45 +128,6 @@ router.get('/me', async (req: Request, res: Response) => {
     }
 });
 
-// POST /api/auth/login-as/:userId (Impersonation)
-router.post('/login-as/:userId', authenticate, requireRole('admin', 'director'), async (req: Request, res: Response) => {
-  try {
-    const targetUserId = req.params.userId;
-    
-    // Check if target user exists
-    const targetResult = await pool.query(
-      'SELECT id, email, role, full_name, display_name, reports_to, is_active FROM profiles WHERE id = $1',
-      [targetUserId]
-    );
 
-    if (targetResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Target user not found' });
-    }
-
-    const targetUser = targetResult.rows[0];
-
-    if (!targetUser.is_active) {
-      return res.status(403).json({ error: 'Cannot impersonate an inactive user' });
-    }
-
-    // Generate JWT for the target user but keep reference to real user (not strictly used yet, but good for future)
-    const token = jwt.sign(
-      { 
-        id: targetUser.id, 
-        role: targetUser.role
-      },
-      process.env.JWT_SECRET || 'fallback_secret',
-      { expiresIn: '24h' }
-    );
-
-    res.json({
-      token,
-      user: targetUser
-    });
-  } catch (err) {
-    console.error('Impersonation error:', err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
 
 export default router;

@@ -15,6 +15,8 @@ export interface User {
   reports_to?: string;
   reports_to_name?: string;
   is_active?: boolean;
+  work_file_url?: string;
+  created_at: string;
 }
 
 // ── Client ──────────────────────────────────────────────────────
@@ -269,7 +271,7 @@ export interface UserWorkProgress {
 // ═══════════════════════════════════════════════════════════════════
 
 export const ASSIGNMENT_TYPE_LABELS: Record<AssignmentType, string> = {
-  internal_audit: 'Internal Audit',
+  internal_audit: 'Engagement Matrix',
   forensic: 'Forensic',
   overseas: 'Overseas',
   mcs: 'Management Consultancy',

@@ -96,7 +96,7 @@ export const getVisibleUserFilter = async (
     managerCol: string,
     partnerCol: string,
     paramOffset: number = 0
-): Promise<{ clause: string; params: any[] }> => {
+): Promise<{ clause: string; params: unknown[] }> => {
     const ids = await getVisibleUserIds(user);
     if (ids === null) {
         return { clause: '', params: [] }; // No filter needed
@@ -132,7 +132,7 @@ export const auditLog = (action: string, entityType: string) => {
                     req.ip || req.headers['x-forwarded-for'] || 'unknown',
                     req.headers['user-agent'] || 'unknown'
                 ]
-            ).catch(err => console.error('Audit log error:', err));
+            ).catch((err: unknown) => console.error('Audit log error:', err));
         }
         next();
     };
@@ -165,7 +165,7 @@ export const logAuditEvent = async (
                 req?.headers['user-agent'] || 'unknown'
             ]
         );
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Audit log error:', err);
     }
 };

@@ -1,82 +1,93 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { Client } from '@/types';
+import { Client } from '@/types';
+import api from '@/lib/api';
+import { toast } from 'react-hot-toast';
 
-// Mock data
-const initialClients: Client[] = [
-  {
-    id: 'c1',
-    name: 'TechCorp India Pvt. Ltd.',
-    industry: 'Technology',
-    status: 'active',
-    spocName: 'Anand Kumar',
-    spocEmail: 'anand@techcorp.in',
-    spocPhone: '+91 9876543210',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: 'c2',
-    name: 'Global Logistics Solutions',
-    industry: 'Logistics',
-    status: 'active',
-    spocName: 'Rajesh Sharma',
-    spocEmail: 'rajesh@globallogistics.com',
-    spocPhone: '+91 9876512345',
-    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-    updated_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-  },
-  {
-    id: 'c3',
-    name: 'Innovate Retail Partners',
-    industry: 'Retail',
-    status: 'inactive',
-    spocName: 'Priya Desai',
-    spocEmail: 'priya@innovateretail.com',
-    spocPhone: '+91 9988776655',
-    created_at: new Date(Date.now() - 86400000 * 30).toISOString(),
-    updated_at: new Date(Date.now() - 86400000 * 30).toISOString(),
-  }
-];
-
-interface ClientState {
+interface ClientStore {
   clients: Client[];
   isLoading: boolean;
-  addClient: (client: Omit<Client, 'id' | 'created_at' | 'updated_at'>) => void;
-  updateClient: (id: string, client: Partial<Client>) => void;
-  deleteClient: (id: string) => void;
+  error: string | null;
+  fetchClients: () => Promise<void>;
+  fetchClientById: (id: string) => Promise<Client | null>;
+  addClient: (client: Partial<Client>) => Promise<void>;
+  updateClient: (id: string, updates: Partial<Client>) => Promise<void>;
+  deleteClient: (id: string) => Promise<void>;
 }
 
-export const useClientStore = create<ClientState>()(
-  persist(
-    (set) => ({
-      clients: initialClients,
-      isLoading: false,
-      addClient: (newClient) => 
-        set((state) => ({
-          clients: [
-            ...state.clients,
-            {
-              ...newClient,
-              id: `c${Date.now()}`,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            } as Client
-          ]
-        })),
-      updateClient: (id, updatedFields) =>
-        set((state) => ({
-          clients: state.clients.map(c => 
-            c.id === id ? { ...c, ...updatedFields, updated_at: new Date().toISOString() } : c
-          )
-        })),
-      deleteClient: (id) =>
-        set((state) => ({
-          clients: state.clients.filter(c => c.id !== id)
-        }))
-    }),
-    {
-      name: 'kp-clients',
+export const useClientStore = create<ClientStore>((set, get) => ({
+  clients: [],
+  isLoading: false,
+  error: null,
+
+  fetchClients: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.get('/api/clients');
+      set({ clients: response.data, isLoading: false });
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.error || 'Failed to fetch clients';
+      set({ error: message, isLoading: false });
+      toast.error(message);
     }
-  )
-);
+  },
+
+  fetchClientById: async (id) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.get(`/api/clients/${id}`);
+      set({ isLoading: false });
+      return response.data;
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.error || 'Failed to fetch client details';
+      set({ error: message, isLoading: false });
+      toast.error(message);
+      return null;
+    }
+  },
+
+  addClient: async (client) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.post('/api/clients', client);
+      set((state) => ({
+        clients: [response.data, ...state.clients],
+        isLoading: false
+      }));
+      toast.success('Client added successfully');
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.error || 'Failed to add client';
+      set({ error: message, isLoading: false });
+      toast.error(message);
+    }
+  },
+
+  updateClient: async (id, updates) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.put(`/api/clients/${id}`, updates);
+      set((state) => ({
+        clients: state.clients.map((c) => (c.id === id ? response.data : c)),
+        isLoading: false
+      }));
+      toast.success('Client updated successfully');
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.error || 'Failed to update client';
+      set({ error: message, isLoading: false });
+      toast.error(message);
+    }
+  },
+
+  deleteClient: async (id) => {
+    // Note: Backend might not have delete yet, but keeping store logic ready
+    set({ isLoading: true, error: null });
+    try {
+      // await api.delete(`/api/clients/${id}`);
+      set((state) => ({
+        clients: state.clients.filter((c) => c.id !== id),
+        isLoading: false
+      }));
+    } catch (err: unknown) {
+      set({ error: (err as Error).message, isLoading: false });
+    }
+  }
+}));

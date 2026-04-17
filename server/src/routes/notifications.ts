@@ -14,7 +14,7 @@ router.get('/', async (req: Request, res: Response) => {
             [req.user!.id]
         );
         res.json(result.rows);
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Error fetching notifications:', err);
         res.status(500).json({ error: 'Server error' });
     }
@@ -29,7 +29,7 @@ router.patch('/:id/read', async (req: Request, res: Response) => {
         );
         if (result.rows.length === 0) return res.status(404).json({ error: 'Notification not found' });
         res.json(result.rows[0]);
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Error updating notification:', err);
         res.status(500).json({ error: 'Server error' });
     }
@@ -43,7 +43,7 @@ router.post('/read-all', async (req: Request, res: Response) => {
             [req.user!.id]
         );
         res.json({ success: true });
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Error marking all as read:', err);
         res.status(500).json({ error: 'Server error' });
     }

@@ -25,7 +25,7 @@ export const useTicketStore = create<TicketStore>((set, get) => ({
     fetchTickets: async () => {
         set({ isLoading: true });
         try {
-            const res = await api.get('/tickets');
+            const res = await api.get('/api/tickets');
             set({ tickets: res.data });
         } catch (error) {
             console.error('Failed to fetch tickets', error);
@@ -35,7 +35,7 @@ export const useTicketStore = create<TicketStore>((set, get) => ({
     },
     createTicket: async (data) => {
         try {
-            const res = await api.post('/tickets', data);
+            const res = await api.post('/api/tickets', data);
             set({ tickets: [res.data, ...get().tickets] });
         } catch (error) {
             console.error('Failed to create ticket', error);
@@ -44,7 +44,7 @@ export const useTicketStore = create<TicketStore>((set, get) => ({
     },
     updateTicketStatus: async (id, status) => {
         try {
-            const res = await api.patch(`/tickets/${id}`, { status });
+            const res = await api.patch(`/api/tickets/${id}`, { status });
             // Only update local copy if strictly needed or refetch
             // We'll update the local object
             const updated = get().tickets.map(t => 

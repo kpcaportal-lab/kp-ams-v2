@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, AlertCircle } from 'lucide-react';
 import { useAssignmentStore } from '@/store/assignmentStore';
-import { CATEGORY_LABELS, AssignmentCategory, AssignmentSubcategory, BillingCycle } from '@/types';
+import { CATEGORY_LABELS, SUBCATEGORY_LABELS, AssignmentCategory, AssignmentSubcategory, BillingCycle } from '@/types';
 import api from '@/lib/api';
 
 interface AddAssignmentModalProps {
@@ -20,8 +20,13 @@ interface ClientOption {
 export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModalProps) {
   const { addAssignment } = useAssignmentStore();
   const [clients, setClients] = useState<ClientOption[]>([]);
+  const [partners, setPartners] = useState<any[]>([]);
+  const [managers, setManagers] = useState<any[]>([]);
   const [form, setForm] = useState({
     client_id: '',
+    gstn: '',
+    partner_id: '',
+    manager_id: '',
     category: 'A' as AssignmentCategory,
     subcategory: 'statutory_audit' as AssignmentSubcategory,
     total_fees: 0,
@@ -35,6 +40,14 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
       api.get('/api/clients').then(res => {
         setClients(res.data.map((c: any) => ({ id: c.id, name: c.name })));
       }).catch(() => setClients([]));
+      
+      api.get('/api/users/partners').then(res => {
+        setPartners(res.data || []);
+      }).catch(() => setPartners([]));
+
+      api.get('/api/users/managers').then(res => {
+        setManagers(res.data || []);
+      }).catch(() => setManagers([]));
     }
   }, [open]);
 
@@ -45,6 +58,9 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
     // Reset form
     setForm({
       client_id: '',
+      gstn: '',
+      partner_id: '',
+      manager_id: '',
       category: 'A' as AssignmentCategory,
       subcategory: 'statutory_audit' as AssignmentSubcategory,
       total_fees: 0,
@@ -104,6 +120,18 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                   </select>
                 </div>
 
+                {/* GSTN */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">GSTN</label>
+                  <input
+                    required
+                    value={form.gstn}
+                    onChange={(e) => setForm({ ...form, gstn: e.target.value })}
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 pattern-uppercase"
+                    placeholder="29ABCDE1234F1Z5"
+                  />
+                </div>
+
                 {/* Scope Item */}
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Scope of Work</label>
@@ -130,6 +158,22 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     </select>
                   </div>
 
+                  {/* Subcategory */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Subcategory</label>
+                    <select
+                      value={form.subcategory}
+                      onChange={(e) => setForm({ ...form, subcategory: e.target.value as any })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                    >
+                      {Object.entries(SUBCATEGORY_LABELS).map(([key, label]) => (
+                        <option key={key} value={key}>{label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   {/* Fiscal Year */}
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Fiscal Year</label>
@@ -173,6 +217,40 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                       <option value="monthly">Monthly</option>
                       <option value="quarterly">Quarterly</option>
                       <option value="annually">Annually</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Partner Selection */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Partner</label>
+                    <select
+                      required
+                      value={form.partner_id}
+                      onChange={(e) => setForm({ ...form, partner_id: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                    >
+                      <option value="">Select partner</option>
+                      {partners.map(p => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Manager Selection */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Manager</label>
+                    <select
+                      required
+                      value={form.manager_id}
+                      onChange={(e) => setForm({ ...form, manager_id: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                    >
+                      <option value="">Select manager</option>
+                      {managers.map(m => (
+                        <option key={m.id} value={m.id}>{m.name}</option>
+                      ))}
                     </select>
                   </div>
                 </div>

@@ -59,7 +59,7 @@ router.get('/templates', async (_req: Request, res: Response) => {
             'SELECT * FROM proposal_templates WHERE is_active=true ORDER BY name'
         );
         res.json(result.rows);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // GET /api/proposals/subcategories — assignment subcategory options
@@ -99,7 +99,7 @@ router.get('/', async (req: Request, res: Response) => {
       LEFT JOIN profiles pr ON pr.id = p.prepared_by
       LEFT JOIN profiles pa ON pa.id = p.responsible_partner
       WHERE 1=1`;
-        const params: any[] = [];
+        const params: unknown[] = [];
 
         // ── RBAC filtering ──
         const visibleIds = await getVisibleUserIds(req.user!);
@@ -117,7 +117,7 @@ router.get('/', async (req: Request, res: Response) => {
         query += ' ORDER BY p.created_at DESC';
         const result = await pool.query(query, params);
         res.json(result.rows);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // GET /api/proposals/:id
@@ -152,7 +152,7 @@ router.get('/:id', async (req: Request, res: Response) => {
             versions: versions.rows,
             assignment_count: parseInt(assignmentCount.rows[0].count)
         });
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // POST /api/proposals
@@ -184,7 +184,7 @@ router.post('/', async (req: Request, res: Response) => {
                 1, template_id || null, status || 'pending']
         );
         res.status(201).json(result.rows[0]);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // PUT /api/proposals/:id
@@ -194,7 +194,7 @@ router.put('/:id', async (req: Request, res: Response) => {
             'fee_category', 'increment_details', 'revised_fee', 'proposal_date', 'responsible_partner',
             'status', 'fiscal_year', 'revision_flag', 'revision_details', 'file_url', 'notes', 'template_id'];
         const updates: string[] = [];
-        const params: any[] = [];
+        const params: unknown[] = [];
 
         for (const f of fields) {
             if (req.body[f] !== undefined) {
@@ -210,7 +210,7 @@ router.put('/:id', async (req: Request, res: Response) => {
         );
         if (!result.rows.length) return res.status(404).json({ error: 'Not found' });
         res.json(result.rows[0]);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // ── Status — fully reversible (Won ↔ Lost ↔ Pending) ───────────
@@ -248,7 +248,7 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
         );
 
         res.json({ success: true, status });
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // ── Revisions ──────────────────────────────────────────────────
@@ -306,7 +306,7 @@ router.post('/:id/revise', async (req: Request, res: Response) => {
 
         await dbClient.query('COMMIT');
         res.status(201).json(newProposal.rows[0]);
-    } catch (err) {
+    } catch (err: unknown) {
         await dbClient.query('ROLLBACK');
         console.error(err);
         res.status(500).json({ error: 'Failed to create revision' });
@@ -342,7 +342,7 @@ router.get('/:id/versions', async (req: Request, res: Response) => {
             versions: versions.rows,
             chain: chainProposals.rows
         });
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // ── Assignment Generation from Scope ────────────────────────────
@@ -374,7 +374,7 @@ router.post('/:id/generate-assignments', async (req: Request, res: Response) => 
             return res.status(400).json({ error: 'scope_items array is required' });
         }
 
-        const createdAssignments: any[] = [];
+        const createdAssignments: unknown[] = [];
 
         for (const item of scope_items) {
             const result = await dbClient.query(`
@@ -416,7 +416,7 @@ router.post('/:id/generate-assignments', async (req: Request, res: Response) => 
             message: `${createdAssignments.length} assignment(s) created`,
             assignments: createdAssignments
         });
-    } catch (err) {
+    } catch (err: unknown) {
         await dbClient.query('ROLLBACK');
         console.error(err);
         res.status(500).json({ error: 'Failed to generate assignments' });
@@ -523,7 +523,7 @@ router.get('/:id/export/pdf', async (req: Request, res: Response) => {
         }
 
         doc.end();
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to generate PDF' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Failed to generate PDF' }); }
 });
 
 // GET /api/proposals/:id/export/pptx
@@ -621,7 +621,7 @@ router.get('/:id/export/pptx', async (req: Request, res: Response) => {
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.presentationml.presentation');
         res.setHeader('Content-Disposition', `attachment; filename="Proposal_${p.number.replace(/\//g, '_')}.pptx"`);
         res.send(buffer);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to generate PPTX' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Failed to generate PPTX' }); }
 });
 
 export default router;

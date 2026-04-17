@@ -432,7 +432,7 @@ export default function ProposalDetailsPage() {
                   </div>
                   <div className="flex-1">
                     <h4 className="text-xs font-black text-amber-900 uppercase tracking-widest mb-2">Revision Insights (v{proposal.version_number})</h4>
-                    <p className="text-sm text-amber-800 leading-relaxed font-semibold italic">"{proposal.revision_details || proposal.increment_details}"</p>
+                    <p className="text-sm text-amber-800 leading-relaxed font-semibold italic">&quot;{proposal.revision_details || proposal.increment_details}&quot;</p>
                     <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 bg-amber-200/50 rounded-full text-xs font-black text-amber-900 border border-amber-300/50 shadow-sm">
                       <IndianRupee size={12} />
                       Adjusted Fee: {formatCurrency(proposal.revised_fee || proposal.quotation_amount)}

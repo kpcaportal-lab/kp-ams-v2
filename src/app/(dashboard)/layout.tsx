@@ -5,6 +5,7 @@ import { Header } from '@/components/Header';
 import { useAuthStore } from '@/store/authStore';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 export default function DashboardLayout({
   children,
@@ -20,7 +21,6 @@ export default function DashboardLayout({
     setIsClient(true);
   }, []);
 
-  // Simple client-side catch-all, though middleware handles the real protection
   useEffect(() => {
     if (isClient && !isLoading && !isAuthenticated) {
       router.push('/login');
@@ -29,20 +29,34 @@ export default function DashboardLayout({
 
   if (!isClient || isLoading) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-main)' }}>
-        <div style={{ width: 40, height: 40, border: '4px solid var(--bg-card)', borderTopColor: 'var(--color-primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-        <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
+      <div className="h-full min-h-screen w-full flex flex-col items-center justify-center bg-slate-50 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-100/40 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-100/40 rounded-full blur-[120px]" />
+        
+        <div className="relative flex flex-col items-center">
+          <div className="relative w-16 h-16">
+            <div className="absolute inset-0 border-4 border-slate-200 rounded-full" />
+            <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" />
+            </div>
+          </div>
+          <p className="mt-6 text-sm font-bold text-slate-500 uppercase tracking-[0.2em] animate-pulse">Initializing Portal</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', backgroundColor: 'var(--bg-main)', overflow: 'hidden', position: 'relative' }}>
+    <div className="flex h-screen bg-[#F8FAFC] overflow-hidden selection:bg-blue-100 selection:text-blue-900">
       <Sidebar isMobileOpen={isMobileMenuOpen} setIsMobileOpen={setIsMobileMenuOpen} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', width: '100%' }}>
+      
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <Header onMenuClick={() => setIsMobileMenuOpen(true)} />
-        <main style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', WebkitOverflowScrolling: 'touch' }}>
-          <div style={{ maxWidth: 1400, margin: '0 auto', width: '100%' }}>
+        
+        <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8 md:py-8 lg:px-10 lg:py-10 scroll-smooth">
+          <div className="max-w-[1600px] mx-auto w-full animate-in fade-in slide-in-from-bottom-2 duration-700">
             {children}
           </div>
         </main>

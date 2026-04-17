@@ -2,55 +2,30 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ProposalTemplate } from '@/types';
 
-// Mock Templates based on schema
-const initialTemplates: ProposalTemplate[] = [
-  { 
-    id: 't1', 
-    name: 'Internal Audit Standard Template', 
-    assignment_type: 'internal_audit',
-    template_file_path: '/templates/ia_standard.pptx',
-    prefilled_fields: {},
-    required_fields: ['client_name', 'quotation_amount'],
-    is_active: true,
-    created_at: new Date().toISOString()
-  },
-  { 
-    id: 't2', 
-    name: 'Forensic Investigation Proposal', 
-    assignment_type: 'forensic',
-    template_file_path: '/templates/forensic_v1.pptx',
-    prefilled_fields: {},
-    required_fields: ['client_name', 'scope_areas'],
-    is_active: true,
-    created_at: new Date().toISOString()
-  },
-  { 
-    id: 't3', 
-    name: 'IFC Testing Scope Template', 
-    assignment_type: 'ifc',
-    template_file_path: '/templates/ifc_v2.pptx',
-    prefilled_fields: {},
-    required_fields: ['client_name', 'fiscal_year'],
-    is_active: true,
-    created_at: new Date().toISOString()
-  },
-];
+import api from '@/lib/api';
 
 interface TemplateState {
   templates: ProposalTemplate[];
   isLoading: boolean;
+  error: string | null;
+  fetchTemplates: () => Promise<void>;
   getTemplatesByType: (type: string) => ProposalTemplate[];
 }
 
-export const useTemplateStore = create<TemplateState>()(
-  persist(
-    (set, get) => ({
-      templates: initialTemplates,
-      isLoading: false,
-      getTemplatesByType: (type) => get().templates.filter(t => t.assignment_type === type),
-    }),
-    {
-      name: 'kp-templates',
+export const useTemplateStore = create<TemplateState>()((set, get) => ({
+  templates: [],
+  isLoading: false,
+  error: null,
+
+  fetchTemplates: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await api.get('/api/proposals/templates');
+      set({ templates: response.data, isLoading: false });
+    } catch (err: unknown) {
+      set({ error: (err as Error).message, isLoading: false });
     }
-  )
-);
+  },
+
+  getTemplatesByType: (type) => get().templates.filter(t => t.assignment_type === type),
+}));

@@ -34,7 +34,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
   useEffect(() => {
     if (open) {
       api.get('/api/clients').then(res => {
-        setClients(res.data.map((c: any) => ({ id: c.id, name: c.name })));
+        setClients(res.data.map((c: ClientOption) => ({ id: c.id, name: c.name })));
       }).catch(() => setClients([]));
     }
   }, [open]);

@@ -19,7 +19,7 @@ pool.on('error', (err: Error) => {
     try {
         await pool.query('SELECT 1');
         console.log('Database connection successful');
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Database connection failed:', err);
     }
 })();

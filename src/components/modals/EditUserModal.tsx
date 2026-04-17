@@ -15,9 +15,14 @@ interface EditUserModalProps {
 }
 
 const ROLES: { value: UserRole; label: string; description: string }[] = [
-  { value: 'manager', label: 'Manager', description: 'Can manage assignments and billing' },
-  { value: 'director', label: 'Director', description: 'Can review and approve proposals' },
   { value: 'partner', label: 'Partner', description: 'Full access to client and user management' },
+  { value: 'director', label: 'Director', description: 'Can review and approve proposals' },
+  { value: 'manager', label: 'Manager', description: 'Can manage assignments and billing' },
+  { value: 'assistant_manager', label: 'Asst. Manager', description: 'Assists with operational management' },
+  { value: 'sr_executive', label: 'Sr. Executive', description: 'Senior level operations and reporting' },
+  { value: 'executive', label: 'Executive', description: 'General operations and execution' },
+  { value: 'staff', label: 'Staff', description: 'Standard platform access' },
+  { value: 'analyst', label: 'Analyst', description: 'Data analysis and research' },
   { value: 'admin', label: 'Administrator', description: 'System-wide configuration and security' },
 ];
 
@@ -25,7 +30,7 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
   const [formData, setFormData] = useState({
     full_name: '',
     display_name: '',
-    role: 'manager' as UserRole,
+    role: 'staff' as UserRole,
     reports_to: '',
     is_active: true
   });
@@ -50,10 +55,9 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
   const fetchSupervisors = async () => {
     try {
       const res = await api.get('/api/users');
-      // Filter for users who can be supervisors (Partners and Directors)
-      // Also prevent self-reporting
+      // Filter for users who can be supervisors
       const potentialSupervisors = res.data.filter((u: User) =>
-        (u.role === 'partner' || u.role === 'director') && u.id !== user?.id
+        (u.role === 'partner' || u.role === 'director' || u.role === 'manager') && u.id !== user?.id
       );
       setSupervisors(potentialSupervisors);
     } catch (err) {
@@ -90,7 +94,7 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
-      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200 shadow-2xl">
+      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 shadow-2xl">
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-indigo-100 border border-indigo-200 flex items-center justify-center">
@@ -106,12 +110,14 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[calc(100vh-120px)]">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto max-h-[85vh]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                <UserIcon className="w-3 h-3" />
-                Full Name *
+              <label className="label">
+                <div className="flex items-center gap-2">
+                  <UserIcon className="w-3 h-3" />
+                  Full Name *
+                </div>
               </label>
               <input
                 type="text"
@@ -124,9 +130,11 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
             </div>
 
             <div className="space-y-1">
-              <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                <UserIcon className="w-3 h-3" />
-                Display Name
+              <label className="label">
+                <div className="flex items-center gap-2">
+                  <UserIcon className="w-3 h-3" />
+                  Display Name
+                </div>
               </label>
               <input
                 type="text"
@@ -139,12 +147,14 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
           </div>
 
           <div className="space-y-1">
-            <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-              <Users className="w-3 h-3" />
-              Reporting To (Supervisor)
+            <label className="label">
+              <div className="flex items-center gap-2">
+                <Users className="w-3 h-3" />
+                Reporting To (Supervisor)
+              </div>
             </label>
             <select
-              className={`input text-sm h-[42px] ${!isAdmin ? 'bg-slate-50 cursor-not-allowed opacity-75' : ''}`}
+              className={`select text-sm h-[42px] ${!isAdmin ? 'bg-slate-50 cursor-not-allowed opacity-75' : ''}`}
               value={formData.reports_to}
               onChange={(e) => setFormData({ ...formData, reports_to: e.target.value })}
               disabled={!isAdmin}
@@ -152,35 +162,37 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
               <option value="">No Supervisor (Direct Admin)</option>
               {supervisors.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.full_name} ({s.role})
+                  {s.full_name} ({s.role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')})
                 </option>
               ))}
             </select>
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-              <Shield className="w-3 h-3" />
-              Security Role
+            <label className="label">
+              <div className="flex items-center gap-2">
+                <Shield className="w-3 h-3" />
+                Security Role
+              </div>
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {ROLES.map((role) => (
                 <button
                   key={role.value}
                   type="button"
                   onClick={() => setFormData({ ...formData, role: role.value })}
-                  className={`flex flex-col items-start p-3 rounded-xl border transition-all text-left ${
+                  className={`flex flex-col items-start p-3 rounded-xl border transition-all text-left group ${
                     formData.role === role.value
                       ? 'bg-indigo-50 border-indigo-300 ring-1 ring-indigo-300'
-                      : 'bg-white border-slate-200 hover:border-slate-300'
+                      : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
-                  <span className={`text-sm font-semibold ${
-                    formData.role === role.value ? 'text-indigo-700' : 'text-slate-900'
+                  <span className={`text-[13px] font-bold ${
+                    formData.role === role.value ? 'text-indigo-700' : 'text-slate-900 group-hover:text-indigo-600'
                   }`}>
                     {role.label}
                   </span>
-                  <span className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                  <span className="text-[11px] text-slate-500 mt-0.5 line-clamp-1 leading-tight">
                     {role.description}
                   </span>
                 </button>
@@ -205,14 +217,14 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
             <button
               type="button"
               onClick={onClose}
-              className="btn flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 justify-center h-11"
+              className="btn btn-secondary flex-1 justify-center h-11"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="btn bg-indigo-600 hover:bg-indigo-700 text-white flex-1 justify-center h-11"
+              className="btn btn-primary bg-indigo-600 hover:bg-indigo-700 text-white flex-1 justify-center h-11"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

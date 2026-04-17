@@ -12,7 +12,7 @@ router.patch('/', async (req: Request, res: Response) => {
         const { display_name, phone_number, notification_preferences } = req.body;
         
         let updateFields = [];
-        let params = [];
+        let params: unknown[] = [];
         let counter = 1;
 
         if (display_name !== undefined) {
@@ -36,7 +36,7 @@ router.patch('/', async (req: Request, res: Response) => {
             UPDATE profiles 
             SET ${updateFields.join(', ')} 
             WHERE id = $${counter} 
-            RETURNING id, full_name, display_name, email, role, phone_number;
+            RETURNING id, full_name, display_name, email, role, phone_number, work_file_url;
         `;
 
         const result = await pool.query(query, params);
@@ -45,7 +45,7 @@ router.patch('/', async (req: Request, res: Response) => {
         }
 
         res.json(result.rows[0]);
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Error updating profile:', err);
         res.status(500).json({ error: 'Server error' });
     }

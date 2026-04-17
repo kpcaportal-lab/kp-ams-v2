@@ -28,8 +28,8 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     fetchNotifications: async () => {
         set({ isLoading: true });
         try {
-            const res = await api.get('/notifications');
-            const notifications = res.data;
+            const response = await api.get('/api/notifications');
+            const notifications = response.data;
             const unreadCount = notifications.filter((n: Notification) => !n.is_read).length;
             set({ notifications, unreadCount });
         } catch (error) {
@@ -41,7 +41,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
     markAsRead: async (id: string) => {
         try {
-            await api.patch(`/notifications/${id}/read`);
+            await api.patch(`/api/notifications/${id}/read`);
             const updated = get().notifications.map(n => 
                 n.id === id ? { ...n, is_read: true } : n
             );
@@ -56,7 +56,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
     markAllAsRead: async () => {
         try {
-            await api.post(`/notifications/read-all`);
+            await api.post(`/api/notifications/read-all`);
             const updated = get().notifications.map(n => ({ ...n, is_read: true }));
             set({ notifications: updated, unreadCount: 0 });
         } catch (error) {

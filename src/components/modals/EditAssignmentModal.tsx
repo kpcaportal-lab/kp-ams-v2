@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save, AlertCircle } from 'lucide-react';
 import { useAssignmentStore } from '@/store/assignmentStore';
-import { CATEGORY_LABELS, Assignment } from '@/types';
+import { CATEGORY_LABELS, SUBCATEGORY_LABELS, Assignment } from '@/types';
 import { toast } from 'react-hot-toast';
+import api from '@/lib/api';
 
 interface EditAssignmentModalProps {
   open: boolean;
@@ -15,22 +16,42 @@ interface EditAssignmentModalProps {
 
 export default function EditAssignmentModal({ open, setOpen, assignment }: EditAssignmentModalProps) {
   const { updateAssignment } = useAssignmentStore();
+  const [partners, setPartners] = useState<any[]>([]);
+  const [managers, setManagers] = useState<any[]>([]);
   const [form, setForm] = useState({
+    gstn: '',
     category: 'A' as any,
     subcategory: 'internal_audit' as any,
     total_fees: 0,
     billing_cycle: 'monthly' as any,
-    scope_item: ''
+    scope_item: '',
+    partner_id: '',
+    manager_id: ''
   });
+
+  useEffect(() => {
+    if (open) {
+      api.get('/api/users/partners').then(res => {
+        setPartners(res.data || []);
+      }).catch(() => setPartners([]));
+
+      api.get('/api/users/managers').then(res => {
+        setManagers(res.data || []);
+      }).catch(() => setManagers([]));
+    }
+  }, [open]);
 
   useEffect(() => {
     if (assignment) {
       setForm({
+        gstn: assignment.gstn || '',
         category: assignment.category as any,
         subcategory: assignment.subcategory || ('internal_audit' as any),
         total_fees: assignment.total_fees ?? (assignment as any).fees ?? 0,
         billing_cycle: assignment.billing_cycle || ('monthly' as any),
-        scope_item: assignment.scope_item || assignment.subcategory || ''
+        scope_item: assignment.scope_item || assignment.subcategory || '',
+        partner_id: assignment.partner_id || '',
+        manager_id: assignment.manager_id || ''
       });
     }
   }, [assignment]);
@@ -38,11 +59,14 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await updateAssignment(assignment.id, {
+      gstn: form.gstn,
       category: form.category,
       subcategory: form.subcategory,
       total_fees: form.total_fees,
       billing_cycle: form.billing_cycle,
       scope_item: form.scope_item,
+      partner_id: form.partner_id,
+      manager_id: form.manager_id,
     } as Partial<Assignment>);
     setOpen(false);
   };
@@ -89,6 +113,18 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                   </div>
                 </div>
 
+                {/* GSTN */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">GSTN</label>
+                  <input
+                    required
+                    value={form.gstn}
+                    onChange={(e) => setForm({ ...form, gstn: e.target.value })}
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 pattern-uppercase"
+                    placeholder="29ABCDE1234F1Z5"
+                  />
+                </div>
+
                 {/* Scope Item */}
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Scope of Work</label>
@@ -123,14 +159,9 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                       onChange={(e) => setForm({ ...form, subcategory: e.target.value as any })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                     >
-                      <option value="internal_audit">Internal Audit</option>
-                      <option value="statutory_audit">Statutory Audit</option>
-                      <option value="compliance">Compliance</option>
-                      <option value="tax_filing">Tax Filing</option>
-                      <option value="advisory">Advisory</option>
-                      <option value="ifc_testing">IFC Testing</option>
-                      <option value="forensic_investigation">Forensic Investigation</option>
-                      <option value="other">Other</option>
+                      {Object.entries(SUBCATEGORY_LABELS).map(([key, label]) => (
+                        <option key={key} value={key}>{label}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -163,6 +194,40 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                       <option value="monthly">Monthly</option>
                       <option value="quarterly">Quarterly</option>
                       <option value="annually">Annually</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Partner Selection */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Partner</label>
+                    <select
+                      required
+                      value={form.partner_id}
+                      onChange={(e) => setForm({ ...form, partner_id: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                    >
+                      <option value="">Select partner</option>
+                      {partners.map(p => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Manager Selection */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Manager</label>
+                    <select
+                      required
+                      value={form.manager_id}
+                      onChange={(e) => setForm({ ...form, manager_id: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                    >
+                      <option value="">Select manager</option>
+                      {managers.map(m => (
+                        <option key={m.id} value={m.id}>{m.name}</option>
+                      ))}
                     </select>
                   </div>
                 </div>

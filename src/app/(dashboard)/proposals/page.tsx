@@ -38,7 +38,7 @@ export default function ProposalListPage() {
   // Move loading screen inside the main return to avoid hook violations
 
   const filteredProposals = useMemo(() => {
-    let result = proposals.filter((p) => {
+    const result = proposals.filter((p) => {
       const matchesSearch =
         p.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -298,7 +298,7 @@ export default function ProposalListPage() {
             <div className="flex gap-2">
               <select 
                 value={sortBy} 
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value as 'date' | 'amount' | 'client')}
                 className="w-full bg-slate-800 border-none rounded-xl px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-amber-500 text-white"
               >
                 <option value="date">Date</option>
@@ -360,7 +360,7 @@ export default function ProposalListPage() {
                     transition={{ delay: 0.1 + (idx * 0.03) }}
                     className="hover:bg-amber-50/30 transition-all cursor-pointer group"
                     onClick={(e) => {
-                      if (!(e.target as HTMLElement).closest('button, a')) { // Added 'a' to prevent link clicks from triggering row click
+                      if (!(e.target as HTMLElement).closest('button, a')) { // Added "a" to prevent link clicks from triggering row click
                         window.location.href = `/proposals/${proposal.id}`;
                       }
                     }}

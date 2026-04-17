@@ -14,7 +14,7 @@ router.get('/', async (req: Request, res: Response) => {
             FROM tickets t
             LEFT JOIN profiles p ON t.submitted_by = p.id
         `;
-        let params: any[] = [];
+        let params: unknown[] = [];
 
         // Staff can only see their own tickets, admins/partners can see all, directors/managers see subordinates
         if (req.user!.role !== 'admin' && req.user!.role !== 'partner') {
@@ -26,7 +26,7 @@ router.get('/', async (req: Request, res: Response) => {
 
         const result = await pool.query(query, params);
         res.json(result.rows);
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Error fetching tickets:', err);
         res.status(500).json({ error: 'Server error' });
     }
@@ -44,7 +44,7 @@ router.post('/', async (req: Request, res: Response) => {
             [title, description, priority || 'medium', req.user!.id]
         );
         res.status(201).json(result.rows[0]);
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Error creating ticket:', err);
         res.status(500).json({ error: 'Server error' });
     }
@@ -65,7 +65,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
         );
         if (result.rows.length === 0) return res.status(404).json({ error: 'Ticket not found' });
         res.json(result.rows[0]);
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Error updating ticket:', err);
         res.status(500).json({ error: 'Server error' });
     }

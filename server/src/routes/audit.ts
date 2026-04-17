@@ -28,8 +28,8 @@ router.get('/logs', async (req: Request, res: Response) => {
             LEFT JOIN profiles p ON p.id = al.user_id
             WHERE 1=1`;
         let countQuery = `SELECT COUNT(*) as total FROM audit_logs al WHERE 1=1`;
-        const params: any[] = [];
-        const countParams: any[] = [];
+        const params: unknown[] = [];
+        const countParams: unknown[] = [];
 
         if (user_id) {
             params.push(user_id);
@@ -83,7 +83,7 @@ router.get('/logs', async (req: Request, res: Response) => {
             limit: Number(limit),
             totalPages: Math.ceil(Number(countResult.rows[0].total) / Number(limit))
         });
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Audit logs error:', err);
         res.status(500).json({ error: 'Server error' });
     }
@@ -110,7 +110,7 @@ router.get('/active-users', async (_req: Request, res: Response) => {
         `);
 
         res.json(result.rows);
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Active users error:', err);
         res.status(500).json({ error: 'Server error' });
     }
@@ -153,7 +153,7 @@ router.get('/stats', async (_req: Request, res: Response) => {
             actionBreakdown: actionStats.rows,
             topUsers: topUsers.rows
         });
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Audit stats error:', err);
         res.status(500).json({ error: 'Server error' });
     }
@@ -170,7 +170,7 @@ router.get('/change-history', async (req: Request, res: Response) => {
             FROM change_history ch
             LEFT JOIN profiles p ON p.id = ch.changed_by
             WHERE 1=1`;
-        const params: any[] = [];
+        const params: unknown[] = [];
 
         if (entity_type) { params.push(entity_type); query += ` AND ch.entity_type = $${params.length}`; }
         if (entity_id) { params.push(entity_id); query += ` AND ch.entity_id = $${params.length}`; }
@@ -180,7 +180,7 @@ router.get('/change-history', async (req: Request, res: Response) => {
 
         const result = await pool.query(query, params);
         res.json(result.rows);
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Change history error:', err);
         res.status(500).json({ error: 'Server error' });
     }

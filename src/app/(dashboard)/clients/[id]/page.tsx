@@ -19,17 +19,39 @@ export default function ClientDetailPage() {
   const { id } = useParams();
   const clientId = id as string;
   const router = useRouter();
-  const { clients } = useClientStore();
+  const { clients, fetchClientById } = useClientStore();
   const { assignments } = useAssignmentStore();
   const { proposals } = useProposalStore();
 
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [localClient, setLocalClient] = React.useState<any>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
 
-  const client = clients.find(c => c.id === clientId);
+  React.useEffect(() => {
+    const loadClient = async () => {
+      setIsLoading(true);
+      const data = await fetchClientById(clientId);
+      if (data) {
+        setLocalClient(data);
+      }
+      setIsLoading(false);
+    };
+    loadClient();
+  }, [clientId, fetchClientById]);
+
+  const client = localClient || clients.find(c => c.id === clientId);
 
   // Filter assignments and proposals for this client
   const clientAssignments = assignments.filter(a => a.client_id === clientId);
   const clientProposals = proposals.filter(p => p.client_id === clientId);
+
+  if (isLoading && !client) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   if (!client) {
     return (
@@ -43,6 +65,11 @@ export default function ClientDetailPage() {
       </div>
     );
   }
+
+  const primarySpoc = client.spocs?.find((s: any) => s.is_primary) || client.spocs?.[0];
+  const spocName = primarySpoc?.contact_name || client.spocName || 'N/A';
+  const spocEmail = primarySpoc?.email || client.spocEmail || 'N/A';
+  const spocPhone = primarySpoc?.phone || client.spocPhone || 'N/A';
 
   const statusBadge = client.status === 'active' ? (
     <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
@@ -97,7 +124,7 @@ export default function ClientDetailPage() {
                 </div>
                 <div>
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">SPOC Name</div>
-                  <div className="text-sm font-semibold text-slate-800">{client.spocName}</div>
+                  <div className="text-sm font-semibold text-slate-800">{spocName}</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -106,7 +133,7 @@ export default function ClientDetailPage() {
                 </div>
                 <div>
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">SPOC Email</div>
-                  <div className="text-sm font-semibold text-slate-800">{client.spocEmail}</div>
+                  <div className="text-sm font-semibold text-slate-800">{spocEmail}</div>
                 </div>
               </div>
             </div>
@@ -117,7 +144,7 @@ export default function ClientDetailPage() {
                 </div>
                 <div>
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">SPOC Phone</div>
-                  <div className="text-sm font-semibold text-slate-800">{client.spocPhone}</div>
+                  <div className="text-sm font-semibold text-slate-800">{spocPhone}</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">

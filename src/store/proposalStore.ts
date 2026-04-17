@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Proposal, ProposalStatus } from '@/types';
+import { Proposal, ProposalStatus, Assignment } from '@/types';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
 
@@ -7,13 +7,13 @@ interface ProposalStore {
   proposals: Proposal[];
   isLoading: boolean;
   error: string | null;
-  fetchProposals: (filters?: any) => Promise<void>;
+  fetchProposals: (filters?: Record<string, string | number | boolean>) => Promise<void>;
   fetchProposalById: (id: string) => Promise<Proposal | null>;
   addProposal: (proposal: Partial<Proposal>) => Promise<Proposal | null>;
   updateProposal: (id: string, updates: Partial<Proposal>) => Promise<void>;
   updateProposalStatus: (id: string, status: ProposalStatus, gstn?: string) => Promise<void>;
   reviseProposal: (id: string, details: string, revisedFee?: number) => Promise<Proposal | null>;
-  generateAssignments: (id: string, data: any) => Promise<void>;
+  generateAssignments: (id: string, data: { scope_items: Omit<Assignment, 'id' | 'created_at'>[] }) => Promise<void>;
 }
 
 export const useProposalStore = create<ProposalStore>((set, get) => ({
@@ -26,8 +26,8 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
     try {
       const response = await api.get('/api/proposals', { params: filters });
       set({ proposals: response.data, isLoading: false });
-    } catch (err: any) {
-      const message = err.response?.data?.error || 'Failed to fetch proposals';
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.error || 'Failed to fetch proposals';
       set({ error: message, isLoading: false });
       toast.error(message);
     }
@@ -39,8 +39,8 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
       const response = await api.get(`/api/proposals/${id}`);
       set({ isLoading: false });
       return response.data;
-    } catch (err: any) {
-      const message = err.response?.data?.error || 'Failed to fetch proposal details';
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.error || 'Failed to fetch proposal details';
       set({ error: message, isLoading: false });
       toast.error(message);
       return null;
@@ -57,8 +57,8 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
       }));
       toast.success('Proposal created successfully');
       return response.data;
-    } catch (err: any) {
-      const message = err.response?.data?.error || 'Failed to create proposal';
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.error || 'Failed to create proposal';
       set({ error: message, isLoading: false });
       toast.error(message);
       return null;
@@ -74,8 +74,8 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
         isLoading: false
       }));
       toast.success('Proposal updated successfully');
-    } catch (err: any) {
-      const message = err.response?.data?.error || 'Failed to update proposal';
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.error || 'Failed to update proposal';
       set({ error: message, isLoading: false });
       toast.error(message);
     }
@@ -90,30 +90,32 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
         isLoading: false
       }));
       toast.success(`Proposal marked as ${status}`);
-    } catch (err: any) {
-      const message = err.response?.data?.error || 'Failed to update status';
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.error || 'Failed to update status';
       set({ error: message, isLoading: false });
       toast.error(message);
     }
   },
 
-  reviseProposal: async (id, details, revisedFee) => {
-    set({ isLoading: true, error: null });
+  reviseProposal: async (id, revision_details, revised_fee) => {
     try {
-      const response = await api.post(`/api/proposals/${id}/revise`, { 
-        revision_details: details,
-        revised_fee: revisedFee 
+      set({ isLoading: true });
+      const response = await api.post(`/api/proposals/${id}/revise`, {
+        revision_details,
+        revised_fee
       });
-      set((state) => ({
-        proposals: [response.data, ...state.proposals],
+
+      const newProposal = response.data;
+      
+      set(state => ({
+        proposals: [...state.proposals, newProposal],
         isLoading: false
       }));
-      toast.success('New revision created');
-      return response.data;
-    } catch (err: any) {
-      const message = err.response?.data?.error || 'Failed to create revision';
-      set({ error: message, isLoading: false });
-      toast.error(message);
+      
+      return newProposal;
+    } catch (error) {
+      console.error('Failed to revise proposal:', error);
+      set({ isLoading: false });
       return null;
     }
   },
@@ -124,8 +126,8 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
       await api.post(`/api/proposals/${id}/generate-assignments`, data);
       set({ isLoading: false });
       toast.success('Assignments generated successfully');
-    } catch (err: any) {
-      const message = err.response?.data?.error || 'Failed to generate assignments';
+    } catch (err: unknown) {
+      const message = (err as any).response?.data?.error || 'Failed to generate assignments';
       set({ error: message, isLoading: false });
       toast.error(message);
     }

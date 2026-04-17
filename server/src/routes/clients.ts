@@ -10,13 +10,13 @@ router.get('/', async (req: Request, res: Response) => {
     try {
         const { search, status } = req.query;
         let query = 'SELECT c.*, p.full_name as added_by_name FROM clients c LEFT JOIN profiles p ON p.id = c.added_by WHERE 1=1';
-        const params: any[] = [];
+        const params: unknown[] = [];
         if (search) { params.push(`%${search}%`); query += ` AND c.name ILIKE $${params.length}`; }
         if (status) { params.push(status); query += ` AND c.status = $${params.length}`; }
         query += ' ORDER BY c.created_at DESC';
         const result = await pool.query(query, params);
         res.json(result.rows);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // GET /api/clients/:id
@@ -32,7 +32,7 @@ router.get('/:id', async (req: Request, res: Response) => {
        LEFT JOIN profiles pa ON pa.id = p.responsible_partner 
        WHERE p.client_id = $1 ORDER BY p.created_at DESC`, [req.params.id]);
         res.json({ ...client.rows[0], spocs: spocs.rows, proposals: proposals.rows });
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // POST /api/clients
@@ -45,7 +45,7 @@ router.post('/', async (req: Request, res: Response) => {
             [name, gstn || null, notes || null, industry || null, address || null, billing_details || null, req.user!.id]
         );
         res.status(201).json(result.rows[0]);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // PUT /api/clients/:id
@@ -57,7 +57,7 @@ router.put('/:id', async (req: Request, res: Response) => {
             [name, gstn, notes, industry, address, billing_details, status, req.params.id]
         );
         res.json(result.rows[0]);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // POST /api/clients/:id/spocs
@@ -72,7 +72,7 @@ router.post('/:id/spocs', async (req: Request, res: Response) => {
             [req.params.id, contact_name, email, phone, designation || null, is_primary || false]
         );
         res.status(201).json(result.rows[0]);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // PUT /api/clients/:id/spocs/:spocId
@@ -87,7 +87,7 @@ router.put('/:id/spocs/:spocId', async (req: Request, res: Response) => {
             [contact_name, email, phone, designation, is_active, is_primary, req.params.spocId, req.params.id]
         );
         res.json(result.rows[0]);
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 export default router;

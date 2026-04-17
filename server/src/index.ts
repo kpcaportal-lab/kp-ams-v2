@@ -95,7 +95,7 @@ const startServer = async () => {
         app.listen(Number(PORT), HOST, () => {
             console.log(`🚀 KP AMS Server running on http://localhost:${PORT} (Interface: ${HOST})`);
         });
-    } catch (error) {
+    } catch (error: unknown) {
         console.error('Failed to start server:', error);
         process.exit(1);
     }

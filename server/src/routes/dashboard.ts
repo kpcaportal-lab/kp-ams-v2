@@ -21,7 +21,7 @@ router.get('/summary', async (req: Request, res: Response) => {
             FROM invoices i
             JOIN assignments a ON a.id = i.assignment_id
             WHERE a.fiscal_year=$1`;
-        const totalBilledParams: any[] = [fiscal_year];
+        const totalBilledParams: unknown[] = [fiscal_year];
 
         if (visibleIds !== null) {
             totalBilledParams.push(visibleIds);
@@ -50,7 +50,7 @@ router.get('/summary', async (req: Request, res: Response) => {
             JOIN assignments a ON a.id = fa.assignment_id
             WHERE a.status='active' AND fa.fiscal_year=$1
             AND fa.month < $2 AND fa.amount > fa.billed_amount`;
-        const overdueParams: any[] = [fiscal_year, currentFiscalMonth];
+        const overdueParams: unknown[] = [fiscal_year, currentFiscalMonth];
 
         if (visibleIds !== null) {
             overdueParams.push(visibleIds);
@@ -60,7 +60,7 @@ router.get('/summary', async (req: Request, res: Response) => {
         const overdueResult = await pool.query(overdueQuery, overdueParams);
 
         // ── Per-partner breakdown (admin, partner, director) ──
-        let partnerBreakdown: any[] = [];
+        let partnerBreakdown: unknown[] = [];
         if (role !== 'manager' && role !== 'staff') {
             let pQuery = `
                 SELECT pp.id, pp.full_name, pp.display_name,
@@ -69,7 +69,7 @@ router.get('/summary', async (req: Request, res: Response) => {
                 LEFT JOIN assignments a ON a.partner_id=pp.id AND a.status='active' AND a.fiscal_year=$1
                 LEFT JOIN invoices i ON i.assignment_id=a.id
                 WHERE pp.role='partner' AND pp.is_active=true`;
-            const pParams: any[] = [fiscal_year];
+            const pParams: unknown[] = [fiscal_year];
 
             // Directors only see their own partner data (themselves if they're also a partner,
             // or partners linked to their subordinates)
@@ -100,7 +100,7 @@ router.get('/summary', async (req: Request, res: Response) => {
             LEFT JOIN assignments a ON a.manager_id=pm.id AND a.status='active' AND a.fiscal_year=$1
             LEFT JOIN invoices i ON i.assignment_id=a.id
             WHERE pm.role='manager' AND pm.is_active=true`;
-        const mParams: any[] = [fiscal_year];
+        const mParams: unknown[] = [fiscal_year];
 
         if (visibleIds !== null) {
             mParams.push(visibleIds);
@@ -111,7 +111,7 @@ router.get('/summary', async (req: Request, res: Response) => {
         const managerBreakdown = await pool.query(mQuery, mParams);
 
         // ── Category breakdown (for focused views) ──
-        let categoryBreakdown: any[] = [];
+        let categoryBreakdown: unknown[] = [];
         if (role === 'manager' || role === 'staff' || role === 'director') {
             let catQuery = `
                 SELECT a.category,
@@ -120,7 +120,7 @@ router.get('/summary', async (req: Request, res: Response) => {
                 FROM assignments a
                 LEFT JOIN invoices i ON i.assignment_id=a.id
                 WHERE a.status='active' AND a.fiscal_year=$1`;
-            const catParams: any[] = [fiscal_year];
+            const catParams: unknown[] = [fiscal_year];
 
             if (visibleIds !== null) {
                 catParams.push(visibleIds);
@@ -142,7 +142,10 @@ router.get('/summary', async (req: Request, res: Response) => {
             managerBreakdown: managerBreakdown.rows,
             categoryBreakdown,
         });
-    } catch (err) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) {
+        console.error('Summary dashboard error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // GET /api/dashboard/work-progress — role-aware work progress
@@ -166,7 +169,7 @@ router.get('/work-progress', async (req: Request, res: Response) => {
             FROM work_progress wp
             JOIN profiles p ON p.id = wp.user_id
             WHERE wp.fiscal_year = $1`;
-        const workParams: any[] = [fiscal_year];
+        const workParams: unknown[] = [fiscal_year];
 
         if (visibleIds !== null) {
             workParams.push(visibleIds);
@@ -197,7 +200,7 @@ router.get('/work-progress', async (req: Request, res: Response) => {
 
         // For admin/partner/director — return array of all visible users' progress
         if (role !== 'manager' && role !== 'staff') {
-            const allProgress = workProgressResult.rows.map(wp => ({
+            const allProgress = workProgressResult.rows.map((wp: any) => ({
                 user_id: wp.user_id,
                 user_name: wp.user_name,
                 display_name: wp.display_name,
@@ -235,7 +238,7 @@ router.get('/work-progress', async (req: Request, res: Response) => {
             completed_items: [],
             pending_items: []
         });
-    } catch (err) {
+    } catch (err: unknown) {
         console.error('Work progress error:', err);
         res.status(500).json({ error: 'Failed to fetch work progress data' });
     }
