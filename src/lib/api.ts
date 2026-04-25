@@ -41,6 +41,8 @@ api.interceptors.request.use((config) => {
 });
 
 // Response interceptor
+let isRedirecting = false;
+
 api.interceptors.response.use(
   (res) => {
     useLoadingStore.getState().stopLoading();
@@ -48,10 +50,18 @@ api.interceptors.response.use(
   },
   (error) => {
     useLoadingStore.getState().stopLoading();
+    
     if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== 'undefined' && !isRedirecting) {
+        isRedirecting = true;
         localStorage.removeItem('kp_token');
-        window.location.href = '/login';
+        document.cookie = 'kp_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        
+        toast.error('Session expired. Please login again.', { id: 'auth-error' });
+        
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1500);
       }
     }
     return Promise.reject(error);
