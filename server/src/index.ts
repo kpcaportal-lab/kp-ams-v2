@@ -82,8 +82,42 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // ── Startup ────────────────────────────────────────────────────────
+// Emergency Admin Recovery Function
+const ensureAdminUser = async () => {
+    try {
+        console.log('🛡️ Running emergency admin recovery check...');
+        const adminEmail = 'admin.kpams@gmail.com';
+        const adminPasswordHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
+        const adminId = '00000000-0000-0000-0000-000000000001';
+
+        // Check if admin exists
+        const res = await pool.query('SELECT id FROM profiles WHERE id = $1 OR email = $2', [adminId, adminEmail]);
+        
+        if (res.rows.length === 0) {
+            console.log('➕ Creating missing admin user...');
+            await pool.query(`
+                INSERT INTO profiles (id, email, password_hash, role, full_name, display_name, is_active)
+                VALUES ($1, $2, $3, 'admin', 'System Administrator', 'Admin', true)
+            `, [adminId, adminEmail, adminPasswordHash]);
+        } else {
+            console.log('🔄 Syncing admin credentials...');
+            await pool.query(`
+                UPDATE profiles 
+                SET email = $1, password_hash = $2, role = 'admin', is_active = true 
+                WHERE id = $3
+            `, [adminEmail, adminPasswordHash, adminId]);
+        }
+        console.log('✅ Admin recovery check complete');
+    } catch (err) {
+        console.error('❌ Admin recovery failed:', err);
+    }
+};
+
 const startServer = async () => {
     try {
+        // Force sync admin user on start
+        await ensureAdminUser();
+        
         registerRoutes(app);
 
         // ── 404 handler ─────────────────────────────────────────────
