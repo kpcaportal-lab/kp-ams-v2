@@ -51,51 +51,62 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
                 [fees, assignment_id, fiscalMonth]
             );
 
-            // Send email
-            const assignmentData = await pool.query(`
-        SELECT a.*, c.name as client_name, pm.email as manager_email, pm.full_name as manager_name
-        FROM assignments a
-        LEFT JOIN clients c ON c.id = a.client_id
-        LEFT JOIN profiles pm ON pm.id = a.manager_id
-        LEFT JOIN proposals p ON p.id = a.proposal_id
-        WHERE a.id = $1`, [assignment_id]);
-
-            if (assignmentData.rows.length) {
-                const asgn = assignmentData.rows[0];
+            // Send email — completely non-blocking, never throws to outer scope
+            (async () => {
                 try {
+                    const assignmentData = await pool.query(`
+                SELECT a.*, c.name as client_name, pm.email as manager_email, pm.full_name as manager_name
+                FROM assignments a
+                LEFT JOIN clients c ON c.id = a.client_id
+                LEFT JOIN profiles pm ON pm.id = a.manager_id
+                LEFT JOIN proposals p ON p.id = a.proposal_id
+                WHERE a.id = $1`, [assignment_id]);
+
+                    if (!assignmentData.rows.length) return;
+                    const asgn = assignmentData.rows[0];
+
                     const emailResult = await sendInvoiceEmail({
                         invoiceId: invoiceRow.id,
                         assignmentRef: asgn.proposal_number || assignment_id,
-                        clientName: asgn.client_name,
-                        invoiceDate: invoice_date,
-                        udin, kindAttention: kind_attention, reference, address, gstNo: gst_no,
-                        newSalesLedger: new_sales_ledger, narration,
-                        professionalFees: Number(professional_fees),
-                        outOfPocket: Number(out_of_pocket || 0),
+                        clientName: asgn.client_name || '',
+                        invoiceDate: invoice_date || new Date().toISOString().split('T')[0],
+                        udin, kindAttention: kind_attention || '', reference: reference || '',
+                        address: address || '', gstNo: gst_no || '',
+                        newSalesLedger: new_sales_ledger, narration: narration || '',
+                        professionalFees: fees,
+                        outOfPocket: oop,
                         netAmount,
-                        managerEmail: asgn.manager_email,
-                        managerName: asgn.manager_name,
-                        category: asgn.category,
-                        billingCycle: asgn.billing_cycle,
+                        managerEmail: asgn.manager_email || '',
+                        managerName: asgn.manager_name || '',
+                        category: asgn.category || '',
+                        billingCycle: asgn.billing_cycle || '',
                         batchId,
                     });
-                    await pool.query(
-                        `INSERT INTO email_logs (invoice_id, recipient, cc, subject, status, sent_at)
-             VALUES ($1,$2,$3,$4,$5,NOW())`,
-                        [invoiceRow.id, process.env.ACCOUNTS_EMAIL, asgn.manager_email,
-                        `Invoice Request – ${asgn.client_name} – ${invoice_date}`,
-                        emailResult.stubbed ? 'sent' : 'sent']
-                    );
+
+                    if (process.env.ACCOUNTS_EMAIL) {
+                        await pool.query(
+                            `INSERT INTO email_logs (invoice_id, recipient, cc, subject, status, sent_at)
+                             VALUES ($1,$2,$3,$4,$5,NOW())`,
+                            [invoiceRow.id, process.env.ACCOUNTS_EMAIL, asgn.manager_email || null,
+                             `Invoice Request – ${asgn.client_name} – ${invoice_date}`,
+                             'sent']
+                        ).catch(() => {}); // ignore log insert failures
+                    }
+                    void emailResult;
                 } catch (emailErr: unknown) {
                     const errMsg = emailErr instanceof Error ? emailErr.message : 'Unknown email error';
-                    await pool.query(
-                        `INSERT INTO email_logs (invoice_id, recipient, subject, status, error_msg)
-             VALUES ($1,$2,$3,'failed',$4)`,
-                        [invoiceRow.id, process.env.ACCOUNTS_EMAIL,
-                        `Invoice Request – ${asgn.client_name} – ${invoice_date}`, errMsg]
-                    );
+                    console.error('[Invoice Email Error]', errMsg);
+                    // Try to log the failure — but don't let THIS crash either
+                    if (process.env.ACCOUNTS_EMAIL) {
+                        pool.query(
+                            `INSERT INTO email_logs (invoice_id, recipient, subject, status, error_msg)
+                             VALUES ($1,$2,$3,'failed',$4)`,
+                            [invoiceRow.id, process.env.ACCOUNTS_EMAIL,
+                             `Invoice Request – ${assignment_id} – ${invoice_date}`, errMsg]
+                        ).catch(() => {});
+                    }
                 }
-            }
+            })();
         }
 
         res.status(201).json({ success: true, invoices: results, batchId });
