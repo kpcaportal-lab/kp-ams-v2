@@ -28,8 +28,8 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
           gst_no, new_sales_ledger, narration, professional_fees, out_of_pocket,
           net_amount, batch_id, generated_by
         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`,
-                [assignment_id, invoice_date, udin || null, kind_attention, reference, address,
-                    gst_no, new_sales_ledger || null, narration, professional_fees,
+                [assignment_id, invoice_date, udin || null, kind_attention || '', reference || '', address || '',
+                    gst_no || null, new_sales_ledger || null, narration || '', professional_fees,
                     out_of_pocket || 0, netAmount, batchId || null, req.user!.id]
             );
 
