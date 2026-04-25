@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useLoadingStore } from '@/store/loadingStore';
+import { toast } from 'react-hot-toast';
 
 const getBaseURL = () => {
   if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
