@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Invoice } from '@/types';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 interface BillingStore {
   invoices: Invoice[];
@@ -21,6 +22,8 @@ export const useBillingStore = create<BillingStore>((set) => ({
       set({ invoices: res.data, loading: false });
     } catch (err) {
       console.error('Failed to fetch invoices:', err);
+      const message = getErrorMessage(err);
+      toast.error(message);
       set({ loading: false });
     }
   },
@@ -41,7 +44,7 @@ export const useBillingStore = create<BillingStore>((set) => ({
       }
       return createdInvoice;
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.error || 'Failed to generate invoice';
+      const message = getErrorMessage(err);
       console.error('Failed to create invoice:', err);
       set({ loading: false });
       toast.error(message);

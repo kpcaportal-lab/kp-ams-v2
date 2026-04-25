@@ -1,14 +1,15 @@
 import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import pool from '../db/pool.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, getVisibleUserIds } from '../middleware/auth.js';
 import { sendInvoiceEmail } from '../services/email.js';
+import { validateCreateInvoiceBatch } from '../middleware/validation.js';
 
 const router = Router();
 router.use(authenticate);
 
 // POST /api/invoices — generate single or batch
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Response) => {
     try {
         const { invoices, batch } = req.body;
         // invoices = array of invoice objects
@@ -105,7 +106,6 @@ router.get('/', async (req: Request, res: Response) => {
     try {
         const role = req.user!.role;
         const userId = req.user!.id;
-        const { getVisibleUserIds } = await import('../middleware/auth.js');
         const visibleIds = await getVisibleUserIds(req.user!);
 
         let query = `
@@ -120,7 +120,7 @@ router.get('/', async (req: Request, res: Response) => {
         const params: unknown[] = [];
         if (visibleIds) {
             params.push(visibleIds);
-            query += ` AND i.generated_by = ANY($${params.length})`;
+            query += ` AND (i.generated_by = ANY($${params.length}::uuid[]) OR a.manager_id = ANY($${params.length}::uuid[]) OR a.partner_id = ANY($${params.length}::uuid[]))`;
         }
         query += ' ORDER BY i.created_at DESC';
         const result = await pool.query(query, params);

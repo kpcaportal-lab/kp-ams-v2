@@ -6,9 +6,11 @@ import { formatIndianCurrency, cn } from '@/lib/utils';
 import { formatDate } from '@/types';
 import { AddInvoiceModal } from '@/components/billing/AddInvoiceModal';
 import { InvoiceDownloadButton } from '@/components/billing/InvoiceDownloadButton';
+import { useRouter } from 'next/navigation';
 import { type Invoice, type Assignment } from '@/types';
 import { useBillingStore } from '@/store/billingStore';
 import { useAssignmentStore } from '@/store/assignmentStore';
+import { useAuthStore } from '@/store/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 
@@ -25,6 +27,15 @@ export default function BillingPage() {
   const { assignments } = useAssignmentStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { user } = useAuthStore();
+  const router = useRouter();
+  const canAccessBilling = ['admin', 'partner', 'director'].includes(user?.role || '');
+
+  useEffect(() => {
+    if (user && !canAccessBilling) {
+      router.push('/dashboard');
+    }
+  }, [user, canAccessBilling, router]);
 
   useEffect(() => {
     fetchInvoices();
@@ -41,10 +52,10 @@ export default function BillingPage() {
   }, [invoices, searchTerm]);
 
   const stats = useMemo(() => {
-    const totalBilled = invoices.reduce((sum, inv) => sum + inv.net_amount, 0);
-    const totalProfFees = invoices.reduce((sum, inv) => sum + inv.professional_fees, 0);
-    const totalOOP = invoices.reduce((sum, inv) => sum + inv.out_of_pocket, 0);
-    const totalFees = assignments.reduce((sum, a) => sum + (a.total_fees || 0), 0);
+    const totalBilled = invoices.reduce((sum, inv) => sum + Number(inv.net_amount || 0), 0);
+    const totalProfFees = invoices.reduce((sum, inv) => sum + Number(inv.professional_fees || 0), 0);
+    const totalOOP = invoices.reduce((sum, inv) => sum + Number(inv.out_of_pocket || 0), 0);
+    const totalFees = assignments.reduce((sum, a) => sum + Number(a.total_fees || a.fees || 0), 0);
     const billingPct = totalFees > 0 ? (totalBilled / totalFees) * 100 : 0;
     return { totalBilled, totalProfFees, totalOOP, billingPct, count: invoices.length };
   }, [invoices, assignments]);

@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { User } from '@/types';
-
 import api from '@/lib/api';
+import { getErrorMessage } from '@/lib/utils';
 
 interface UserState {
   partners: User[];
@@ -26,7 +26,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
       const response = await api.get('/api/users/partners');
       set({ partners: response.data, isLoading: false });
     } catch (err: unknown) {
-      set({ error: (err as Error).message, isLoading: false });
+      set({ error: getErrorMessage(err), isLoading: false });
     }
   },
 
@@ -36,7 +36,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
       const response = await api.get('/api/users/managers');
       set({ managers: response.data, isLoading: false });
     } catch (err: unknown) {
-      set({ error: (err as Error).message, isLoading: false });
+      set({ error: getErrorMessage(err), isLoading: false });
     }
   },
 

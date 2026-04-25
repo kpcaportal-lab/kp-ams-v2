@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
+import { cn, getErrorMessage } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   UserPlus, Search, Shield, Mail, MoreVertical,
@@ -32,7 +33,15 @@ export default function UsersPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const { user: currentUser } = useAuthStore();
+  const router = useRouter();
   const isAdmin = currentUser?.role === 'admin';
+  const canManageUsers = ['admin', 'partner', 'director'].includes(currentUser?.role || '');
+
+  useEffect(() => {
+    if (currentUser && !canManageUsers) {
+      router.push('/dashboard');
+    }
+  }, [currentUser, canManageUsers, router]);
 
   const fetchUsers = async () => {
     try {
@@ -272,7 +281,7 @@ export default function UsersPage() {
                               await useAuthStore.getState().loginAs(user.id);
                               window.location.href = '/dashboard';
                             } catch (err) {
-                              toast.error('Impersonation failed');
+                              toast.error(getErrorMessage(err));
                             }
                           }
                         }}

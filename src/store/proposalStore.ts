@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Proposal, ProposalStatus, Assignment } from '@/types';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 interface ProposalStore {
   proposals: Proposal[];
@@ -27,7 +28,7 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
       const response = await api.get('/api/proposals', { params: filters });
       set({ proposals: response.data, isLoading: false });
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.error || 'Failed to fetch proposals';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
     }
@@ -40,7 +41,7 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
       set({ isLoading: false });
       return response.data;
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.error || 'Failed to fetch proposal details';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
       return null;
@@ -58,7 +59,7 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
       toast.success('Proposal created successfully');
       return response.data;
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.error || 'Failed to create proposal';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
       return null;
@@ -75,7 +76,7 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
       }));
       toast.success('Proposal updated successfully');
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.error || 'Failed to update proposal';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
     }
@@ -91,7 +92,7 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
       }));
       toast.success(`Proposal marked as ${status}`);
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.error || 'Failed to update status';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
     }
@@ -115,6 +116,8 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
       return newProposal;
     } catch (error) {
       console.error('Failed to revise proposal:', error);
+      const message = getErrorMessage(error);
+      toast.error(message);
       set({ isLoading: false });
       return null;
     }
@@ -127,7 +130,7 @@ export const useProposalStore = create<ProposalStore>((set, get) => ({
       set({ isLoading: false });
       toast.success('Assignments generated successfully');
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.error || 'Failed to generate assignments';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
     }

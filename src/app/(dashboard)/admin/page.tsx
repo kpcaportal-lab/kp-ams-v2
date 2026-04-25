@@ -116,14 +116,14 @@ export default function AdminPage() {
       const res = await fetch(`${API}/api/audit/active-users`, { headers });
       if (res.ok) setActiveUsers(await res.json());
     } catch (err) { console.error(err); }
-  }, [token]);
+  }, [headers]);
 
   const fetchStats = useCallback(async () => {
     try {
       const res = await fetch(`${API}/api/audit/stats`, { headers });
       if (res.ok) setStats(await res.json());
     } catch (err) { console.error(err); }
-  }, [token]);
+  }, [headers]);
 
   useEffect(() => {
     if (activeTab === 'logs') fetchLogs();
@@ -141,6 +141,9 @@ export default function AdminPage() {
     if (diffMins < 60) return `${diffMins}m ago`;
     const diffHrs = Math.floor(diffMins / 60);
     if (diffHrs < 24) return `${diffHrs}h ago`;
+    const diffDays = Math.floor(diffHrs / 24);
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
   const now = useMemo(() => Date.now(), []);

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Assignment } from '@/types';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 interface AssignmentStore {
   assignments: Assignment[];
@@ -24,7 +25,7 @@ export const useAssignmentStore = create<AssignmentStore>((set, get) => ({
       const response = await api.get('/api/assignments');
       set({ assignments: response.data, isLoading: false });
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.message || 'Failed to fetch assignments';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
     }
@@ -37,7 +38,7 @@ export const useAssignmentStore = create<AssignmentStore>((set, get) => ({
       set({ isLoading: false });
       return response.data;
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.message || 'Failed to fetch assignment details';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
       return null;
@@ -54,7 +55,7 @@ export const useAssignmentStore = create<AssignmentStore>((set, get) => ({
       }));
       toast.success('Assignment created successfully');
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.message || 'Failed to create assignment';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
     }
@@ -70,7 +71,7 @@ export const useAssignmentStore = create<AssignmentStore>((set, get) => ({
       }));
       toast.success('Assignment updated successfully');
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.message || 'Failed to update assignment';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
     }

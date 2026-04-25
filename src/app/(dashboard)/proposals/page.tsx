@@ -84,8 +84,8 @@ export default function ProposalListPage() {
     const won = proposals.filter(p => p.status === 'won');
     const pending = proposals.filter(p => p.status === 'pending');
     
-    const wonValue = won.reduce((sum, p) => sum + p.quotation_amount, 0);
-    const pendingValue = pending.reduce((sum, p) => sum + p.quotation_amount, 0);
+    const wonValue = won.reduce((sum, p) => sum + Number(p.quotation_amount || 0), 0);
+    const pendingValue = pending.reduce((sum, p) => sum + Number(p.quotation_amount || 0), 0);
     const winRate = total > 0 ? (won.length / total) * 100 : 0;
 
     return {

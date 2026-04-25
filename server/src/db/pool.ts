@@ -7,7 +7,7 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false },
     max: 10,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000, // Increased to 10s for slower connections
+    connectionTimeoutMillis: 30000, // Increased to 30s to allow Supabase to wake up from sleep
 });
 
 pool.on('error', (err: Error) => {

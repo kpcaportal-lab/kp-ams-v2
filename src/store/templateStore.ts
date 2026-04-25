@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ProposalTemplate } from '@/types';
-
 import api from '@/lib/api';
+import { getErrorMessage } from '@/lib/utils';
 
 interface TemplateState {
   templates: ProposalTemplate[];
@@ -23,7 +23,7 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
       const response = await api.get('/api/proposals/templates');
       set({ templates: response.data, isLoading: false });
     } catch (err: unknown) {
-      set({ error: (err as Error).message, isLoading: false });
+      set({ error: getErrorMessage(err), isLoading: false });
     }
   },
 

@@ -210,7 +210,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                     >
                       <option value="">Select partner</option>
                       {partners.map(p => (
-                        <option key={p.id} value={p.id}>{p.name}</option>
+                        <option key={p.id} value={p.id}>{p.full_name}</option>
                       ))}
                     </select>
                   </div>
@@ -226,7 +226,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                     >
                       <option value="">Select manager</option>
                       {managers.map(m => (
-                        <option key={m.id} value={m.id}>{m.name}</option>
+                        <option key={m.id} value={m.id}>{m.full_name}</option>
                       ))}
                     </select>
                   </div>

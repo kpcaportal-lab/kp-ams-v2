@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import api from '../lib/api';
+import { toast } from 'react-hot-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 export interface Ticket {
     id: string;
@@ -8,6 +10,7 @@ export interface Ticket {
     priority: 'low' | 'medium' | 'high';
     status: 'open' | 'in_progress' | 'resolved' | 'closed';
     submitted_by_name?: string;
+    attachment_url?: string;
     created_at: string;
 }
 
@@ -29,6 +32,8 @@ export const useTicketStore = create<TicketStore>((set, get) => ({
             set({ tickets: res.data });
         } catch (error) {
             console.error('Failed to fetch tickets', error);
+            const message = getErrorMessage(error);
+            toast.error(message);
         } finally {
             set({ isLoading: false });
         }
@@ -39,6 +44,8 @@ export const useTicketStore = create<TicketStore>((set, get) => ({
             set({ tickets: [res.data, ...get().tickets] });
         } catch (error) {
             console.error('Failed to create ticket', error);
+            const message = getErrorMessage(error);
+            toast.error(message);
             throw error;
         }
     },
@@ -52,7 +59,9 @@ export const useTicketStore = create<TicketStore>((set, get) => ({
             );
             set({ tickets: updated });
         } catch (error) {
-            // handle
+            console.error('Failed to update status', error);
+            const message = getErrorMessage(error);
+            toast.error(message);
         }
     }
 }));

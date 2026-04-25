@@ -26,6 +26,7 @@ export default function AddProposalModal({ open, setOpen }: AddProposalModalProp
     assignment_type: 'internal_audit' as AssignmentType,
     quotation_amount: 0,
     fiscal_year: '2025-26',
+    scope_areas: '',
     notes: ''
   });
 
@@ -49,6 +50,7 @@ export default function AddProposalModal({ open, setOpen }: AddProposalModalProp
       assignment_type: 'internal_audit',
       quotation_amount: 0,
       fiscal_year: '2025-26',
+      scope_areas: '',
       notes: ''
     });
   };
@@ -118,7 +120,7 @@ export default function AddProposalModal({ open, setOpen }: AddProposalModalProp
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       <option value="new">New Proposal</option>
-                      <option value="renewal">Renewal</option>
+                      <option value="revision">Renewal</option>
                     </select>
                   </div>
 
@@ -167,6 +169,19 @@ export default function AddProposalModal({ open, setOpen }: AddProposalModalProp
                       <option value="2026-27">2026-27</option>
                     </select>
                   </div>
+                </div>
+
+                {/* Scope Areas */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Critical Workstreams (Scope)</label>
+                  <textarea
+                    required
+                    value={form.scope_areas}
+                    onChange={(e) => setForm({ ...form, scope_areas: e.target.value })}
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 resize-none"
+                    placeholder="Identify core focus areas...&#10;• Operational Efficiency Review&#10;• Compliance Framework Matrix"
+                  />
                 </div>
 
                 {/* Notes */}

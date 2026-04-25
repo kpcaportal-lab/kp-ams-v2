@@ -43,8 +43,8 @@ export default function DashboardPage() {
 
   const stats = useMemo(() => {
     const activeAssignments = assignments.filter(a => a.status === 'active').length;
-    const totalFees = assignments.reduce((sum, a) => sum + (a.total_fees || 0), 0);
-    const totalBilled = invoices.reduce((sum, inv) => sum + inv.net_amount, 0);
+    const totalFees = assignments.reduce((sum, a) => sum + Number(a.total_fees || 0), 0);
+    const totalBilled = invoices.reduce((sum, inv) => sum + Number(inv.net_amount || 0), 0);
     const pendingProposals = proposals.filter(p => p.status === 'pending').length;
     const wonProposals = proposals.filter(p => p.status === 'won').length;
     const billingPct = totalFees > 0 ? (totalBilled / totalFees) * 100 : 0;
@@ -384,10 +384,10 @@ export default function DashboardPage() {
             <h3 className="text-lg font-black text-slate-900 tracking-tight mb-6">Quick Tasks</h3>
             <div className="flex flex-col gap-3">
               {[
-                { label: 'Register New Client', href: '/clients/new', icon: Users, color: 'hover:bg-blue-50' },
-                { label: 'Draft New Proposal', href: '/proposals/new', icon: FileText, color: 'hover:bg-indigo-50' },
-                { label: 'Execute Assignment', href: '/assignments/new', icon: Briefcase, color: 'hover:bg-emerald-50' },
-                { label: 'Generate Invoice', href: '/billing/new', icon: DollarSign, color: 'hover:bg-violet-50' },
+                { label: 'Register New Client', href: '/clients', icon: Users, color: 'hover:bg-blue-50' },
+                { label: 'Draft New Proposal', href: '/proposals', icon: FileText, color: 'hover:bg-indigo-50' },
+                { label: 'Execute Assignment', href: '/assignments', icon: Briefcase, color: 'hover:bg-emerald-50' },
+                { label: 'Generate Invoice', href: '/billing', icon: DollarSign, color: 'hover:bg-violet-50' },
               ].map((item) => (
                 <Link 
                   key={item.label} 

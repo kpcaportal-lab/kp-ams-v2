@@ -134,7 +134,7 @@ export default function ClientsPage() {
                     <h3 className="text-sm font-bold text-slate-900 truncate group-hover:text-blue-700 transition-colors">
                       {client.name}
                     </h3>
-                    <span className="text-xs text-slate-400 font-medium">{client.industry}</span>
+                    <span className="text-xs text-slate-400 font-medium">{client.industry || 'Industry not specified'}</span>
                   </div>
                 </div>
                 {statusBadge(client.status)}
@@ -143,15 +143,15 @@ export default function ClientsPage() {
               <div className="space-y-2 mt-4 pt-3 border-t border-slate-100">
                 <div className="flex items-center gap-2 text-xs text-slate-500">
                   <Users size={13} className="text-slate-400 shrink-0" />
-                  <span className="font-medium text-slate-700">{client.spocName}</span>
+                  <span className="font-medium text-slate-700">{client.spocName || 'No SPOC assigned'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-slate-500">
                   <Mail size={13} className="text-slate-400 shrink-0" />
-                  <span className="truncate">{client.spocEmail}</span>
+                  <span className="truncate">{client.spocEmail || 'N/A'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-slate-500">
                   <Phone size={13} className="text-slate-400 shrink-0" />
-                  <span>{client.spocPhone}</span>
+                  <span>{client.spocPhone || 'N/A'}</span>
                 </div>
               </div>
             </Link>

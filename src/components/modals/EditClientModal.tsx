@@ -26,7 +26,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
   });
 
   useEffect(() => {
-    if (client) {
+    if (open && client) {
       setForm({
         name: client.name,
         industry: client.industry || '',
@@ -38,7 +38,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
         spocPhone: client.spocPhone || '',
       });
     }
-  }, [client]);
+  }, [open, client]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

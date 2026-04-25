@@ -17,7 +17,25 @@ router.get('/', requireRole('admin', 'partner', 'director'), async (_req: Reques
              ORDER BY p.role, p.full_name`
         );
         res.json(result.rows);
-    } catch (err: unknown) { res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { 
+        console.error('Error fetching users:', err);
+        res.status(500).json({ error: 'Server error' }); 
+    }
+});
+
+router.get('/test-error', async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT p.id, p.email, p.role, p.full_name, p.display_name, p.is_active, p.created_at, p.reports_to, p.work_file_url,
+                    rp.full_name as reports_to_name
+             FROM profiles p
+             LEFT JOIN profiles rp ON rp.id = p.reports_to
+             ORDER BY p.role, p.full_name`
+        );
+        res.json(result.rows);
+    } catch (err: any) {
+        res.status(500).json({ error: err.message, stack: err.stack });
+    }
 });
 
 // GET /api/users/managers
@@ -66,7 +84,7 @@ router.post('/', requireRole('admin', 'partner', 'director'), async (req: Reques
 // PATCH /api/users/:id — toggle active, update role
 router.patch('/:id', requireRole('admin', 'partner', 'director'), async (req: Request, res: Response) => {
     try {
-        const { is_active, role, display_name, reports_to, work_file_url } = req.body;
+        const { is_active, role, display_name, full_name, reports_to, work_file_url } = req.body;
 
         // Only allow admins to change the reporting structure
         if (reports_to !== undefined && req.user?.role !== 'admin') {
@@ -74,10 +92,10 @@ router.patch('/:id', requireRole('admin', 'partner', 'director'), async (req: Re
         }
 
         await pool.query(
-            'UPDATE profiles SET is_active=COALESCE($1,is_active), role=COALESCE($2,role), display_name=COALESCE($3,display_name), reports_to=COALESCE($4,reports_to), work_file_url=COALESCE($5,work_file_url), updated_at=NOW() WHERE id=$6',
-            [is_active, role, display_name, reports_to, work_file_url, req.params.id]
+            'UPDATE profiles SET is_active=COALESCE($1,is_active), role=COALESCE($2,role), display_name=COALESCE($3,display_name), full_name=COALESCE($4,full_name), reports_to=COALESCE($5,reports_to), work_file_url=COALESCE($6,work_file_url), updated_at=NOW() WHERE id=$7',
+            [is_active, role, display_name, full_name, reports_to, work_file_url, req.params.id]
         );
-        await logAuditEvent(req.user!, 'update', 'user', req.params.id, { is_active, role, reports_to }, req);
+        await logAuditEvent(req.user!, 'update', 'user', req.params.id, { is_active, role, full_name, reports_to }, req);
         res.json({ success: true });
     } catch (err: unknown) { res.status(500).json({ error: 'Server error' }); }
 });

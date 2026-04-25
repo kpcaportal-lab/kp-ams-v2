@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import pool from '../db/pool.js';
 import { authenticate, getVisibleUserIds, logAuditEvent } from '../middleware/auth.js';
+import { validateCreateProposal, validateUpdateProposal } from '../middleware/validation.js';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -105,7 +106,8 @@ router.get('/', async (req: Request, res: Response) => {
         const visibleIds = await getVisibleUserIds(req.user!);
         if (visibleIds !== null) {
             params.push(visibleIds);
-            query += ` AND (p.prepared_by = ANY($${params.length}) OR p.responsible_partner = ANY($${params.length}))`;
+            const paramIdx = params.length;
+            query += ` AND (p.prepared_by = ANY($${paramIdx}) OR p.responsible_partner = ANY($${paramIdx}))`;
         }
 
         if (status) { params.push(status); query += ` AND p.status = $${params.length}`; }
@@ -156,7 +158,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // POST /api/proposals
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', ...validateCreateProposal, async (req: Request, res: Response) => {
     try {
         const {
             client_id, proposal_type, assignment_type, scope_areas, quotation_amount,
@@ -179,7 +181,7 @@ router.post('/', async (req: Request, res: Response) => {
       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING *`,
             [number, client_id, proposal_type || 'new', assignment_type, scope_areas,
                 quotation_amount, fee_category || null, increment_details || null, revised_fee || null,
-                proposal_date, req.user!.id, responsible_partner, revision_flag || false,
+                proposal_date || new Date().toISOString(), req.user!.id, responsible_partner || null, revision_flag || false,
                 revision_details || null, notes || null, fiscal_year || '2025-26',
                 1, template_id || null, status || 'pending']
         );
@@ -188,7 +190,7 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // PUT /api/proposals/:id
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', ...validateUpdateProposal, async (req: Request, res: Response) => {
     try {
         const fields = ['client_id', 'proposal_type', 'assignment_type', 'scope_areas', 'quotation_amount',
             'fee_category', 'increment_details', 'revised_fee', 'proposal_date', 'responsible_partner',

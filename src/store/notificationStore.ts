@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import api from '../lib/api';
+import { toast } from 'react-hot-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 export interface Notification {
     id: string;
@@ -28,12 +30,14 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     fetchNotifications: async () => {
         set({ isLoading: true });
         try {
-            const response = await api.get('/api/notifications');
-            const notifications = response.data;
+            const response = await api.get<Notification[]>('/api/notifications');
+            const notifications = Array.isArray(response.data) ? response.data : [];
             const unreadCount = notifications.filter((n: Notification) => !n.is_read).length;
             set({ notifications, unreadCount });
         } catch (error) {
             console.error('Failed to fetch notifications', error);
+            const message = getErrorMessage(error);
+            toast.error(message);
         } finally {
             set({ isLoading: false });
         }
@@ -51,6 +55,8 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
             });
         } catch (error) {
             console.error('Failed to read notification', error);
+            const message = getErrorMessage(error);
+            toast.error(message);
         }
     },
 
@@ -61,6 +67,8 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
             set({ notifications: updated, unreadCount: 0 });
         } catch (error) {
             console.error('Failed to mark all as read', error);
+            const message = getErrorMessage(error);
+            toast.error(message);
         }
     }
 }));

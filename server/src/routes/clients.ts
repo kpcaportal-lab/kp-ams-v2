@@ -9,7 +9,14 @@ router.use(authenticate);
 router.get('/', async (req: Request, res: Response) => {
     try {
         const { search, status } = req.query;
-        let query = 'SELECT c.*, p.full_name as added_by_name FROM clients c LEFT JOIN profiles p ON p.id = c.added_by WHERE 1=1';
+        let query = `
+            SELECT c.*, p.full_name as added_by_name,
+                   cs.contact_name as "spocName", cs.email as "spocEmail", cs.phone as "spocPhone"
+            FROM clients c 
+            LEFT JOIN profiles p ON p.id = c.added_by 
+            LEFT JOIN client_spocs cs ON cs.client_id = c.id AND cs.is_primary = true
+            WHERE 1=1
+        `;
         const params: unknown[] = [];
         if (search) { params.push(`%${search}%`); query += ` AND c.name ILIKE $${params.length}`; }
         if (status) { params.push(status); query += ` AND c.status = $${params.length}`; }

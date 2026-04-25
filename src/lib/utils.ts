@@ -12,13 +12,14 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Formats a number to Indian currency format (Lakhs, Crores).
  */
-export function formatIndianCurrency(amount: number, includeSymbol = true, short = false) {
+export function formatIndianCurrency(amount: number | string, includeSymbol = true, short = false) {
+  const numAmount = Number(amount || 0);
   if (short) {
-    if (amount >= 10000000) {
-      return `${includeSymbol ? '₹' : ''}${(amount / 10000000).toFixed(2)} Cr`;
+    if (numAmount >= 10000000) {
+      return `${includeSymbol ? '₹' : ''}${(numAmount / 10000000).toFixed(2)} Cr`;
     }
-    if (amount >= 100000) {
-      return `${includeSymbol ? '₹' : ''}${(amount / 100000).toFixed(2)} L`;
+    if (numAmount >= 100000) {
+      return `${includeSymbol ? '₹' : ''}${(numAmount / 100000).toFixed(2)} L`;
     }
   }
 
@@ -27,5 +28,60 @@ export function formatIndianCurrency(amount: number, includeSymbol = true, short
     currency: 'INR',
     maximumFractionDigits: 0,
   });
-  return formatter.format(amount);
+  return formatter.format(numAmount);
+}
+
+/**
+ * Safely extracts a string error message from various error types,
+ * especially handling Axios errors and nested object responses from the backend.
+ */
+export function getErrorMessage(err: any): string {
+  if (!err) return 'An unknown error occurred';
+  
+  // Handle string errors
+  if (typeof err === 'string') return err;
+  
+  // Handle Axios response errors
+  if (err.response?.data) {
+    const data = err.response.data;
+    
+    // Check for nested error object (e.g., { error: { message: "...", code: "...", details: [...] } })
+    if (data.error && typeof data.error === 'object') {
+      const e = data.error;
+      // If there are specific validation details, join them
+      if (Array.isArray(e.details) && e.details.length > 0) {
+        return e.details.map((d: any) => {
+          if (typeof d === 'object') {
+            return d.field ? `${d.field}: ${d.message || 'Invalid value'}` : (d.message || 'Invalid value');
+          }
+          return String(d);
+        }).join(', ');
+      }
+      return e.message || e.details || JSON.stringify(e);
+    }
+    
+    // Check for direct fields
+    if (Array.isArray(data.details) && data.details.length > 0) {
+      return data.details.map((d: any) => {
+        if (typeof d === 'object') {
+          return d.field ? `${d.field}: ${d.message || d.msg || 'Invalid value'}` : (d.message || d.msg || 'Invalid value');
+        }
+        return String(d);
+      }).join(', ');
+    }
+
+    return data.error || data.details || data.message || (typeof data === 'string' ? data : 'Server error');
+  }
+  
+  // Handle standard Error objects
+  if (err instanceof Error) return err.message;
+  
+  // Handle other object types
+  if (err.message) return err.message;
+  
+  try {
+    return JSON.stringify(err);
+  } catch {
+    return String(err);
+  }
 }

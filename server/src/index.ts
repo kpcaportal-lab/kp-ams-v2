@@ -20,6 +20,8 @@ import ticketRoutes from './routes/tickets.js';
 import notificationRoutes from './routes/notifications.js';
 import profileRoutes from './routes/profile.js';
 
+import { generalLimiter, authLimiter } from './middleware/rateLimiter.js';
+
 // Route registration helper
 const registerRoutes = (app: express.Express) => {
     app.get('/health', (_req: express.Request, res: express.Response) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
@@ -41,6 +43,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // ── Middleware ──────────────────────────────────────────────────────
+app.use(generalLimiter); // Apply rate limiting to all requests
 app.use(cors({
     origin: (origin, callback) => {
         const allowedOrigins = [

@@ -51,8 +51,8 @@ export default function AssignmentsPage() {
 
   const stats = useMemo(() => {
     const active = assignments.filter(a => a.status === 'active');
-    const totalFees = assignments.reduce((sum, a) => sum + (a.fees ?? a.total_fees ?? 0), 0);
-    const activeFees = active.reduce((sum, a) => sum + (a.fees ?? a.total_fees ?? 0), 0);
+    const totalFees = assignments.reduce((sum, a) => sum + Number(a.fees ?? a.total_fees ?? 0), 0);
+    const activeFees = active.reduce((sum, a) => sum + Number(a.fees ?? a.total_fees ?? 0), 0);
     return {
       total: assignments.length,
       active: active.length,
@@ -220,12 +220,18 @@ export default function AssignmentsPage() {
                   <tbody className="divide-y divide-slate-50">
                     {filteredAssignments.map((a, i) => (
                       <motion.tr key={a.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }}
-                        className="group hover:bg-slate-50/30 transition-colors cursor-pointer">
+                        className="group hover:bg-slate-50/30 transition-colors cursor-pointer"
+                        onClick={(e) => {
+                          if (!(e.target as HTMLElement).closest('button, a')) {
+                            window.location.href = `/assignments/${a.id}`;
+                          }
+                        }}
+                      >
                         <td className="px-8 py-6">
-                          <Link href={`/assignments/${a.id}`} className="block">
+                          <div className="block">
                             <div className="font-black text-slate-900 group-hover:text-blue-600 transition-colors text-base">{a.client_name}</div>
                             <div className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-tight line-clamp-1">{a.scope_item || SUBCATEGORY_LABELS[a.subcategory]}</div>
-                          </Link>
+                          </div>
                         </td>
                         <td className="px-6 py-6">
                           <div className="px-3 py-1 rounded-lg border border-slate-200 bg-white text-[11px] font-black text-slate-500 inline-block">

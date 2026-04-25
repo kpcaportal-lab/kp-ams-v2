@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save, FileText, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { useProposalStore } from '@/store/proposalStore';
+import { useUserStore } from '@/store/userStore';
 import { ASSIGNMENT_TYPE_LABELS, Proposal, ProposalType, AssignmentType, ProposalStatus } from '@/types';
 import api from '@/lib/api';
 
@@ -20,6 +21,7 @@ interface ClientOption {
 
 export default function EditProposalModal({ open, setOpen, proposal }: EditProposalModalProps) {
   const { updateProposal } = useProposalStore();
+  const { partners } = useUserStore();
   const [clients, setClients] = useState<ClientOption[]>([]);
   const [form, setForm] = useState({
     client_id: proposal?.client_id || '',
@@ -28,6 +30,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
     quotation_amount: proposal?.quotation_amount || 0,
     status: proposal?.status || 'pending' as ProposalStatus,
     fiscal_year: proposal?.fiscal_year || '2025-26',
+    responsible_partner: proposal?.responsible_partner || '',
     notes: proposal?.notes || ''
   });
 
@@ -36,11 +39,14 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
       api.get('/api/clients').then(res => {
         setClients(res.data.map((c: ClientOption) => ({ id: c.id, name: c.name })));
       }).catch(() => setClients([]));
+      
+      // Also fetch partners if not already available in store (optional, but good for freshness)
+      // For now we'll assume they are in userStore, but we can also fetch them here
     }
   }, [open]);
 
   useEffect(() => {
-    if (proposal) {
+    if (open && proposal) {
       setForm({
         client_id: proposal.client_id || '',
         proposal_type: proposal.proposal_type,
@@ -48,20 +54,23 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
         quotation_amount: proposal.quotation_amount,
         status: proposal.status,
         fiscal_year: proposal.fiscal_year,
+        responsible_partner: proposal.responsible_partner || '',
         notes: proposal.notes || ''
       });
     }
-  }, [proposal]);
+  }, [open, proposal]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const backendProposalType = form.proposal_type === 'renewal' ? 'revision' : 'new';
     await updateProposal(proposal.id, {
       client_id: form.client_id,
-      proposal_type: form.proposal_type,
+      proposal_type: backendProposalType as any,
       assignment_type: form.assignment_type,
       quotation_amount: form.quotation_amount,
       status: form.status,
       fiscal_year: form.fiscal_year,
+      responsible_partner: form.responsible_partner,
       notes: form.notes
     });
     setOpen(false);
@@ -160,7 +169,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       <option value="new">New Proposal</option>
-                      <option value="renewal">Renewal</option>
+                      <option value="revision">Renewal</option>
                     </select>
                   </div>
 
@@ -208,6 +217,22 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                       <option value="2026-27">2026-27</option>
                     </select>
                   </div>
+                </div>
+
+                {/* Responsible Partner */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Responsible Partner</label>
+                  <select
+                    required
+                    value={form.responsible_partner}
+                    onChange={(e) => setForm({ ...form, responsible_partner: e.target.value })}
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                  >
+                    <option value="">Select a partner</option>
+                    {partners.map(p => (
+                      <option key={p.id} value={p.id}>{p.full_name}</option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Notes */}

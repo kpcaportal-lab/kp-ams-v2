@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { User } from '@/types';
 import api from '@/lib/api';
+import { getErrorMessage } from '@/lib/utils';
 
 interface AuthState {
   user: User | null;
@@ -37,16 +38,7 @@ export const useAuthStore = create<AuthState>()(
           set({ user, token, isAuthenticated: true, isLoading: false });
         } catch (err) {
           set({ isLoading: false });
-          const error = err as {
-            message?: string;
-            response?: { data?: { details?: string; error?: string }; status?: number };
-          };
-          const message =
-            error.response?.data?.details ||
-            error.response?.data?.error ||
-            error.message ||
-            'Login failed';
-          throw new Error(message);
+          throw new Error(getErrorMessage(err));
         }
       },
 
@@ -62,7 +54,7 @@ export const useAuthStore = create<AuthState>()(
           set({ user, token, isAuthenticated: true, isLoading: false });
         } catch (err) {
           set({ isLoading: false });
-          throw err;
+          throw new Error(getErrorMessage(err));
         }
       },
 

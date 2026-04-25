@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Client } from '@/types';
 import api from '@/lib/api';
 import { toast } from 'react-hot-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 interface ClientStore {
   clients: Client[];
@@ -25,7 +26,7 @@ export const useClientStore = create<ClientStore>((set, get) => ({
       const response = await api.get('/api/clients');
       set({ clients: response.data, isLoading: false });
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.error || 'Failed to fetch clients';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
     }
@@ -38,7 +39,7 @@ export const useClientStore = create<ClientStore>((set, get) => ({
       set({ isLoading: false });
       return response.data;
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.error || 'Failed to fetch client details';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
       return null;
@@ -53,11 +54,12 @@ export const useClientStore = create<ClientStore>((set, get) => ({
         clients: [response.data, ...state.clients],
         isLoading: false
       }));
-      toast.success('Client added successfully');
+      return response.data;
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.error || 'Failed to add client';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
+      return null;
     }
   },
 
@@ -71,7 +73,7 @@ export const useClientStore = create<ClientStore>((set, get) => ({
       }));
       toast.success('Client updated successfully');
     } catch (err: unknown) {
-      const message = (err as any).response?.data?.error || 'Failed to update client';
+      const message = getErrorMessage(err);
       set({ error: message, isLoading: false });
       toast.error(message);
     }
@@ -87,7 +89,9 @@ export const useClientStore = create<ClientStore>((set, get) => ({
         isLoading: false
       }));
     } catch (err: unknown) {
-      set({ error: (err as Error).message, isLoading: false });
+      const message = getErrorMessage(err);
+      set({ error: message, isLoading: false });
+      toast.error(message);
     }
   }
 }));

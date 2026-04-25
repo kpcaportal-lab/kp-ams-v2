@@ -7,6 +7,7 @@ import { useProposalStore } from '@/store/proposalStore';
 import { useClientStore } from '@/store/clientStore';
 import { useUserStore } from '@/store/userStore';
 import { useTemplateStore } from '@/store/templateStore';
+import { useAuthStore } from '@/store/authStore';
 import { Proposal, ProposalType, AssignmentType, FeeCategory } from '@/types';
 import { 
   ArrowLeft, 
@@ -34,6 +35,7 @@ export default function NewProposalPage() {
   const { clients } = useClientStore();
   const { partners } = useUserStore();
   const { templates } = useTemplateStore();
+  const { user } = useAuthStore();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [clientSearch, setClientSearch] = useState('');
@@ -103,7 +105,7 @@ export default function NewProposalPage() {
     }, 600);
   };
 
-  const handleQuickAddClient = (e: React.FormEvent) => {
+  const handleQuickAddClient = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newClientData.name) {
       toast.error('Client name is required');
@@ -111,33 +113,34 @@ export default function NewProposalPage() {
     }
 
     try {
-      const tempId = `c${Date.now()}`;
-      addClient({
+      const addedClient = await addClient({
         ...newClientData,
         status: 'active',
       } as any);
 
-      // Auto-select the new client
-      setFormData(prev => ({ 
-        ...prev, 
-        client_id: tempId, 
-        client_name: newClientData.name 
-      }));
-      setClientSearch(newClientData.name);
-      setIsAddingClient(false);
-      
-      // Reset new client form
-      setNewClientData({
-        name: '',
-        industry: 'Technology',
-        spocName: '',
-        spocEmail: '',
-        spocPhone: '',
-      });
+      if (addedClient) {
+        // Auto-select the new client with the REAL ID from backend
+        setFormData(prev => ({ 
+          ...prev, 
+          client_id: addedClient.id, 
+          client_name: addedClient.name 
+        }));
+        setClientSearch(addedClient.name);
+        setIsAddingClient(false);
+        
+        // Reset new client form
+        setNewClientData({
+          name: '',
+          industry: 'Technology',
+          spocName: '',
+          spocEmail: '',
+          spocPhone: '',
+        });
 
-      toast.success(`${newClientData.name} added and selected!`, {
-        icon: '🏢',
-      });
+        toast.success(`${addedClient.name} added and selected!`, {
+          icon: '🏢',
+        });
+      }
     } catch (error) {
       toast.error('Failed to add client');
     }
@@ -154,35 +157,35 @@ export default function NewProposalPage() {
     try {
       const selectedPartner = partners.find(p => p.id === formData.responsible_partner);
 
-      const newProposal: Proposal = {
-        id: `prop-${Math.random().toString(36).substr(2, 9)}`,
-        number: `PRP-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
+      // Map 'renewal' to 'revision' for backend validation if necessary
+      // Actually, let's check if the backend allows 'renewal'
+      // From validation.ts: isIn(['new', 'revision'])
+      const backendProposalType = formData.proposal_type === 'renewal' ? 'revision' : 'new';
+
+      const newProposal: Partial<Proposal> = {
         client_id: formData.client_id,
-        client_name: formData.client_name,
-        proposal_type: formData.proposal_type,
+        proposal_type: backendProposalType as any,
         assignment_type: formData.assignment_type,
         fee_category: formData.fee_category,
         quotation_amount: Number(formData.quotation_amount),
         proposal_date: new Date().toISOString(),
-        prepared_by: 'current-user',
-        prepared_by_name: 'Current User',
-        responsible_partner: formData.responsible_partner,
-        partner_name: selectedPartner?.full_name || '',
+        prepared_by: user?.id || '',
+        responsible_partner: formData.responsible_partner || undefined,
         status: 'pending',
-        revision_flag: false,
-        version_number: 1,
+        revision_flag: backendProposalType === 'revision',
         fiscal_year: formData.fiscal_year,
-        template_id: formData.template_id,
+        template_id: formData.template_id || undefined,
         scope_areas: formData.scope_areas,
         notes: formData.notes,
-        created_at: new Date().toISOString(),
       };
 
-      addProposal(newProposal);
-      toast.success('Proposal created successfully!');
-      router.push('/proposals');
+      const result = await addProposal(newProposal as Proposal);
+      if (result) {
+        toast.success('Proposal created successfully!');
+        router.push('/proposals');
+      }
     } catch (error) {
-      toast.error('Failed to create proposal');
+      // toast.error is already handled in addProposal
     } finally {
       setIsSubmitting(false);
     }
@@ -391,6 +394,7 @@ export default function NewProposalPage() {
               <div className="space-y-3">
                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Critical Workstreams (Scope)</label>
                 <textarea 
+                  required
                   rows={6}
                   className="w-full px-6 py-5 bg-gray-50/50 border border-gray-100 rounded-[1.5rem] focus:ring-4 focus:ring-purple-500/10 focus:border-purple-400 outline-none resize-none font-medium text-gray-700 leading-relaxed placeholder:text-gray-300"
                   placeholder="Identify core focus areas...&#10;• Operational Efficiency Review&#10;• Compliance Framework Matrix&#10;• Risk Assessment & Mitigation"

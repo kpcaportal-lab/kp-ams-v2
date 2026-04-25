@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import pool from '../db/pool.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, getVisibleUserIds } from '../middleware/auth.js';
+import { validateCreateTicket, validateUpdateTicketStatus } from '../middleware/validation.js';
 
 const router = Router();
 
@@ -16,10 +17,11 @@ router.get('/', async (req: Request, res: Response) => {
         `;
         let params: unknown[] = [];
 
-        // Staff can only see their own tickets, admins/partners can see all, directors/managers see subordinates
-        if (req.user!.role !== 'admin' && req.user!.role !== 'partner') {
-            query += ' WHERE t.submitted_by = $1';
-            params.push(req.user!.id);
+        // RBAC filtering
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            query += ' WHERE t.submitted_by = ANY($1)';
+            params.push(visibleIds);
         }
 
         query += ' ORDER BY CASE t.status WHEN \'open\' THEN 1 WHEN \'in_progress\' THEN 2 WHEN \'resolved\' THEN 3 ELSE 4 END, t.created_at DESC';
@@ -33,17 +35,39 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // POST /api/tickets - Create a new ticket
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', ...validateCreateTicket, async (req: Request, res: Response) => {
     try {
-        const { title, description, priority } = req.body;
+        const { title, description, priority, attachment_url } = req.body;
         if (!title || !description) return res.status(400).json({ error: 'Title and description required' });
 
         const result = await pool.query(
-            `INSERT INTO tickets (title, description, priority, status, submitted_by)
-             VALUES ($1, $2, $3, 'open', $4) RETURNING *`,
-            [title, description, priority || 'medium', req.user!.id]
+            `INSERT INTO tickets (title, description, priority, status, submitted_by, attachment_url)
+             VALUES ($1, $2, $3, 'open', $4, $5) RETURNING *`,
+            [title, description, priority || 'medium', req.user!.id, attachment_url || null]
         );
-        res.status(201).json(result.rows[0]);
+        
+        const newTicket = result.rows[0];
+
+        // Notify Admins and Partners
+        try {
+            const adminsResult = await pool.query(
+                "SELECT id FROM profiles WHERE role IN ('admin', 'partner')"
+            );
+            
+            const notificationPromises = adminsResult.rows.map(admin => {
+                return pool.query(
+                    `INSERT INTO notifications (user_id, message, type, entity_type, entity_id)
+                     VALUES ($1, $2, 'ticket_update', 'ticket', $3)`,
+                    [admin.id, `New ticket raised: ${title}`, newTicket.id]
+                );
+            });
+            
+            await Promise.all(notificationPromises);
+        } catch (notifyErr) {
+            console.error('Failed to send ticket notifications:', notifyErr);
+        }
+
+        res.status(201).json(newTicket);
     } catch (err: unknown) {
         console.error('Error creating ticket:', err);
         res.status(500).json({ error: 'Server error' });

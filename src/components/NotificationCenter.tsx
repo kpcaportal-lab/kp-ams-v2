@@ -1,18 +1,21 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Bell, Check, Trash2 } from 'lucide-react';
+import { Bell, Check, Trash2, Ticket, ClipboardList, Shield, Info, X, Clock, AlertCircle } from 'lucide-react';
 import { useNotificationStore } from '@/store/notificationStore';
 import { formatDistanceToNow } from 'date-fns';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 export function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
   const { notifications, unreadCount, fetchNotifications, markAsRead, markAllAsRead } = useNotificationStore();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     fetchNotifications();
-    // Setting up click outside
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -24,115 +27,135 @@ export function NotificationCenter() {
 
   const handleToggle = () => setIsOpen(!isOpen);
 
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'ticket_update': return <Ticket className="text-blue-500" size={16} />;
+      case 'assignment_update': return <ClipboardList className="text-amber-500" size={16} />;
+      case 'system': return <Shield className="text-indigo-500" size={16} />;
+      default: return <Info className="text-slate-400" size={16} />;
+    }
+  };
+
+  const handleNotificationClick = async (n: any) => {
+    if (!n.is_read) {
+      await markAsRead(n.id);
+    }
+    if (n.entity_type === 'ticket') {
+      router.push('/tickets');
+      setIsOpen(false);
+    } else if (n.entity_type === 'assignment') {
+      router.push('/assignments');
+      setIsOpen(false);
+    }
+  };
+
   return (
-    <div className="notification-center" ref={dropdownRef} style={{ position: 'relative' }}>
+    <div className="relative" ref={dropdownRef}>
       <button 
         onClick={handleToggle}
-        style={{ 
-          position: 'relative', 
-          width: 40, height: 40, 
-          borderRadius: 8, 
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: isOpen ? 'var(--bg-muted)' : 'var(--bg-surface)', 
-          border: '1px solid var(--border-default)',
-          cursor: 'pointer',
-          color: 'var(--text-secondary)',
-          transition: 'all 0.2s'
-        }}
+        className={cn(
+          "relative w-10 h-10 flex items-center justify-center rounded-xl border transition-all active:scale-95",
+          isOpen 
+            ? "bg-slate-100 border-slate-200 text-slate-900 shadow-inner" 
+            : "bg-white border-slate-200/60 text-slate-500 hover:text-slate-900 hover:border-slate-300 shadow-sm"
+        )}
       >
-        <Bell size={20} />
+        <Bell size={20} className={cn(unreadCount > 0 && "animate-none")} />
         {unreadCount > 0 && (
-          <span style={{
-            position: 'absolute', top: -4, right: -4,
-            minWidth: 18, height: 18, borderRadius: 9,
-            padding: '0 4px',
-            background: 'var(--color-danger)',
-            color: '#fff',
-            fontSize: '10px',
-            fontWeight: 'bold',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: '2px solid var(--bg-surface)'
-          }}>
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-blue-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm ring-2 ring-blue-100">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>
 
-      {isOpen && (
-        <div style={{
-          position: 'absolute',
-          top: 'calc(100% + 8px)',
-          right: 0,
-          width: 320,
-          maxHeight: 400,
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-default)',
-          borderRadius: 12,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-          zIndex: 100,
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden'
-        }}>
-          <div style={{ 
-            padding: '12px 16px', 
-            borderBottom: '1px solid var(--border-default)',
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-          }}>
-            <h3 style={{ margin: 0, fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-              Notifications
-            </h3>
-            {unreadCount > 0 && (
-              <button 
-                onClick={() => markAllAsRead()}
-                style={{ 
-                  background: 'none', border: 'none', color: 'var(--color-primary)', 
-                  fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 
-                }}
-              >
-                <Check size={14} /> Mark all read
-              </button>
-            )}
-          </div>
-          
-          <div style={{ overflowY: 'auto', flex: 1, padding: 0 }}>
-            {notifications.length === 0 ? (
-              <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                No notifications yet.
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-full right-0 mt-3 w-[360px] max-h-[520px] bg-white border border-slate-200 rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.12)] z-50 overflow-hidden flex flex-col"
+          >
+            <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div>
+                <h3 className="text-sm font-black text-slate-900">Notifications</h3>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{unreadCount} UNREAD MESSAGES</p>
               </div>
-            ) : (
-              <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                {notifications.map((n) => (
-                  <li 
-                    key={n.id}
-                    onClick={() => !n.is_read && markAsRead(n.id)}
-                    style={{
-                      padding: '12px 16px',
-                      borderBottom: '1px solid var(--border-default)',
-                      background: n.is_read ? 'var(--bg-surface)' : 'var(--bg-muted)',
-                      cursor: n.is_read ? 'default' : 'pointer',
-                      display: 'flex',
-                      gap: '12px',
-                    }}
-                  >
-                    {!n.is_read && (
-                      <div style={{ width: 8, height: 8, borderRadius: 4, background: 'var(--color-primary)', marginTop: 6, flexShrink: 0 }} />
-                    )}
-                    <div style={{ flex: 1 }}>
-                      <p style={{ margin: '0 0 4px', fontSize: '0.875rem', color: 'var(--text-primary)', lineHeight: 1.4 }}>
-                        {n.message}
-                      </p>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                        {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
-                      </span>
+              {unreadCount > 0 && (
+                <button 
+                  onClick={() => markAllAsRead()}
+                  className="text-[11px] font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
+                >
+                  <Check size={14} /> Mark all read
+                </button>
+              )}
+            </div>
+            
+            <div className="overflow-y-auto flex-1 custom-scrollbar">
+              {notifications.length === 0 ? (
+                <div className="py-20 flex flex-col items-center justify-center px-8 text-center">
+                  <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4 border border-slate-100">
+                    <Bell className="text-slate-200" size={32} />
+                  </div>
+                  <h4 className="text-sm font-bold text-slate-900">All caught up!</h4>
+                  <p className="text-xs text-slate-400 mt-1 font-medium">No new notifications at the moment.</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-50">
+                  {notifications.map((n) => (
+                    <div 
+                      key={n.id}
+                      onClick={() => handleNotificationClick(n)}
+                      className={cn(
+                        "group relative px-5 py-4 flex gap-4 transition-all cursor-pointer",
+                        n.is_read ? "opacity-70 hover:opacity-100" : "bg-blue-50/30 hover:bg-blue-50/60"
+                      )}
+                    >
+                      {!n.is_read && (
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 shadow-[2px_0_8px_rgba(59,130,246,0.4)]" />
+                      )}
+                      
+                      <div className={cn(
+                        "w-10 h-10 rounded-xl shrink-0 flex items-center justify-center border transition-colors shadow-sm",
+                        n.is_read ? "bg-slate-50 border-slate-100" : "bg-white border-blue-100 shadow-blue-100"
+                      )}>
+                        {getNotificationIcon(n.type)}
+                      </div>
+                      
+                      <div className="flex-1 space-y-1">
+                        <div className="flex justify-between items-start gap-2">
+                          <p className={cn(
+                            "text-sm leading-snug",
+                            n.is_read ? "text-slate-600 font-medium" : "text-slate-900 font-bold"
+                          )}>
+                            {n.message}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock size={12} className="text-slate-400" />
+                          <span className="text-[11px] text-slate-400 font-bold">
+                            {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-      )}
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div className="p-3 bg-slate-50/50 border-t border-slate-100">
+              <button 
+                onClick={() => { router.push('/dashboard'); setIsOpen(false); }}
+                className="w-full py-2.5 rounded-xl bg-white border border-slate-200 text-[11px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 hover:border-slate-300 hover:shadow-sm transition-all active:scale-[0.98]"
+              >
+                View Dashboard Settings
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

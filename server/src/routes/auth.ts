@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../db/pool.js';
 import { logAuditEvent, authenticate, requireRole } from '../middleware/auth.js';
+import { validateLogin, validateCreateUser } from '../middleware/validation.js';
+import { authLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
@@ -43,6 +45,11 @@ router.post('/login-as/:userId', authenticate, requireRole('admin', 'director'),
                 role: user.role,
                 full_name: user.full_name,
                 display_name: user.display_name,
+                phone_number: user.phone_number,
+                work_file_url: user.work_file_url,
+                is_active: user.is_active,
+                reports_to: user.reports_to,
+                created_at: user.created_at,
             },
         });
     } catch (err: unknown) {
@@ -53,7 +60,7 @@ router.post('/login-as/:userId', authenticate, requireRole('admin', 'director'),
 });
 
 // POST /api/auth/login
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', authLimiter, ...validateLogin, async (req: Request, res: Response) => {
     console.log(`📡 Login attempt: ${req.body.email}`);
     try {
         const { email, password } = req.body;
@@ -100,6 +107,11 @@ router.post('/login', async (req: Request, res: Response) => {
                 role: user.role,
                 full_name: user.full_name,
                 display_name: user.display_name,
+                phone_number: user.phone_number,
+                work_file_url: user.work_file_url,
+                is_active: user.is_active,
+                reports_to: user.reports_to,
+                created_at: user.created_at,
             },
         });
     } catch (err: unknown) {
@@ -118,7 +130,7 @@ router.get('/me', async (req: Request, res: Response) => {
         const token = header.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
         const result = await pool.query(
-            'SELECT id, email, role, full_name, display_name FROM profiles WHERE id = $1',
+            'SELECT id, email, role, full_name, display_name, phone_number, work_file_url, is_active, reports_to, created_at FROM profiles WHERE id = $1',
             [decoded.id]
         );
         if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
