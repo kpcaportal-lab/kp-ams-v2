@@ -59,7 +59,7 @@ export const validateCreateProposal = [
         .isISO8601()
         .withMessage('proposal_date must be a valid ISO 8601 date'),
     body('responsible_partner')
-        .optional()
+        .optional({ values: 'falsy' })
         .isUUID()
         .withMessage('responsible_partner must be a valid UUID'),
     body('revision_flag')
@@ -149,11 +149,11 @@ export const validateCreateAssignment = [
         .isString()
         .trim(),
     body('partner_id')
-        .optional()
+        .optional({ values: 'falsy' })
         .isUUID()
         .withMessage('partner_id must be a valid UUID'),
     body('manager_id')
-        .optional()
+        .optional({ values: 'falsy' })
         .isUUID()
         .withMessage('manager_id must be a valid UUID'),
     body('start_date')
@@ -205,11 +205,11 @@ export const validateUpdateAssignment = [
         .isString()
         .trim(),
     body('partner_id')
-        .optional()
+        .optional({ values: 'falsy' })
         .isUUID()
         .withMessage('partner_id must be a valid UUID'),
     body('manager_id')
-        .optional()
+        .optional({ values: 'falsy' })
         .isUUID()
         .withMessage('manager_id must be a valid UUID'),
     body('start_date')
