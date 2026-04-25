@@ -316,26 +316,23 @@ export const validateCreateInvoiceBatch = [
         .isArray({ min: 1 })
         .withMessage('invoices must be a non-empty array'),
     body('invoices.*.assignment_id')
-        .isUUID()
-        .withMessage('Each invoice must have a valid assignment_id UUID'),
+        .isString()
+        .trim(),
     body('invoices.*.invoice_date')
         .isISO8601()
         .withMessage('invoice_date must be a valid ISO 8601 date'),
     body('invoices.*.kind_attention')
+        .optional()
         .isString()
-        .trim()
-        .notEmpty()
-        .withMessage('kind_attention is required'),
+        .trim(),
     body('invoices.*.reference')
+        .optional()
         .isString()
-        .trim()
-        .notEmpty()
-        .withMessage('reference is required'),
+        .trim(),
     body('invoices.*.address')
+        .optional()
         .isString()
-        .trim()
-        .notEmpty()
-        .withMessage('address is required'),
+        .trim(),
     body('invoices.*.gst_no')
         .optional()
         .isString()
@@ -345,10 +342,9 @@ export const validateCreateInvoiceBatch = [
         .isString()
         .trim(),
     body('invoices.*.narration')
+        .optional()
         .isString()
-        .trim()
-        .notEmpty()
-        .withMessage('narration is required'),
+        .trim(),
     body('invoices.*.professional_fees')
         .isFloat({ min: 0 })
         .withMessage('professional_fees must be a positive number'),
