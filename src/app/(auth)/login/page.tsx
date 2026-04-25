@@ -23,7 +23,10 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      navigate('/dashboard');
+      // Small delay to ensure localStorage is synced before navigation
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500);
     } catch (err: any) {
       setError(err.message || 'Invalid credentials. Please try again.');
     }

@@ -53,22 +53,22 @@ api.interceptors.response.use(
     useLoadingStore.getState().stopLoading();
     
     if (error.response?.status === 401) {
-      // Don't redirect if we are already on the login page or already redirecting
       const isLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login';
+      const authEndpoint = error.config?.url?.includes('/api/auth/login');
       
-      if (typeof window !== 'undefined' && !isRedirecting && !isLoginPage) {
+      if (typeof window !== 'undefined' && !isRedirecting && !isLoginPage && !authEndpoint) {
         isRedirecting = true;
+        console.warn('🔒 Unauthorized access detected at:', error.config?.url);
         
-        // Comprehensive cleanup
         localStorage.removeItem('kp_token');
         document.cookie = 'kp_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        delete api.defaults.headers.common['Authorization'];
         
         toast.error('Session expired. Please login again.', { id: 'auth-error' });
         
         setTimeout(() => {
+          isRedirecting = false; // Reset for next time
           window.location.href = '/login';
-        }, 1200);
+        }, 1500);
       }
     }
     return Promise.reject(error);
