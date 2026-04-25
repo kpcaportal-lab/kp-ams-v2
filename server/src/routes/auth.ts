@@ -22,9 +22,11 @@ router.post('/login-as/:userId', authenticate, requireRole('admin', 'director'),
         }
 
         const user = result.rows[0];
+        const JWT_SECRET = process.env.JWT_SECRET || 'kp-ams-v2-secure-fallback-secret-2025';
+
         const token = jwt.sign(
             { id: user.id, email: user.email, role: user.role, full_name: user.full_name },
-            process.env.JWT_SECRET as string,
+            JWT_SECRET,
             { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any } // expiresIn can be string or number, library needs this cast sometimes if type is strict
         );
 
@@ -131,14 +133,19 @@ router.get('/me', async (req: Request, res: Response) => {
         const header = req.headers.authorization;
         if (!header) return res.status(401).json({ error: 'Unauthorized' });
         const token = header.split(' ')[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+        
+        // Use stable fallback
+        const JWT_SECRET = process.env.JWT_SECRET || 'kp-ams-v2-secure-fallback-secret-2025';
+        
+        const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
         const result = await pool.query(
             'SELECT id, email, role, full_name, display_name, phone_number, work_file_url, is_active, reports_to, created_at FROM profiles WHERE id = $1',
             [decoded.id]
         );
         if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
         return res.json(result.rows[0]);
-    } catch {
+    } catch (err: any) {
+        console.error('/me Auth Error:', err.message);
         return res.status(401).json({ error: 'Invalid token' });
     }
 });
