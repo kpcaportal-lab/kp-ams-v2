@@ -389,7 +389,7 @@ router.post('/:id/generate-assignments', async (req: Request, res: Response) => 
                                 item.category || 'A', item.scope_areas || '',
                                 item.fees || 0,
                                 billing_cycle || item.billing_cycle || 'monthly',
-                                partner_id || p.responsible_partner,
+                                partner_id || p.responsible_partner || req.user!.id,
                                 manager_id || req.user!.id,
                                 item.assessment_year || p.fiscal_year,
                                 item.subcategory || 'other',

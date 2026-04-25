@@ -247,7 +247,6 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Partner</label>
                     <select
-                      required
                       value={form.partner_id}
                       onChange={(e) => setForm({ ...form, partner_id: e.target.value })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
@@ -263,7 +262,6 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Manager</label>
                     <select
-                      required
                       value={form.manager_id}
                       onChange={(e) => setForm({ ...form, manager_id: e.target.value })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
