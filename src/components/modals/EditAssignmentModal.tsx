@@ -60,6 +60,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const sanitizeUUID = (val: any) => (val && typeof val === 'string' && val.includes('-')) ? val : undefined;
+
     await updateAssignment(assignment.id, {
       gstn: form.gstn,
       category: form.category,
@@ -68,8 +70,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
       billing_cycle: form.billing_cycle,
       scope_item: form.scope_item,
       scope_areas: form.scope_areas || form.scope_item,
-      partner_id: form.partner_id || undefined,
-      manager_id: form.manager_id || undefined,
+      partner_id: sanitizeUUID(form.partner_id),
+      manager_id: sanitizeUUID(form.manager_id),
     } as Partial<Assignment>);
     setOpen(false);
   };

@@ -54,10 +54,12 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const sanitizeUUID = (val: any) => (val && typeof val === 'string' && val.includes('-')) ? val : undefined;
+
     const payload = {
       ...form,
-      partner_id: form.partner_id || undefined,
-      manager_id: form.manager_id || undefined
+      partner_id: sanitizeUUID(form.partner_id),
+      manager_id: sanitizeUUID(form.manager_id)
     };
     await addAssignment(payload);
     setOpen(false);
