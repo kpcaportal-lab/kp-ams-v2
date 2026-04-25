@@ -31,7 +31,7 @@ router.get('/', async (req: Request, res: Response) => {
         if (visibleIds !== null) {
             params.push(visibleIds);
             const paramIdx = params.length;
-            query += ` AND (a.manager_id = ANY($${paramIdx}) OR a.partner_id = ANY($${paramIdx}))`;
+            query += ` AND (a.created_by = ANY($${paramIdx}::uuid[]) OR a.manager_id = ANY($${paramIdx}::uuid[]) OR a.partner_id = ANY($${paramIdx}::uuid[]))`;
         }
 
         if (status) { params.push(status); query += ` AND a.status = $${params.length}`; }
@@ -64,6 +64,19 @@ router.get('/:id', async (req: Request, res: Response) => {
       WHERE a.id = $1`, [req.params.id]);
 
         if (!result.rows.length) return res.status(404).json({ error: 'Not found' });
+
+        // Visibility check
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            const isAuthorized = 
+                visibleIds.includes(result.rows[0].created_by) || 
+                visibleIds.includes(result.rows[0].manager_id) || 
+                visibleIds.includes(result.rows[0].partner_id);
+            
+            if (!isAuthorized) {
+                return res.status(403).json({ error: 'Access denied' });
+            }
+        }
 
         const allocations = await pool.query(
             'SELECT * FROM fee_allocations WHERE assignment_id=$1 AND fiscal_year=$2 ORDER BY month',
@@ -109,12 +122,13 @@ router.post('/', ...validateCreateAssignment, async (req: Request, res: Response
       INSERT INTO assignments (
         proposal_id, client_id, gstn, category, scope_areas, total_fees,
         billing_cycle, partner_id, manager_id, start_date, end_date, notes, fiscal_year, status,
-        subcategory, assessment_year, scope_item
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'draft',$14,$15,$16) RETURNING *`,
+        subcategory, assessment_year, scope_item, created_by
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'draft',$14,$15,$16, $17) RETURNING *`,
             [proposal_id, client_id, gstn, category || 'A', scope_areas || scope_item, total_fees,
                 billing_cycle, partner_id || req.user!.id, manager_id || req.user!.id, start_date || null, end_date || null,
                 notes || null, fiscal_year || '2025-26',
-                subcategory || 'other', assessment_year || fiscal_year || '2025-26', scope_item || scope_areas]
+                subcategory || 'other', assessment_year || fiscal_year || '2025-26', scope_item || scope_areas,
+                req.user!.id]
         );
 
         // Initialize 12 fee allocation rows within transaction
@@ -149,6 +163,19 @@ router.put('/:id', ...validateUpdateAssignment, async (req: Request, res: Respon
     try {
         const old = await pool.query('SELECT * FROM assignments WHERE id=$1', [req.params.id]);
         if (!old.rows.length) return res.status(404).json({ error: 'Not found' });
+
+        // Visibility check
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            const isAuthorized = 
+                visibleIds.includes(old.rows[0].created_by) || 
+                visibleIds.includes(old.rows[0].manager_id) || 
+                visibleIds.includes(old.rows[0].partner_id);
+            
+            if (!isAuthorized) {
+                return res.status(403).json({ error: 'Access denied' });
+            }
+        }
 
         const fields = ['category', 'scope_areas', 'total_fees', 'billing_cycle', 'partner_id',
             'manager_id', 'start_date', 'end_date', 'notes', 'gstn', 'subcategory', 'assessment_year', 'scope_item'];
@@ -188,6 +215,22 @@ router.put('/:id', ...validateUpdateAssignment, async (req: Request, res: Respon
 // PATCH /api/assignments/:id/confirm
 router.patch('/:id/confirm', async (req: Request, res: Response) => {
     try {
+        const check = await pool.query('SELECT created_by, manager_id, partner_id FROM assignments WHERE id=$1', [req.params.id]);
+        if (!check.rows.length) return res.status(404).json({ error: 'Not found' });
+
+        // Visibility check
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            const isAuthorized = 
+                visibleIds.includes(check.rows[0].created_by) || 
+                visibleIds.includes(check.rows[0].manager_id) || 
+                visibleIds.includes(check.rows[0].partner_id);
+            
+            if (!isAuthorized) {
+                return res.status(403).json({ error: 'Access denied' });
+            }
+        }
+
         await pool.query(
             'UPDATE assignments SET status=\'active\', updated_at=NOW() WHERE id=$1 AND status=\'draft\'',
             [req.params.id]
@@ -205,8 +248,21 @@ router.patch('/:id/confirm', async (req: Request, res: Response) => {
 router.put('/:id/allocations', async (req: Request, res: Response) => {
     try {
         const { allocations, fiscal_year } = req.body;
-        const assignment = await pool.query('SELECT total_fees FROM assignments WHERE id=$1', [req.params.id]);
+        const assignment = await pool.query('SELECT total_fees, created_by, manager_id, partner_id FROM assignments WHERE id=$1', [req.params.id]);
         if (!assignment.rows.length) return res.status(404).json({ error: 'Not found' });
+
+        // Visibility check
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            const isAuthorized = 
+                visibleIds.includes(assignment.rows[0].created_by) || 
+                visibleIds.includes(assignment.rows[0].manager_id) || 
+                visibleIds.includes(assignment.rows[0].partner_id);
+            
+            if (!isAuthorized) {
+                return res.status(403).json({ error: 'Access denied' });
+            }
+        }
 
         const totalAllocated = allocations.reduce((sum: number, a: { amount: number }) => sum + Number(a.amount), 0);
         const totalFees = Number(assignment.rows[0].total_fees);

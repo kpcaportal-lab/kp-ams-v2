@@ -63,34 +63,6 @@ export default function AssignmentDetailPage() {
   const totalFeesVal = assignment.total_fees || 0;
   const billingPct = totalFeesVal > 0 ? (totalBilled / totalFeesVal) * 100 : 0;
 
-  const statusBadge = (() => {
-    switch (assignment.status) {
-      case 'active':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-            <CheckCircle2 size={13} /> Active
-          </span>
-        );
-      case 'draft':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">
-            <Clock size={13} /> Draft
-          </span>
-        );
-      case 'completed':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-600 border border-blue-500/20">
-            <CheckCircle2 size={13} /> Completed
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-200 text-slate-600">
-            {assignment.status}
-          </span>
-        );
-    }
-  })();
 
   // Build fee allocation progress from store data
   const allocations = assignment.allocations || [];
@@ -111,7 +83,6 @@ export default function AssignmentDetailPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            {statusBadge}
                 <button 
                   onClick={() => setIsEditModalOpen(true)}
                   className="flex items-center gap-2 px-6 py-3 rounded-2xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all active:scale-95"

@@ -32,7 +32,6 @@ export default function AssignmentsPage() {
     fetchAssignments();
   }, [fetchAssignments]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
@@ -43,55 +42,22 @@ export default function AssignmentsPage() {
         a.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         a.scope_item?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         a.partner_name?.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || a.status === statusFilter;
       const matchesCategory = categoryFilter === 'all' || a.category === categoryFilter;
-      return matchesSearch && matchesStatus && matchesCategory;
+      return matchesSearch && matchesCategory;
     });
-  }, [assignments, searchTerm, statusFilter, categoryFilter]);
+  }, [assignments, searchTerm, categoryFilter]);
 
   const stats = useMemo(() => {
-    const active = assignments.filter(a => a.status === 'active');
     const totalFees = assignments.reduce((sum, a) => sum + Number(a.fees ?? a.total_fees ?? 0), 0);
-    const activeFees = active.reduce((sum, a) => sum + Number(a.fees ?? a.total_fees ?? 0), 0);
     return {
       total: assignments.length,
-      active: active.length,
       totalFees,
-      activeFees,
-      drafts: assignments.filter(a => a.status === 'draft').length,
-      completed: assignments.filter(a => a.status === 'completed').length,
     };
   }, [assignments]);
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/10 uppercase tracking-tight">
-             Active
-          </span>
-        );
-      case 'draft':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 border border-amber-500/10 uppercase tracking-tight">
-             Draft
-          </span>
-        );
-      case 'completed':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-600 border border-blue-500/10 uppercase tracking-tight">
-             Completed
-          </span>
-        );
-      default:
-        return <span className="text-[10px] font-bold text-slate-400 uppercase">{status}</span>;
-    }
-  };
 
   const kpiCards = [
     { label: 'Expected Revenue', value: formatIndianCurrency(stats.totalFees, true, true), icon: IndianRupee, color: 'text-blue-600', bg: 'bg-blue-50', subValue: 'Total pipeline' },
-    { label: 'Active Projects', value: stats.active.toString(), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50', subValue: `${stats.completed} recently completed` },
-    { label: 'Drafts', value: stats.drafts.toString(), icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', subValue: 'Pending activation' },
     { label: 'Total Volume', value: stats.total.toString(), icon: Briefcase, color: 'text-violet-600', bg: 'bg-violet-50', subValue: 'Lifetime assignments' },
   ];
 
@@ -164,13 +130,6 @@ export default function AssignmentsPage() {
         </div>
         
         <div className="flex flex-wrap gap-4">
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
-            className="pl-5 pr-10 py-4 rounded-[1.5rem] border border-slate-200 bg-white text-sm text-slate-700 font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 transition-all appearance-none cursor-pointer shadow-thin min-w-[160px]">
-            <option value="all">All Statuses</option>
-            <option value="active">Active Only</option>
-            <option value="draft">Drafts Only</option>
-            <option value="completed">Completed</option>
-          </select>
           
           <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}
             className="pl-5 pr-10 py-4 rounded-[1.5rem] border border-slate-200 bg-white text-sm text-slate-700 font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 transition-all appearance-none cursor-pointer shadow-thin min-w-[180px]">
@@ -180,7 +139,7 @@ export default function AssignmentsPage() {
             ))}
           </select>
           
-          <button onClick={() => { setSearchTerm(''); setStatusFilter('all'); setCategoryFilter('all'); }} 
+          <button onClick={() => { setSearchTerm(''); setCategoryFilter('all'); }} 
             className="p-4 rounded-[1.5rem] border border-slate-200 bg-white text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all shadow-thin">
             <Filter size={20} />
           </button>
@@ -199,7 +158,7 @@ export default function AssignmentsPage() {
                 </div>
                 <h3 className="text-xl font-bold text-slate-900">No Assignments Found</h3>
                 <p className="text-slate-500 mt-2 max-w-xs mx-auto text-sm leading-relaxed">We couldn&apos;t find any assignments matching your current search criteria.</p>
-                <button onClick={() => { setSearchTerm(''); setStatusFilter('all'); setCategoryFilter('all'); }} className="mt-6 text-blue-600 font-bold hover:underline text-sm">Clear all filters</button>
+                <button onClick={() => { setSearchTerm(''); setCategoryFilter('all'); }} className="mt-6 text-blue-600 font-bold hover:underline text-sm">Clear all filters</button>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -213,7 +172,6 @@ export default function AssignmentsPage() {
                       </th>
                       <th className="text-right px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Proposed Fees</th>
                       <th className="text-center px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Billing</th>
-                      <th className="text-center px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Status</th>
                       <th className="text-right px-8 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Fiscal Year</th>
                     </tr>
                   </thead>
@@ -254,9 +212,6 @@ export default function AssignmentsPage() {
                             {BILLING_CYCLE_LABELS[a.billing_cycle]}
                           </span>
                         </td>
-                        <td className="px-6 py-6 text-center">
-                          {getStatusBadge(a.status)}
-                        </td>
                         <td className="px-8 py-6 text-right text-slate-500 font-black tracking-widest text-[11px]">
                           {a.fiscal_year}
                         </td>
@@ -274,9 +229,6 @@ export default function AssignmentsPage() {
               <motion.div key={a.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
                 className="group relative rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm hover:shadow-[0_20px_40px_rgba(15,23,42,0.06)] transition-all hover:-translate-y-1 overflow-hidden"
               >
-                 <div className="absolute right-6 top-6">
-                   {getStatusBadge(a.status)}
-                 </div>
                  <div className="flex flex-col h-full gap-5">
                    <div>
                      <div className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-2 px-1">Engagement</div>
