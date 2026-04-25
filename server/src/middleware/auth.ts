@@ -65,14 +65,14 @@ export const getVisibleUserIds = async (user: AuthUser): Promise<string[] | null
         return [user.id];
     }
 
-    // Recursive lookup for subordinates (for directors, managers, or any role)
+    // Recursive lookup for subordinates with a depth limit to prevent infinite loops
     const result = await pool.query(
         `WITH RECURSIVE subordinates AS (
-            SELECT id FROM profiles WHERE reports_to = $1 AND is_active = true
+            SELECT id, 1 as depth FROM profiles WHERE reports_to = $1 AND is_active = true
             UNION
-            SELECT p.id FROM profiles p
+            SELECT p.id, s.depth + 1 FROM profiles p
             INNER JOIN subordinates s ON p.reports_to = s.id
-            WHERE p.is_active = true
+            WHERE p.is_active = true AND s.depth < 10
         )
         SELECT id FROM subordinates`,
         [user.id]

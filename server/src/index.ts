@@ -109,6 +109,17 @@ const startServer = async () => {
     }
 };
 
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    // Application specific logging, throwing an error, or other logic here
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception thrown:', err);
+    // Optional: exit process if needed (usually recommended for uncaught exceptions)
+    // process.exit(1);
+});
+
 startServer();
 
 export default app;

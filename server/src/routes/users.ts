@@ -91,6 +91,10 @@ router.patch('/:id', requireRole('admin', 'partner', 'director'), async (req: Re
             return res.status(403).json({ error: 'Only administrators can change reporting relationships' });
         }
 
+        if (reports_to === req.params.id) {
+            return res.status(400).json({ error: 'User cannot report to themselves' });
+        }
+
         await pool.query(
             'UPDATE profiles SET is_active=COALESCE($1,is_active), role=COALESCE($2,role), display_name=COALESCE($3,display_name), full_name=COALESCE($4,full_name), reports_to=COALESCE($5,reports_to), work_file_url=COALESCE($6,work_file_url), updated_at=NOW() WHERE id=$7',
             [is_active, role, display_name, full_name, reports_to, work_file_url, req.params.id]

@@ -19,6 +19,8 @@ const getNextProposalNumber = async (assignmentType: string, fiscalYear: string)
     };
     const code = typeMap[assignmentType] || 'GEN';
 
+    console.log(`[Proposals] Generating number for type: ${assignmentType}, FY: ${fiscalYear}, Code: ${code}`);
+
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
@@ -30,10 +32,18 @@ const getNextProposalNumber = async (assignmentType: string, fiscalYear: string)
        RETURNING last_sequence`,
             [assignmentType, fiscalYear]
         );
+        
+        if (!seq.rows[0]) {
+            throw new Error('Failed to update proposal sequence - no row returned');
+        }
+
         const num = seq.rows[0].last_sequence.toString().padStart(3, '0');
         await client.query('COMMIT');
-        return `KP/${code}/${fiscalYear}/${num}`;
+        const finalNumber = `KP/${code}/${fiscalYear}/${num}`;
+        console.log(`[Proposals] Generated number: ${finalNumber}`);
+        return finalNumber;
     } catch (e) {
+        console.error('[Proposals] Error in getNextProposalNumber:', e);
         await client.query('ROLLBACK');
         throw e;
     } finally {
@@ -160,6 +170,13 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST /api/proposals
 router.post('/', ...validateCreateProposal, async (req: Request, res: Response) => {
     try {
+        console.log('[Proposals] Creating new proposal:', JSON.stringify({
+            client_id: req.body.client_id,
+            assignment_type: req.body.assignment_type,
+            fiscal_year: req.body.fiscal_year,
+            user_id: req.user?.id
+        }));
+
         const {
             client_id, proposal_type, assignment_type, scope_areas, quotation_amount,
             fee_category, increment_details, revised_fee, proposal_date, responsible_partner,
@@ -170,7 +187,10 @@ router.post('/', ...validateCreateProposal, async (req: Request, res: Response) 
             fiscal_year, template_id
         } = req.body;
 
-        const number = await getNextProposalNumber(assignment_type, fiscal_year || '2025-26');
+        const fy = fiscal_year || '2025-26';
+        const number = await getNextProposalNumber(assignment_type, fy);
+
+        console.log(`[Proposals] Inserting into DB with number: ${number}`);
 
         const result = await pool.query(`
       INSERT INTO proposals (
@@ -179,14 +199,38 @@ router.post('/', ...validateCreateProposal, async (req: Request, res: Response) 
         responsible_partner, revision_flag, revision_details, notes, fiscal_year,
         version_number, template_id, status
       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING *`,
-            [number, client_id, proposal_type || 'new', assignment_type, scope_areas,
-                quotation_amount, fee_category || null, increment_details || null, revised_fee || null,
-                proposal_date || new Date().toISOString(), req.user!.id, responsible_partner || req.user!.id, revision_flag || false,
-                revision_details || null, notes || null, fiscal_year || '2025-26',
-                1, template_id || null, status || 'pending']
+            [
+                number, 
+                client_id, 
+                proposal_type || 'new', 
+                assignment_type, 
+                scope_areas || '', 
+                quotation_amount || 0,
+                fee_category || null, 
+                increment_details || null, 
+                revised_fee || null,
+                proposal_date || new Date().toISOString().split('T')[0], 
+                req.user!.id, 
+                responsible_partner || req.user!.id, 
+                revision_flag || false,
+                revision_details || null, 
+                notes || null, 
+                fy,
+                1, 
+                template_id || null, 
+                status || 'pending'
+            ]
         );
+        
+        console.log(`[Proposals] Proposal created successfully: ${result.rows[0].id}`);
         res.status(201).json(result.rows[0]);
-    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { 
+        console.error('[Proposals] Fatal error creating proposal:', err); 
+        res.status(500).json({ 
+            error: 'Server error', 
+            message: err instanceof Error ? err.message : String(err) 
+        }); 
+    }
 });
 
 // PUT /api/proposals/:id
