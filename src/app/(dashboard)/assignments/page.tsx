@@ -49,16 +49,22 @@ export default function AssignmentsPage() {
 
   const stats = useMemo(() => {
     const totalFees = assignments.reduce((sum, a) => sum + Number(a.fees ?? a.total_fees ?? 0), 0);
+    const totalBilled = assignments.reduce((sum, a) => sum + Number(a.billed_amount || 0), 0);
+    const totalReceipt = assignments.reduce((sum, a) => sum + Number(a.amount_receipt || 0), 0);
     return {
       total: assignments.length,
       totalFees,
+      totalBilled,
+      totalReceipt
     };
   }, [assignments]);
 
 
   const kpiCards = [
-    { label: 'Expected Revenue', value: formatIndianCurrency(stats.totalFees, true, true), icon: IndianRupee, color: 'text-blue-600', bg: 'bg-blue-50', subValue: 'Total pipeline' },
-    { label: 'Total Volume', value: stats.total.toString(), icon: Briefcase, color: 'text-violet-600', bg: 'bg-violet-50', subValue: 'Lifetime assignments' },
+    { label: 'Expected Fees', value: formatIndianCurrency(stats.totalFees, true, true), icon: IndianRupee, color: 'text-blue-600', bg: 'bg-blue-50', subValue: 'Total pipeline' },
+    { label: 'Total Billed', value: formatIndianCurrency(stats.totalBilled, true, true), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50', subValue: 'Invoiced to date' },
+    { label: 'Total Receipt', value: formatIndianCurrency(stats.totalReceipt, true, true), icon: CheckCircle, color: 'text-indigo-600', bg: 'bg-indigo-50', subValue: 'Payments received' },
+    { label: 'Assignments', value: stats.total.toString(), icon: Briefcase, color: 'text-slate-600', bg: 'bg-slate-50', subValue: 'Total engagements' },
   ];
 
   if (isLoading) return <LoadingScreen message="Fetching assignment intelligence..." />;
@@ -166,13 +172,14 @@ export default function AssignmentsPage() {
                   <thead>
                     <tr className="bg-slate-50/50">
                       <th className="text-left px-8 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Client & Scope</th>
-                      <th className="text-left px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Category</th>
+                      <th className="text-left px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Audit Type</th>
                       <th className="text-left px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest leading-none flex items-center gap-1.5 pt-6.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Professional Lead
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Lead
                       </th>
-                      <th className="text-right px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Proposed Fees</th>
-                      <th className="text-center px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Billing</th>
-                      <th className="text-right px-8 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Fiscal Year</th>
+                      <th className="text-right px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Fees</th>
+                      <th className="text-right px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest text-emerald-600">Billed</th>
+                      <th className="text-right px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest text-blue-600">Receipt</th>
+                      <th className="text-center px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Cycle</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -192,8 +199,8 @@ export default function AssignmentsPage() {
                           </div>
                         </td>
                         <td className="px-6 py-6">
-                          <div className="px-3 py-1 rounded-lg border border-slate-200 bg-white text-[11px] font-black text-slate-500 inline-block">
-                             Cat {a.category}
+                          <div className="px-3 py-1 rounded-lg border border-slate-200 bg-white text-[10px] font-black text-slate-500 inline-block max-w-[120px] truncate">
+                             {CATEGORY_LABELS[a.category] || a.category}
                           </div>
                         </td>
                         <td className="px-6 py-6">
@@ -201,19 +208,22 @@ export default function AssignmentsPage() {
                             <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 border border-slate-200 shadow-sm uppercase">
                               {a.partner_name ? a.partner_name.charAt(0) : '?'}
                             </div>
-                            <span className="font-bold text-slate-700">{a.partner_name || 'Unassigned'}</span>
+                            <span className="font-bold text-slate-700 text-xs truncate max-w-[80px]">{a.partner_name || 'Unassigned'}</span>
                           </div>
                         </td>
                         <td className="px-6 py-6 text-right">
-                          <div className="font-black text-slate-900 text-base">{formatIndianCurrency(a.fees ?? a.total_fees ?? 0, true, true)}</div>
+                          <div className="font-black text-slate-900 text-sm">{formatIndianCurrency(a.fees ?? a.total_fees ?? 0, true, true)}</div>
+                        </td>
+                        <td className="px-6 py-6 text-right">
+                          <div className="font-black text-emerald-600 text-sm">{formatIndianCurrency(a.billed_amount || 0, true, true)}</div>
+                        </td>
+                        <td className="px-6 py-6 text-right">
+                          <div className="font-black text-blue-600 text-sm">{formatIndianCurrency(a.amount_receipt || 0, true, true)}</div>
                         </td>
                         <td className="px-6 py-6 text-center">
-                          <span className="text-[11px] font-black text-slate-500 uppercase tracking-tighter bg-slate-100 px-2.5 py-1 rounded-md">
-                            {BILLING_CYCLE_LABELS[a.billing_cycle]}
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter bg-slate-100 px-2 py-1 rounded-md">
+                            {BILLING_CYCLE_LABELS[a.billing_cycle]?.substring(0, 3)}
                           </span>
-                        </td>
-                        <td className="px-8 py-6 text-right text-slate-500 font-black tracking-widest text-[11px]">
-                          {a.fiscal_year}
                         </td>
                       </motion.tr>
                     ))}

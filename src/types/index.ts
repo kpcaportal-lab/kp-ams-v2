@@ -155,6 +155,8 @@ export interface Assignment {
   start_date?: string;
   end_date?: string;
   fiscal_year: string;
+  billed_amount?: number;
+  amount_receipt?: number;
   notes?: string;
   created_at: string;
   allocations?: FeeAllocation[];

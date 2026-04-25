@@ -29,13 +29,7 @@ export default function BillingPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useAuthStore();
   const router = useRouter();
-  const canAccessBilling = ['admin', 'partner', 'director'].includes(user?.role || '');
-
-  useEffect(() => {
-    if (user && !canAccessBilling) {
-      router.push('/dashboard');
-    }
-  }, [user, canAccessBilling, router]);
+  const canAccessBilling = true; // Allow all authenticated users as requested
 
   useEffect(() => {
     fetchInvoices();

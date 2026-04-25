@@ -215,7 +215,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                 <div className="grid grid-cols-2 gap-4">
                   {/* Total Fees */}
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Total Fees (₹)</label>
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Professional Fees (₹)</label>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                       <input
@@ -231,7 +231,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
 
                   {/* Billing Cycle */}
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Billing Cycle</label>
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Professional Fees Cycle</label>
                     <select
                       value={form.billing_cycle}
                       onChange={(e) => setForm({ ...form, billing_cycle: e.target.value as any })}

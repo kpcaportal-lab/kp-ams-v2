@@ -133,10 +133,7 @@ router.get('/', async (req: Request, res: Response) => {
       LEFT JOIN email_logs el ON el.invoice_id = i.id
       WHERE 1=1`;
         const params: unknown[] = [];
-        if (visibleIds) {
-            params.push(visibleIds);
-            query += ` AND (i.generated_by = ANY($${params.length}::uuid[]) OR a.manager_id = ANY($${params.length}::uuid[]) OR a.partner_id = ANY($${params.length}::uuid[]))`;
-        }
+        // Removed visibleIds filter to allow global access as requested
         query += ' ORDER BY i.created_at DESC';
         const result = await pool.query(query, params);
         res.json(result.rows);
