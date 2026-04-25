@@ -83,9 +83,12 @@ router.post('/login', authLimiter, ...validateLogin, async (req: Request, res: R
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
+        // Use stable secret for signing
+        const JWT_SECRET = process.env.JWT_SECRET || 'kp-ams-v2-secure-fallback-secret-2025';
+
         const token = jwt.sign(
             { id: user.id, email: user.email, role: user.role, full_name: user.full_name },
-            process.env.JWT_SECRET as string,
+            JWT_SECRET,
             { expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any }
         );
 

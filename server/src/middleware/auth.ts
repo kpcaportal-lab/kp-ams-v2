@@ -18,18 +18,26 @@ declare global {
     }
 }
 
+// Use a stable fallback if JWT_SECRET is missing to prevent session drops on server restart
+const JWT_SECRET = process.env.JWT_SECRET || 'kp-ams-v2-secure-fallback-secret-2025';
+
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
     const header = req.headers.authorization;
     if (!header || !header.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'Unauthorized' });
+        return res.status(401).json({ error: 'Unauthorized', detail: 'Missing Authorization header' });
     }
     const token = header.split(' ')[1];
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as AuthUser;
+        const decoded = jwt.verify(token, JWT_SECRET) as AuthUser;
         req.user = decoded;
         next();
-    } catch {
-        return res.status(401).json({ error: 'Invalid or expired token' });
+    } catch (err: any) {
+        console.error('JWT Verification Error:', err.message);
+        return res.status(401).json({ 
+            error: 'Invalid or expired token', 
+            detail: err.message,
+            reason: 'Token signature mismatch or expiration'
+        });
     }
 };
 
