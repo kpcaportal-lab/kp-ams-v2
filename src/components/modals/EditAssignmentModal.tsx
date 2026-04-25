@@ -25,6 +25,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
     total_fees: 0,
     billing_cycle: 'monthly' as any,
     scope_item: '',
+    scope_areas: '',
     partner_id: '',
     manager_id: ''
   });
@@ -50,6 +51,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
         total_fees: assignment.total_fees ?? (assignment as any).fees ?? 0,
         billing_cycle: assignment.billing_cycle || ('monthly' as any),
         scope_item: assignment.scope_item || assignment.subcategory || '',
+        scope_areas: assignment.scope_areas || '',
         partner_id: assignment.partner_id || '',
         manager_id: assignment.manager_id || ''
       });
@@ -65,8 +67,9 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
       total_fees: form.total_fees,
       billing_cycle: form.billing_cycle,
       scope_item: form.scope_item,
-      partner_id: form.partner_id,
-      manager_id: form.manager_id,
+      scope_areas: form.scope_areas || form.scope_item,
+      partner_id: form.partner_id || undefined,
+      manager_id: form.manager_id || undefined,
     } as Partial<Assignment>);
     setOpen(false);
   };
@@ -133,6 +136,18 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                     onChange={(e) => setForm({ ...form, scope_item: e.target.value })}
                     className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
                     placeholder="e.g. Statutory Audit FY 23-24"
+                  />
+                </div>
+
+                {/* Detailed Scope Areas */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Detailed Scope Areas</label>
+                  <textarea
+                    required
+                    value={form.scope_areas}
+                    onChange={(e) => setForm({ ...form, scope_areas: e.target.value })}
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 min-h-[100px] resize-none"
+                    placeholder="Describe specific audit areas, locations, or deliverables..."
                   />
                 </div>
 
@@ -203,7 +218,6 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Partner</label>
                     <select
-                      required
                       value={form.partner_id}
                       onChange={(e) => setForm({ ...form, partner_id: e.target.value })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
@@ -219,7 +233,6 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Manager</label>
                     <select
-                      required
                       value={form.manager_id}
                       onChange={(e) => setForm({ ...form, manager_id: e.target.value })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
