@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import pool from '../db/pool.js';
-import { authenticate, getVisibleUserIds, logAuditEvent } from '../middleware/auth.js';
+import { authenticate, requireRole, getVisibleUserIds, logAuditEvent } from '../middleware/auth.js';
 import { validateCreateProposal, validateUpdateProposal } from '../middleware/validation.js';
 
 import path from 'path';
