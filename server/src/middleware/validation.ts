@@ -93,8 +93,8 @@ export const validateCreateProposal = [
 export const validateUpdateProposal = [
     body('client_id')
         .optional()
-        .isUUID()
-        .withMessage('client_id must be a valid UUID'),
+        .isString()
+        .trim(),
     body('proposal_type')
         .optional()
         .isIn(['new', 'revision'])
@@ -127,8 +127,8 @@ export const validateCreateAssignment = [
         .isUUID()
         .withMessage('proposal_id must be a valid UUID'),
     body('client_id')
-        .isUUID()
-        .withMessage('client_id must be a valid UUID'),
+        .isString()
+        .trim(),
     body('gstn')
         .optional()
         .isString()
@@ -138,10 +138,9 @@ export const validateCreateAssignment = [
         .isString()
         .trim(),
     body('scope_areas')
+        .optional()
         .isString()
-        .trim()
-        .notEmpty()
-        .withMessage('scope_areas is required'),
+        .trim(),
     body('total_fees')
         .isFloat({ min: 0 })
         .withMessage('total_fees must be a positive number'),
@@ -151,12 +150,12 @@ export const validateCreateAssignment = [
         .trim(),
     body('partner_id')
         .optional({ values: 'falsy' })
-        .isUUID()
-        .withMessage('partner_id must be a valid UUID'),
+        .isString()
+        .trim(),
     body('manager_id')
         .optional({ values: 'falsy' })
-        .isUUID()
-        .withMessage('manager_id must be a valid UUID'),
+        .isString()
+        .trim(),
     body('start_date')
         .optional()
         .isISO8601()
@@ -207,12 +206,12 @@ export const validateUpdateAssignment = [
         .trim(),
     body('partner_id')
         .optional({ values: 'falsy' })
-        .isUUID()
-        .withMessage('partner_id must be a valid UUID'),
+        .isString()
+        .trim(),
     body('manager_id')
         .optional({ values: 'falsy' })
-        .isUUID()
-        .withMessage('manager_id must be a valid UUID'),
+        .isString()
+        .trim(),
     body('start_date')
         .optional()
         .isISO8601()
