@@ -9,6 +9,7 @@ import fs from 'fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const router = Router();
+router.use(authenticate);
 // Relaxed permissions to allow managers and directors access to audit info as part of billing/admin refactor
 router.use(requireRole('admin', 'partner', 'director', 'manager', 'assistant_manager'));
 
