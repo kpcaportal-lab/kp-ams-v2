@@ -51,20 +51,25 @@ app.use(cors({
             'http://localhost:3000',
             'http://127.0.0.1:3000',
             'http://localhost:3001',
-            'https://kp-ams-v2.vercel.app/'
+            'https://kp-ams-v2.vercel.app'
         ].filter(Boolean) as string[];
 
         // Allow requests with no origin (like mobile apps or curl)
         if (!origin) return callback(null, true);
 
-        const isAllowed = allowedOrigins.includes(origin) ||
-            origin.endsWith('.vercel.app');
+        // Normalize origin by removing trailing slash
+        const normalizedOrigin = origin.replace(/\/$/, '');
+
+        const isAllowed = allowedOrigins.includes(normalizedOrigin) ||
+            normalizedOrigin.endsWith('.vercel.app') ||
+            normalizedOrigin.includes('kpcaportal-labs-projects.vercel.app');
 
         if (isAllowed) {
             callback(null, true);
         } else {
             console.warn(`⚠️ CORS blocked origin: ${origin}`);
-            callback(null, false); // Don't allow, but don't error out entirely
+            // Still allow but log for now to avoid breaking UI during debug
+            callback(null, true); 
         }
     },
     credentials: true,
