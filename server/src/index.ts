@@ -18,6 +18,7 @@ import userRoutes from './routes/users.js';
 import auditRoutes from './routes/audit.js';
 import ticketRoutes from './routes/tickets.js';
 import notificationRoutes from './routes/notifications.js';
+import pool from './db/pool.js';
 import profileRoutes from './routes/profile.js';
 
 import { generalLimiter, authLimiter } from './middleware/rateLimiter.js';
