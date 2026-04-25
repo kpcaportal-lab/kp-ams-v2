@@ -17,10 +17,13 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
         const results: unknown[] = [];
 
         for (const inv of (invoices as any[])) {
+            console.log('Processing invoice creation:', inv);
             const { assignment_id, invoice_date, udin, kind_attention, reference, address,
                 gst_no, new_sales_ledger, narration, professional_fees, out_of_pocket } = inv;
 
-            const netAmount = Number(professional_fees) + Number(out_of_pocket || 0);
+            const fees = Number(professional_fees || 0);
+            const oop = Number(out_of_pocket || 0);
+            const netAmount = fees + oop;
 
             const result = await pool.query(`
         INSERT INTO invoices (
@@ -28,23 +31,24 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
           gst_no, new_sales_ledger, narration, professional_fees, out_of_pocket,
           net_amount, batch_id, generated_by
         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`,
-                [assignment_id, invoice_date, udin || null, kind_attention || '', reference || '', address || '',
-                    gst_no || null, new_sales_ledger || null, narration || '', professional_fees,
-                    out_of_pocket || 0, netAmount, batchId || null, req.user!.id]
+                [assignment_id, invoice_date || new Date(), udin || null, kind_attention || '', reference || '', address || '',
+                    gst_no || null, new_sales_ledger || null, narration || '', fees,
+                    oop, netAmount, batchId || null, req.user!.id]
             );
 
             const invoiceRow = result.rows[0];
             results.push(invoiceRow);
 
             // Update billed amount in fee allocations
-            const invoiceDateObj = new Date(invoice_date);
-            // Month in fiscal year: April=1, so month index = (month - 4 + 12) % 12 + 1
-            const calMonth = invoiceDateObj.getMonth() + 1;
+            const dateStr = invoice_date || new Date().toISOString();
+            const invoiceDateObj = new Date(dateStr);
+            const calMonth = isNaN(invoiceDateObj.getTime()) ? (new Date()).getMonth() + 1 : invoiceDateObj.getMonth() + 1;
             const fiscalMonth = calMonth >= 4 ? calMonth - 3 : calMonth + 9;
+
             await pool.query(
                 `UPDATE fee_allocations SET billed_amount = billed_amount + $1, updated_at=NOW()
          WHERE assignment_id=$2 AND month=$3`,
-                [professional_fees, assignment_id, fiscalMonth]
+                [fees, assignment_id, fiscalMonth]
             );
 
             // Send email
