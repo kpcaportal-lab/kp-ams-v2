@@ -181,7 +181,7 @@ router.post('/', ...validateCreateProposal, async (req: Request, res: Response) 
       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING *`,
             [number, client_id, proposal_type || 'new', assignment_type, scope_areas,
                 quotation_amount, fee_category || null, increment_details || null, revised_fee || null,
-                proposal_date || new Date().toISOString(), req.user!.id, responsible_partner || null, revision_flag || false,
+                proposal_date || new Date().toISOString(), req.user!.id, responsible_partner || req.user!.id, revision_flag || false,
                 revision_details || null, notes || null, fiscal_year || '2025-26',
                 1, template_id || null, status || 'pending']
         );
