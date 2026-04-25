@@ -112,7 +112,7 @@ router.post('/', ...validateCreateAssignment, async (req: Request, res: Response
         subcategory, assessment_year, scope_item
       ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'draft',$14,$15,$16) RETURNING *`,
             [proposal_id, client_id, gstn, category || 'A', scope_areas || scope_item, total_fees,
-                billing_cycle, partner_id, manager_id, start_date || null, end_date || null,
+                billing_cycle, partner_id || req.user!.id, manager_id || req.user!.id, start_date || null, end_date || null,
                 notes || null, fiscal_year || '2025-26',
                 subcategory || 'other', assessment_year || fiscal_year || '2025-26', scope_item || scope_areas]
         );

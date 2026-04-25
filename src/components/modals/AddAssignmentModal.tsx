@@ -32,7 +32,8 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
     total_fees: 0,
     billing_cycle: 'monthly' as BillingCycle,
     fiscal_year: '2025-26',
-    scope_item: ''
+    scope_item: '',
+    scope_areas: ''
   });
 
   useEffect(() => {
@@ -53,7 +54,12 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addAssignment(form);
+    const payload = {
+      ...form,
+      partner_id: form.partner_id || undefined,
+      manager_id: form.manager_id || undefined
+    };
+    await addAssignment(payload);
     setOpen(false);
     // Reset form
     setForm({
@@ -66,7 +72,8 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
       total_fees: 0,
       billing_cycle: 'monthly' as BillingCycle,
       fiscal_year: '2025-26',
-      scope_item: ''
+      scope_item: '',
+      scope_areas: ''
     });
   };
 
@@ -134,12 +141,26 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
 
                 {/* Scope Item */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Scope of Work</label>
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Scope Title</label>
                   <input
+                    required
                     value={form.scope_item}
                     onChange={(e) => setForm({ ...form, scope_item: e.target.value })}
                     className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
                     placeholder="e.g. Statutory Audit FY 23-24"
+                  />
+                </div>
+
+                {/* Scope Areas */}
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Detailed Scope Areas</label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={form.scope_areas}
+                    onChange={(e) => setForm({ ...form, scope_areas: e.target.value })}
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 resize-none"
+                    placeholder="Describe the scope areas in detail..."
                   />
                 </div>
 
