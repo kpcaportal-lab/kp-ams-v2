@@ -7,6 +7,7 @@ import { Request, Response, NextFunction } from 'express';
 export const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.log('Validation Error on', req.path, ':', JSON.stringify(errors.array(), null, 2));
         return res.status(400).json({
             error: {
                 code: 'VALIDATION_ERROR',
