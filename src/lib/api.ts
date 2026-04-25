@@ -53,16 +53,22 @@ api.interceptors.response.use(
     useLoadingStore.getState().stopLoading();
     
     if (error.response?.status === 401) {
-      if (typeof window !== 'undefined' && !isRedirecting) {
+      // Don't redirect if we are already on the login page or already redirecting
+      const isLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login';
+      
+      if (typeof window !== 'undefined' && !isRedirecting && !isLoginPage) {
         isRedirecting = true;
+        
+        // Comprehensive cleanup
         localStorage.removeItem('kp_token');
         document.cookie = 'kp_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        delete api.defaults.headers.common['Authorization'];
         
         toast.error('Session expired. Please login again.', { id: 'auth-error' });
         
         setTimeout(() => {
           window.location.href = '/login';
-        }, 1500);
+        }, 1200);
       }
     }
     return Promise.reject(error);
