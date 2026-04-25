@@ -10,7 +10,7 @@ interface ClientStore {
   error: string | null;
   fetchClients: () => Promise<void>;
   fetchClientById: (id: string) => Promise<Client | null>;
-  addClient: (client: Partial<Client>) => Promise<void>;
+  addClient: (client: Partial<Client>) => Promise<Client | void>;
   updateClient: (id: string, updates: Partial<Client>) => Promise<void>;
   deleteClient: (id: string) => Promise<void>;
 }
