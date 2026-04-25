@@ -85,7 +85,8 @@ export default function AdminPage() {
 
   // Role guard
   useEffect(() => {
-    if (user && user.role !== 'admin') {
+    const allowedRoles = ['admin', 'partner', 'director', 'manager', 'assistant_manager'];
+    if (user && !allowedRoles.includes(user.role)) {
       router.push('/dashboard');
     }
   }, [user, router]);

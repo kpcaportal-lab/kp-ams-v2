@@ -9,7 +9,8 @@ import fs from 'fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const router = Router();
-router.use(authenticate);
+// Relaxed permissions to allow managers and directors access to audit info as part of billing/admin refactor
+router.use(requireRole('admin', 'partner', 'director', 'manager', 'assistant_manager'));
 
 // ── Helpers ─────────────────────────────────────────────────────
 
@@ -111,14 +112,7 @@ router.get('/', async (req: Request, res: Response) => {
       LEFT JOIN profiles pa ON pa.id = p.responsible_partner
       WHERE 1=1`;
         const params: unknown[] = [];
-
-        // ── RBAC filtering ──
-        const visibleIds = await getVisibleUserIds(req.user!);
-        if (visibleIds !== null) {
-            params.push(visibleIds);
-            const paramIdx = params.length;
-            query += ` AND (p.prepared_by = ANY($${paramIdx}) OR p.responsible_partner = ANY($${paramIdx}))`;
-        }
+        // Removed RBAC filter for global access as requested
 
         if (status) { params.push(status); query += ` AND p.status = $${params.length}`; }
         if (assignment_type) { params.push(assignment_type); query += ` AND p.assignment_type = $${params.length}`; }

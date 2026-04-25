@@ -111,8 +111,9 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
 
         res.status(201).json({ success: true, invoices: results, batchId });
     } catch (err: unknown) {
-        console.error('Invoice creation error:', err);
-        res.status(500).json({ error: 'Server error' });
+        const error = err as Error;
+        console.error('Summary dashboard error:', error);
+        res.status(500).json({ error: 'Server error', detail: error.message });
     }
 });
 
@@ -121,25 +122,25 @@ router.get('/', async (req: Request, res: Response) => {
     try {
         const role = req.user!.role;
         const userId = req.user!.id;
-        const visibleIds = await getVisibleUserIds(req.user!);
 
         let query = `
-      SELECT i.*, c.name as client_name, a.category, pm.full_name as manager_name,
+      SELECT DISTINCT ON (i.id) i.*, c.name as client_name, a.category, pm.full_name as manager_name,
         el.status as email_status
       FROM invoices i
       LEFT JOIN assignments a ON a.id = i.assignment_id
       LEFT JOIN clients c ON c.id = a.client_id
       LEFT JOIN profiles pm ON pm.id = i.generated_by
       LEFT JOIN email_logs el ON el.invoice_id = i.id
-      WHERE 1=1`;
+      WHERE 1=1
+      ORDER BY i.id, i.created_at DESC`;
         const params: unknown[] = [];
         // Removed visibleIds filter to allow global access as requested
-        query += ' ORDER BY i.created_at DESC';
         const result = await pool.query(query, params);
         res.json(result.rows);
     } catch (err: unknown) {
-        console.error('Invoice list error:', err);
-        res.status(500).json({ error: 'Server error' });
+        const error = err as Error;
+        console.error('Invoice list error:', error);
+        res.status(500).json({ error: 'Server error', detail: error.message, stack: process.env.NODE_ENV === 'development' ? error.stack : undefined });
     }
 });
 
@@ -167,7 +168,11 @@ router.post('/:id/retry-email', async (req: Request, res: Response) => {
         });
         await pool.query('UPDATE email_logs SET status=\'sent\', sent_at=NOW(), retry_count=retry_count+1 WHERE invoice_id=$1', [req.params.id]);
         res.json({ success: true });
-    } catch (err: unknown) { res.status(500).json({ error: 'Failed to resend email' }); }
+    } catch (err: unknown) {
+        const error = err as Error;
+        console.error('Proposal list error:', error);
+        res.status(500).json({ error: 'Server error', detail: error.message });
+    }
 });
 
 // GET /api/invoices/:id/download

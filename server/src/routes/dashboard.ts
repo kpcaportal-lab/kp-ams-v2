@@ -35,7 +35,7 @@ router.get('/summary', async (req: Request, res: Response) => {
             `SELECT COALESCE(SUM(i.professional_fees),0) as total
              FROM invoices i
              JOIN assignments a ON a.id = i.assignment_id
-             WHERE a.fiscal_year=$1 AND a.${(role === 'manager' || role === 'staff') ? 'manager_id' : 'partner_id'}=$2`,
+             WHERE a.fiscal_year=$1 AND (a.manager_id=$2 OR a.partner_id=$2)`,
             [fiscal_year, userId]
         );
 
@@ -99,7 +99,7 @@ router.get('/summary', async (req: Request, res: Response) => {
             FROM profiles pm
             LEFT JOIN assignments a ON a.manager_id=pm.id AND a.status='active' AND a.fiscal_year=$1
             LEFT JOIN invoices i ON i.assignment_id=a.id
-            WHERE pm.role='manager' AND pm.is_active=true`;
+            WHERE pm.role IN ('manager', 'assistant_manager') AND pm.is_active=true`;
         const mParams: unknown[] = [fiscal_year];
 
         if (visibleIds !== null) {
@@ -143,8 +143,9 @@ router.get('/summary', async (req: Request, res: Response) => {
             categoryBreakdown,
         });
     } catch (err: unknown) {
-        console.error('Summary dashboard error:', err);
-        res.status(500).json({ error: 'Server error' });
+        const error = err as Error;
+        console.error('Summary dashboard error:', error);
+        res.status(500).json({ error: 'Server error', detail: error.message });
     }
 });
 

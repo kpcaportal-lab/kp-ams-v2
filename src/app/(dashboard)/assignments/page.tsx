@@ -195,7 +195,7 @@ export default function AssignmentsPage() {
                         <td className="px-8 py-6">
                           <div className="block">
                             <div className="font-black text-slate-900 group-hover:text-blue-600 transition-colors text-base">{a.client_name}</div>
-                            <div className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-tight line-clamp-1">{a.scope_item || SUBCATEGORY_LABELS[a.subcategory]}</div>
+                            <div className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-tight line-clamp-1">{a.scope_item || SUBCATEGORY_LABELS[a.subcategory] || a.subcategory || '—'}</div>
                           </div>
                         </td>
                         <td className="px-6 py-6">
@@ -212,17 +212,17 @@ export default function AssignmentsPage() {
                           </div>
                         </td>
                         <td className="px-6 py-6 text-right">
-                          <div className="font-black text-slate-900 text-sm">{formatIndianCurrency(a.fees ?? a.total_fees ?? 0, true, true)}</div>
+                          <div className="font-black text-slate-900 text-sm">{formatIndianCurrency(Number(a.fees ?? a.total_fees ?? 0), true, true)}</div>
                         </td>
                         <td className="px-6 py-6 text-right">
-                          <div className="font-black text-emerald-600 text-sm">{formatIndianCurrency(a.billed_amount || 0, true, true)}</div>
+                          <div className="font-black text-emerald-600 text-sm">{formatIndianCurrency(Number(a.billed_amount || 0), true, true)}</div>
                         </td>
                         <td className="px-6 py-6 text-right">
-                          <div className="font-black text-blue-600 text-sm">{formatIndianCurrency(a.amount_receipt || 0, true, true)}</div>
+                          <div className="font-black text-blue-600 text-sm">{formatIndianCurrency(Number(a.amount_receipt || 0), true, true)}</div>
                         </td>
                         <td className="px-6 py-6 text-center">
                           <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter bg-slate-100 px-2 py-1 rounded-md">
-                            {BILLING_CYCLE_LABELS[a.billing_cycle]?.substring(0, 3)}
+                            {(BILLING_CYCLE_LABELS[a.billing_cycle] || a.billing_cycle || '—').substring(0, 3)}
                           </span>
                         </td>
                       </motion.tr>
@@ -245,17 +245,17 @@ export default function AssignmentsPage() {
                      <Link href={`/assignments/${a.id}`}>
                        <h3 className="text-xl font-black text-slate-900 group-hover:text-blue-600 transition-colors leading-tight line-clamp-1">{a.client_name}</h3>
                      </Link>
-                     <p className="text-sm font-bold text-slate-400 mt-2 leading-relaxed h-10 overflow-hidden text-ellipsis line-clamp-2">{a.scope_item || SUBCATEGORY_LABELS[a.subcategory]}</p>
+                     <p className="text-sm font-bold text-slate-400 mt-2 leading-relaxed h-10 overflow-hidden text-ellipsis line-clamp-2">{a.scope_item || SUBCATEGORY_LABELS[a.subcategory] || a.subcategory || '—'}</p>
                    </div>
                    
                    <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-50">
                       <div>
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Proposed Fee</div>
-                        <div className="font-black text-slate-900 text-lg">{formatIndianCurrency(a.fees ?? a.total_fees ?? 0, true, true)}</div>
+                        <div className="font-black text-slate-900 text-lg">{formatIndianCurrency(Number(a.fees ?? a.total_fees ?? 0), true, true)}</div>
                       </div>
                       <div className="text-right">
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Billing</div>
-                        <div className="font-black text-slate-800 text-sm mt-1 uppercase">{BILLING_CYCLE_LABELS[a.billing_cycle]}</div>
+                        <div className="font-black text-slate-800 text-sm mt-1 uppercase">{BILLING_CYCLE_LABELS[a.billing_cycle] || a.billing_cycle || '—'}</div>
                       </div>
                    </div>
 

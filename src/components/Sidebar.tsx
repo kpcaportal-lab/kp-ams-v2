@@ -27,8 +27,8 @@ const navigation = [
   { name: 'Assignments', href: '/assignments', icon: ClipboardList, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Billing', href: '/billing', icon: Receipt, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Tickets', href: '/tickets', icon: LifeBuoy, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
-  { name: 'Users', href: '/users', icon: UserCog, roles: ['admin', 'partner', 'director'] },
-  { name: 'Admin Panel', href: '/admin', icon: Shield, roles: ['admin'] },
+  { name: 'Users', href: '/users', icon: UserCog, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager'] },
+  { name: 'Admin Panel', href: '/admin', icon: Shield, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager'] },
 ];
 
 export function Sidebar({ 

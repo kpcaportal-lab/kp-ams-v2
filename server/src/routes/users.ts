@@ -23,20 +23,7 @@ router.get('/', requireRole('admin', 'partner', 'director'), async (_req: Reques
     }
 });
 
-router.get('/test-error', async (req, res) => {
-    try {
-        const result = await pool.query(
-            `SELECT p.id, p.email, p.role, p.full_name, p.display_name, p.is_active, p.created_at, p.reports_to, p.work_file_url,
-                    rp.full_name as reports_to_name
-             FROM profiles p
-             LEFT JOIN profiles rp ON rp.id = p.reports_to
-             ORDER BY p.role, p.full_name`
-        );
-        res.json(result.rows);
-    } catch (err: any) {
-        res.status(500).json({ error: err.message, stack: err.stack });
-    }
-});
+
 
 // GET /api/users/managers
 router.get('/managers', async (_req: Request, res: Response) => {

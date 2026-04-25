@@ -23,6 +23,10 @@ router.patch('/', async (req: Request, res: Response) => {
             updateFields.push(`phone_number = $${counter++}`);
             params.push(phone_number);
         }
+        if (req.body.work_file_url !== undefined) {
+            updateFields.push(`work_file_url = $${counter++}`);
+            params.push(req.body.work_file_url);
+        }
         // If we add notification_preferences to profiles table later, handle it here.
         
         if (updateFields.length === 0) {

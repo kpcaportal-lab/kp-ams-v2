@@ -42,6 +42,9 @@ const registerRoutes = (app: express.Express) => {
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// Enable trust proxy for Render/Vercel/Heroku
+app.set('trust proxy', 1);
+
 // ── Middleware ──────────────────────────────────────────────────────
 app.use(generalLimiter); // Apply rate limiting to all requests
 app.use(cors({
@@ -51,7 +54,8 @@ app.use(cors({
             'http://localhost:3000',
             'http://127.0.0.1:3000',
             'http://localhost:3001',
-            'https://kp-ams-v2.vercel.app'
+            'https://kp-ams-v2.vercel.app',
+            'https://kpca-portal-5ysc.onrender.com'
         ].filter(Boolean) as string[];
 
         // Allow requests with no origin (like mobile apps or curl)

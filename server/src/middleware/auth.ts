@@ -50,36 +50,42 @@ export const requireRole = (...roles: string[]) => {
  * - manager → [self]
  */
 export const getVisibleUserIds = async (user: AuthUser): Promise<string[] | null> => {
-    if (user.role === 'admin' || user.role === 'partner') {
-        return null; // No filter — see all
-    }
+    try {
+        if (user.role === 'admin' || user.role === 'partner') {
+            return null; // No filter — see all
+        }
 
-    if (user.role === 'staff') {
+        if (user.role === 'staff') {
+            const result = await pool.query(
+                'SELECT reports_to FROM profiles WHERE id = $1',
+                [user.id]
+            );
+            if (result.rows.length > 0 && result.rows[0].reports_to) {
+                return [user.id, result.rows[0].reports_to];
+            }
+            return [user.id];
+        }
+
+        // Recursive lookup for subordinates with a depth limit to prevent infinite loops
         const result = await pool.query(
-            'SELECT reports_to FROM profiles WHERE id = $1',
+            `WITH RECURSIVE subordinates AS (
+                SELECT id, 1 as depth FROM profiles WHERE reports_to = $1 AND is_active = true
+                UNION
+                SELECT p.id, s.depth + 1 FROM profiles p
+                INNER JOIN subordinates s ON p.reports_to = s.id
+                WHERE p.is_active = true AND s.depth < 10
+            )
+            SELECT id FROM subordinates`,
             [user.id]
         );
-        if (result.rows.length > 0 && result.rows[0].reports_to) {
-            return [user.id, result.rows[0].reports_to];
-        }
+
+        const subordinateIds = result.rows.map((r: { id: string }) => r.id);
+        return [user.id, ...subordinateIds];
+    } catch (err: unknown) {
+        console.error('Error in getVisibleUserIds:', err);
+        // Fallback to only self if hierarchy query fails (e.g. reports_to column missing or circular dependency)
         return [user.id];
     }
-
-    // Recursive lookup for subordinates with a depth limit to prevent infinite loops
-    const result = await pool.query(
-        `WITH RECURSIVE subordinates AS (
-            SELECT id, 1 as depth FROM profiles WHERE reports_to = $1 AND is_active = true
-            UNION
-            SELECT p.id, s.depth + 1 FROM profiles p
-            INNER JOIN subordinates s ON p.reports_to = s.id
-            WHERE p.is_active = true AND s.depth < 10
-        )
-        SELECT id FROM subordinates`,
-        [user.id]
-    );
-
-    const subordinateIds = result.rows.map((r: { id: string }) => r.id);
-    return [user.id, ...subordinateIds];
 };
 
 /**

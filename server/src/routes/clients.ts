@@ -45,26 +45,64 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST /api/clients
 router.post('/', async (req: Request, res: Response) => {
     try {
-        const { name, gstn, notes, industry, address, billing_details } = req.body;
+        const { name, gstn, notes, industry, address, billing_details, spocName, spocEmail, spocPhone } = req.body;
         if (!name) return res.status(400).json({ error: 'Client name required' });
         const result = await pool.query(
             'INSERT INTO clients (name, gstn, notes, industry, address, billing_details, added_by) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *',
             [name, gstn || null, notes || null, industry || null, address || null, billing_details || null, req.user!.id]
         );
-        res.status(201).json(result.rows[0]);
+        const newClient = result.rows[0];
+
+        // Create SPOC entry if SPOC data was provided
+        if (spocName || spocEmail || spocPhone) {
+            await pool.query(
+                'INSERT INTO client_spocs (client_id, contact_name, email, phone, is_primary) VALUES ($1,$2,$3,$4,true)',
+                [newClient.id, spocName || null, spocEmail || null, spocPhone || null]
+            );
+        }
+
+        res.status(201).json(newClient);
     } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // PUT /api/clients/:id
 router.put('/:id', async (req: Request, res: Response) => {
     try {
-        const { name, gstn, notes, industry, address, billing_details, status } = req.body;
+        const { name, gstn, notes, industry, address, billing_details, status, spocName, spocEmail, spocPhone } = req.body;
+        
+        // Start transaction for atomic update
+        await pool.query('BEGIN');
+
         const result = await pool.query(
             'UPDATE clients SET name=COALESCE($1,name), gstn=COALESCE($2,gstn), notes=COALESCE($3,notes), industry=COALESCE($4,industry), address=COALESCE($5,address), billing_details=COALESCE($6,billing_details), status=COALESCE($7,status), updated_at=NOW() WHERE id=$8 RETURNING *',
             [name, gstn, notes, industry, address, billing_details, status, req.params.id]
         );
+
+        // Update primary SPOC if data provided
+        if (spocName || spocEmail || spocPhone) {
+            // Check if primary SPOC exists
+            const spocCheck = await pool.query('SELECT id FROM client_spocs WHERE client_id=$1 AND is_primary=true', [req.params.id]);
+            
+            if (spocCheck.rows.length) {
+                await pool.query(
+                    'UPDATE client_spocs SET contact_name=COALESCE($1,contact_name), email=COALESCE($2,email), phone=COALESCE($3,phone), updated_at=NOW() WHERE id=$4',
+                    [spocName, spocEmail, spocPhone, spocCheck.rows[0].id]
+                );
+            } else {
+                await pool.query(
+                    'INSERT INTO client_spocs (client_id, contact_name, email, phone, is_primary) VALUES ($1,$2,$3,$4,true)',
+                    [req.params.id, spocName || null, spocEmail || null, spocPhone || null]
+                );
+            }
+        }
+
+        await pool.query('COMMIT');
         res.json(result.rows[0]);
-    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { 
+        await pool.query('ROLLBACK');
+        console.error(err); 
+        res.status(500).json({ error: 'Server error' }); 
+    }
 });
 
 // POST /api/clients/:id/spocs

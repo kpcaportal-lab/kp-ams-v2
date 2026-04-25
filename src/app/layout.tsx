@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import { LoadingProvider, useLoading } from '@/components/LoadingProvider';
+import { LoadingProvider } from '@/components/LoadingProvider';
 import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { ClientLayout } from '@/components/ClientLayout';
 

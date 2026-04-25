@@ -465,7 +465,7 @@ export const validateCreateUser = [
         .notEmpty()
         .withMessage('full_name is required'),
     body('role')
-        .isIn(['admin', 'partner', 'director', 'manager', 'staff'])
+        .isIn(['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'])
         .withMessage('invalid role'),
     body('password')
         .optional()

@@ -75,7 +75,7 @@ router.post('/', ...validateCreateTicket, async (req: Request, res: Response) =>
 });
 
 // PATCH /api/tickets/:id - Update ticket status (admin only for now, or self if needed)
-router.patch('/:id', async (req: Request, res: Response) => {
+router.patch('/:id', ...validateUpdateTicketStatus, async (req: Request, res: Response) => {
     try {
         const { status } = req.body;
         // Basic check

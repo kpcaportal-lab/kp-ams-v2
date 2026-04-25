@@ -57,7 +57,7 @@ export function getErrorMessage(err: any): string {
           return String(d);
         }).join(', ');
       }
-      return e.message || e.details || JSON.stringify(e);
+      return e.message || (typeof e.details === 'string' ? e.details : JSON.stringify(e));
     }
     
     // Check for direct fields
@@ -70,7 +70,12 @@ export function getErrorMessage(err: any): string {
       }).join(', ');
     }
 
-    return data.error || data.details || data.message || (typeof data === 'string' ? data : 'Server error');
+    const errVal = data.error || data.message;
+    if (typeof errVal === 'string') return errVal;
+    if (data.details) {
+      return typeof data.details === 'string' ? data.details : JSON.stringify(data.details);
+    }
+    return typeof data === 'string' ? data : 'Server error';
   }
   
   // Handle standard Error objects

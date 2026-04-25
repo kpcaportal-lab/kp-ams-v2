@@ -24,6 +24,7 @@ export default function ProfilePage() {
     // Form state
     const [displayName, setDisplayName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [workFileUrl, setWorkFileUrl] = useState('');
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState(false);
 
@@ -31,6 +32,7 @@ export default function ProfilePage() {
         if (user) {
             setDisplayName(user.display_name || '');
             setPhoneNumber(user.phone_number || '');
+            setWorkFileUrl(user.work_file_url || '');
         }
     }, [user]);
 
@@ -41,6 +43,7 @@ export default function ProfilePage() {
             await api.patch('/api/profile', {
                 display_name: displayName,
                 phone_number: phoneNumber,
+                work_file_url: workFileUrl,
             });
             await fetchUser(); // Reload user context
             setIsEditing(false);
@@ -200,7 +203,25 @@ export default function ProfilePage() {
                                     </div>
                                 </div>
 
-                                {user.work_file_url && (
+                                <div className="col-span-full space-y-1.5 pt-2">
+                                    <label className="label">Portal Verification URL (Work File)</label>
+                                    <div className="relative">
+                                        <ExternalLink className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
+                                        <input 
+                                            type="url" 
+                                            className={`input pl-10 ${isEditing ? 'border-primary' : ''}`}
+                                            placeholder="https://link-to-your-work-file.com"
+                                            value={isEditing ? workFileUrl : (user.work_file_url || '')} 
+                                            onChange={(e) => setWorkFileUrl(e.target.value)}
+                                            disabled={!isEditing}
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-muted mt-1 italic">
+                                        Optional: Link to your CV, certifications, or professional portfolio.
+                                    </p>
+                                </div>
+
+                                {!isEditing && user.work_file_url && (
                                     <div className="col-span-full pt-4">
                                         <label className="label">Verification & Work Files</label>
                                         <div className="p-4 bg-muted/40 rounded-xl border border-border flex items-center justify-between group hover:border-primary/50 transition-colors">
@@ -235,6 +256,7 @@ export default function ProfilePage() {
                                             setIsEditing(false);
                                             setDisplayName(user.display_name || '');
                                             setPhoneNumber(user.phone_number || '');
+                                            setWorkFileUrl(user.work_file_url || '');
                                         }}
                                     >
                                         <X size={18} />

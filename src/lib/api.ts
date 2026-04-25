@@ -1,7 +1,23 @@
 import axios from 'axios';
 import { useLoadingStore } from '@/store/loadingStore';
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const getBaseURL = () => {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  
+  if (typeof window !== 'undefined') {
+    // If not on localhost, assume the API is on the same domain (common for monolithic/proxied deploys)
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      return window.location.origin;
+    }
+  }
+  
+  return 'http://localhost:4000';
+};
+
+const baseURL = getBaseURL();
+if (typeof window !== 'undefined') {
+  console.log('📡 API Base URL initialized:', baseURL);
+}
 
 const api = axios.create({
   baseURL,

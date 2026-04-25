@@ -4,7 +4,7 @@ import { authenticate, requireRole } from '../middleware/auth.js';
 
 const router = Router();
 router.use(authenticate);
-router.use(requireRole('admin'));
+router.use(requireRole('admin', 'partner', 'director', 'manager', 'assistant_manager'));
 
 // GET /api/audit/logs — paginated, filterable audit log
 router.get('/logs', async (req: Request, res: Response) => {

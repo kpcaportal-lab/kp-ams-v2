@@ -422,11 +422,11 @@ export default function DashboardPage() {
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-sm text-slate-800 group-hover:text-blue-600 transition-colors truncate">{a.client_name}</div>
                     <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
-                      {SUBCATEGORY_LABELS[a.subcategory]}
+                      {SUBCATEGORY_LABELS[a.subcategory] || a.subcategory || '—'}
                     </div>
                   </div>
                   <div className="text-xs font-black text-slate-900 self-center">
-                    {formatIndianCurrency(a.total_fees || 0, true, true)}
+                    {formatIndianCurrency(Number(a.total_fees || 0), true, true)}
                   </div>
                 </Link>
               ))}

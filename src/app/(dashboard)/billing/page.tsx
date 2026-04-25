@@ -1,194 +1,319 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
-import { Plus, Search, DollarSign, FileText, TrendingUp, Download } from 'lucide-react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { 
+  Plus, Search, DollarSign, FileText, TrendingUp, Download, 
+  Users, Filter, Activity, Receipt, CreditCard, ChevronLeft, ChevronRight, Clock 
+} from 'lucide-react';
 import { formatIndianCurrency, cn } from '@/lib/utils';
-import { formatDate } from '@/types';
+import { formatDate, type DashboardSummary, type Invoice } from '@/types';
 import { AddInvoiceModal } from '@/components/billing/AddInvoiceModal';
 import { InvoiceDownloadButton } from '@/components/billing/InvoiceDownloadButton';
-import { useRouter } from 'next/navigation';
-import { type Invoice, type Assignment } from '@/types';
-import { useBillingStore } from '@/store/billingStore';
-import { useAssignmentStore } from '@/store/assignmentStore';
 import { useAuthStore } from '@/store/authStore';
+import { useBillingStore } from '@/store/billingStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import api from '@/lib/api';
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 18 },
-  visible: (i: number) => ({
-    opacity: 1, y: 0,
-    transition: { delay: i * 0.06, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }
-  })
-};
 
 export default function BillingPage() {
-  const { invoices, loading, fetchInvoices } = useBillingStore();
-  const { assignments } = useAssignmentStore();
+  const { invoices, loading: billingLoading, fetchInvoices } = useBillingStore();
+  const { user, token } = useAuthStore();
+  const [activeTab, setActiveTab] = useState<'invoices' | 'breakdown'>('invoices');
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { user } = useAuthStore();
-  const router = useRouter();
-  const canAccessBilling = true; // Allow all authenticated users as requested
+
+  const headers = useMemo(() => ({ 
+    Authorization: `Bearer ${token}`, 
+    'Content-Type': 'application/json' 
+  }), [token]);
+
+  const fetchSummary = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/api/dashboard/summary');
+      setSummary(res.data);
+    } catch (err) {
+      console.error('Failed to fetch billing summary:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchInvoices();
-  }, [fetchInvoices]);
+    fetchSummary();
+  }, [fetchInvoices, fetchSummary]);
 
   const filteredInvoices = useMemo(() => {
     return invoices.filter((inv) => {
-      const matchesSearch =
-        inv.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        inv.narration.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        inv.udin?.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesSearch;
+      const search = searchTerm.toLowerCase();
+      return (
+        inv.client_name?.toLowerCase().includes(search) ||
+        inv.narration.toLowerCase().includes(search) ||
+        inv.udin?.toLowerCase().includes(search)
+      );
     });
   }, [invoices, searchTerm]);
 
-  const stats = useMemo(() => {
-    const totalBilled = invoices.reduce((sum, inv) => sum + Number(inv.net_amount || 0), 0);
-    const totalProfFees = invoices.reduce((sum, inv) => sum + Number(inv.professional_fees || 0), 0);
-    const totalOOP = invoices.reduce((sum, inv) => sum + Number(inv.out_of_pocket || 0), 0);
-    const totalFees = assignments.reduce((sum, a) => sum + Number(a.total_fees || a.fees || 0), 0);
-    const billingPct = totalFees > 0 ? (totalBilled / totalFees) * 100 : 0;
-    return { totalBilled, totalProfFees, totalOOP, billingPct, count: invoices.length };
-  }, [invoices, assignments]);
+  const filteredBreakdown = useMemo(() => {
+    if (!summary) return [];
+    const search = searchTerm.toLowerCase();
+    const combined = [
+      ...(summary.partnerBreakdown || []).map(p => ({ ...p, role: 'partner' })),
+      ...(summary.managerBreakdown || []).map(m => ({ ...m, role: 'manager', billed: m.billed_amount }))
+    ];
+    return combined.filter(u => 
+      u.full_name.toLowerCase().includes(search) || 
+      (u.display_name && u.display_name.toLowerCase().includes(search))
+    );
+  }, [summary, searchTerm]);
 
-  const kpiCards = [
-    { label: 'Total Billed', value: formatIndianCurrency(stats.totalBilled, true, true), icon: DollarSign, color: 'text-blue-600', bg: 'bg-blue-500/10', accent: 'from-blue-600 to-indigo-600' },
-    { label: 'Prof. Fees', value: formatIndianCurrency(stats.totalProfFees, true, true), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-500/10', accent: 'from-emerald-500 to-teal-500' },
-    { label: 'Out of Pocket', value: formatIndianCurrency(stats.totalOOP, true, true), icon: FileText, color: 'text-amber-600', bg: 'bg-amber-500/10', accent: 'from-amber-500 to-orange-500' },
-    { label: 'Invoices', value: stats.count.toString(), icon: FileText, color: 'text-violet-600', bg: 'bg-violet-500/10', accent: 'from-violet-500 to-purple-600' },
+  // Tab configurations matching Admin page
+  const tabs = [
+    { id: 'invoices', label: 'All Invoices', icon: Receipt },
+    { id: 'breakdown', label: 'Revenue Breakdown', icon: Users },
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div style={{ padding: '0 8px' }}>
+      {/* Page Header - Admin Standard */}
+      <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Billing & Invoices</h1>
-          <p className="text-sm text-slate-400 mt-1 font-medium">Track all invoices and billing progress</p>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: 4 }}>
+            Billing & Revenue
+          </h1>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+            Unified billing interface and performance tracking
+          </p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-bold shadow-[0_4px_12px_rgba(37,99,235,0.25)] hover:shadow-[0_8px_24px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 transition-all active:scale-95"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
+            background: 'var(--gradient-primary)', color: '#fff', border: 'none',
+            borderRadius: 12, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
+            boxShadow: '0 4px 12px var(--color-primary-ring)', transition: 'all 0.2s'
+          }}
+          onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+          onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
         >
           <Plus size={18} />
           Generate Invoice
         </button>
-      </motion.div>
+      </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpiCards.map((card, i) => (
-          <motion.div key={card.label} custom={i} variants={fadeUp} initial="hidden" animate="visible"
-            className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-4 shadow-[0_1px_3px_rgba(15,23,42,0.06)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.08)] transition-all duration-300">
-            <div className={cn("absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r", card.accent)} />
-            <div className="flex items-center gap-3">
-              <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center", card.bg)}>
-                <card.icon size={18} className={card.color} />
+      {/* KPI Cards - Matching Dashboard/Admin hybrid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 32 }}>
+        {[
+          { label: 'Total Billed', value: summary?.totalBilled || 0, icon: DollarSign, color: '#3b82f6', bg: 'var(--bg-primary-light)' },
+          { label: 'Overdue Revenue', value: summary?.overdue || 0, icon: Clock, color: '#ef4444', bg: 'var(--bg-danger-light)' },
+          { label: 'Collection %', value: `${summary?.billingPct?.toFixed(1) || 0}%`, isRaw: true, icon: TrendingUp, color: '#10b981', bg: 'var(--bg-success-light)' },
+          { label: 'Active Invoices', value: invoices.length, isRaw: true, icon: FileText, color: '#8b5cf6', bg: 'var(--color-violet-light)' },
+        ].map((kpi, i) => (
+          <motion.div
+            key={kpi.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
+            style={{
+              padding: '20px 24px', background: '#fff', border: '1px solid var(--border)',
+              borderRadius: 16, boxShadow: 'var(--shadow-card)', display: 'flex', alignItems: 'center', gap: 16
+            }}
+          >
+            <div style={{ 
+              width: 48, height: 48, borderRadius: 12, background: kpi.bg, 
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 
+            }}>
+               <kpi.icon size={22} style={{ color: kpi.color, margin: 'auto' }} />
+            </div>
+            <div>
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {kpi.label}
               </div>
-              <div>
-                <div className="text-xl font-extrabold text-slate-900">{card.value}</div>
-                <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{card.label}</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+                {kpi.isRaw ? kpi.value : formatIndianCurrency(Number(kpi.value || 0), true, true)}
               </div>
             </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Billing Progress */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-        className="rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-bold text-slate-700">Overall Billing Progress</h3>
-          <span className="text-sm font-extrabold text-slate-900">{stats.billingPct.toFixed(1)}%</span>
-        </div>
-        <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
+      {/* Tabs Switcher - Exactly as in Admin area */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 24, borderBottom: '1px solid var(--border)', paddingBottom: 16 }}>
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px',
+              borderRadius: 10, border: 'none', background: activeTab === tab.id ? 'var(--bg-primary-light)' : 'transparent',
+              color: activeTab === tab.id ? 'var(--color-primary)' : 'var(--text-muted)',
+              cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem', transition: 'all 0.2s'
+            }}
+          >
+            <tab.icon size={18} />
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Search Bar - Integrated Style */}
+      <div style={{ marginBottom: 24, position: 'relative', maxWidth: 400 }}>
+        <Search size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+        <input
+          type="text"
+          placeholder={activeTab === 'invoices' ? "Search client, UDIN..." : "Search manager or partner..."}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{
+            width: '100%', padding: '12px 16px 12px 42px', borderRadius: 12,
+            border: '1px solid var(--border)', background: '#fff', fontSize: '0.9rem',
+            outline: 'none', transition: 'border-color 0.2s'
+          }}
+          onFocus={(e) => e.target.style.borderColor = 'var(--color-primary)'}
+          onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+        />
+      </div>
+
+      {/* Tab Content */}
+      <AnimatePresence mode="wait">
+        {activeTab === 'invoices' && (
           <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${Math.min(stats.billingPct, 100)}%` }}
-            transition={{ delay: 0.4, duration: 1, ease: 'easeOut' }}
-            className={cn("h-full rounded-full",
-              stats.billingPct >= 80 ? "bg-gradient-to-r from-emerald-500 to-teal-400" :
-              stats.billingPct >= 40 ? "bg-gradient-to-r from-blue-500 to-indigo-500" :
-              "bg-gradient-to-r from-amber-400 to-orange-400"
-            )}
-          />
-        </div>
-        <div className="flex items-center justify-between mt-2 text-xs text-slate-400">
-          <span>{formatIndianCurrency(stats.totalBilled, true, true)} billed</span>
-          <span>{formatIndianCurrency(assignments.reduce((s, a) => s + (a.total_fees || 0), 0), true, true)} total fees</span>
-        </div>
-      </motion.div>
-
-      {/* Filters */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-        className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search client, narration, UDIN..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white/80 backdrop-blur-sm text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all"
-          />
-        </div>
-      </motion.div>
-
-      {/* Invoices Table */}
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.5 }}
-        className="rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm shadow-[0_1px_3px_rgba(15,23,42,0.06)] overflow-hidden">
-        {filteredInvoices.length === 0 ? (
-          <div className="px-5 py-16 text-center">
-            <FileText size={40} className="mx-auto text-slate-300 mb-3" />
-            <p className="text-sm font-semibold text-slate-500">No invoices found</p>
-            <p className="text-xs text-slate-400 mt-1">Try adjusting your search</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-gradient-to-b from-slate-50 to-slate-100/80 border-b border-slate-200/60">
-                  <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Date</th>
-                  <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Client</th>
-                  <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Narration</th>
-                  <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Prof. Fees</th>
-                  <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">OOP</th>
-                  <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Net Amount</th>
-                  <th className="text-left px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">UDIN</th>
-                  <th className="text-right px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100/80">
-                {filteredInvoices.map((inv, i) => (
-                  <motion.tr key={inv.id} custom={i} variants={fadeUp} initial="hidden" animate="visible"
-                    className="hover:bg-blue-50/30 transition-colors">
-                    <td className="px-5 py-3.5 text-slate-600 whitespace-nowrap">{formatDate(inv.invoice_date)}</td>
-                    <td className="px-5 py-3.5 font-semibold text-slate-800">{inv.client_name || '—'}</td>
-                    <td className="px-5 py-3.5 text-slate-600 max-w-[200px] truncate">{inv.narration}</td>
-                    <td className="px-5 py-3.5 text-right text-slate-600">{formatIndianCurrency(inv.professional_fees)}</td>
-                    <td className="px-5 py-3.5 text-right text-slate-600">{formatIndianCurrency(inv.out_of_pocket)}</td>
-                    <td className="px-5 py-3.5 text-right font-bold text-slate-900">{formatIndianCurrency(inv.net_amount)}</td>
-                    <td className="px-5 py-3.5">
-                      {inv.udin ? (
-                        <span className="font-mono text-[11px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded">{inv.udin}</span>
-                      ) : (
-                         <span className="text-xs text-slate-400">—</span>
-                      )}
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <InvoiceDownloadButton invoice={inv} />
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+            key="invoices"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 10 }}
+            style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden' }}
+          >
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border)', background: '#f8fafc' }}>
+                    <th style={{ padding: '16px 20px', textAlign: 'left', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Date</th>
+                    <th style={{ padding: '16px 20px', textAlign: 'left', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Client</th>
+                    <th style={{ padding: '16px 20px', textAlign: 'left', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Professional Fees</th>
+                    <th style={{ padding: '16px 20px', textAlign: 'left', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Net Amount</th>
+                    <th style={{ padding: '16px 20px', textAlign: 'left', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>UDIN</th>
+                    <th style={{ padding: '16px 20px', textAlign: 'right', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading || billingLoading ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                        <td colSpan={6} style={{ padding: '24px 20px' }}>
+                          <div style={{ height: 20, background: 'var(--bg-main)', borderRadius: 4, width: '100%', animation: 'pulse 1.5s infinite' }} />
+                        </td>
+                      </tr>
+                    ))
+                  ) : filteredInvoices.map((inv) => (
+                    <tr 
+                      key={inv.id} 
+                      style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }}
+                      onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
+                      onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <td style={{ padding: '14px 20px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{formatDate(inv.invoice_date)}</td>
+                      <td style={{ padding: '14px 20px' }}>
+                        <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.9rem' }}>{inv.client_name}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{inv.narration}</div>
+                      </td>
+                      <td style={{ padding: '14px 20px', fontSize: '0.85rem', fontWeight: 600 }}>{formatIndianCurrency(inv.professional_fees)}</td>
+                      <td style={{ padding: '14px 20px' }}>
+                        <div style={{ background: 'var(--bg-primary-light)', color: 'var(--color-primary)', display: 'inline-block', padding: '4px 10px', borderRadius: 8, fontWeight: 700, fontSize: '0.85rem' }}>
+                          {formatIndianCurrency(inv.net_amount)}
+                        </div>
+                      </td>
+                      <td style={{ padding: '14px 20px' }}>
+                         {inv.udin ? (
+                           <span style={{ fontFamily: 'monospace', fontSize: '0.75rem', background: '#f1f5f9', padding: '2px 6px', borderRadius: 4, color: '#475569' }}>{inv.udin}</span>
+                         ) : <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>—</span>}
+                      </td>
+                      <td style={{ padding: '14px 20px', textAlign: 'right' }}>
+                        <InvoiceDownloadButton invoice={inv} />
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredInvoices.length === 0 && (
+                    <tr>
+                      <td colSpan={6} style={{ padding: '48px 20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                        No invoices matching your search criteria
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
         )}
-      </motion.div>
+
+        {activeTab === 'breakdown' && (
+          <motion.div
+            key="breakdown"
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}
+          >
+            {filteredBreakdown.map((item) => (
+              <div 
+                key={item.id}
+                style={{
+                  padding: '20px 24px', background: '#fff', border: '1px solid var(--border)',
+                  borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  boxShadow: 'var(--shadow-card)', transition: 'all 0.2s'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ 
+                    width: 44, height: 44, borderRadius: 12, background: 'var(--bg-main)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800,
+                    color: 'var(--text-secondary)', fontSize: '0.9rem'
+                  }}>
+                    <span style={{ margin: 'auto' }}>{item.full_name.charAt(0)}</span>
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem' }}>
+                      {item.full_name}
+                      {item.full_name === 'Hamza Momin' && (
+                        <span style={{ marginLeft: 8, fontSize: '0.65rem', background: 'var(--bg-success-light)', color: 'var(--color-success)', padding: '2px 6px', borderRadius: 6, verticalAlign: 'middle' }}>
+                          PRIORITY
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'capitalize' }}>{item.role}</div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{
+                      padding: '6px 12px', borderRadius: 10, background: 'var(--bg-primary-light)',
+                      color: 'var(--color-primary)', fontWeight: 800, fontSize: '0.9rem'
+                    }}>
+                      {formatIndianCurrency(Number(item.billed), true, true)}
+                    </div>
+                    {item.role === 'manager' && (item as any).billing_pct !== undefined && (
+                      <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)', marginTop: 4, textAlign: 'center' }}>
+                        {Number((item as any).billing_pct || 0).toFixed(0)}% of target
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+            {filteredBreakdown.length === 0 && (
+              <div style={{ gridColumn: '1 / -1', padding: '48px', textAlign: 'center', background: '#fff', border: '1px dashed var(--border)', borderRadius: 16, color: 'var(--text-muted)' }}>
+                No revenue data found for the current filter
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AddInvoiceModal open={isModalOpen} setOpen={setIsModalOpen} />
     </div>
   );
