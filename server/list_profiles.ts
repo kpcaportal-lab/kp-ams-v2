@@ -1,12 +1,14 @@
-import pool from './src/db/pool.ts';
-async function list() {
+import pool from './src/db/pool.js';
+
+async function listProfiles() {
     try {
-        const res = await pool.query("SELECT id, full_name, email, role FROM profiles");
+        const res = await pool.query("SELECT id, email, role, full_name, is_active FROM profiles ORDER BY email");
         console.log(JSON.stringify(res.rows, null, 2));
-    } catch (e) {
-        console.error(e);
+    } catch (err) {
+        console.error('Error listing profiles:', err);
     } finally {
-        await pool.end();
+        process.exit();
     }
 }
-list();
+
+listProfiles();

@@ -1,20 +1,13 @@
-import pg from 'pg';
-const { Pool } = pg;
+import pool from './src/db/pool.js';
 
-const pool = new Pool({
-  connectionString: "postgresql://postgres.dtwdrlxfqozoqmenhpih:thedeveloper%40321@aws-1-eu-west-1.pooler.supabase.com:6543/postgres"
-});
-
-async function checkColumns() {
+async function main() {
   try {
-    const res = await pool.query('SELECT column_name FROM information_schema.columns WHERE table_name = \'assignments\'');
-    console.log('--- Assignment Columns ---');
-    console.table(res.rows.map(r => r.column_name));
-  } catch (err) {
-    console.error(err);
+    const res = await pool.query("SELECT column_name FROM information_schema.columns WHERE table_name = 'assignments'");
+    console.log(res.rows.map(r => r.column_name));
+  } catch (e) {
+    console.error(e);
   } finally {
-    await pool.end();
+    process.exit();
   }
 }
-
-checkColumns();
+main();
