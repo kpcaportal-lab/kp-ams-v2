@@ -162,6 +162,7 @@ export interface Assignment {
   created_at: string;
   allocations?: FeeAllocation[];
   invoices?: Invoice[];
+  file_url?: string;
   history?: ChangeHistoryEntry[];
 }
 
