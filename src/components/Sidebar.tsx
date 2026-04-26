@@ -15,20 +15,26 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  LifeBuoy
+  LifeBuoy,
+  TrendingUp,
+  Calendar as CalendarIcon,
+  HardDrive
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { cn } from '@/lib/utils';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
+  { name: 'Insights', href: '/insights', icon: TrendingUp, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager'] },
+  { name: 'Calendar', href: '/calendar', icon: CalendarIcon, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Clients', href: '/clients', icon: Users, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Proposals', href: '/proposals', icon: FileText, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Assignments', href: '/assignments', icon: ClipboardList, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
+  { name: 'Vault', href: '/documents', icon: HardDrive, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Billing', href: '/billing', icon: Receipt, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Tickets', href: '/tickets', icon: LifeBuoy, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
-  { name: 'Users', href: '/users', icon: UserCog, roles: ['admin'] },
-  { name: 'Admin Panel', href: '/admin', icon: Shield, roles: ['admin'] },
+  { name: 'Users', href: '/users', icon: UserCog, roles: ['admin', 'partner', 'director'] },
+  { name: 'Admin Panel', href: '/admin', icon: Shield, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager'] },
 ];
 
 export function Sidebar({ 

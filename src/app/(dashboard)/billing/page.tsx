@@ -14,6 +14,7 @@ import { useBillingStore } from '@/store/billingStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
+import * as XLSX from 'xlsx';
 
 
 export default function BillingPage() {
@@ -48,15 +49,35 @@ export default function BillingPage() {
   }, [fetchInvoices, fetchSummary]);
 
   const filteredInvoices = useMemo(() => {
-    return invoices.filter((inv) => {
-      const search = searchTerm.toLowerCase();
-      return (
-        inv.client_name?.toLowerCase().includes(search) ||
-        inv.narration.toLowerCase().includes(search) ||
-        inv.udin?.toLowerCase().includes(search)
-      );
-    });
+    return invoices
+      .filter((inv) => {
+        const search = searchTerm.toLowerCase();
+        return (
+          inv.client_name?.toLowerCase().includes(search) ||
+          inv.narration.toLowerCase().includes(search) ||
+          inv.udin?.toLowerCase().includes(search)
+        );
+      })
+      .sort((a, b) => new Date(b.invoice_date).getTime() - new Date(a.invoice_date).getTime());
   }, [invoices, searchTerm]);
+
+  const handleExport = () => {
+    const exportData = filteredInvoices.map(inv => ({
+      'Date': formatDate(inv.invoice_date),
+      'Client Name': inv.client_name,
+      'Professional Fees': Number(inv.professional_fees || 0),
+      'Net Amount': Number(inv.net_amount || 0),
+      'UDIN': inv.udin || '—',
+      'Narration': inv.narration,
+      'Assignment ID': inv.assignment_id
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Invoices');
+    XLSX.writeFile(wb, `KP_AMS_Invoices_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
 
   const filteredBreakdown = useMemo(() => {
     if (!summary) return [];
@@ -89,20 +110,36 @@ export default function BillingPage() {
             Unified billing interface and performance tracking
           </p>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
-            background: 'var(--gradient-primary)', color: '#fff', border: 'none',
-            borderRadius: 12, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
-            boxShadow: '0 4px 12px var(--color-primary-ring)', transition: 'all 0.2s'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-          onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-        >
-          <Plus size={18} />
-          Generate Invoice
-        </button>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button
+            onClick={handleExport}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
+              background: '#fff', color: 'var(--text-primary)', border: '1px solid var(--border)',
+              borderRadius: 12, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
+              boxShadow: 'var(--shadow-sm)', transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
+            onMouseOut={(e) => e.currentTarget.style.background = '#fff'}
+          >
+            <Download size={18} className="text-emerald-500" />
+            Export
+          </button>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
+              background: 'var(--gradient-primary)', color: '#fff', border: 'none',
+              borderRadius: 12, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
+              boxShadow: '0 4px 12px var(--color-primary-ring)', transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+          >
+            <Plus size={18} />
+            Generate Invoice
+          </button>
+        </div>
       </div>
 
       {/* KPI Cards - Matching Dashboard/Admin hybrid */}

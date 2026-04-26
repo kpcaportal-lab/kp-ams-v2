@@ -156,6 +156,7 @@ export interface Assignment {
   end_date?: string;
   fiscal_year: string;
   billed_amount?: number;
+  out_of_pocket?: number;
   amount_receipt?: number;
   notes?: string;
   created_at: string;

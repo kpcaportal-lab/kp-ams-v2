@@ -44,13 +44,13 @@ export default function DashboardPage() {
   const stats = useMemo(() => {
     const activeAssignments = assignments.filter(a => a.status === 'active').length;
     const totalFees = assignments.reduce((sum, a) => sum + Number(a.total_fees || 0), 0);
-    const totalBilled = invoices.reduce((sum, inv) => sum + Number(inv.net_amount || 0), 0);
+    const totalBilled = assignments.reduce((sum, a) => sum + Number(a.billed_amount || 0), 0);
     const pendingProposals = proposals.filter(p => p.status === 'pending').length;
     const wonProposals = proposals.filter(p => p.status === 'won').length;
     const billingPct = totalFees > 0 ? (totalBilled / totalFees) * 100 : 0;
 
     return { activeAssignments, totalFees, totalBilled, pendingProposals, wonProposals, billingPct, totalClients: clients.length };
-  }, [assignments, proposals, clients, invoices]);
+  }, [assignments, proposals, clients]);
 
   const searchResults = useMemo(() => {
     if (!searchTerm) return assignments.slice(0, 5);
@@ -102,7 +102,7 @@ export default function DashboardPage() {
     },
     {
       label: 'Financial Flow',
-      value: invoices.length.toString(),
+      value: formatIndianCurrency(stats.totalBilled, true, true),
       icon: FileText,
       trend: 'Settled',
       trendVal: '+15%',
@@ -131,10 +131,12 @@ export default function DashboardPage() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-[2rem] bg-slate-900 px-8 py-10 md:px-12 md:py-14 text-white shadow-2xl"
+        className="relative rounded-[2rem] bg-slate-900 px-8 py-10 md:px-12 md:py-14 text-white shadow-2xl"
       >
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-blue-500/20 rounded-full blur-[100px]" />
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-[100px]" />
+        <div className="absolute inset-0 rounded-[2rem] overflow-hidden">
+          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-blue-500/20 rounded-full blur-[100px]" />
+          <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-[100px]" />
+        </div>
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="max-w-2xl">
@@ -401,6 +403,51 @@ export default function DashboardPage() {
                   <ArrowUpRight size={14} className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               ))}
+            </div>
+          </motion.div>
+
+          {/* Billing Reminders */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-[2.5rem] border border-slate-200 p-8 shadow-sm overflow-hidden relative group"
+          >
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+              <DollarSign size={80} className="text-blue-600" />
+            </div>
+            <div className="relative z-10">
+              <h3 className="text-lg font-black text-slate-900 tracking-tight mb-6 flex items-center gap-2">
+                <AlertCircle className="text-blue-600" size={20} />
+                Billing Reminders
+              </h3>
+              <div className="space-y-4">
+                {assignments.filter(a => Number(a.total_fees) > Number(a.billed_amount)).slice(0, 3).map((a) => (
+                  <div key={a.id} className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100/50 hover:border-blue-200 transition-colors">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="font-bold text-sm text-slate-800 truncate pr-2" title={a.client_name}>
+                        {a.client_name}
+                      </div>
+                      <span className="text-[10px] font-black text-blue-600 bg-white px-2 py-0.5 rounded-full border border-blue-100 shadow-sm">
+                        Pending
+                      </span>
+                    </div>
+                    <div className="flex items-end justify-between">
+                      <div className="text-xs text-slate-500 font-medium">
+                        Unbilled: <span className="font-bold text-slate-700">{formatIndianCurrency(Number(a.total_fees) - Number(a.billed_amount), true, true)}</span>
+                      </div>
+                      <Link href="/billing" className="text-[10px] font-black text-blue-600 hover:underline flex items-center gap-0.5">
+                        Invoiced <ArrowUpRight size={10} />
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+                {assignments.filter(a => Number(a.total_fees) > Number(a.billed_amount)).length === 0 && (
+                  <div className="text-center py-6 text-slate-400 font-medium italic text-sm">
+                    No pending billing windows.
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
 

@@ -2,7 +2,8 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Plus, Filter, Briefcase, CheckCircle, Clock, AlertCircle, XCircle, LayoutGrid, List, IndianRupee, TrendingUp, Calendar } from 'lucide-react';
+import { Search, Plus, Filter, Briefcase, CheckCircle, Clock, AlertCircle, XCircle, LayoutGrid, List, IndianRupee, TrendingUp, Calendar, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { useAssignmentStore } from '@/store/assignmentStore';
 import { SUBCATEGORY_LABELS, CATEGORY_LABELS, BILLING_CYCLE_LABELS, formatDate } from '@/types';
 import { formatIndianCurrency, cn } from '@/lib/utils';
@@ -37,15 +38,39 @@ export default function AssignmentsPage() {
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
 
   const filteredAssignments = useMemo(() => {
-    return assignments.filter((a) => {
-      const matchesSearch =
-        a.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        a.scope_item?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        a.partner_name?.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = categoryFilter === 'all' || a.category === categoryFilter;
-      return matchesSearch && matchesCategory;
-    });
+    return assignments
+      .filter((a) => {
+        const matchesSearch =
+          a.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          a.scope_item?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          a.partner_name?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = categoryFilter === 'all' || a.category === categoryFilter;
+        return matchesSearch && matchesCategory;
+      })
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }, [assignments, searchTerm, categoryFilter]);
+1: 
+  const handleExport = () => {
+    const exportData = filteredAssignments.map(a => ({
+      'Client Name': a.client_name,
+      'Scope/Subcategory': a.scope_item || SUBCATEGORY_LABELS[a.subcategory] || a.subcategory,
+      'Category': CATEGORY_LABELS[a.category] || a.category,
+      'Partner': a.partner_name || 'Unassigned',
+      'Manager': a.manager_name || 'Unassigned',
+      'Total Fees': Number(a.fees ?? a.total_fees ?? 0),
+      'Billed Amount': Number(a.billed_amount || 0),
+      'Amount Receipt': Number(a.amount_receipt || 0),
+      'Billing Cycle': BILLING_CYCLE_LABELS[a.billing_cycle] || a.billing_cycle,
+      'Fiscal Year': a.fiscal_year,
+      'Status': a.status
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Assignments');
+    XLSX.writeFile(wb, `KP_AMS_Assignments_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
 
   const stats = useMemo(() => {
     const totalFees = assignments.reduce((sum, a) => sum + Number(a.fees ?? a.total_fees ?? 0), 0);
@@ -80,6 +105,13 @@ export default function AssignmentsPage() {
         </motion.div>
         
         <motion.div initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="flex items-center gap-3">
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-2.5 px-5 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-600 text-sm font-black transition-all hover:bg-slate-50 hover:shadow-sm active:scale-95"
+          >
+            <Download size={18} strokeWidth={3} className="text-emerald-500" />
+            Export
+          </button>
           <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200 shadow-sm">
              <button onClick={() => setViewMode('table')} className={cn("px-3 py-2 rounded-xl transition-all", viewMode === 'table' ? "bg-white text-blue-600 shadow-sm ring-1 ring-slate-200" : "text-slate-400")}>
                <List size={18} strokeWidth={2.5} />

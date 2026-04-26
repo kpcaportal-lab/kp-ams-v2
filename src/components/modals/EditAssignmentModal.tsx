@@ -23,6 +23,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
     category: 'A' as any,
     subcategory: 'internal_audit' as any,
     total_fees: 0,
+    billed_amount: 0,
+    out_of_pocket: 0,
     billing_cycle: 'monthly' as any,
     scope_item: '',
     scope_areas: '',
@@ -49,6 +51,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
         category: assignment.category as any,
         subcategory: assignment.subcategory || ('internal_audit' as any),
         total_fees: assignment.total_fees ?? (assignment as any).fees ?? 0,
+        billed_amount: assignment.billed_amount ?? 0,
+        out_of_pocket: assignment.out_of_pocket ?? 0,
         billing_cycle: assignment.billing_cycle || ('monthly' as any),
         scope_item: assignment.scope_item || assignment.subcategory || '',
         scope_areas: assignment.scope_areas || '',
@@ -57,6 +61,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
       });
     }
   }, [assignment]);
+
+  const billingPct = form.total_fees > 0 ? ((form.billed_amount / form.total_fees) * 100) : 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,6 +73,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
       category: form.category,
       subcategory: form.subcategory,
       total_fees: form.total_fees,
+      billed_amount: form.billed_amount,
+      out_of_pocket: form.out_of_pocket,
       billing_cycle: form.billing_cycle,
       scope_item: form.scope_item,
       scope_areas: form.scope_areas || form.scope_item,
@@ -214,6 +222,58 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                     </select>
                   </div>
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Billed Amount */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Billed (₹)</label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+                      <input
+                        type="number"
+                        value={form.billed_amount || ''}
+                        onChange={(e) => setForm({ ...form, billed_amount: Number(e.target.value) })}
+                        className="w-full pl-8 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 focus:bg-white transition-all"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Out of Pocket */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Out of Pocket (₹)</label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+                      <input
+                        type="number"
+                        value={form.out_of_pocket || ''}
+                        onChange={(e) => setForm({ ...form, out_of_pocket: Number(e.target.value) })}
+                        className="w-full pl-8 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-400 focus:bg-white transition-all"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Billing % Indicator (read-only) */}
+                {form.total_fees > 0 && (
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Billing %</span>
+                      <span className="text-sm font-black text-slate-900">{billingPct.toFixed(1)}%</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          billingPct >= 80 ? 'bg-gradient-to-r from-emerald-500 to-teal-400' :
+                          billingPct >= 40 ? 'bg-gradient-to-r from-blue-500 to-indigo-500' :
+                          'bg-gradient-to-r from-amber-400 to-orange-400'
+                        }`}
+                        style={{ width: `${Math.min(billingPct, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-4">
                   {/* Partner Selection */}

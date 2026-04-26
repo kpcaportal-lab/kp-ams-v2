@@ -41,7 +41,7 @@ export default function TicketsPage() {
                                    t.description.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesStatus = statusFilter === 'all' || t.status === statusFilter;
             return matchesSearch && matchesStatus;
-        });
+        }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     }, [tickets, searchTerm, statusFilter]);
 
     const stats = useMemo(() => {

@@ -162,7 +162,8 @@ router.put('/:id', ...validateUpdateAssignment, async (req: Request, res: Respon
         }
 
         const fields = ['category', 'scope_areas', 'total_fees', 'billing_cycle', 'partner_id',
-            'manager_id', 'start_date', 'end_date', 'notes', 'gstn', 'subcategory', 'assessment_year', 'scope_item'];
+            'manager_id', 'start_date', 'end_date', 'notes', 'gstn', 'subcategory', 'assessment_year', 'scope_item',
+            'billed_amount', 'out_of_pocket'];
         const updates: string[] = [];
         const params: unknown[] = [];
         const changedFields: Array<{ field: string; old: unknown; new: unknown }> = [];

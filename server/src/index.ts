@@ -20,6 +20,7 @@ import ticketRoutes from './routes/tickets.js';
 import notificationRoutes from './routes/notifications.js';
 import pool from './db/pool.js';
 import profileRoutes from './routes/profile.js';
+import searchRoutes from './routes/search.js';
 
 import { generalLimiter, authLimiter } from './middleware/rateLimiter.js';
 
@@ -37,6 +38,7 @@ const registerRoutes = (app: express.Express) => {
     app.use('/api/tickets', ticketRoutes);
     app.use('/api/notifications', notificationRoutes);
     app.use('/api/profile', profileRoutes);
+    app.use('/api/search', searchRoutes);
     console.log('✅ All routes loaded successfully');
 };
 

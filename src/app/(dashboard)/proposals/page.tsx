@@ -2,7 +2,8 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Plus, Filter, MoreVertical, FileText, CheckCircle, XCircle, Clock, TrendingUp, DollarSign, Briefcase, RotateCcw } from 'lucide-react';
+import { Search, Plus, Filter, MoreVertical, FileText, CheckCircle, XCircle, Clock, TrendingUp, DollarSign, Briefcase, RotateCcw, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { useProposalStore } from '@/store/proposalStore';
 import { ASSIGNMENT_TYPE_LABELS, formatDate } from '@/types';
 import { formatIndianCurrency, cn } from '@/lib/utils';
@@ -72,6 +73,27 @@ export default function ProposalListPage() {
       return sortOrder === 'desc' ? -comparison : comparison;
     });
   }, [proposals, searchTerm, statusFilter, partnerFilter, categoryFilter, clientFilter, dateFrom, dateTo, amountMin, amountMax, sortBy, sortOrder]);
+
+  const handleExport = () => {
+    const exportData = filteredProposals.map(p => ({
+      'Proposal Number': p.number,
+      'Date': p.proposal_date,
+      'Client Name': p.client_name,
+      'Assignment Type': ASSIGNMENT_TYPE_LABELS[p.assignment_type] || p.assignment_type,
+      'Quotation Amount': Number(p.quotation_amount || 0),
+      'Fee Category': p.fee_category,
+      'Partner': p.partner_name,
+      'Prepared By': p.prepared_by_name,
+      'Status': p.status,
+      'Version': p.version_number
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Proposals');
+    XLSX.writeFile(wb, `KP_AMS_Proposals_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
 
   const partners = useMemo(() => {
     const pSet = new Set(proposals.map(p => p.partner_name).filter(Boolean));
@@ -147,15 +169,24 @@ export default function ProposalListPage() {
           </h1>
           <p className="text-slate-500 mt-1 font-medium italic">Strategic business development and proposal lifecycle tracking</p>
         </div>
-        <motion.button 
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-slate-200 hover:shadow-slate-300 transition-all border border-slate-800"
-        >
-          <Plus size={20} className="text-amber-400" /> 
-          <span>Create Strategic Proposal</span>
-        </motion.button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleExport}
+            className="flex items-center gap-2.5 bg-white text-slate-700 px-5 py-2.5 rounded-xl font-bold border border-slate-200 hover:bg-slate-50 transition-all shadow-sm active:scale-95"
+          >
+            <Download size={18} className="text-emerald-500" /> 
+            <span>Export</span>
+          </button>
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-slate-200 hover:shadow-slate-300 transition-all border border-slate-800"
+          >
+            <Plus size={20} className="text-amber-400" /> 
+            <span>Create Strategic Proposal</span>
+          </motion.button>
+        </div>
       </div>
 
       {/* Modern Stats Grid */}

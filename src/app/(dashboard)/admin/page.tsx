@@ -105,8 +105,8 @@ export default function AdminPage() {
       const res = await fetch(`${API}/api/audit/logs?${params}`, { headers });
       if (res.ok) {
         const data = await res.json();
-        setLogs(data.logs);
-        setTotalPages(data.totalPages);
+        setLogs(data.logs || []);
+        setTotalPages(data.totalPages || 1);
       }
     } catch (err) { console.error(err); }
     setLoading(false);
@@ -115,14 +115,20 @@ export default function AdminPage() {
   const fetchActiveUsers = useCallback(async () => {
     try {
       const res = await fetch(`${API}/api/audit/active-users`, { headers });
-      if (res.ok) setActiveUsers(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        setActiveUsers(Array.isArray(data) ? data : []);
+      }
     } catch (err) { console.error(err); }
   }, [headers]);
 
   const fetchStats = useCallback(async () => {
     try {
       const res = await fetch(`${API}/api/audit/stats`, { headers });
-      if (res.ok) setStats(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        setStats(data || null);
+      }
     } catch (err) { console.error(err); }
   }, [headers]);
 
@@ -135,6 +141,7 @@ export default function AdminPage() {
   const formatTime = (dateStr: string | null) => {
     if (!dateStr) return 'Never';
     const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return 'Invalid Date';
     const now = new Date();
     const diffMs = now.getTime() - d.getTime();
     const diffMins = Math.floor(diffMs / 60000);
@@ -149,7 +156,8 @@ export default function AdminPage() {
 
   const now = useMemo(() => Date.now(), []);
 
-  if (user?.role !== 'admin') return null;
+  const allowedRoles = ['admin', 'partner', 'director', 'manager', 'assistant_manager'];
+  if (user && !allowedRoles.includes(user.role)) return null;
 
   return (
     <div style={{ padding: '32px', maxWidth: 1400, margin: '0 auto' }}>

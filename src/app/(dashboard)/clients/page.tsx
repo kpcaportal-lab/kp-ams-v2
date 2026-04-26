@@ -31,7 +31,7 @@ export default function ClientsPage() {
         (c.industry?.toLowerCase() || '').includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
       return matchesSearch && matchesStatus;
-    });
+    }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }, [clients, searchTerm, statusFilter]);
 
   const stats = useMemo(() => ({

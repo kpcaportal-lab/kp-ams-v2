@@ -6,8 +6,16 @@ import { Search, User as UserIcon, Menu, Bell, ChevronRight, LifeBuoy, Plus, X }
 import { NotificationCenter } from './NotificationCenter';
 import { cn } from '@/lib/utils';
 import { useTicketStore } from '@/store/ticketStore';
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '@/lib/api';
+
+interface SearchResultSet {
+  clients: any[];
+  assignments: any[];
+  proposals: any[];
+  invoices: any[];
+}
 
 export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const pathname = usePathname();
@@ -15,6 +23,47 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const { user } = useAuthStore();
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   
+  // Global search state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResultSet | null>(null);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Close search on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setIsSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Debounced search
+  useEffect(() => {
+    if (searchQuery.length < 2) {
+      setSearchResults(null);
+      return;
+    }
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(async () => {
+      setSearchLoading(true);
+      try {
+        const res = await api.get(`/api/search?q=${encodeURIComponent(searchQuery)}`);
+        setSearchResults(res.data);
+      } catch (err) {
+        console.error('Search failed:', err);
+        setSearchResults(null);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 300);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [searchQuery]);
+
   // Ticket form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -103,14 +152,112 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           Raise Ticket
         </button>
 
-        {/* Search - Expandable on focus */}
-        <div className="relative group hidden lg:block">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+        {/* Search - Expandable on focus with live results */}
+        <div className="relative group hidden lg:block" ref={searchRef}>
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors z-10" />
           <input 
             type="text" 
             placeholder="Search everything..." 
-            className="w-48 focus:w-64 h-10 pl-10 pr-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-sm font-medium text-slate-700"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setIsSearchOpen(true)}
+            className="w-48 focus:w-72 h-10 pl-10 pr-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-sm font-medium text-slate-700"
           />
+          
+          <AnimatePresence>
+            {isSearchOpen && searchQuery.length >= 2 && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                className="absolute top-full right-0 mt-2 w-[420px] bg-white border border-slate-200 shadow-2xl rounded-2xl overflow-hidden z-[200]"
+              >
+                <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.15em]">
+                    {searchLoading ? 'Searching...' : 'Search Results'}
+                  </span>
+                  <button onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }} className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
+                    <X size={14} />
+                  </button>
+                </div>
+                <div className="max-h-80 overflow-y-auto">
+                  {searchLoading ? (
+                    <div className="p-8 text-center">
+                      <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                      <p className="text-xs text-slate-400 font-medium">Searching...</p>
+                    </div>
+                  ) : !searchResults ? (
+                    <div className="p-8 text-center text-xs text-slate-400 font-medium">Type to search...</div>
+                  ) : (searchResults.clients.length + searchResults.assignments.length + searchResults.proposals.length + searchResults.invoices.length) === 0 ? (
+                    <div className="p-8 text-center text-xs text-slate-400 font-medium italic">No results found for &ldquo;{searchQuery}&rdquo;</div>
+                  ) : (
+                    <>
+                      {searchResults.clients.length > 0 && (
+                        <div>
+                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Clients</div>
+                          {searchResults.clients.map((c: any) => (
+                            <button key={c.id} onClick={() => { router.push(`/clients/${c.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
+                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
+                              <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 text-xs font-black">{c.name?.charAt(0)}</div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-bold text-slate-800 truncate">{c.name}</div>
+                                <div className="text-[10px] text-slate-400 font-medium">{c.gstn || 'No GSTN'}</div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      {searchResults.assignments.length > 0 && (
+                        <div>
+                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Assignments</div>
+                          {searchResults.assignments.map((a: any) => (
+                            <button key={a.id} onClick={() => { router.push(`/assignments/${a.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
+                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-emerald-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
+                              <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 text-xs font-black">{a.proposal_number?.slice(-2) || 'AS'}</div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-bold text-slate-800 truncate">{a.client_name}</div>
+                                <div className="text-[10px] text-slate-400 font-medium">{a.proposal_number || 'No ID'}</div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      {searchResults.proposals.length > 0 && (
+                        <div>
+                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Proposals</div>
+                          {searchResults.proposals.map((p: any) => (
+                            <button key={p.id} onClick={() => { router.push(`/proposals/${p.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
+                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-violet-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
+                              <div className="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center text-violet-600 text-xs font-black">{p.number?.slice(-2) || 'PR'}</div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-bold text-slate-800 truncate">{p.client_name}</div>
+                                <div className="text-[10px] text-slate-400 font-medium">{p.number}</div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      {searchResults.invoices.length > 0 && (
+                        <div>
+                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Invoices</div>
+                          {searchResults.invoices.map((inv: any) => (
+                            <button key={inv.id} onClick={() => { router.push(`/assignments/${inv.assignment_id}`); setIsSearchOpen(false); setSearchQuery(''); }}
+                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-amber-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
+                              <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600 text-xs font-black">#{inv.sr_no}</div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-bold text-slate-800 truncate">{inv.client_name}</div>
+                                <div className="text-[10px] text-slate-400 font-medium truncate">{inv.narration?.slice(0, 50)}</div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <NotificationCenter />

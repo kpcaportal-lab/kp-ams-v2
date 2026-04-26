@@ -69,10 +69,16 @@ export default function UsersPage() {
   };
 
   const filtered = profiles.filter(u => {
-    const matchesSearch = u.full_name.toLowerCase().includes(search.toLowerCase()) ||
-                         u.email.toLowerCase().includes(search.toLowerCase());
+    const fullName = u.full_name || '';
+    const email = u.email || '';
+    const matchesSearch = fullName.toLowerCase().includes(search.toLowerCase()) ||
+                         email.toLowerCase().includes(search.toLowerCase());
     const matchesRole = roleFilter === 'all' || u.role === roleFilter;
     return matchesSearch && matchesRole;
+  }).sort((a, b) => {
+    const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+    const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+    return dateB - dateA;
   });
 
   const roleConfig: Record<UserRole, { color: string, bg: string, border: string, icon: any }> = {
@@ -221,7 +227,7 @@ export default function UsersPage() {
                 <div className="flex items-center gap-5 mb-6">
                   <div className="relative">
                     <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 flex items-center justify-center text-slate-900 font-black text-2xl shadow-inner group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:text-white transition-all duration-500">
-                      {user.full_name.charAt(0)}
+                      {(user.full_name || 'U').charAt(0)}
                     </div>
                   </div>
                   <div>
@@ -268,7 +274,7 @@ export default function UsersPage() {
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">
                     Member Since<br />
                     <span className="text-slate-600 text-[11px] font-black leading-tight">
-                      {new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
+                      {user.created_at ? new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : 'N/A'}
                     </span>
                   </div>
                   
