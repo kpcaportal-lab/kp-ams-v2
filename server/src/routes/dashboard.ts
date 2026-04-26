@@ -245,188 +245,7 @@ router.get('/work-progress', async (req: Request, res: Response) => {
     }
 });
 
-// GET /api/dashboard/insights — advanced financial analytics
-router.get('/insights', async (req: Request, res: Response) => {
-    try {
-        const { fiscal_year = '2025-26' } = req.query;
-        const visibleIds = await getVisibleUserIds(req.user!);
 
-        // 1. Monthly Revenue Trend (Billed vs Planned)
-        let monthlyQuery = `
-            SELECT 
-                month,
-                SUM(amount) as planned,
-                SUM(billed_amount) as billed
-            FROM fee_allocations fa
-            JOIN assignments a ON a.id = fa.assignment_id
-            WHERE fa.fiscal_year = $1`;
-        const monthlyParams: unknown[] = [fiscal_year];
-        if (visibleIds !== null) {
-            monthlyParams.push(visibleIds);
-            monthlyQuery += ` AND (a.manager_id = ANY($2) OR a.partner_id = ANY($2))`;
-        }
-        monthlyQuery += ` GROUP BY month ORDER BY month`;
-        const monthlyResult = await pool.query(monthlyQuery, monthlyParams);
-
-        // 2. Partner Performance (Billed vs Received)
-        let partnerQuery = `
-            SELECT 
-                p.full_name as name,
-                SUM(a.billed_amount) as billed,
-                SUM(a.amount_receipt) as collected
-            FROM profiles p
-            JOIN assignments a ON a.partner_id = p.id
-            WHERE a.fiscal_year = $1 AND p.role = 'partner'`;
-        const partnerParams: unknown[] = [fiscal_year];
-        if (visibleIds !== null) {
-            partnerParams.push(visibleIds);
-            partnerQuery += ` AND a.partner_id = ANY($2)`;
-        }
-        partnerQuery += ` GROUP BY p.id, p.full_name ORDER BY billed DESC`;
-        const partnerResult = await pool.query(partnerQuery, partnerParams);
-
-        // 3. Client Outstanding Dues (Top 10)
-        let clientQuery = `
-            SELECT 
-                c.name,
-                SUM(a.total_fees) as total,
-                SUM(a.billed_amount) as billed,
-                SUM(a.amount_receipt) as collected,
-                SUM(a.billed_amount - a.amount_receipt) as outstanding
-            FROM clients c
-            JOIN assignments a ON a.client_id = c.id
-            WHERE a.fiscal_year = $1 AND a.status != 'postponed'`;
-        const clientParams: unknown[] = [fiscal_year];
-        if (visibleIds !== null) {
-            clientParams.push(visibleIds);
-            clientQuery += ` AND (a.manager_id = ANY($2) OR a.partner_id = ANY($2))`;
-        }
-        clientQuery += ` GROUP BY c.id, c.name HAVING SUM(a.billed_amount - a.amount_receipt) > 0 ORDER BY outstanding DESC LIMIT 10`;
-        const clientResult = await pool.query(clientQuery, clientParams);
-
-        // 4. Category Revenue
-        let categoryQuery = `
-            SELECT 
-                category,
-                SUM(billed_amount) as value
-            FROM assignments a
-            WHERE fiscal_year = $1 AND status != 'postponed'`;
-        const categoryParams: unknown[] = [fiscal_year];
-        if (visibleIds !== null) {
-            categoryParams.push(visibleIds);
-            categoryQuery += ` AND (a.manager_id = ANY($2) OR a.partner_id = ANY($2))`;
-        }
-        categoryQuery += ` GROUP BY category ORDER BY value DESC`;
-        const categoryResult = await pool.query(categoryQuery, categoryParams);
-
-        // 5. Manager Workload (Active Assignments Count)
-        let managerWorkloadQuery = `
-            SELECT 
-                p.full_name as name,
-                COUNT(a.id) as active_assignments,
-                SUM(a.total_fees) as total_load
-            FROM profiles p
-            JOIN assignments a ON a.manager_id = p.id
-            WHERE a.fiscal_year = $1 AND a.status = 'active'
-            AND p.role IN ('manager', 'assistant_manager')`;
-        const managerWorkloadParams: unknown[] = [fiscal_year];
-        if (visibleIds !== null) {
-            managerWorkloadParams.push(visibleIds);
-            managerWorkloadQuery += ` AND a.manager_id = ANY($2)`;
-        }
-        managerWorkloadQuery += ` GROUP BY p.id, p.full_name ORDER BY active_assignments DESC`;
-        const managerWorkloadResult = await pool.query(managerWorkloadQuery, managerWorkloadParams);
-
-        res.json({
-            monthlyRevenue: monthlyResult.rows,
-            partnerPerformance: partnerResult.rows,
-            clientDues: clientResult.rows,
-            categoryRevenue: categoryResult.rows,
-            managerWorkload: managerWorkloadResult.rows
-        });
-    } catch (err: unknown) {
-        console.error('Insights error:', err);
-        res.status(500).json({ error: 'Failed to fetch insights data' });
-    }
-});
-
-// GET /api/calendar/events — key dates for the audit calendar
-router.get('/calendar/events', async (req: Request, res: Response) => {
-    try {
-        const { fiscal_year = '2025-26' } = req.query;
-        const visibleIds = await getVisibleUserIds(req.user!);
-
-        // 1. Assignment Deadlines
-        let assignQuery = `
-            SELECT 
-                id,
-                client_name || ' - ' || COALESCE(scope_item, 'Audit') as title,
-                end_date as date,
-                'assignment' as type,
-                status
-            FROM assignments
-            WHERE fiscal_year = $1 AND end_date IS NOT NULL`;
-        const assignParams: unknown[] = [fiscal_year];
-        if (visibleIds !== null) {
-            assignParams.push(visibleIds);
-            assignQuery += ` AND (manager_id = ANY($2) OR partner_id = ANY($2))`;
-        }
-        const assignResults = await pool.query(assignQuery, assignParams);
-
-        // 2. Proposal Dates
-        let propQuery = `
-            SELECT 
-                id,
-                client_name || ' - Proposal' as title,
-                proposal_date as date,
-                'proposal' as type,
-                status
-            FROM proposals
-            WHERE proposal_date IS NOT NULL`; // Proposals might span years
-        const propParams: unknown[] = [];
-        if (visibleIds !== null) {
-            propParams.push(visibleIds);
-            propQuery += ` AND partner_id = ANY($1)`;
-        }
-        const propResults = await pool.query(propQuery, propParams);
-
-        // 3. Billing Milestones (from fee_allocations)
-        // We'll map month numbers to approximate dates in the fiscal year
-        let feeQuery = `
-            SELECT 
-                a.id,
-                a.client_name || ' - Billing' as title,
-                fa.month,
-                'billing' as type
-            FROM fee_allocations fa
-            JOIN assignments a ON a.id = fa.assignment_id
-            WHERE fa.fiscal_year = $1 AND fa.amount > 0`;
-        const feeParams: unknown[] = [fiscal_year];
-        if (visibleIds !== null) {
-            feeParams.push(visibleIds);
-            feeQuery += ` AND (a.manager_id = ANY($2) OR a.partner_id = ANY($2))`;
-        }
-        const feeResults = await pool.query(feeQuery, feeParams);
-
-        // Map fee months to actual dates (assuming 25th of the month)
-        const mappedFees = feeResults.rows.map(f => {
-            const year = f.month >= 4 ? 2025 : 2026; // Rough mapping for 2025-26 FY
-            const date = new Date(year, f.month - 1, 25);
-            return { ...f, date: date.toISOString() };
-        });
-
-        res.json({
-            events: [
-                ...assignResults.rows,
-                ...propResults.rows,
-                ...mappedFees
-            ]
-        });
-    } catch (err: unknown) {
-        console.error('Calendar events error:', err);
-        res.status(500).json({ error: 'Failed to fetch calendar events' });
-    }
-});
 
 // GET /api/documents — browse assignment documents grouped by client
 router.get('/documents', async (req: Request, res: Response) => {
@@ -437,12 +256,13 @@ router.get('/documents', async (req: Request, res: Response) => {
         let query = `
             SELECT 
                 a.id,
-                a.client_name,
-                a.scope_item || ' (' || a.fiscal_year || ')' as title,
+                c.name as client_name,
+                a.scope_areas || ' (' || a.fiscal_year || ')' as title,
                 a.file_url,
                 a.fiscal_year,
                 a.category
             FROM assignments a
+            JOIN clients c ON c.id = a.client_id
             WHERE a.file_url IS NOT NULL AND a.file_url != ''`;
         
         const params: unknown[] = [];
@@ -456,7 +276,7 @@ router.get('/documents', async (req: Request, res: Response) => {
             query += ` AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}))`;
         }
 
-        query += ` ORDER BY a.client_name, a.fiscal_year DESC`;
+        query += ` ORDER BY c.name, a.fiscal_year DESC`;
         
         const result = await pool.query(query, params);
 

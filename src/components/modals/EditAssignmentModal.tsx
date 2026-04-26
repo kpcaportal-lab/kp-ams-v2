@@ -29,7 +29,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
     scope_item: '',
     scope_areas: '',
     partner_id: '',
-    manager_id: ''
+    manager_id: '',
+    amount_receipt: 0
   });
 
   useEffect(() => {
@@ -57,7 +58,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
         scope_item: assignment.scope_item || assignment.subcategory || '',
         scope_areas: assignment.scope_areas || '',
         partner_id: assignment.partner_id || '',
-        manager_id: assignment.manager_id || ''
+        manager_id: assignment.manager_id || '',
+        amount_receipt: assignment.amount_receipt ?? 0
       });
     }
   }, [assignment]);
@@ -80,6 +82,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
       scope_areas: form.scope_areas || form.scope_item,
       partner_id: sanitizeUUID(form.partner_id),
       manager_id: sanitizeUUID(form.manager_id),
+      amount_receipt: form.amount_receipt
     } as Partial<Assignment>);
     setOpen(false);
   };
@@ -249,6 +252,23 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                         value={form.out_of_pocket || ''}
                         onChange={(e) => setForm({ ...form, out_of_pocket: Number(e.target.value) })}
                         className="w-full pl-8 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-400 focus:bg-white transition-all"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Received Amount */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Received (₹)</label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+                      <input
+                        type="number"
+                        value={form.amount_receipt || ''}
+                        onChange={(e) => setForm({ ...form, amount_receipt: Number(e.target.value) })}
+                        className="w-full pl-8 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all"
                         placeholder="0"
                       />
                     </div>

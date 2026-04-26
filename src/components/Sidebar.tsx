@@ -16,8 +16,6 @@ import {
   ChevronLeft,
   ChevronRight,
   LifeBuoy,
-  TrendingUp,
-  Calendar as CalendarIcon,
   HardDrive
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
@@ -25,8 +23,6 @@ import { cn } from '@/lib/utils';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
-  { name: 'Insights', href: '/insights', icon: TrendingUp, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager'] },
-  { name: 'Calendar', href: '/calendar', icon: CalendarIcon, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Clients', href: '/clients', icon: Users, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Proposals', href: '/proposals', icon: FileText, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Assignments', href: '/assignments', icon: ClipboardList, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
