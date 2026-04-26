@@ -23,6 +23,8 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
     spocName: '',
     spocEmail: '',
     spocPhone: '',
+    gstn: '',
+    notes: '',
   });
 
   useEffect(() => {
@@ -36,6 +38,8 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
         spocName: client.spocName || '',
         spocEmail: client.spocEmail || '',
         spocPhone: client.spocPhone || '',
+        gstn: client.gstn || '',
+        notes: client.notes || '',
       });
     }
   }, [open, client]);
@@ -141,6 +145,30 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
                     </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* GSTN */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">GSTN</label>
+                    <input
+                      value={form.gstn}
+                      onChange={(e) => setForm({ ...form, gstn: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all placeholder:text-slate-300 shadow-sm"
+                      placeholder="e.g. 27AAAC..."
+                    />
+                  </div>
+
+                  {/* Internal Notes */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Internal Notes</label>
+                    <input
+                      value={form.notes}
+                      onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 transition-all placeholder:text-slate-300 shadow-sm"
+                      placeholder="Internal reference..."
+                    />
                   </div>
                 </div>
 

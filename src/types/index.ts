@@ -274,7 +274,7 @@ export interface UserWorkProgress {
 // ═══════════════════════════════════════════════════════════════════
 
 export const ASSIGNMENT_TYPE_LABELS: Record<AssignmentType, string> = {
-  internal_audit: 'Engagement Matrix',
+  internal_audit: 'Internal Audit',
   forensic: 'Forensic',
   overseas: 'Overseas',
   mcs: 'Management Consultancy',

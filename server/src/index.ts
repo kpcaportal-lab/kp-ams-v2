@@ -21,6 +21,7 @@ import notificationRoutes from './routes/notifications.js';
 import pool from './db/pool.js';
 import profileRoutes from './routes/profile.js';
 import searchRoutes from './routes/search.js';
+import insightRoutes from './routes/insights.js';
 
 import { generalLimiter, authLimiter } from './middleware/rateLimiter.js';
 
@@ -39,6 +40,8 @@ const registerRoutes = (app: express.Express) => {
     app.use('/api/notifications', notificationRoutes);
     app.use('/api/profile', profileRoutes);
     app.use('/api/search', searchRoutes);
+    app.use('/api/insights', insightRoutes);
+    app.use('/api/managers', insightRoutes);
     console.log('✅ All routes loaded successfully');
 };
 

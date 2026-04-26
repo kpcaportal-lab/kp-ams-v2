@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { 
   Building2, 
   LayoutDashboard,
+  BarChart3,
   Users, 
   FileText, 
   ClipboardList, 
@@ -23,6 +24,7 @@ import { cn } from '@/lib/utils';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
+  { name: 'Insights', href: '/insights', icon: BarChart3, roles: ['admin', 'partner', 'director'] },
   { name: 'Clients', href: '/clients', icon: Users, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Proposals', href: '/proposals', icon: FileText, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
   { name: 'Assignments', href: '/assignments', icon: ClipboardList, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
@@ -81,13 +83,15 @@ export function Sidebar({
         {/* Brand logo */}
         <div className="h-[72px] flex items-center px-5 border-b border-slate-100/80 overflow-hidden whitespace-nowrap">
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[var(--brand-navy)] flex items-center justify-center shadow-lg shadow-[var(--brand-navy)]/20 shrink-0">
               <Building2 size={22} className="text-white" />
             </div>
             {(!isCollapsed || isMobileOpen) && (
               <div className="flex flex-col">
-                <span className="font-extrabold text-slate-900 leading-tight tracking-tight text-lg">KP AMS</span>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">CORE V2</span>
+                <span className="font-extrabold text-[var(--brand-navy)] leading-tight tracking-tight text-lg font-accent">
+                  KP <span className="text-[var(--brand-red)]">&</span> AMS
+                </span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] font-accent">EST. 1956</span>
               </div>
             )}
           </div>
@@ -104,7 +108,7 @@ export function Sidebar({
                 className={cn(
                   "flex items-center group relative h-11 px-3 rounded-xl transition-all duration-200",
                   isActive 
-                    ? "bg-blue-50 text-blue-600 font-bold" 
+                    ? "bg-[var(--navy-50)] text-[var(--brand-navy)] font-bold" 
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
                   isCollapsed ? "justify-center" : "justify-start gap-3.5"
                 )}
@@ -112,13 +116,13 @@ export function Sidebar({
                 onClick={() => setIsMobileOpen?.(false)}
               >
                 {isActive && (
-                  <div className="absolute left-[-4px] top-2 bottom-2 w-1.5 bg-blue-600 rounded-full shadow-[2px_0_8px_rgba(37,99,235,0.4)]" />
+                  <div className="absolute left-[-4px] top-2 bottom-2 w-1.5 bg-[var(--brand-navy)] rounded-full shadow-[2px_0_8px_rgba(0,72,120,0.4)]" />
                 )}
                 <item.icon 
                   size={20} 
                   className={cn(
                     "shrink-0 transition-transform group-hover:scale-110",
-                    isActive ? "text-blue-600" : "text-slate-400 group-hover:text-slate-600"
+                    isActive ? "text-[var(--brand-navy)]" : "text-slate-400 group-hover:text-slate-600"
                   )} 
                 />
                 {(!isCollapsed || isMobileOpen) && (
@@ -136,7 +140,7 @@ export function Sidebar({
             className={cn(
               "flex items-center h-11 px-3 rounded-xl transition-all duration-200",
               pathname === '/profile' 
-                ? "bg-white text-blue-600 font-bold shadow-sm" 
+                ? "bg-white text-[var(--brand-navy)] font-bold shadow-sm" 
                 : "text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-sm",
               isCollapsed ? "justify-center" : "justify-start gap-3.5"
             )}
@@ -168,7 +172,7 @@ export function Sidebar({
         {/* Collapse Toggle */}
         <button
           onClick={toggleCollapse}
-          className="hidden lg:flex absolute top-[24px] right-[-14px] w-7 h-7 bg-white border border-slate-200 rounded-full items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-200 hover:shadow-lg transition-all z-10"
+          className="hidden lg:flex absolute top-[24px] right-[-14px] w-7 h-7 bg-white border border-slate-200 rounded-full items-center justify-center text-slate-400 hover:text-[var(--brand-navy)] hover:border-[var(--brand-navy)]/20 hover:shadow-lg transition-all z-10"
         >
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>

@@ -144,7 +144,9 @@ export default function DashboardPage() {
               <Sparkles size={14} /> Intelligence Overview
             </div>
             <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-4">
-              Welcome Back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">{user?.full_name?.split(' ')[0] || 'Partner'}</span>
+              Welcome Back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
+                {user?.role === 'admin' ? 'Admin' : (user?.full_name?.split(' ')[0] || 'Partner')}
+              </span>
             </h1>
             <p className="text-slate-400 text-lg font-medium leading-relaxed">
               Your practice performance is up <span className="text-emerald-400 font-bold">12.4%</span> this quarter. You have <span className="text-white font-bold">{stats.activeAssignments}</span> active assignments requiring attention.

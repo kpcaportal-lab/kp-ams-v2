@@ -51,6 +51,13 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
                 [fees, assignment_id, fiscalMonth]
             );
 
+            // Update assignment billed_amount as well
+            await pool.query(
+                `UPDATE assignments SET billed_amount = COALESCE(billed_amount, 0) + $1, updated_at=NOW()
+         WHERE id=$2`,
+                [fees, assignment_id]
+            );
+
             // Send email — completely non-blocking, never throws to outer scope
             (async () => {
                 try {

@@ -12,8 +12,10 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Formats a number to Indian currency format (Lakhs, Crores).
  */
-export function formatIndianCurrency(amount: number | string, includeSymbol = true, short = false) {
+export function formatIndianCurrency(amount: number | string, includeSymbol = true, _short = false) {
   const numAmount = Number(amount || 0);
+  // User requested exact amounts, so we ignore the 'short' flag
+  /*
   if (short) {
     if (numAmount >= 10000000) {
       return `${includeSymbol ? '₹' : ''}${(numAmount / 10000000).toFixed(2)} Cr`;
@@ -22,6 +24,7 @@ export function formatIndianCurrency(amount: number | string, includeSymbol = tr
       return `${includeSymbol ? '₹' : ''}${(numAmount / 100000).toFixed(2)} L`;
     }
   }
+  */
 
   const formatter = new Intl.NumberFormat('en-IN', {
     style: includeSymbol ? 'currency' : 'decimal',
@@ -29,6 +32,13 @@ export function formatIndianCurrency(amount: number | string, includeSymbol = tr
     maximumFractionDigits: 0,
   });
   return formatter.format(numAmount);
+}
+
+/**
+ * Specialized INR formatter with suffix (K, L, Cr)
+ */
+export function formatINR(amount: number) {
+  return '₹' + amount.toLocaleString('en-IN');
 }
 
 /**
