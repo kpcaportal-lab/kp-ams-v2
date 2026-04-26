@@ -15,9 +15,19 @@ router.get('/', async (req: Request, res: Response) => {
             FROM clients c 
             LEFT JOIN profiles p ON p.id = c.added_by 
             LEFT JOIN client_spocs cs ON cs.client_id = c.id AND cs.is_primary = true
-            WHERE 1=1
-        `;
+            WHERE 1=1`;
         const params: unknown[] = [];
+        
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            params.push(visibleIds);
+            // Managers see clients they added or clients linked to their assignments/proposals
+            query += ` AND (c.added_by = ANY($${params.length}) OR EXISTS (
+                SELECT 1 FROM assignments a WHERE a.client_id = c.id AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}))
+            ) OR EXISTS (
+                SELECT 1 FROM proposals p WHERE p.client_id = c.id AND (p.responsible_partner = ANY($${params.length}) OR p.prepared_by = ANY($${params.length}))
+            ))`;
+        }
         if (search) { params.push(`%${search}%`); query += ` AND c.name ILIKE $${params.length}`; }
         if (status) { params.push(status); query += ` AND c.status = $${params.length}`; }
         query += ' ORDER BY c.created_at DESC';

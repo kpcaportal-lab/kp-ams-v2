@@ -134,7 +134,12 @@ router.get('/', async (req: Request, res: Response) => {
       WHERE 1=1
       ORDER BY i.id, i.created_at DESC`;
         const params: unknown[] = [];
-        // Removed visibleIds filter to allow global access as requested
+        // Apply RBAC filter
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            params.push(visibleIds);
+            query += ` AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}) OR i.generated_by = ANY($${params.length}))`;
+        }
         const result = await pool.query(query, params);
         res.json(result.rows);
     } catch (err: unknown) {

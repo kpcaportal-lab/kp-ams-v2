@@ -25,7 +25,12 @@ router.get('/', async (req: Request, res: Response) => {
       WHERE 1=1`;
 
         const params: unknown[] = [];
-        // Removed RBAC filter for global access as requested
+        // Apply RBAC filter
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            params.push(visibleIds);
+            query += ` AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}) OR a.created_by = ANY($${params.length}))`;
+        }
 
         if (status) { params.push(status); query += ` AND a.status = $${params.length}`; }
         if (category) { params.push(category); query += ` AND a.category = $${params.length}`; }
@@ -59,8 +64,17 @@ router.get('/:id', async (req: Request, res: Response) => {
         if (!result.rows.length) return res.status(404).json({ error: 'Not found' });
 
         // Visibility check
-        // Removed visibility check for global access as requested
-        const visibleIds = null;
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            const isAuthorized = 
+                visibleIds.includes(result.rows[0].created_by) || 
+                visibleIds.includes(result.rows[0].manager_id) || 
+                visibleIds.includes(result.rows[0].partner_id);
+            
+            if (!isAuthorized) {
+                return res.status(403).json({ error: 'Access denied' });
+            }
+        }
 
         const allocations = await pool.query(
             'SELECT * FROM fee_allocations WHERE assignment_id=$1 AND fiscal_year=$2 ORDER BY month',

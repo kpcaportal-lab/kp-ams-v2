@@ -113,7 +113,12 @@ router.get('/', async (req: Request, res: Response) => {
       LEFT JOIN profiles pa ON pa.id = p.responsible_partner
       WHERE 1=1`;
         const params: unknown[] = [];
-        // Removed RBAC filter for global access as requested
+        // Apply RBAC filter
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            params.push(visibleIds);
+            query += ` AND (p.responsible_partner = ANY($${params.length}) OR p.prepared_by = ANY($${params.length}))`;
+        }
 
         if (status) { params.push(status); query += ` AND p.status = $${params.length}`; }
         if (assignment_type) { params.push(assignment_type); query += ` AND p.assignment_type = $${params.length}`; }
