@@ -103,10 +103,10 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden"
+            className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]"
           >
-            {/* Header */}
-            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white">
+            {/* Header - Fixed */}
+            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white sticky top-0 z-10 bg-white">
               <div>
                 <h2 className="text-xl font-bold text-slate-900 tracking-tight">Edit Assignment</h2>
                 <p className="text-xs text-slate-500 mt-0.5 font-medium">Update assignment details</p>
@@ -119,7 +119,9 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-8 space-y-5">
+            <div className="flex-1 overflow-y-auto">
+              <form onSubmit={handleSubmit} className="p-8 space-y-5">
+
               <div className="space-y-4">
                 {/* Client Name (read-only) */}
                 <div className="space-y-1.5">
@@ -346,7 +348,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                 </button>
               </div>
             </form>
-          </motion.div>
+          </div>
+        </motion.div>
         </div>
       )}
     </AnimatePresence>

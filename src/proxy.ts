@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 // Protected routes require authentication
 const protectedRoutes = ['/dashboard', '/clients', '/proposals', '/assignments', '/billing', '/users', '/profile', '/tickets', '/admin'];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get('kp_token')?.value;
   const { pathname } = request.nextUrl;
 

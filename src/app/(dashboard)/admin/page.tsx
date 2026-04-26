@@ -9,7 +9,7 @@ import {
   LogIn, Edit, Trash, Eye, Plus, Download, X
 } from 'lucide-react';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+import api from '@/lib/api';
 
 interface AuditLog {
   id: string;
@@ -70,7 +70,7 @@ export default function AdminPage() {
       console.log(`Impersonating user: ${userId}`);
       // In a real app, this would refresh the session with a new token
     };
-  const { user, token } = useAuthStore();
+  const { user } = useAuthStore();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'logs' | 'users' | 'stats'>('logs');
   const [logs, setLogs] = useState<AuditLog[]>([]);
@@ -91,46 +91,32 @@ export default function AdminPage() {
     }
   }, [user, router]);
 
-  const headers = useMemo(() => ({ 
-    Authorization: `Bearer ${token}`, 
-    'Content-Type': 'application/json' 
-  }), [token]);
-
   const fetchLogs = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page: String(page), limit: '30' });
       if (searchTerm) params.set('search', searchTerm);
       if (actionFilter) params.set('action', actionFilter);
-      const res = await fetch(`${API}/api/audit/logs?${params}`, { headers });
-      if (res.ok) {
-        const data = await res.json();
-        setLogs(data.logs || []);
-        setTotalPages(data.totalPages || 1);
-      }
+      const res = await api.get(`/api/audit/logs?${params}`);
+      setLogs(res.data.logs || []);
+      setTotalPages(res.data.totalPages || 1);
     } catch (err) { console.error(err); }
     setLoading(false);
-  }, [page, searchTerm, actionFilter, headers]);
+  }, [page, searchTerm, actionFilter]);
 
   const fetchActiveUsers = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/api/audit/active-users`, { headers });
-      if (res.ok) {
-        const data = await res.json();
-        setActiveUsers(Array.isArray(data) ? data : []);
-      }
+      const res = await api.get('/api/audit/active-users');
+      setActiveUsers(Array.isArray(res.data) ? res.data : []);
     } catch (err) { console.error(err); }
-  }, [headers]);
+  }, []);
 
   const fetchStats = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/api/audit/stats`, { headers });
-      if (res.ok) {
-        const data = await res.json();
-        setStats(data || null);
-      }
+      const res = await api.get('/api/audit/stats');
+      setStats(res.data || null);
     } catch (err) { console.error(err); }
-  }, [headers]);
+  }, []);
 
   useEffect(() => {
     if (activeTab === 'logs') fetchLogs();
