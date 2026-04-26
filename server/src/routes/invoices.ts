@@ -131,8 +131,7 @@ router.get('/', async (req: Request, res: Response) => {
       LEFT JOIN clients c ON c.id = a.client_id
       LEFT JOIN profiles pm ON pm.id = i.generated_by
       LEFT JOIN email_logs el ON el.invoice_id = i.id
-      WHERE 1=1
-      ORDER BY i.id, i.created_at DESC`;
+      WHERE 1=1`;
         const params: unknown[] = [];
         // Apply RBAC filter
         const visibleIds = await getVisibleUserIds(req.user!);
@@ -140,6 +139,7 @@ router.get('/', async (req: Request, res: Response) => {
             params.push(visibleIds);
             query += ` AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}) OR i.generated_by = ANY($${params.length}))`;
         }
+        query += ' ORDER BY i.id, i.created_at DESC';
         const result = await pool.query(query, params);
         res.json(result.rows);
     } catch (err: unknown) {
