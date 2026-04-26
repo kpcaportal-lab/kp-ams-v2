@@ -103,135 +103,168 @@ router.get('/subcategories', async (_req: Request, res: Response) => {
 router.get('/', async (req: Request, res: Response) => {
     try {
         const { status, assignment_type, fiscal_year, partner_id, search } = req.query;
-
-        let query = `
-      SELECT p.*, c.name as client_name, 
-        pr.full_name as prepared_by_name, pa.full_name as partner_name
-      FROM proposals p
-      LEFT JOIN clients c ON c.id = p.client_id
-      LEFT JOIN profiles pr ON pr.id = p.prepared_by
-      LEFT JOIN profiles pa ON pa.id = p.responsible_partner
-      WHERE 1=1`;
-        const params: unknown[] = [];
-        // Apply RBAC filter
         const visibleIds = await getVisibleUserIds(req.user!);
-        if (visibleIds !== null) {
-            params.push(visibleIds);
-            query += ` AND (p.responsible_partner = ANY($${params.length}) OR p.prepared_by = ANY($${params.length}))`;
+
+        let result;
+        try {
+            let query = `
+                SELECT p.*, c.name as client_name, 
+                    pr.full_name as prepared_by_name, pa.full_name as partner_name
+                FROM proposals p
+                LEFT JOIN clients c ON c.id = p.client_id
+                LEFT JOIN profiles pr ON pr.id = p.prepared_by
+                LEFT JOIN profiles pa ON pa.id = p.responsible_partner
+                WHERE 1=1`;
+            const params: unknown[] = [];
+            
+            if (visibleIds !== null) {
+                params.push(visibleIds);
+                query += ` AND (p.responsible_partner = ANY($${params.length}) OR p.prepared_by = ANY($${params.length}))`;
+            }
+
+            if (status) { params.push(status); query += ` AND p.status = $${params.length}`; }
+            if (assignment_type) { params.push(assignment_type); query += ` AND p.assignment_type = $${params.length}`; }
+            if (fiscal_year) { params.push(fiscal_year); query += ` AND p.fiscal_year = $${params.length}`; }
+            if (partner_id) { params.push(partner_id); query += ` AND p.responsible_partner = $${params.length}`; }
+            if (search) { params.push(`%${search}%`); query += ` AND c.name ILIKE $${params.length}`; }
+
+            query += ' ORDER BY p.created_at DESC';
+            result = await pool.query(query, params);
+        } catch (dbErr: any) {
+            if (dbErr.code === '42703') {
+                console.warn('⚠️ Missing columns in proposals list, falling back to basic query');
+                let query = `
+                    SELECT p.id, p.number, p.status, p.quotation_amount, c.name as client_name
+                    FROM proposals p
+                    LEFT JOIN clients c ON c.id = p.client_id
+                    WHERE 1=1`;
+                const params: unknown[] = [];
+                if (visibleIds !== null) {
+                    params.push(visibleIds);
+                    query += ` AND (p.prepared_by = ANY($1))`;
+                }
+                query += ' ORDER BY p.created_at DESC';
+                result = await pool.query(query, params);
+            } else {
+                throw dbErr;
+            }
         }
-
-        if (status) { params.push(status); query += ` AND p.status = $${params.length}`; }
-        if (assignment_type) { params.push(assignment_type); query += ` AND p.assignment_type = $${params.length}`; }
-        if (fiscal_year) { params.push(fiscal_year); query += ` AND p.fiscal_year = $${params.length}`; }
-        if (partner_id) { params.push(partner_id); query += ` AND p.responsible_partner = $${params.length}`; }
-        if (search) { params.push(`%${search}%`); query += ` AND c.name ILIKE $${params.length}`; }
-
-        query += ' ORDER BY p.created_at DESC';
-        const result = await pool.query(query, params);
         res.json(result.rows);
-    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) {
+        console.error('Proposals list error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // GET /api/proposals/:id
 router.get('/:id', async (req: Request, res: Response) => {
     try {
-        const result = await pool.query(`
-      SELECT p.*, c.name as client_name, c.gstn as client_gstn,
-        pr.full_name as prepared_by_name, pa.full_name as partner_name
-      FROM proposals p
-      LEFT JOIN clients c ON c.id = p.client_id
-      LEFT JOIN profiles pr ON pr.id = p.prepared_by
-      LEFT JOIN profiles pa ON pa.id = p.responsible_partner
-      WHERE p.id = $1`, [req.params.id]);
-        if (!result.rows.length) return res.status(404).json({ error: 'Not found' });
+        let proposal;
+        try {
+            const result = await pool.query(`
+                SELECT p.*, c.name as client_name, c.gstn as client_gstn,
+                    pr.full_name as prepared_by_name, pa.full_name as partner_name
+                FROM proposals p
+                LEFT JOIN clients c ON c.id = p.client_id
+                LEFT JOIN profiles pr ON pr.id = p.prepared_by
+                LEFT JOIN profiles pa ON pa.id = p.responsible_partner
+                WHERE p.id = $1`, [req.params.id]);
+            if (!result.rows.length) return res.status(404).json({ error: 'Not found' });
+            proposal = result.rows[0];
+        } catch (dbErr: any) {
+            if (dbErr.code === '42703') {
+                const result = await pool.query(`
+                    SELECT p.id, p.number, p.status, p.quotation_amount, p.client_id, c.name as client_name
+                    FROM proposals p
+                    LEFT JOIN clients c ON c.id = p.client_id
+                    WHERE p.id = $1`, [req.params.id]);
+                if (!result.rows.length) return res.status(404).json({ error: 'Not found' });
+                proposal = result.rows[0];
+            } else {
+                throw dbErr;
+            }
+        }
 
-        // Also fetch version history
-        const versions = await pool.query(
-            `SELECT pv.*, pr.full_name as created_by_name
-       FROM proposal_versions pv
-       LEFT JOIN profiles pr ON pr.id = pv.created_by
-       WHERE pv.proposal_id = $1
-       ORDER BY pv.version_number DESC`, [req.params.id]
-        );
+        // Versions
+        let versions = [];
+        try {
+            const vResult = await pool.query(
+                `SELECT pv.*, pr.full_name as created_by_name
+                FROM proposal_versions pv
+                LEFT JOIN profiles pr ON pr.id = pv.created_by
+                WHERE pv.proposal_id = $1
+                ORDER BY pv.version_number DESC`, [req.params.id]
+            );
+            versions = vResult.rows;
+        } catch (e) {}
 
-        // Fetch linked assignments count
-        const assignmentCount = await pool.query(
-            'SELECT COUNT(*) as count FROM assignments WHERE proposal_id = $1', [req.params.id]
-        );
+        // Assignment count
+        let count = 0;
+        try {
+            const countResult = await pool.query('SELECT COUNT(*) as count FROM assignments WHERE proposal_id = $1', [req.params.id]);
+            count = parseInt(countResult.rows[0].count);
+        } catch (e) {}
 
-        res.json({
-            ...result.rows[0],
-            versions: versions.rows,
-            assignment_count: parseInt(assignmentCount.rows[0].count)
-        });
-    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+        res.json({ ...proposal, versions, assignment_count: count });
+    } catch (err: unknown) {
+        console.error('Proposal detail error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // POST /api/proposals
 router.post('/', ...validateCreateProposal, async (req: Request, res: Response) => {
     try {
-        console.log('[Proposals] Creating new proposal:', JSON.stringify({
-            client_id: req.body.client_id,
-            assignment_type: req.body.assignment_type,
-            fiscal_year: req.body.fiscal_year,
-            user_id: req.user?.id
-        }));
-
         const {
             client_id, proposal_type, assignment_type, scope_areas, quotation_amount,
             fee_category, increment_details, revised_fee, proposal_date, responsible_partner,
-            status,
-            revision_flag,
-            revision_details,
-            notes,
-            fiscal_year, template_id
+            status, revision_flag, revision_details, notes, fiscal_year, template_id
         } = req.body;
 
         const fy = fiscal_year || '2025-26';
         const number = await getNextProposalNumber(assignment_type, fy);
 
-        console.log(`[Proposals] Inserting into DB with number: ${number}`);
-
-        const result = await pool.query(`
-      INSERT INTO proposals (
-        number, client_id, proposal_type, assignment_type, scope_areas, quotation_amount,
-        fee_category, increment_details, revised_fee, proposal_date, prepared_by,
-        responsible_partner, revision_flag, revision_details, notes, fiscal_year,
-        version_number, template_id, status
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING *`,
-            [
-                number, 
-                client_id, 
-                proposal_type || 'new', 
-                assignment_type, 
-                scope_areas || '', 
-                quotation_amount || 0,
-                fee_category || null, 
-                increment_details || null, 
-                revised_fee || null,
-                proposal_date || new Date().toISOString().split('T')[0], 
-                req.user!.id, 
-                responsible_partner || req.user!.id, 
-                revision_flag || false,
-                revision_details || null, 
-                notes || null, 
-                fy,
-                1, 
-                template_id || null, 
-                status || 'pending'
-            ]
-        );
+        let proposal;
+        try {
+            const result = await pool.query(`
+                INSERT INTO proposals (
+                    number, client_id, proposal_type, assignment_type, scope_areas, quotation_amount,
+                    fee_category, increment_details, revised_fee, proposal_date, prepared_by,
+                    responsible_partner, revision_flag, revision_details, notes, fiscal_year,
+                    version_number, template_id, status
+                ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING *`,
+                [number, client_id, proposal_type || 'new', assignment_type, scope_areas || '', 
+                 quotation_amount || 0, fee_category || null, increment_details || null, revised_fee || null,
+                 proposal_date || new Date().toISOString().split('T')[0], req.user!.id, 
+                 responsible_partner || req.user!.id, revision_flag || false, revision_details || null, 
+                 notes || null, fy, 1, template_id || null, status || 'pending'
+                ]
+            );
+            proposal = result.rows[0];
+        } catch (dbErr: any) {
+            if (dbErr.code === '42703') {
+                console.warn('⚠️ Missing columns in proposals table, attempting basic insert');
+                const result = await pool.query(`
+                    INSERT INTO proposals (
+                        number, client_id, proposal_type, assignment_type, quotation_amount,
+                        prepared_by, status, created_at
+                    ) VALUES ($1,$2,$3,$4,$5,$6,$7,NOW()) RETURNING *`,
+                    [number, client_id, proposal_type || 'new', assignment_type, quotation_amount || 0,
+                     req.user!.id, status || 'pending']
+                );
+                proposal = result.rows[0];
+            } else {
+                throw dbErr;
+            }
+        }
         
-        console.log(`[Proposals] Proposal created successfully: ${result.rows[0].id}`);
-        res.status(201).json(result.rows[0]);
+        res.status(201).json(proposal);
     } catch (err: unknown) { 
         console.error('[Proposals] Fatal error creating proposal:', err); 
-        res.status(500).json({ 
-            error: 'Server error', 
-            message: err instanceof Error ? err.message : String(err) 
-        }); 
+        res.status(500).json({ error: 'Server error', message: err instanceof Error ? err.message : String(err) }); 
     }
 });
+
 
 // PUT /api/proposals/:id
 router.put('/:id', ...validateUpdateProposal, async (req: Request, res: Response) => {

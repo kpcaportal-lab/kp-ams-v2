@@ -14,7 +14,7 @@ router.get('/', async (req: Request, res: Response) => {
         const { status, category, fiscal_year, partner_id, manager_id, subcategory, assessment_year } = req.query;
 
         let query = `
-      SELECT a.*, c.name as client_name, c.gstn,
+      SELECT a.*, c.name as client_name,
         pm.full_name as manager_name, pp.full_name as partner_name,
         p.number as proposal_number
       FROM assignments a
@@ -41,9 +41,33 @@ router.get('/', async (req: Request, res: Response) => {
         if (assessment_year) { params.push(assessment_year); query += ` AND a.assessment_year = $${params.length}`; }
 
         query += ' ORDER BY a.created_at DESC';
-        const result = await pool.query(query, params);
+        
+        let result;
+        try {
+            result = await pool.query(query, params);
+        } catch (dbErr: any) {
+            if (dbErr.code === '42703') {
+                console.warn('⚠️ Some columns missing in assignments query, falling back to basic select');
+                const fallbackQuery = `
+                    SELECT a.id, a.client_id, a.category, a.total_fees, a.status, a.fiscal_year, 
+                           a.manager_id, a.partner_id, a.created_at,
+                           c.name as client_name,
+                           pm.full_name as manager_name, pp.full_name as partner_name
+                    FROM assignments a
+                    LEFT JOIN clients c ON c.id = a.client_id
+                    LEFT JOIN profiles pm ON pm.id = a.manager_id
+                    LEFT JOIN profiles pp ON pp.id = a.partner_id
+                    WHERE 1=1
+                    ${visibleIds ? ` AND (a.manager_id = ANY($1) OR a.partner_id = ANY($1))` : ''}
+                    ORDER BY a.created_at DESC
+                `;
+                result = await pool.query(fallbackQuery, visibleIds ? [visibleIds] : []);
+            } else {
+                throw dbErr;
+            }
+        }
         res.json(result.rows);
-    } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+    } catch (err: unknown) { console.error('Assignments GET error:', err); res.status(500).json({ error: 'Server error' }); }
 });
 
 // GET /api/assignments/:id
@@ -288,6 +312,48 @@ router.put('/:id/allocations', async (req: Request, res: Response) => {
 
         res.json({ success: true });
     } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
+});
+
+// PATCH /api/assignments/:id/vault — Upload working paper link
+router.patch('/:id/vault', async (req: Request, res: Response) => {
+    try {
+        const { file_url } = req.body;
+        if (!file_url) return res.status(400).json({ error: 'file_url is required' });
+
+        // Visibility check
+        const assignment = await pool.query('SELECT created_by, manager_id, partner_id FROM assignments WHERE id=$1', [req.params.id]);
+        if (!assignment.rows.length) return res.status(404).json({ error: 'Not found' });
+
+        const visibleIds = await getVisibleUserIds(req.user!);
+        if (visibleIds !== null) {
+            const isAuthorized = 
+                visibleIds.includes(assignment.rows[0].created_by) || 
+                visibleIds.includes(assignment.rows[0].manager_id) || 
+                visibleIds.includes(assignment.rows[0].partner_id);
+            
+            if (!isAuthorized) {
+                return res.status(403).json({ error: 'Access denied' });
+            }
+        }
+
+        try {
+            await pool.query(
+                'UPDATE assignments SET file_url=$1, updated_at=NOW() WHERE id=$2',
+                [file_url, req.params.id]
+            );
+        } catch (dbErr: any) {
+            if (dbErr.code === '42703' || dbErr.message.includes('file_url')) {
+                return res.status(501).json({ error: 'The Document Vault storage is not yet enabled on this server instance (missing file_url column).' });
+            }
+            throw dbErr;
+        }
+        
+        await logAuditEvent(req.user!, 'update', 'assignment', req.params.id, { action: 'vault_upload', file_url }, req);
+        res.json({ success: true, file_url });
+    } catch (err: any) {
+        console.error('Vault upload failed:', err);
+        res.status(500).json({ error: 'Failed to update vault', detail: err.message });
+    }
 });
 
 export default router;

@@ -9,6 +9,7 @@ import { SUBCATEGORY_LABELS, CATEGORY_LABELS, BILLING_CYCLE_LABELS, formatDate }
 import { formatIndianCurrency, cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import AddAssignmentModal from '@/components/modals/AddAssignmentModal';
+import VaultUploadModal from '@/components/modals/VaultUploadModal';
 import LoadingScreen from '@/components/ui/LoadingScreen';
 
 const container = {
@@ -35,6 +36,8 @@ export default function AssignmentsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVaultModalOpen, setIsVaultModalOpen] = useState(false);
+  const [selectedAssignment, setSelectedAssignment] = useState<{ id: string; clientName: string } | null>(null);
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
 
   const filteredAssignments = useMemo(() => {
@@ -211,6 +214,7 @@ export default function AssignmentsPage() {
                       <th className="text-right px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest text-emerald-600">Billed</th>
                       <th className="text-right px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest text-blue-600">Receipt</th>
                       <th className="text-center px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Cycle</th>
+                      <th className="text-center px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Vault</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -256,6 +260,24 @@ export default function AssignmentsPage() {
                             {(BILLING_CYCLE_LABELS[a.billing_cycle] || a.billing_cycle || '—').substring(0, 3)}
                           </span>
                         </td>
+                        <td className="px-6 py-6 text-center">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedAssignment({ id: a.id, clientName: a.client_name });
+                              setIsVaultModalOpen(true);
+                            }}
+                            className={cn(
+                              "p-2 rounded-lg transition-all",
+                              a.file_url 
+                                ? "bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100" 
+                                : "bg-slate-50 text-slate-400 border border-slate-200 hover:bg-blue-50 hover:text-blue-600"
+                            )}
+                            title={a.file_url ? "View in Vault" : "Upload to Vault"}
+                          >
+                            <Download size={14} strokeWidth={3} className={cn(a.file_url ? "" : "rotate-180")} />
+                          </button>
+                        </td>
                       </motion.tr>
                     ))}
                   </tbody>
@@ -297,9 +319,28 @@ export default function AssignmentsPage() {
                         </div>
                         <span className="text-[11px] font-black text-slate-600">{a.partner_name || 'Unassigned'}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-slate-400 font-bold text-[10px]">
-                        <Calendar size={12} strokeWidth={3} />
-                        {a.fiscal_year}
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5 text-slate-400 font-bold text-[10px]">
+                          <Calendar size={12} strokeWidth={3} />
+                          {a.fiscal_year}
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setSelectedAssignment({ id: a.id, clientName: a.client_name });
+                            setIsVaultModalOpen(true);
+                          }}
+                          className={cn(
+                            "p-2 rounded-lg transition-all",
+                            a.file_url 
+                              ? "bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100" 
+                              : "bg-slate-50 text-slate-400 border border-slate-200 hover:bg-blue-50 hover:text-blue-600"
+                          )}
+                          title={a.file_url ? "View in Vault" : "Upload to Vault"}
+                        >
+                          <Download size={14} strokeWidth={3} className={cn(a.file_url ? "" : "rotate-180")} />
+                        </button>
                       </div>
                    </div>
                  </div>
@@ -310,6 +351,16 @@ export default function AssignmentsPage() {
       </AnimatePresence>
 
       <AddAssignmentModal open={isModalOpen} setOpen={setIsModalOpen} />
+      
+      {selectedAssignment && (
+        <VaultUploadModal
+          isOpen={isVaultModalOpen}
+          onClose={() => setIsVaultModalOpen(false)}
+          assignmentId={selectedAssignment.id}
+          clientName={selectedAssignment.clientName}
+          onSuccess={fetchAssignments}
+        />
+      )}
     </div>
   );
 }

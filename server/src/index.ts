@@ -131,28 +131,76 @@ const ensureSystemUsers = async () => {
             `, [user.name, user.email, user.role, standardHash, user.id]);
         }
 
-        // 3. Data Consolidation: Reassign all seed data to Hamza Momin (ID ...012)
-        // This ensures other managers show 0 data as requested
-        const hamzaId = '00000000-0000-0000-0000-000000000012';
-        
-        // Reassign assignments
-        await pool.query('UPDATE assignments SET manager_id = $1 WHERE manager_id != $1', [hamzaId]);
-        
-        // Reassign proposals
-        await pool.query('UPDATE proposals SET prepared_by = $1 WHERE prepared_by != $1', [hamzaId]);
-        
-        // 4. Deactivate remaining dummy users
-        await pool.query(`
-            UPDATE profiles SET is_active = false 
-            WHERE id IN (
-                '00000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000006', 
-                '00000000-0000-0000-0000-000000000007', '00000000-0000-0000-0000-000000000014',
-                '00000000-0000-0000-0000-000000000015', '00000000-0000-0000-0000-000000000016',
-                '00000000-0000-0000-0000-000000000017', '00000000-0000-0000-0000-000000000018'
-            )
-        `);
+        // 3. FULL DATA WIPE (Remove all old seed data)
+        console.log('🧹 Wiping old seed data...');
+        await pool.query('DELETE FROM invoices');
+        await pool.query('DELETE FROM assignments');
+        await pool.query('DELETE FROM proposals');
+        await pool.query('DELETE FROM clients');
 
-        console.log('✅ System users synced and data consolidated to Hamza Momin');
+        // 4. SEED REAL DATA FOR HAMZA MOMIN (from Screenshot)
+        console.log('🌱 Seeding real data for Hamza Momin...');
+        const hamzaId = '00000000-0000-0000-0000-000000000012';
+        const partnerId = '00000000-0000-0000-0000-000000000002'; // Milind Limaye as partner
+
+        const realData = [
+            { client: 'Swadhar IDWC', cat: 'Forensic Audits', scope: 'Embezzelment', fee: 250000, billed: 250000 },
+            { client: 'ACG PAM Pharma Pvt Ltd', cat: 'Forensic Audits', scope: 'Contract Labour', fee: 200000, billed: 200000 },
+            { client: 'ATS Nashik', cat: 'Forensic Audits', scope: 'JIIU', fee: 250000, billed: 250000 },
+            { client: 'EOW', cat: 'Forensic Audits', scope: 'Mohan Bajaj and Pote Family', fee: 200000, billed: 200000 },
+            { client: 'Accent Packaging Pvt Ltd', cat: 'Forensic Audits', scope: 'Liquidation', fee: 190000, billed: 190000 },
+            { client: 'Eka Mobility Pvt Ltd', cat: 'Internal Audit', scope: 'IA', fee: 800000, billed: 800000 },
+            { client: 'Cooper Corporation Pvt Ltd', cat: 'Internal Audit', scope: 'ATR', fee: 375000, billed: 375000 },
+            { client: 'John Deere India Pvt Ltd', cat: 'Internal Audit', scope: 'Stock Take', fee: 190400, billed: 190400 },
+            { client: 'Mah Logistics Ltd', cat: 'Internal Audit', scope: 'Mah Logistics Ltd', fee: 450000, billed: 450000 },
+            { client: 'Mah Accelo Ltd', cat: 'Internal Audit', scope: 'Mah Accelo Ltd', fee: 425000, billed: 425000 },
+            { client: 'Bristlecone India Ltd', cat: 'Internal Audit', scope: 'Bristlecone India Ltd', fee: 250000, billed: 250000 },
+            { client: 'Mah Auto Steel Pvt Ltd', cat: 'Internal Audit', scope: 'Mah Auto Pvt Ltd', fee: 250000, billed: 250000 },
+            { client: 'Mah Steel Service Center Ltd', cat: 'Internal Audit', scope: 'Mah Steel Service Center Ltd', fee: 150000, billed: 150000 },
+            { client: 'Mahindra MSTC Recycling Pvt. Ltd', cat: 'Internal Audit', scope: 'Mahindra MSTC Recycling Pvt. Ltd', fee: 50000, billed: 50000 },
+            { client: 'LORDS Freight (India) Private Limited', cat: 'Internal Audit', scope: 'LORDS Freight (India) Private Limited', fee: 50000, billed: 50000 },
+            { client: 'MLL Express Services Private Limited', cat: 'Internal Audit', scope: 'MLL Express Services Private Limited', fee: 80000, billed: 80000 },
+            { client: 'MLL Mobility Pvt. Ltd', cat: 'Internal Audit', scope: 'MLL Mobility Pvt. Ltd', fee: 50000, billed: 50000 }
+        ];
+
+        for (const data of realData) {
+            // Create Client
+            const clientRes = await pool.query(
+                'INSERT INTO clients (name, status) VALUES ($1, \'active\') RETURNING id',
+                [data.client]
+            );
+            const clientId = clientRes.rows[0].id;
+
+            // Create Assignment
+            const assignRes = await pool.query(
+                `INSERT INTO assignments (client_id, category, scope_areas, total_fees, billing_cycle, partner_id, manager_id, status, fiscal_year)
+                 VALUES ($1, $2, $3, $4, \'Monthly\', $5, $6, \'active\', \'2024-25\') RETURNING id`,
+                [clientId, data.cat, data.scope, data.fee, partnerId, hamzaId]
+            );
+            const assignId = assignRes.rows[0].id;
+
+            // Create Invoice (if billed)
+            if (data.billed > 0) {
+                await pool.query(
+                    `INSERT INTO invoices (assignment_id, invoice_number, invoice_date, professional_fees, billed_amount, status)
+                     VALUES ($1, $2, CURRENT_DATE, $3, $3, \'paid\')`,
+                    [assignId, `INV-${Math.floor(Math.random() * 9000) + 1000}`, data.billed]
+                );
+            }
+        }
+
+        // 5. DEACTIVATE ALL OTHER USERS (Strict enforcement)
+        const coreUserIds = [
+            adminId,
+            '00000000-0000-0000-0000-000000000002', // Milind Limaye
+            '00000000-0000-0000-0000-000000000003', // Tanmay Bodhe
+            '00000000-0000-0000-0000-000000000005', // Rishabh Thakkar
+            '00000000-0000-0000-0000-000000000012'  // Hamza Momin
+        ];
+
+        await pool.query('UPDATE profiles SET is_active = false WHERE id NOT IN ($1, $2, $3, $4, $5)', coreUserIds);
+        
+        console.log('✅ Success: Wiped all seed data and loaded REAL data for Hamza Momin. Non-essential users deactivated.');
     } catch (err) {
         console.error('❌ System user sync failed:', err);
     }
@@ -201,6 +249,30 @@ process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception thrown:', err);
     // Optional: exit process if needed (usually recommended for uncaught exceptions)
     // process.exit(1);
+});
+
+// GET /api/health-check — Check DB connection and schema status
+app.get('/api/health-check', async (_req, res) => {
+    try {
+        const client = await pool.connect();
+        try {
+            const columns = await client.query(`
+                SELECT table_name, column_name 
+                FROM information_schema.columns 
+                WHERE table_name IN ('profiles', 'assignments', 'invoices', 'tickets')
+            `);
+            const tableCols: Record<string, string[]> = {};
+            columns.rows.forEach(r => {
+                if (!tableCols[r.table_name]) tableCols[r.table_name] = [];
+                tableCols[r.table_name].push(r.column_name);
+            });
+            res.json({ status: 'healthy', database: 'connected', schema: tableCols });
+        } finally {
+            client.release();
+        }
+    } catch (err: any) {
+        res.status(500).json({ status: 'error', database: err.message });
+    }
 });
 
 startServer();

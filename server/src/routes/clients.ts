@@ -10,29 +10,46 @@ router.use(authenticate);
 router.get('/', async (req: Request, res: Response) => {
     try {
         const { search, status } = req.query;
-        let query = `
-            SELECT c.*, p.full_name as added_by_name,
-                   cs.contact_name as "spocName", cs.email as "spocEmail", cs.phone as "spocPhone"
-            FROM clients c 
-            LEFT JOIN profiles p ON p.id = c.added_by 
-            LEFT JOIN client_spocs cs ON cs.client_id = c.id AND cs.is_primary = true
-            WHERE 1=1`;
-        const params: unknown[] = [];
-        
         const visibleIds = await getVisibleUserIds(req.user!);
-        if (visibleIds !== null) {
-            params.push(visibleIds);
-            // Managers see clients they added or clients linked to their assignments/proposals
-            query += ` AND (c.added_by = ANY($${params.length}) OR EXISTS (
-                SELECT 1 FROM assignments a WHERE a.client_id = c.id AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}))
-            ) OR EXISTS (
-                SELECT 1 FROM proposals p WHERE p.client_id = c.id AND (p.responsible_partner = ANY($${params.length}) OR p.prepared_by = ANY($${params.length}))
-            ))`;
+
+        let result;
+        try {
+            let query = `
+                SELECT c.*, p.full_name as added_by_name,
+                       cs.contact_name as "spocName", cs.email as "spocEmail", cs.phone as "spocPhone"
+                FROM clients c 
+                LEFT JOIN profiles p ON p.id = c.added_by 
+                LEFT JOIN client_spocs cs ON cs.client_id = c.id AND cs.is_primary = true
+                WHERE 1=1`;
+            const params: unknown[] = [];
+            
+            if (visibleIds !== null) {
+                params.push(visibleIds);
+                query += ` AND (c.added_by = ANY($${params.length}) OR EXISTS (
+                    SELECT 1 FROM assignments a WHERE a.client_id = c.id AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}))
+                ) OR EXISTS (
+                    SELECT 1 FROM proposals p WHERE p.client_id = c.id AND (p.responsible_partner = ANY($${params.length}) OR p.prepared_by = ANY($${params.length}))
+                ))`;
+            }
+            if (search) { params.push(`%${search}%`); query += ` AND c.name ILIKE $${params.length}`; }
+            if (status) { params.push(status); query += ` AND c.status = $${params.length}`; }
+            query += ' ORDER BY c.created_at DESC';
+            result = await pool.query(query, params);
+        } catch (dbErr: any) {
+            if (dbErr.code === '42703') {
+                console.warn('⚠️ Missing columns in clients list, falling back');
+                let query = `
+                    SELECT c.id, c.name, c.status, c.created_at
+                    FROM clients c 
+                    WHERE 1=1`;
+                const params: unknown[] = [];
+                if (search) { params.push(`%${search}%`); query += ` AND c.name ILIKE $${params.length}`; }
+                query += ' ORDER BY c.created_at DESC';
+                result = await pool.query(query, params);
+            } else {
+                throw dbErr;
+            }
         }
-        if (search) { params.push(`%${search}%`); query += ` AND c.name ILIKE $${params.length}`; }
-        if (status) { params.push(status); query += ` AND c.status = $${params.length}`; }
-        query += ' ORDER BY c.created_at DESC';
-        const result = await pool.query(query, params);
         res.json(result.rows);
     } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
@@ -40,18 +57,34 @@ router.get('/', async (req: Request, res: Response) => {
 // GET /api/clients/:id
 router.get('/:id', async (req: Request, res: Response) => {
     try {
-        const client = await pool.query('SELECT * FROM clients WHERE id = $1', [req.params.id]);
-        if (!client.rows.length) return res.status(404).json({ error: 'Not found' });
-        const spocs = await pool.query('SELECT * FROM client_spocs WHERE client_id = $1 ORDER BY is_primary DESC, created_at ASC', [req.params.id]);
-        const proposals = await pool.query(
-            `SELECT p.*, pr.full_name as prepared_by_name, pa.full_name as partner_name 
-       FROM proposals p 
-       LEFT JOIN profiles pr ON pr.id = p.prepared_by 
-       LEFT JOIN profiles pa ON pa.id = p.responsible_partner 
-       WHERE p.client_id = $1 ORDER BY p.created_at DESC`, [req.params.id]);
-        res.json({ ...client.rows[0], spocs: spocs.rows, proposals: proposals.rows });
+        const clientResult = await pool.query('SELECT * FROM clients WHERE id = $1', [req.params.id]);
+        if (!clientResult.rows.length) return res.status(404).json({ error: 'Not found' });
+        
+        let spocs = [];
+        try {
+            const sRes = await pool.query('SELECT * FROM client_spocs WHERE client_id = $1 ORDER BY is_primary DESC, created_at ASC', [req.params.id]);
+            spocs = sRes.rows;
+        } catch (e) {}
+
+        let proposals = [];
+        try {
+            const pRes = await pool.query(
+                `SELECT p.*, pr.full_name as prepared_by_name, pa.full_name as partner_name 
+                 FROM proposals p 
+                 LEFT JOIN profiles pr ON pr.id = p.prepared_by 
+                 LEFT JOIN profiles pa ON pa.id = p.responsible_partner 
+                 WHERE p.client_id = $1 ORDER BY p.created_at DESC`, [req.params.id]);
+            proposals = pRes.rows;
+        } catch (dbErr: any) {
+            if (dbErr.code === '42703') {
+                const pRes = await pool.query('SELECT id, number, status, quotation_amount FROM proposals WHERE client_id = $1', [req.params.id]);
+                proposals = pRes.rows;
+            }
+        }
+        res.json({ ...clientResult.rows[0], spocs, proposals });
     } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });
+
 
 // POST /api/clients
 router.post('/', async (req: Request, res: Response) => {

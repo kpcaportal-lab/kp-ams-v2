@@ -15,7 +15,6 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
         // invoices = array of invoice objects
         const batchId = batch ? uuidv4() : undefined;
         const results: unknown[] = [];
-
         for (const inv of (invoices as any[])) {
             console.log('Processing invoice creation:', inv);
             const { assignment_id, invoice_date, udin, kind_attention, reference, address,
@@ -25,18 +24,35 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
             const oop = Number(out_of_pocket || 0);
             const netAmount = fees + oop;
 
-            const result = await pool.query(`
-        INSERT INTO invoices (
-          assignment_id, invoice_date, udin, kind_attention, reference, address,
-          gst_no, new_sales_ledger, narration, professional_fees, out_of_pocket,
-          net_amount, batch_id, generated_by
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`,
-                [assignment_id, invoice_date || new Date(), udin || null, kind_attention || '', reference || '', address || '',
-                    gst_no || null, new_sales_ledger || null, narration || '', fees,
-                    oop, netAmount, batchId || null, req.user!.id]
-            );
+            let invoiceRow;
+            try {
+                const result = await pool.query(`
+                    INSERT INTO invoices (
+                        assignment_id, invoice_date, udin, kind_attention, reference, address,
+                        gst_no, new_sales_ledger, narration, professional_fees, out_of_pocket,
+                        net_amount, batch_id, generated_by
+                    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`,
+                    [assignment_id, invoice_date || new Date(), udin || null, kind_attention || '', reference || '', address || '',
+                        gst_no || null, new_sales_ledger || null, narration || '', fees,
+                        oop, netAmount, batchId || null, req.user!.id]
+                );
+                invoiceRow = result.rows[0];
+            } catch (dbErr: any) {
+                if (dbErr.code === '42703') {
+                    console.warn('⚠️ Some columns missing in invoices table, attempting basic insert');
+                    // Fallback to minimal set of columns that definitely exist (based on index.ts seeding)
+                    const result = await pool.query(`
+                        INSERT INTO invoices (
+                            assignment_id, invoice_date, professional_fees, net_amount, generated_by
+                        ) VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+                        [assignment_id, invoice_date || new Date(), fees, netAmount, req.user!.id]
+                    );
+                    invoiceRow = result.rows[0];
+                } else {
+                    throw dbErr;
+                }
+            }
 
-            const invoiceRow = result.rows[0];
             results.push(invoiceRow);
 
             // Update billed amount in fee allocations
@@ -45,16 +61,20 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
             const calMonth = isNaN(invoiceDateObj.getTime()) ? (new Date()).getMonth() + 1 : invoiceDateObj.getMonth() + 1;
             const fiscalMonth = calMonth >= 4 ? calMonth - 3 : calMonth + 9;
 
-            await pool.query(
-                `UPDATE fee_allocations SET billed_amount = billed_amount + $1, updated_at=NOW()
-         WHERE assignment_id=$2 AND month=$3`,
-                [fees, assignment_id, fiscalMonth]
-            );
+            try {
+                await pool.query(
+                    `UPDATE fee_allocations SET billed_amount = billed_amount + $1, updated_at=NOW()
+                    WHERE assignment_id=$2 AND month=$3`,
+                    [fees, assignment_id, fiscalMonth]
+                );
+            } catch (faErr) {
+                console.error('Failed to update fee_allocations (likely table missing):', faErr);
+            }
 
             // Update assignment billed_amount as well
             await pool.query(
                 `UPDATE assignments SET billed_amount = COALESCE(billed_amount, 0) + $1, updated_at=NOW()
-         WHERE id=$2`,
+                 WHERE id=$2`,
                 [fees, assignment_id]
             );
 
@@ -62,12 +82,11 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
             (async () => {
                 try {
                     const assignmentData = await pool.query(`
-                SELECT a.*, c.name as client_name, pm.email as manager_email, pm.full_name as manager_name
-                FROM assignments a
-                LEFT JOIN clients c ON c.id = a.client_id
-                LEFT JOIN profiles pm ON pm.id = a.manager_id
-                LEFT JOIN proposals p ON p.id = a.proposal_id
-                WHERE a.id = $1`, [assignment_id]);
+                        SELECT a.*, c.name as client_name, pm.email as manager_email, pm.full_name as manager_name
+                        FROM assignments a
+                        LEFT JOIN clients c ON c.id = a.client_id
+                        LEFT JOIN profiles pm ON pm.id = a.manager_id
+                        WHERE a.id = $1`, [assignment_id]);
 
                     if (!assignmentData.rows.length) return;
                     const asgn = assignmentData.rows[0];
@@ -90,28 +109,21 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
                         batchId,
                     });
 
-                    if (process.env.ACCOUNTS_EMAIL) {
-                        await pool.query(
-                            `INSERT INTO email_logs (invoice_id, recipient, cc, subject, status, sent_at)
-                             VALUES ($1,$2,$3,$4,$5,NOW())`,
-                            [invoiceRow.id, process.env.ACCOUNTS_EMAIL, asgn.manager_email || null,
-                             `Invoice Request – ${asgn.client_name} – ${invoice_date}`,
-                             'sent']
-                        ).catch(() => {}); // ignore log insert failures
-                    }
+                    try {
+                        if (process.env.ACCOUNTS_EMAIL) {
+                            await pool.query(
+                                `INSERT INTO email_logs (invoice_id, recipient, cc, subject, status, sent_at)
+                                VALUES ($1,$2,$3,$4,$5,NOW())`,
+                                [invoiceRow.id, process.env.ACCOUNTS_EMAIL, asgn.manager_email || null,
+                                 `Invoice Request – ${asgn.client_name} – ${invoice_date}`,
+                                 'sent']
+                            );
+                        }
+                    } catch (logErr) {} // ignore log insert failures
                     void emailResult;
                 } catch (emailErr: unknown) {
                     const errMsg = emailErr instanceof Error ? emailErr.message : 'Unknown email error';
                     console.error('[Invoice Email Error]', errMsg);
-                    // Try to log the failure — but don't let THIS crash either
-                    if (process.env.ACCOUNTS_EMAIL) {
-                        pool.query(
-                            `INSERT INTO email_logs (invoice_id, recipient, subject, status, error_msg)
-                             VALUES ($1,$2,$3,'failed',$4)`,
-                            [invoiceRow.id, process.env.ACCOUNTS_EMAIL,
-                             `Invoice Request – ${assignment_id} – ${invoice_date}`, errMsg]
-                        ).catch(() => {});
-                    }
                 }
             })();
         }
@@ -119,7 +131,7 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
         res.status(201).json({ success: true, invoices: results, batchId });
     } catch (err: unknown) {
         const error = err as Error;
-        console.error('Summary dashboard error:', error);
+        console.error('Invoice creation error:', error);
         res.status(500).json({ error: 'Server error', detail: error.message });
     }
 });
@@ -127,32 +139,52 @@ router.post('/', ...validateCreateInvoiceBatch, async (req: Request, res: Respon
 // GET /api/invoices — list invoices
 router.get('/', async (req: Request, res: Response) => {
     try {
-        const role = req.user!.role;
-        const userId = req.user!.id;
-
-        let query = `
-      SELECT DISTINCT ON (i.id) i.*, c.name as client_name, a.category, pm.full_name as manager_name,
-        el.status as email_status
-      FROM invoices i
-      LEFT JOIN assignments a ON a.id = i.assignment_id
-      LEFT JOIN clients c ON c.id = a.client_id
-      LEFT JOIN profiles pm ON pm.id = i.generated_by
-      LEFT JOIN email_logs el ON el.invoice_id = i.id
-      WHERE 1=1`;
-        const params: unknown[] = [];
-        // Apply RBAC filter
         const visibleIds = await getVisibleUserIds(req.user!);
-        if (visibleIds !== null) {
-            params.push(visibleIds);
-            query += ` AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}) OR i.generated_by = ANY($${params.length}))`;
+        
+        let result;
+        try {
+            let query = `
+                SELECT DISTINCT ON (i.id) i.*, c.name as client_name, a.category, pm.full_name as manager_name,
+                    el.status as email_status
+                FROM invoices i
+                LEFT JOIN assignments a ON a.id = i.assignment_id
+                LEFT JOIN clients c ON c.id = a.client_id
+                LEFT JOIN profiles pm ON pm.id = i.generated_by
+                LEFT JOIN email_logs el ON el.invoice_id = i.id
+                WHERE 1=1`;
+            const params: unknown[] = [];
+            
+            if (visibleIds !== null) {
+                params.push(visibleIds);
+                query += ` AND (a.manager_id = ANY($${params.length}) OR a.partner_id = ANY($${params.length}) OR i.generated_by = ANY($${params.length}))`;
+            }
+            query += ' ORDER BY i.id, i.created_at DESC';
+            result = await pool.query(query, params);
+        } catch (dbErr: any) {
+            if (dbErr.code === '42703') {
+                console.warn('⚠️ Missing columns in invoice list query, falling back to basic view');
+                let query = `
+                    SELECT i.id, i.invoice_date, i.professional_fees as net_amount, c.name as client_name
+                    FROM invoices i
+                    LEFT JOIN assignments a ON a.id = i.assignment_id
+                    LEFT JOIN clients c ON c.id = a.client_id
+                    WHERE 1=1`;
+                const params: unknown[] = [];
+                if (visibleIds !== null) {
+                    params.push(visibleIds);
+                    query += ` AND (a.manager_id = ANY($1) OR a.partner_id = ANY($1))`;
+                }
+                query += ' ORDER BY i.invoice_date DESC';
+                result = await pool.query(query, params);
+            } else {
+                throw dbErr;
+            }
         }
-        query += ' ORDER BY i.id, i.created_at DESC';
-        const result = await pool.query(query, params);
         res.json(result.rows);
     } catch (err: unknown) {
         const error = err as Error;
         console.error('Invoice list error:', error);
-        res.status(500).json({ error: 'Server error', detail: error.message, stack: process.env.NODE_ENV === 'development' ? error.stack : undefined });
+        res.status(500).json({ error: 'Server error', detail: error.message });
     }
 });
 

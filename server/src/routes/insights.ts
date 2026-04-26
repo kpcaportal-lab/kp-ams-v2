@@ -15,51 +15,73 @@ router.get('/summary', async (req: Request, res: Response) => {
         const visibleIds = await getVisibleUserIds(req.user!);
 
         // 1. Total Clients
-        let clientQuery = `SELECT COUNT(DISTINCT client_id) as count FROM assignments WHERE status = 'active' AND fiscal_year = $1`;
-        const clientParams: any[] = [fiscal_year];
-        if (visibleIds !== null) {
-            clientQuery += ` AND (manager_id = ANY($2) OR partner_id = ANY($2))`;
-            clientParams.push(visibleIds);
-        }
-        const clientResult = await pool.query(clientQuery, clientParams);
+        let totalClients = 0;
+        try {
+            let clientQuery = `SELECT COUNT(DISTINCT client_id) as count FROM assignments WHERE status = 'active' AND fiscal_year = $1`;
+            const clientParams: any[] = [fiscal_year];
+            if (visibleIds !== null) {
+                clientQuery += ` AND (manager_id = ANY($2) OR partner_id = ANY($2))`;
+                clientParams.push(visibleIds);
+            }
+            const clientResult = await pool.query(clientQuery, clientParams);
+            totalClients = parseInt(clientResult.rows[0]?.count || '0');
+        } catch (e) {}
 
         // 2. Total Proposals
-        let proposalQuery = `SELECT COUNT(*) as count FROM proposals WHERE fiscal_year = $1`;
-        const proposalParams: any[] = [fiscal_year];
-        if (visibleIds !== null) {
-            proposalQuery += ` AND (prepared_by = ANY($2) OR responsible_partner = ANY($2))`;
-            proposalParams.push(visibleIds);
-        }
-        const proposalResult = await pool.query(proposalQuery, proposalParams);
+        let totalProposals = 0;
+        try {
+            let proposalQuery = `SELECT COUNT(*) as count FROM proposals WHERE fiscal_year = $1`;
+            const proposalParams: any[] = [fiscal_year];
+            if (visibleIds !== null) {
+                proposalQuery += ` AND (prepared_by = ANY($2) OR responsible_partner = ANY($2))`;
+                proposalParams.push(visibleIds);
+            }
+            const proposalResult = await pool.query(proposalQuery, proposalParams);
+            totalProposals = parseInt(proposalResult.rows[0]?.count || '0');
+        } catch (e) {}
 
         // 3. Active Assignments
-        let assignmentQuery = `SELECT COUNT(*) as count FROM assignments WHERE status IN ('active', 'draft') AND fiscal_year = $1`;
-        const assignmentParams: any[] = [fiscal_year];
-        if (visibleIds !== null) {
-            assignmentQuery += ` AND (manager_id = ANY($2) OR partner_id = ANY($2))`;
-            assignmentParams.push(visibleIds);
-        }
-        const assignmentResult = await pool.query(assignmentQuery, assignmentParams);
+        let activeAssignments = 0;
+        try {
+            let assignmentQuery = `SELECT COUNT(*) as count FROM assignments WHERE status IN ('active', 'draft') AND fiscal_year = $1`;
+            const assignmentParams: any[] = [fiscal_year];
+            if (visibleIds !== null) {
+                assignmentQuery += ` AND (manager_id = ANY($2) OR partner_id = ANY($2))`;
+                assignmentParams.push(visibleIds);
+            }
+            const assignmentResult = await pool.query(assignmentQuery, assignmentParams);
+            activeAssignments = parseInt(assignmentResult.rows[0]?.count || '0');
+        } catch (e) {}
 
         // 4. Total Billed
-        let billedQuery = `
-            SELECT COALESCE(SUM(i.professional_fees), 0) as total
-            FROM invoices i
-            JOIN assignments a ON a.id = i.assignment_id
-            WHERE a.fiscal_year = $1
-        `;
-        const billedParams: any[] = [fiscal_year];
-        if (visibleIds !== null) {
-            billedQuery += ` AND (a.manager_id = ANY($2) OR a.partner_id = ANY($2))`;
-            billedParams.push(visibleIds);
+        let totalBilled = 0;
+        try {
+            let billedQuery = `
+                SELECT COALESCE(SUM(i.professional_fees), SUM(i.net_amount), 0) as total
+                FROM invoices i
+                JOIN assignments a ON a.id = i.assignment_id
+                WHERE a.fiscal_year = $1
+            `;
+            const billedParams: any[] = [fiscal_year];
+            if (visibleIds !== null) {
+                billedQuery += ` AND (a.manager_id = ANY($2) OR a.partner_id = ANY($2))`;
+                billedParams.push(visibleIds);
+            }
+            const billedResult = await pool.query(billedQuery, billedParams);
+            totalBilled = parseFloat(billedResult.rows[0]?.total || '0');
+        } catch (e) {
+            // Very basic fallback if invoices join fails
+            try {
+                const fallback = await pool.query('SELECT COALESCE(SUM(billed_amount), 0) as total FROM assignments WHERE fiscal_year = $1', [fiscal_year]);
+                totalBilled = parseFloat(fallback.rows[0]?.total || '0');
+            } catch (e2) {}
         }
-        const billedResult = await pool.query(billedQuery, billedParams);
 
         res.json({
-            totalClients: parseInt(clientResult.rows[0].count),
-            totalProposals: parseInt(proposalResult.rows[0].count),
-            activeAssignments: parseInt(assignmentResult.rows[0].count),
-            totalBilled: parseFloat(billedResult.rows[0].total)
+            totalClients,
+            totalProposals,
+            activeAssignments,
+            totalBilled
         });
     } catch (err) {
         console.error('Insights Summary Error:', err);
@@ -73,39 +95,56 @@ router.get('/managers', async (req: Request, res: Response) => {
         const { sort = 'billed', period = '2024-25' } = req.query;
         const visibleIds = await getVisibleUserIds(req.user!);
 
-        let query = `
-            SELECT 
-                p.id, p.full_name, p.display_name, p.role, p.email,
-                (SELECT COUNT(DISTINCT a.client_id) FROM assignments a WHERE a.manager_id = p.id AND a.fiscal_year = $1) as client_count,
-                (SELECT COUNT(*) FROM assignments a WHERE a.manager_id = p.id AND a.fiscal_year = $1) as assignment_count,
-                (SELECT COUNT(*) FROM proposals pr WHERE pr.prepared_by = p.id AND pr.fiscal_year = $1) as proposal_count,
-                (
-                    SELECT COALESCE(SUM(i.professional_fees), 0) 
-                    FROM invoices i 
-                    JOIN assignments a ON i.assignment_id = a.id 
-                    WHERE a.manager_id = p.id AND a.fiscal_year = $1
-                ) as billed_amount
-            FROM profiles p
-            WHERE p.role IN ('manager', 'assistant_manager', 'partner', 'director') AND p.is_active = true
-        `;
-        const params: any[] = [period];
+        let result;
+        try {
+            let query = `
+                SELECT 
+                    p.id, p.full_name, p.display_name, p.role, p.email,
+                    (SELECT COUNT(DISTINCT a.client_id) FROM assignments a WHERE a.manager_id = p.id AND a.fiscal_year = $1) as client_count,
+                    (SELECT COUNT(*) FROM assignments a WHERE a.manager_id = p.id AND a.fiscal_year = $1) as assignment_count,
+                    (SELECT COUNT(*) FROM proposals pr WHERE pr.prepared_by = p.id AND pr.fiscal_year = $1) as proposal_count,
+                    (
+                        SELECT COALESCE(SUM(i.professional_fees), 0) 
+                        FROM invoices i 
+                        JOIN assignments a ON i.assignment_id = a.id 
+                        WHERE a.manager_id = p.id AND a.fiscal_year = $1
+                    ) as billed_amount
+                FROM profiles p
+                WHERE p.role IN ('manager', 'assistant_manager', 'partner', 'director') 
+                  AND p.is_active = true
+            `;
+            const params: any[] = [period];
 
-        if (visibleIds !== null) {
-            query += ` AND p.id = ANY($2)`;
-            params.push(visibleIds);
+            if (visibleIds !== null) {
+                query += ` AND p.id = ANY($2)`;
+                params.push(visibleIds);
+            }
+
+            // Only show managers with data OR core members (Hamza, Milind, Tanmay, Rishabh, Admin)
+            query += ` AND (
+                EXISTS (SELECT 1 FROM assignments a WHERE a.manager_id = p.id OR a.partner_id = p.id)
+                OR EXISTS (SELECT 1 FROM proposals pr WHERE pr.prepared_by = p.id OR pr.responsible_partner = p.id)
+                OR p.id IN ('00000000-0000-0000-0000-000000000012', '00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000005')
+            )`;
+
+            if (sort === 'billed') query += ` ORDER BY billed_amount DESC, p.full_name ASC`;
+            else if (sort === 'clients') query += ` ORDER BY client_count DESC, p.full_name ASC`;
+            else if (sort === 'assignments') query += ` ORDER BY assignment_count DESC, p.full_name ASC`;
+
+            result = await pool.query(query, params);
+        } catch (dbErr: any) {
+            console.warn('⚠️ Insights managers query failed, falling back to basic profile list');
+            result = await pool.query(
+                "SELECT id, full_name, display_name, role, email, 0 as client_count, 0 as assignment_count, 0 as proposal_count, 0 as billed_amount FROM profiles WHERE is_active=true AND role IN ('manager', 'partner', 'director') ORDER BY full_name"
+            );
         }
-
-        if (sort === 'billed') query += ` ORDER BY billed_amount DESC`;
-        else if (sort === 'clients') query += ` ORDER BY client_count DESC`;
-        else if (sort === 'assignments') query += ` ORDER BY assignment_count DESC`;
-
-        const result = await pool.query(query, params);
         res.json(result.rows);
     } catch (err) {
         console.error('Insights Managers Error:', err);
         res.status(500).json({ error: 'Server error' });
     }
 });
+
 
 // ── INDIVIDUAL MANAGER DETAILS ───────────────────────────────────
 

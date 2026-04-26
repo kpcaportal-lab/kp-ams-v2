@@ -19,7 +19,8 @@ router.get('/', requireRole('admin', 'partner', 'director'), async (_req: Reques
                  ORDER BY p.role, p.full_name`
             );
         } catch (dbErr: any) {
-            if (dbErr.message.includes('column "reports_to" does not exist')) {
+            // Check for missing column error (42703) or message-based check
+            if (dbErr.code === '42703' || dbErr.message.includes('column "reports_to" does not exist')) {
                 console.warn('⚠️ reports_to column missing in profiles, falling back to simple user list');
                 result = await pool.query(
                     `SELECT id, email, role, full_name, display_name, is_active, created_at
@@ -31,9 +32,13 @@ router.get('/', requireRole('admin', 'partner', 'director'), async (_req: Reques
             }
         }
         res.json(result.rows);
-    } catch (err: unknown) { 
-        console.error('Error fetching users:', err);
-        res.status(500).json({ error: 'Server error', detail: err instanceof Error ? err.message : String(err) }); 
+    } catch (err: any) { 
+        console.error('Error in GET /api/users:', err);
+        res.status(500).json({ 
+            error: 'Server error', 
+            detail: err.message,
+            code: err.code 
+        }); 
     }
 });
 
@@ -88,15 +93,31 @@ router.post('/', requireRole('admin', 'partner', 'director'), async (req: Reques
         }
 
         const hash = await bcrypt.hash(password || 'KpAms@2025', 10);
-        const result = await pool.query(
-            'INSERT INTO profiles (email, password_hash, role, full_name, display_name, reports_to) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, email, role, full_name',
-            [email, hash, role, full_name, display_name || full_name, reports_to || null]
-        );
+        
+        let result;
+        try {
+            result = await pool.query(
+                'INSERT INTO profiles (email, password_hash, role, full_name, display_name, reports_to) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, email, role, full_name',
+                [email, hash, role, full_name, display_name || full_name, reports_to || null]
+            );
+        } catch (dbErr: any) {
+            if (dbErr.code === '42703' || dbErr.message.includes('column "reports_to"')) {
+                console.warn('⚠️ reports_to column missing, inserting without it');
+                result = await pool.query(
+                    'INSERT INTO profiles (email, password_hash, role, full_name, display_name) VALUES ($1,$2,$3,$4,$5) RETURNING id, email, role, full_name',
+                    [email, hash, role, full_name, display_name || full_name]
+                );
+            } else {
+                throw dbErr;
+            }
+        }
+
         await logAuditEvent(req.user!, 'create', 'user', result.rows[0].id, { email, role }, req);
         res.status(201).json(result.rows[0]);
-    } catch (err: unknown) {
-        if (err && typeof err === 'object' && 'code' in err && err.code === '23505') return res.status(409).json({ error: 'Email already exists' });
-        res.status(500).json({ error: 'Server error' });
+    } catch (err: any) {
+        console.error('Error in POST /api/users:', err);
+        if (err && err.code === '23505') return res.status(409).json({ error: 'Email already exists' });
+        res.status(500).json({ error: 'Server error', detail: err.message });
     }
 });
 
@@ -114,13 +135,44 @@ router.patch('/:id', requireRole('admin', 'partner', 'director'), async (req: Re
             return res.status(400).json({ error: 'User cannot report to themselves' });
         }
 
-        await pool.query(
-            'UPDATE profiles SET is_active=COALESCE($1,is_active), role=COALESCE($2,role), display_name=COALESCE($3,display_name), full_name=COALESCE($4,full_name), reports_to=COALESCE($5,reports_to), updated_at=NOW() WHERE id=$6',
-            [is_active, role, display_name, full_name, reports_to, req.params.id]
-        );
+        const fields = ['is_active', 'role', 'display_name', 'full_name'];
+        const updates: string[] = [];
+        const params: any[] = [];
+
+        fields.forEach(f => {
+            if (req.body[f] !== undefined) {
+                params.push(req.body[f]);
+                updates.push(`${f} = $${params.length}`);
+            }
+        });
+
+        if (updates.length > 0) {
+            params.push(req.params.id);
+            await pool.query(
+                `UPDATE profiles SET ${updates.join(', ')}, updated_at=NOW() WHERE id=$${params.length}`,
+                params
+            );
+        }
+
+        // Handle reports_to separately if it exists
+        if (reports_to !== undefined) {
+            try {
+                await pool.query('UPDATE profiles SET reports_to=$1 WHERE id=$2', [reports_to, req.params.id]);
+            } catch (dbErr: any) {
+                if (dbErr.code === '42703') {
+                    console.warn('⚠️ reports_to column missing, skipping update');
+                } else {
+                    throw dbErr;
+                }
+            }
+        }
+
         await logAuditEvent(req.user!, 'update', 'user', req.params.id, { is_active, role, full_name, reports_to }, req);
         res.json({ success: true });
-    } catch (err: unknown) { res.status(500).json({ error: 'Server error' }); }
+    } catch (err: any) { 
+        console.error('Error in PATCH /api/users:', err);
+        res.status(500).json({ error: 'Server error', detail: err.message }); 
+    }
 });
 
 export default router;

@@ -49,7 +49,7 @@ router.post('/', ...validateCreateTicket, async (req: Request, res: Response) =>
             );
             newTicket = result.rows[0];
         } catch (dbErr: any) {
-            if (dbErr.message.includes('column "attachment_url" does not exist')) {
+            if (dbErr.code === '42703') {
                 console.warn('⚠️ attachment_url column missing in tickets table, retrying without it');
                 const result = await pool.query(
                     `INSERT INTO tickets (title, description, priority, status, submitted_by)
