@@ -10,7 +10,7 @@ router.use(authenticate);
 router.get('/', requireRole('admin', 'partner', 'director'), async (_req: Request, res: Response) => {
     try {
         const result = await pool.query(
-            `SELECT p.id, p.email, p.role, p.full_name, p.display_name, p.is_active, p.created_at, p.reports_to, p.work_file_url,
+            `SELECT p.id, p.email, p.role, p.full_name, p.display_name, p.is_active, p.created_at, p.reports_to,
                     rp.full_name as reports_to_name
              FROM profiles p
              LEFT JOIN profiles rp ON rp.id = p.reports_to
@@ -75,8 +75,8 @@ router.post('/', requireRole('admin', 'partner', 'director'), async (req: Reques
 
         const hash = await bcrypt.hash(password || 'KpAms@2025', 10);
         const result = await pool.query(
-            'INSERT INTO profiles (email, password_hash, role, full_name, display_name, reports_to, work_file_url) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id, email, role, full_name, work_file_url',
-            [email, hash, role, full_name, display_name || full_name, reports_to || null, work_file_url || null]
+            'INSERT INTO profiles (email, password_hash, role, full_name, display_name, reports_to) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, email, role, full_name',
+            [email, hash, role, full_name, display_name || full_name, reports_to || null]
         );
         await logAuditEvent(req.user!, 'create', 'user', result.rows[0].id, { email, role }, req);
         res.status(201).json(result.rows[0]);
@@ -101,8 +101,8 @@ router.patch('/:id', requireRole('admin', 'partner', 'director'), async (req: Re
         }
 
         await pool.query(
-            'UPDATE profiles SET is_active=COALESCE($1,is_active), role=COALESCE($2,role), display_name=COALESCE($3,display_name), full_name=COALESCE($4,full_name), reports_to=COALESCE($5,reports_to), work_file_url=COALESCE($6,work_file_url), updated_at=NOW() WHERE id=$7',
-            [is_active, role, display_name, full_name, reports_to, work_file_url, req.params.id]
+            'UPDATE profiles SET is_active=COALESCE($1,is_active), role=COALESCE($2,role), display_name=COALESCE($3,display_name), full_name=COALESCE($4,full_name), reports_to=COALESCE($5,reports_to), updated_at=NOW() WHERE id=$6',
+            [is_active, role, display_name, full_name, reports_to, req.params.id]
         );
         await logAuditEvent(req.user!, 'update', 'user', req.params.id, { is_active, role, full_name, reports_to }, req);
         res.json({ success: true });

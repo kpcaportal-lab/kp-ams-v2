@@ -40,13 +40,27 @@ router.post('/', ...validateCreateTicket, async (req: Request, res: Response) =>
         const { title, description, priority, attachment_url } = req.body;
         if (!title || !description) return res.status(400).json({ error: 'Title and description required' });
 
-        const result = await pool.query(
-            `INSERT INTO tickets (title, description, priority, status, submitted_by, attachment_url)
-             VALUES ($1, $2, $3, 'open', $4, $5) RETURNING *`,
-            [title, description, priority || 'medium', req.user!.id, attachment_url || null]
-        );
-        
-        const newTicket = result.rows[0];
+        let newTicket;
+        try {
+            const result = await pool.query(
+                `INSERT INTO tickets (title, description, priority, status, submitted_by, attachment_url)
+                 VALUES ($1, $2, $3, 'open', $4, $5) RETURNING *`,
+                [title, description, priority || 'medium', req.user!.id, attachment_url || null]
+            );
+            newTicket = result.rows[0];
+        } catch (dbErr: any) {
+            if (dbErr.message.includes('column "attachment_url" does not exist')) {
+                console.warn('⚠️ attachment_url column missing in tickets table, retrying without it');
+                const result = await pool.query(
+                    `INSERT INTO tickets (title, description, priority, status, submitted_by)
+                     VALUES ($1, $2, $3, 'open', $4) RETURNING *`,
+                    [title, description, priority || 'medium', req.user!.id]
+                );
+                newTicket = result.rows[0];
+            } else {
+                throw dbErr;
+            }
+        }
 
         // Notify Admins and Partners
         try {

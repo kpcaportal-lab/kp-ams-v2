@@ -278,7 +278,16 @@ router.get('/documents', async (req: Request, res: Response) => {
 
         query += ` ORDER BY c.name, a.fiscal_year DESC`;
         
-        const result = await pool.query(query, params);
+        let result;
+        try {
+            result = await pool.query(query, params);
+        } catch (dbErr: any) {
+            if (dbErr.message.includes('column "file_url" does not exist')) {
+                console.warn('⚠️ file_url column missing, skipping documents');
+                return res.json({});
+            }
+            throw dbErr;
+        }
 
         // Group by client
         const grouped = result.rows.reduce((acc: any, curr: any) => {
@@ -292,7 +301,7 @@ router.get('/documents', async (req: Request, res: Response) => {
         res.json(grouped);
     } catch (err: unknown) {
         console.error('Documents fetch error:', err);
-        res.status(500).json({ error: 'Failed to fetch documents' });
+        res.status(500).json({ error: 'Failed to fetch documents', detail: err instanceof Error ? err.message : String(err) });
     }
 });
 

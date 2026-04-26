@@ -40,7 +40,7 @@ router.patch('/', async (req: Request, res: Response) => {
             UPDATE profiles 
             SET ${updateFields.join(', ')} 
             WHERE id = $${counter} 
-            RETURNING id, full_name, display_name, email, role, phone_number, work_file_url;
+            RETURNING *;
         `;
 
         const result = await pool.query(query, params);

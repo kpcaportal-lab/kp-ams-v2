@@ -41,7 +41,6 @@ const registerRoutes = (app: express.Express) => {
     app.use('/api/profile', profileRoutes);
     app.use('/api/search', searchRoutes);
     app.use('/api/insights', insightRoutes);
-    app.use('/api/managers', insightRoutes);
     console.log('✅ All routes loaded successfully');
 };
 

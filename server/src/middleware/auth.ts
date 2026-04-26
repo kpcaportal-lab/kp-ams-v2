@@ -63,12 +63,7 @@ export const getVisibleUserIds = async (user: AuthUser): Promise<string[] | null
             return null; // No filter — see all
         }
 
-        // ── Custom Restriction for Managers ──
-        // Only Hamza Momin is allowed to see data. Rest of the managers see 0 data.
-        const HAMZA_ID = '00000000-0000-0000-0000-000000000012';
-        if ((user.role === 'manager' || user.role === 'assistant_manager') && user.id !== HAMZA_ID) {
-            return ['00000000-0000-0000-0000-000000000000']; // Dummy ID that doesn't exist
-        }
+        // Remove custom restriction for managers to allow all managers to see their data
 
         if (user.role === 'staff') {
             const result = await pool.query(
