@@ -11,25 +11,18 @@ router.get('/', requireRole('admin', 'partner', 'director'), async (_req: Reques
     try {
         let result;
         try {
+            // Attempt to select all potential columns safely with the join
             result = await pool.query(
                 `SELECT p.id, p.email, p.role, p.full_name, p.display_name, p.is_active, p.created_at, p.reports_to,
-                        rp.full_name as reports_to_name
+                        p.work_file_url, rp.full_name as reports_to_name
                  FROM profiles p
                  LEFT JOIN profiles rp ON rp.id = p.reports_to
                  ORDER BY p.role, p.full_name`
             );
         } catch (dbErr: any) {
-            // Check for missing column error (42703) or message-based check
-            if (dbErr.code === '42703' || dbErr.message.includes('column "reports_to" does not exist')) {
-                console.warn('⚠️ reports_to column missing in profiles, falling back to simple user list');
-                result = await pool.query(
-                    `SELECT id, email, role, full_name, display_name, is_active, created_at
-                     FROM profiles
-                     ORDER BY role, full_name`
-                );
-            } else {
-                throw dbErr;
-            }
+            console.warn('⚠️ Standard user query failed, attempting safe fallback:', dbErr.message);
+            // Absolute minimal fallback that just gets everything that exists
+            result = await pool.query(`SELECT * FROM profiles ORDER BY role, full_name`);
         }
         res.json(result.rows);
     } catch (err: any) { 

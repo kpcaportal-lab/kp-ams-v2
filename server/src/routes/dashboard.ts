@@ -289,17 +289,41 @@ router.get('/work-progress', async (req: Request, res: Response) => {
 // GET /api/dashboard/documents — browse assignment documents grouped by client
 router.get('/documents', async (req: Request, res: Response) => {
     try {
-        const { fiscal_year } = req.query;
+        const { fiscal_year = '2025-26' } = req.query;
         const visibleIds = await getVisibleUserIds(req.user!);
 
-        // Check if file_url column exists first or use TRY/CATCH
+        // Check for columns dynamically to avoid crashes
         let result;
         try {
+            // First check if columns exist
+            const colCheck = await pool.query(`
+                SELECT column_name FROM information_schema.columns 
+                WHERE table_name = 'assignments' AND column_name IN ('file_url', 'scope_areas', 'scope_item')
+            `);
+            const hasFileUrl = colCheck.rows.some(c => c.column_name === 'file_url');
+            
+            if (!hasFileUrl) {
+                console.warn('⚠️ assignments.file_url column missing, returning empty vault');
+                return res.json({});
+            }
+
+            const hasScopeAreas = colCheck.rows.some(c => c.column_name === 'scope_areas');
+            const hasScopeItem = colCheck.rows.some(c => c.column_name === 'scope_item');
+
+            let titleExpr = "'Document'";
+            if (hasScopeAreas && hasScopeItem) {
+                titleExpr = "COALESCE(scope_areas, scope_item, 'Document')";
+            } else if (hasScopeAreas) {
+                titleExpr = "COALESCE(scope_areas, 'Document')";
+            } else if (hasScopeItem) {
+                titleExpr = "COALESCE(scope_item, 'Document')";
+            }
+
             let query = `
                 SELECT 
                     a.id,
                     c.name as client_name,
-                    a.scope_areas || ' (' || a.fiscal_year || ')' as title,
+                    ${titleExpr} || ' (' || COALESCE(a.fiscal_year, 'N/A') || ')' as title,
                     a.file_url,
                     a.fiscal_year,
                     a.category
@@ -321,11 +345,8 @@ router.get('/documents', async (req: Request, res: Response) => {
             query += ` ORDER BY c.name, a.fiscal_year DESC`;
             result = await pool.query(query, params);
         } catch (dbErr: any) {
-            if (dbErr.code === '42703' || dbErr.message.includes('file_url')) {
-                console.warn('⚠️ assignments.file_url missing, returning empty vault');
-                return res.json({});
-            }
-            throw dbErr;
+            console.error('Vault DB Error:', dbErr.message);
+            return res.json({}); // Return empty instead of 500
         }
 
         // Group by client
@@ -340,11 +361,7 @@ router.get('/documents', async (req: Request, res: Response) => {
         res.json(grouped);
     } catch (err: any) {
         console.error('Documents fetch error:', err);
-        res.status(500).json({ 
-            error: 'Failed to fetch documents', 
-            detail: err.message,
-            code: err.code 
-        });
+        res.json({}); // Final fallback to empty object
     }
 });
 

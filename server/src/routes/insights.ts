@@ -11,7 +11,7 @@ router.use(requireRole('admin', 'partner', 'director'));
 // GET /api/insights/summary — firm KPI strip data
 router.get('/summary', async (req: Request, res: Response) => {
     try {
-        const { fiscal_year = '2024-25' } = req.query;
+        const { fiscal_year = '2025-26' } = req.query;
         const visibleIds = await getVisibleUserIds(req.user!);
 
         // 1. Total Clients
@@ -57,9 +57,9 @@ router.get('/summary', async (req: Request, res: Response) => {
         let totalBilled = 0;
         try {
             let billedQuery = `
-                SELECT COALESCE(SUM(i.professional_fees), SUM(i.net_amount), 0) as total
-                FROM invoices i
-                JOIN assignments a ON a.id = i.assignment_id
+                SELECT COALESCE(SUM(i.professional_fees), SUM(a.billed_amount), 0) as total
+                FROM assignments a
+                LEFT JOIN invoices i ON a.id = i.assignment_id
                 WHERE a.fiscal_year = $1
             `;
             const billedParams: any[] = [fiscal_year];
@@ -92,7 +92,7 @@ router.get('/summary', async (req: Request, res: Response) => {
 // GET /api/insights/managers?sort=billed&period=FY2024-25 — manager list with stats
 router.get('/managers', async (req: Request, res: Response) => {
     try {
-        const { sort = 'billed', period = '2024-25' } = req.query;
+        const { sort = 'billed', period = '2025-26' } = req.query;
         const visibleIds = await getVisibleUserIds(req.user!);
 
         let result;
@@ -104,9 +104,9 @@ router.get('/managers', async (req: Request, res: Response) => {
                     (SELECT COUNT(*) FROM assignments a WHERE a.manager_id = p.id AND a.fiscal_year = $1) as assignment_count,
                     (SELECT COUNT(*) FROM proposals pr WHERE pr.prepared_by = p.id AND pr.fiscal_year = $1) as proposal_count,
                     (
-                        SELECT COALESCE(SUM(i.professional_fees), 0) 
-                        FROM invoices i 
-                        JOIN assignments a ON i.assignment_id = a.id 
+                        SELECT COALESCE(SUM(i.professional_fees), MAX(a.billed_amount), 0) 
+                        FROM assignments a 
+                        LEFT JOIN invoices i ON i.assignment_id = a.id 
                         WHERE a.manager_id = p.id AND a.fiscal_year = $1
                     ) as billed_amount
                 FROM profiles p
@@ -277,7 +277,7 @@ router.get('/:id/assignments', async (req: Request, res: Response) => {
 router.get('/:id/billing', async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { period = '2024-25' } = req.query;
+        const { period = '2025-26' } = req.query;
 
         // Billing chart data (last 10 months)
         // Since we don't have a robust 'collected' column, we'll mock collected as 90% of billed for demo/req purposes

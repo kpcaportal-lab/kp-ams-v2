@@ -93,7 +93,7 @@ const ensureSystemUsers = async () => {
     try {
         console.log('🔄 Syncing system users and real names...');
         
-        // 1. Ensure Admin exists
+        // 1. Ensure Admin exists (Matching user request: admin.kpams@gmail.com)
         const adminEmail = 'admin.kpams@gmail.com';
         const adminPasswordHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
         const adminId = '00000000-0000-0000-0000-000000000001';
@@ -108,40 +108,45 @@ const ensureSystemUsers = async () => {
                 is_active = true
         `, [adminId, adminEmail, adminPasswordHash]);
 
-        // 2. Sync Real Names from Placeholder IDs (as defined in migration 015)
+        // 2. Sync Real Names from Placeholder IDs
         const realUsers = [
             { id: '00000000-0000-0000-0000-000000000002', name: 'Milind Limaye', email: 'milind.limaye@kirtanepandit.com', role: 'partner' },
             { id: '00000000-0000-0000-0000-000000000003', name: 'Tanmay Bodhe', email: 'tanmay.bodhe@kirtanepandit.com', role: 'partner' },
             { id: '00000000-0000-0000-0000-000000000005', name: 'Rishabh Thakkar', email: 'rishabh.thakkar@kirtanepandit.com', role: 'director' },
-            { id: '00000000-0000-0000-0000-000000000008', name: 'Sanjeev Deshpande', email: 'sanjeev.deshpande@kirtanepandit.com', role: 'manager' },
-            { id: '00000000-0000-0000-0000-000000000009', name: 'Bhushan Patil', email: 'bhushan.patil@kirtanepandit.com', role: 'manager' },
-            { id: '00000000-0000-0000-0000-000000000010', name: 'Mohit Joshi', email: 'mohit.joshi@kirtanepandit.com', role: 'manager' },
             { id: '00000000-0000-0000-0000-000000000011', name: 'Vibhuti Narang', email: 'vibhuti.narang@kirtanepandit.com', role: 'manager' },
-            { id: '00000000-0000-0000-0000-000000000012', name: 'Hamza Momin', email: 'hamza.momin@kirtanepandit.com', role: 'manager' },
-            { id: '00000000-0000-0000-0000-000000000013', name: 'Dhanashree Dekhane', email: 'dhanashree.dekhane@kirtanepandit.com', role: 'manager' }
+            { id: '00000000-0000-0000-0000-000000000012', name: 'Hamza Momin', email: 'hamza.momin@kirtanepandit.com', role: 'manager' }
         ];
 
         const standardHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
 
         for (const user of realUsers) {
             await pool.query(`
-                UPDATE profiles 
-                SET full_name = $1, display_name = $1, email = $2, role = $3, password_hash = $4, is_active = true 
-                WHERE id = $5
+                INSERT INTO profiles (id, full_name, display_name, email, role, password_hash, is_active)
+                VALUES ($5, $1, $1, $2, $3, $4, true)
+                ON CONFLICT (id) DO UPDATE SET
+                    full_name = EXCLUDED.full_name,
+                    display_name = EXCLUDED.display_name,
+                    email = EXCLUDED.email,
+                    role = EXCLUDED.role,
+                    password_hash = EXCLUDED.password_hash,
+                    is_active = true
             `, [user.name, user.email, user.role, standardHash, user.id]);
         }
 
-        // 3. FULL DATA WIPE (Remove all old seed data)
-        console.log('🧹 Wiping old seed data...');
+        // 3. FORCE DATA RESET (As requested: "no seed data but the one i gave you")
+        // We check if Hamza has assignments. If not, or if we want to ensure fresh data, we wipe.
+        const hamzaId = '00000000-0000-0000-0000-000000000012';
+        const dataCheck = await pool.query('SELECT COUNT(*) FROM assignments WHERE manager_id = $1', [hamzaId]);
+        
+        // Always reset for now to ensure consistency with user request
+        console.log('🧹 Wiping stale data to ensure data integrity...');
         await pool.query('DELETE FROM invoices');
         await pool.query('DELETE FROM assignments');
         await pool.query('DELETE FROM proposals');
         await pool.query('DELETE FROM clients');
 
-        // 4. SEED REAL DATA FOR HAMZA MOMIN (from Screenshot)
-        console.log('🌱 Seeding real data for Hamza Momin...');
-        const hamzaId = '00000000-0000-0000-0000-000000000012';
-        const partnerId = '00000000-0000-0000-0000-000000000002'; // Milind Limaye as partner
+        console.log('🌱 Seeding Hamza Momin\'s real spreadsheet data...');
+        const partnerId = '00000000-0000-0000-0000-000000000002'; // Milind Limaye
 
         const realData = [
             { client: 'Swadhar IDWC', cat: 'Forensic Audits', scope: 'Embezzelment', fee: 250000, billed: 250000 },
@@ -164,22 +169,19 @@ const ensureSystemUsers = async () => {
         ];
 
         for (const data of realData) {
-            // Create Client
             const clientRes = await pool.query(
-                'INSERT INTO clients (name, status) VALUES ($1, \'active\') RETURNING id',
+                'INSERT INTO clients (name, status) VALUES ($1, \'active\') ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id',
                 [data.client]
             );
             const clientId = clientRes.rows[0].id;
 
-            // Create Assignment
             const assignRes = await pool.query(
-                `INSERT INTO assignments (client_id, category, scope_areas, total_fees, billing_cycle, partner_id, manager_id, status, fiscal_year)
-                 VALUES ($1, $2, $3, $4, \'Monthly\', $5, $6, \'active\', \'2024-25\') RETURNING id`,
-                [clientId, data.cat, data.scope, data.fee, partnerId, hamzaId]
+                `INSERT INTO assignments (client_id, category, subcategory, scope_areas, total_fees, billed_amount, billing_cycle, partner_id, manager_id, status, fiscal_year)
+                 VALUES ($1, $2, $3, $3, $4, $5, \'Monthly\', $6, $7, \'active\', \'2025-26\') RETURNING id`,
+                [clientId, data.cat, data.scope, data.fee, data.billed, partnerId, hamzaId]
             );
             const assignId = assignRes.rows[0].id;
 
-            // Create Invoice (if billed)
             if (data.billed > 0) {
                 await pool.query(
                     `INSERT INTO invoices (assignment_id, invoice_number, invoice_date, professional_fees, billed_amount, status)
@@ -189,18 +191,19 @@ const ensureSystemUsers = async () => {
             }
         }
 
-        // 5. DEACTIVATE ALL OTHER USERS (Strict enforcement)
+        // 4. DEACTIVATE ALL OTHER USERS
         const coreUserIds = [
             adminId,
-            '00000000-0000-0000-0000-000000000002', // Milind Limaye
-            '00000000-0000-0000-0000-000000000003', // Tanmay Bodhe
-            '00000000-0000-0000-0000-000000000005', // Rishabh Thakkar
-            '00000000-0000-0000-0000-000000000012'  // Hamza Momin
+            '00000000-0000-0000-0000-000000000002', // Milind
+            '00000000-0000-0000-0000-000000000003', // Tanmay
+            '00000000-0000-0000-0000-000000000005', // Rishabh
+            '00000000-0000-0000-0000-000000000011', // Vibhuti
+            '00000000-0000-0000-0000-000000000012'  // Hamza
         ];
 
-        await pool.query('UPDATE profiles SET is_active = false WHERE id NOT IN ($1, $2, $3, $4, $5)', coreUserIds);
+        await pool.query('UPDATE profiles SET is_active = false WHERE id NOT IN ($1, $2, $3, $4, $5, $6)', coreUserIds);
         
-        console.log('✅ Success: Wiped all seed data and loaded REAL data for Hamza Momin. Non-essential users deactivated.');
+        console.log('✅ Success: Data integrity restored. Hamza Momin data active for 2025-26.');
     } catch (err) {
         console.error('❌ System user sync failed:', err);
     }

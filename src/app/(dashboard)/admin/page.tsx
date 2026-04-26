@@ -66,12 +66,18 @@ const roleColors: Record<string, string> = {
 };
 
 export default function AdminPage() {
+    const { user, loginAs } = useAuthStore();
+    const router = useRouter();
+
     const handleImpersonateUser = async (userId: string) => {
-      console.log(`Impersonating user: ${userId}`);
-      // In a real app, this would refresh the session with a new token
+      try {
+        await loginAs(userId);
+        router.push('/dashboard');
+      } catch (err) {
+        console.error('Impersonation failed:', err);
+        alert('Failed to impersonate user');
+      }
     };
-  const { user } = useAuthStore();
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'logs' | 'users' | 'stats'>('logs');
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [activeUsers, setActiveUsers] = useState<ActiveUser[]>([]);
