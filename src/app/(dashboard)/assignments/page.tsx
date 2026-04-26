@@ -264,7 +264,7 @@ export default function AssignmentsPage() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              setSelectedAssignment({ id: a.id, clientName: a.client_name });
+                              setSelectedAssignment({ id: a.id, clientName: a.client_name || 'Unknown Client' });
                               setIsVaultModalOpen(true);
                             }}
                             className={cn(
@@ -328,7 +328,7 @@ export default function AssignmentsPage() {
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            setSelectedAssignment({ id: a.id, clientName: a.client_name });
+                            setSelectedAssignment({ id: a.id, clientName: a.client_name || 'Unknown Client' });
                             setIsVaultModalOpen(true);
                           }}
                           className={cn(
