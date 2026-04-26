@@ -49,7 +49,6 @@ export default function AssignmentsPage() {
       })
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }, [assignments, searchTerm, categoryFilter]);
-1: 
   const handleExport = () => {
     const exportData = filteredAssignments.map(a => ({
       'Client Name': a.client_name,
