@@ -145,10 +145,10 @@ export default function BillingPage() {
       {/* KPI Cards - Matching Dashboard/Admin hybrid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 32 }}>
         {[
-          { label: 'Total Billed', value: summary?.totalBilled || 0, icon: DollarSign, color: '#3b82f6', bg: 'var(--bg-primary-light)' },
-          { label: 'Overdue Revenue', value: summary?.overdue || 0, icon: Clock, color: '#ef4444', bg: 'var(--bg-danger-light)' },
-          { label: 'Collection %', value: `${summary?.billingPct?.toFixed(1) || 0}%`, isRaw: true, icon: TrendingUp, color: '#10b981', bg: 'var(--bg-success-light)' },
-          { label: 'Active Invoices', value: invoices.length, isRaw: true, icon: FileText, color: '#8b5cf6', bg: 'var(--color-violet-light)' },
+          { label: 'Total Billed', value: Number(summary?.totalBilled || 0), icon: DollarSign, color: '#3b82f6', bg: 'var(--bg-primary-light)' },
+          { label: 'Overdue Revenue', value: Number(summary?.overdue || 0), icon: Clock, color: '#ef4444', bg: 'var(--bg-danger-light)' },
+          { label: 'Collection %', value: `${Number(summary?.billingPct || 0).toFixed(1)}%`, isRaw: true, icon: TrendingUp, color: '#10b981', bg: 'var(--bg-success-light)' },
+          { label: 'Active Invoices', value: Number(invoices.length || 0), isRaw: true, icon: FileText, color: '#8b5cf6', bg: 'var(--color-violet-light)' },
         ].map((kpi, i) => (
           <motion.div
             key={kpi.label}
@@ -261,7 +261,7 @@ export default function BillingPage() {
                       <td style={{ padding: '14px 20px', fontSize: '0.85rem', fontWeight: 600 }}>{formatIndianCurrency(inv.professional_fees)}</td>
                       <td style={{ padding: '14px 20px' }}>
                         <div style={{ background: 'var(--bg-primary-light)', color: 'var(--color-primary)', display: 'inline-block', padding: '4px 10px', borderRadius: 8, fontWeight: 700, fontSize: '0.85rem' }}>
-                          {formatIndianCurrency(inv.net_amount)}
+                          {formatIndianCurrency(Number(inv.net_amount || 0))}
                         </div>
                       </td>
                       <td style={{ padding: '14px 20px' }}>
@@ -331,7 +331,7 @@ export default function BillingPage() {
                       padding: '6px 12px', borderRadius: 10, background: 'var(--bg-primary-light)',
                       color: 'var(--color-primary)', fontWeight: 800, fontSize: '0.9rem'
                     }}>
-                      {formatIndianCurrency(Number(item.billed), true, true)}
+                      {formatIndianCurrency(Number(item.billed || 0), true, true)}
                     </div>
                     {item.role === 'manager' && (item as any).billing_pct !== undefined && (
                       <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)', marginTop: 4, textAlign: 'center' }}>

@@ -45,12 +45,14 @@ export default function InsightsPage() {
     }
   };
 
-  const formatCurrency = (val: number) => {
+  const formatCurrency = (val: any) => {
+    const num = Number(val || 0);
+    if (isNaN(num)) return '₹0';
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
       maximumFractionDigits: 0
-    }).format(val);
+    }).format(num);
   };
 
   const processMonthlyData = () => {
@@ -128,7 +130,7 @@ export default function InsightsPage() {
           </div>
           <div className="p-6 flex-1 min-h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={processMonthlyData()}>
+              <AreaChart data={processMonthlyData() || []}>
                 <defs>
                   <linearGradient id="colorPlanned" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1}/>
@@ -141,10 +143,10 @@ export default function InsightsPage() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} tickFormatter={(v) => `₹${v/1000}k`} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} tickFormatter={(v) => `₹${Number(v || 0) / 1000}k`} />
                 <Tooltip 
                   contentStyle={{borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}}
-                  formatter={(v: number) => [formatCurrency(v), '']}
+                  formatter={(value: any) => [formatCurrency(Number(value || 0)), '']}
                 />
                 <Area type="monotone" dataKey="Planned" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorPlanned)" />
                 <Area type="monotone" dataKey="Billed" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorBilled)" />
@@ -166,14 +168,14 @@ export default function InsightsPage() {
             <ResponsiveContainer width="100%" height={260}>
               <PieChart>
                 <Pie
-                  data={data?.categoryRevenue}
+                  data={data?.categoryRevenue || []}
                   innerRadius={80}
                   outerRadius={100}
                   paddingAngle={5}
                   dataKey="value"
                   nameKey="category"
                 >
-                  {data?.categoryRevenue.map((entry, index) => (
+                  {(data?.categoryRevenue || []).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -181,7 +183,7 @@ export default function InsightsPage() {
               </PieChart>
             </ResponsiveContainer>
             <div className="w-full mt-6 space-y-2">
-              {data?.categoryRevenue.map((cat, idx) => (
+              {(data?.categoryRevenue || []).map((cat, idx) => (
                 <div key={cat.category} className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full" style={{backgroundColor: COLORS[idx % COLORS.length]}} />
@@ -207,7 +209,7 @@ export default function InsightsPage() {
           </div>
           <div className="p-6 flex-1 min-h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data?.managerWorkload} layout="vertical">
+              <BarChart data={data?.managerWorkload || []} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" />
                 <XAxis type="number" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
                 <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} width={120} />
@@ -237,7 +239,7 @@ export default function InsightsPage() {
             <p className="text-xs text-slate-500 mt-0.5">Top clients by pending collection</p>
           </div>
           <div className="divide-y divide-slate-100">
-            {data?.clientDues.map((c, idx) => (
+            {(data?.clientDues || []).map((c, idx) => (
               <div key={idx} className="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between">
                 <div className="flex-1 min-w-0 pr-4">
                   <div className="font-bold text-slate-900 truncate" title={c.name}>{c.name}</div>
@@ -269,7 +271,7 @@ export default function InsightsPage() {
             </div>
           </div>
           <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-            {data?.partnerPerformance.map((p, idx) => {
+            {(data?.partnerPerformance || []).map((p, idx) => {
               const pct = p.billed > 0 ? (p.collected / p.billed) * 100 : 0;
               return (
                 <div key={idx} className="space-y-3">
