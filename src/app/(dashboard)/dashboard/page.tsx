@@ -207,6 +207,31 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
+      {/* Secondary KPI Cluster */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="grid grid-cols-2 md:grid-cols-4 gap-6"
+      >
+        {[
+          { label: 'Total Clients', value: stats.totalClients, color: 'text-blue-500', icon: Users },
+          { label: 'Win Rate', value: `${((stats.wonProposals / (proposals.length || 1)) * 100).toFixed(0)}%`, color: 'text-emerald-500', icon: TrendingUp },
+          { label: 'Total Volume', value: assignments.length, color: 'text-violet-500', icon: Briefcase },
+          { label: 'Billing Health', value: 'Excellent', color: 'text-amber-500', icon: Sparkles },
+        ].map((item) => (
+          <div key={item.label} className="flex items-center gap-4 bg-white/40 backdrop-blur-md rounded-[1.5rem] p-5 shadow-sm border border-slate-200 group hover:border-white transition-all">
+            <div className={cn("w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center transition-transform group-hover:scale-110", item.color)}>
+              <item.icon size={20} />
+            </div>
+            <div>
+              <div className="text-sm font-black text-slate-900">{item.value}</div>
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.label}</div>
+            </div>
+          </div>
+        ))}
+      </motion.div>
+
       {/* Primary KPI Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiCards.map((card, i) => (
@@ -482,30 +507,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Footer KPI Cluster */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-6"
-      >
-        {[
-          { label: 'Total Clients', value: stats.totalClients, color: 'text-blue-500', icon: Users },
-          { label: 'Win Rate', value: `${((stats.wonProposals / (proposals.length || 1)) * 100).toFixed(0)}%`, color: 'text-emerald-500', icon: TrendingUp },
-          { label: 'Total Volume', value: assignments.length, color: 'text-violet-500', icon: Briefcase },
-          { label: 'Billing Health', value: 'Excellent', color: 'text-amber-500', icon: Sparkles },
-        ].map((item) => (
-          <div key={item.label} className="flex items-center gap-4 bg-white/40 backdrop-blur-md rounded-[1.5rem] p-5 shadow-sm border border-slate-200 group hover:border-white transition-all">
-            <div className={cn("w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center transition-transform group-hover:scale-110", item.color)}>
-              <item.icon size={20} />
-            </div>
-            <div>
-              <div className="text-sm font-black text-slate-900">{item.value}</div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.label}</div>
-            </div>
-          </div>
-        ))}
-      </motion.div>
     </div>
   );
 }

@@ -32,17 +32,17 @@ const spreadsheetData = [
   { type: 'Internal Audit', client: 'Cooper Corporation Pvt Ltd', scopeItem: 'Cooper', scopeAreas: 'P2P, Subcon', billingAmount: 375000, billedAmount: 375000, amountReceipt: 375000 },
   { type: 'Internal Audit', client: 'Cooper Corporation Pvt Ltd', scopeItem: 'Cooper', scopeAreas: 'Inventory', billingAmount: 375000, billedAmount: 375000, amountReceipt: 375000 },
   { type: 'Internal Audit', client: 'Cooper Corporation Pvt Ltd', scopeItem: 'Cooper', scopeAreas: 'O2C', billingAmount: 375000, billedAmount: 375000, amountReceipt: 375000 },
-  
+
   // SOP Drafting
   { type: 'SOP Drafting', client: 'Cooper Corporation Pvt Ltd', scopeItem: 'Cooper', scopeAreas: 'SOP Drafting', billingAmount: 1500000, billedAmount: 1500000, amountReceipt: 150000 },
-  
+
   // Mnmg Consulting
   { type: 'Mnmg Consulting', client: 'Cooper Corporation Pvt Ltd', scopeItem: 'Cooper', scopeAreas: 'Costing Verification', billingAmount: 250000, billedAmount: 250000, amountReceipt: 250000 },
   { type: 'Mnmg Consulting', client: 'Cooper Corporation Pvt Ltd', scopeItem: 'Cooper', scopeAreas: 'Production Review', billingAmount: 300000, billedAmount: 300000, amountReceipt: 200000 },
-  
+
   // Internal Audit
   { type: 'Internal Audit', client: 'John Deere India Pvt Ltd', scopeItem: 'JD', scopeAreas: 'Stock Take', billingAmount: 190400, billedAmount: 190400, amountReceipt: 49600 },
-  
+
   // Mahindra
   { type: 'Internal Audit', client: 'Mahindra and Mahindra Lt', subsidiary: 'Mah Logistics Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mah Logistics Ltd', billingAmount: 450000, billedAmount: 450000, amountReceipt: 0 },
   { type: 'Internal Audit', client: 'Mahindra and Mahindra Lt', subsidiary: 'Mah Accelo Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mah Accelo Ltd', billingAmount: 425000, billedAmount: 425000, amountReceipt: 0 },
@@ -61,7 +61,7 @@ async function main() {
 
     // 1. Delete old generated dummy clients
     const dummyClients = ['Apex Infra', 'Zenith', 'Nova', 'Sterling', 'Meridian', 'Apex Innovations', 'Nova Healthcare Systems', 'Meridian Corp', 'Sterling Financial', 'Zenith Healthcare', 'Apex', 'Nova Healthcare'];
-    
+
     // Convert to query string for IN clause
     const inClause = dummyClients.map((_, i) => `$${i + 1}`).join(', ');
     const { rows: clientsToDelete } = await pool.query(`SELECT id FROM clients WHERE name IN (${inClause})`, dummyClients);
@@ -69,10 +69,10 @@ async function main() {
     if (clientsToDelete.length > 0) {
       const clientIds = clientsToDelete.map(c => c.id);
       const cInClause = clientIds.map((_, i) => `$${i + 1}`).join(', ');
-      
+
       const { rows: assignments } = await pool.query(`SELECT id FROM assignments WHERE client_id IN (${cInClause})`, clientIds);
       const aIds = assignments.map(a => a.id);
-      
+
       if (aIds.length > 0) {
         const aInClause = aIds.map((_, i) => `$${i + 1}`).join(', ');
         await pool.query(`DELETE FROM fee_allocations WHERE assignment_id IN (${aInClause})`, aIds);
@@ -105,7 +105,7 @@ async function main() {
 
       let category = 'A';
       let subcategory = 'internal_audit';
-      
+
       if (row.type === 'Forensic Audits') {
         category = 'C';
         subcategory = 'forensic_investigation';
