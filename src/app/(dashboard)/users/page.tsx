@@ -35,13 +35,12 @@ export default function UsersPage() {
   const { user: currentUser } = useAuthStore();
   const router = useRouter();
   const isAdmin = currentUser?.role === 'admin';
-  const canManageUsers = ['admin', 'partner', 'director'].includes(currentUser?.role || '');
 
   useEffect(() => {
-    if (currentUser && !canManageUsers) {
+    if (currentUser && !isAdmin) {
       router.push('/dashboard');
     }
-  }, [currentUser, canManageUsers, router]);
+  }, [currentUser, isAdmin, router]);
 
   const fetchUsers = async () => {
     try {

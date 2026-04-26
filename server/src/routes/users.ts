@@ -25,6 +25,24 @@ router.get('/', requireRole('admin', 'partner', 'director'), async (_req: Reques
 
 
 
+// GET /api/users/impersonation-list
+router.get('/impersonation-list', requireRole('admin', 'partner', 'director'), async (req: Request, res: Response) => {
+    try {
+        const result = await pool.query(
+            `SELECT id, full_name, role, display_name FROM profiles 
+             WHERE role IN ('manager', 'assistant_manager', 'director') 
+             AND id != $1
+             AND is_active = true
+             ORDER BY role, full_name`,
+             [req.user!.id]
+        );
+        res.json(result.rows);
+    } catch (err: unknown) {
+        console.error('Error fetching impersonation list:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // GET /api/users/managers
 router.get('/managers', async (_req: Request, res: Response) => {
     try {

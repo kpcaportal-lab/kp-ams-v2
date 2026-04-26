@@ -9,7 +9,7 @@ import { authLimiter } from '../middleware/rateLimiter.js';
 const router = Router();
 
 // POST /api/auth/login-as/:userId
-router.post('/login-as/:userId', authenticate, requireRole('admin', 'director'), async (req: Request, res: Response) => {
+router.post('/login-as/:userId', authenticate, requireRole('admin', 'director', 'partner'), async (req: Request, res: Response) => {
     try {
         const { userId } = req.params;
         const result = await pool.query(

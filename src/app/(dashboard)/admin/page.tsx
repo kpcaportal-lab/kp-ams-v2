@@ -85,8 +85,7 @@ export default function AdminPage() {
 
   // Role guard
   useEffect(() => {
-    const allowedRoles = ['admin', 'partner', 'director', 'manager', 'assistant_manager'];
-    if (user && !allowedRoles.includes(user.role)) {
+    if (user && user.role !== 'admin') {
       router.push('/dashboard');
     }
   }, [user, router]);
@@ -142,8 +141,7 @@ export default function AdminPage() {
 
   const now = useMemo(() => Date.now(), []);
 
-  const allowedRoles = ['admin', 'partner', 'director', 'manager', 'assistant_manager'];
-  if (user && !allowedRoles.includes(user.role)) return null;
+  if (user && user.role !== 'admin') return null;
 
   return (
     <div style={{ padding: '32px', maxWidth: 1400, margin: '0 auto' }}>

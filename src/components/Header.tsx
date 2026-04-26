@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
-import { Search, User as UserIcon, Menu, Bell, ChevronRight, LifeBuoy, Plus, X } from 'lucide-react';
+import { Search, User as UserIcon, Menu, Bell, ChevronRight, LifeBuoy, Plus, X, Users } from 'lucide-react';
 import { NotificationCenter } from './NotificationCenter';
 import { cn } from '@/lib/utils';
 import { useTicketStore } from '@/store/ticketStore';
@@ -20,8 +20,47 @@ interface SearchResultSet {
 export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, loginAs } = useAuthStore();
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  
+  // Impersonation state
+  const [isImpersonateOpen, setIsImpersonateOpen] = useState(false);
+  const [impersonationList, setImpersonationList] = useState<any[]>([]);
+  const [impersonationLoading, setImpersonationLoading] = useState(false);
+  const impersonateRef = useRef<HTMLDivElement>(null);
+
+  // Close impersonate on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (impersonateRef.current && !impersonateRef.current.contains(e.target as Node)) {
+        setIsImpersonateOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Fetch impersonation list
+  useEffect(() => {
+    if (isImpersonateOpen && ['admin', 'partner', 'director'].includes(user?.role || '') && impersonationList.length === 0) {
+      setImpersonationLoading(true);
+      api.get('/api/users/impersonation-list')
+        .then(res => setImpersonationList(res.data))
+        .catch(err => console.error('Failed to fetch impersonation list', err))
+        .finally(() => setImpersonationLoading(false));
+    }
+  }, [isImpersonateOpen, user?.role, impersonationList.length]);
+
+  const handleImpersonate = async (id: string) => {
+    try {
+      await loginAs(id);
+      setIsImpersonateOpen(false);
+      router.push('/dashboard');
+      router.refresh();
+    } catch (err) {
+      alert('Failed to impersonate user');
+    }
+  };
   
   // Global search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -261,6 +300,57 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         </div>
 
         <NotificationCenter />
+        
+        {/* View As Dropdown */}
+        {['admin', 'partner', 'director'].includes(user?.role || '') && (
+          <div className="relative" ref={impersonateRef}>
+            <button
+              onClick={() => setIsImpersonateOpen(!isImpersonateOpen)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+              title="View As"
+            >
+              <Users size={16} className="text-slate-500" />
+              <span className="text-xs font-bold text-slate-700 hidden sm:block">View As</span>
+            </button>
+            
+            <AnimatePresence>
+              {isImpersonateOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                  className="absolute top-full right-0 mt-2 w-64 bg-white border border-slate-200 shadow-2xl rounded-2xl overflow-hidden z-[200]"
+                >
+                  <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
+                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.15em]">
+                      Impersonate User
+                    </span>
+                  </div>
+                  <div className="max-h-60 overflow-y-auto p-2">
+                    {impersonationLoading ? (
+                      <div className="text-center py-4">
+                        <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                      </div>
+                    ) : impersonationList.length === 0 ? (
+                      <div className="text-center py-4 text-xs text-slate-400 font-medium italic">No users available</div>
+                    ) : (
+                      impersonationList.map((impUser: any) => (
+                        <button
+                          key={impUser.id}
+                          onClick={() => handleImpersonate(impUser.id)}
+                          className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 transition-colors flex flex-col"
+                        >
+                          <span className="text-sm font-bold text-slate-800">{impUser.full_name}</span>
+                          <span className="text-[10px] font-medium text-slate-400 uppercase">{impUser.role}</span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
         {/* User Profile */}
         <div 
