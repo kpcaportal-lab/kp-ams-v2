@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import pool from '../db/pool.js';
-import { authenticate, requireRole } from '../middleware/auth.js';
+import { authenticate, requireRole, getVisibleUserIds } from '../middleware/auth.js';
 
 const router = Router();
 router.use(authenticate);
@@ -22,6 +22,9 @@ router.get('/logs', async (req: Request, res: Response) => {
 
         const offset = (Number(page) - 1) * Number(limit);
 
+        // RBAC filtering
+        const visibleIds = await getVisibleUserIds(req.user!);
+
         let query = `
             SELECT al.*, p.full_name as user_name
             FROM audit_logs al
@@ -30,6 +33,13 @@ router.get('/logs', async (req: Request, res: Response) => {
         let countQuery = `SELECT COUNT(*) as total FROM audit_logs al WHERE 1=1`;
         const params: unknown[] = [];
         const countParams: unknown[] = [];
+
+        if (visibleIds !== null) {
+            params.push(visibleIds);
+            countParams.push(visibleIds);
+            query += ` AND al.user_id = ANY($${params.length})`;
+            countQuery += ` AND al.user_id = ANY($${countParams.length})`;
+        }
 
         if (user_id) {
             params.push(user_id);
