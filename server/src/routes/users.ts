@@ -9,17 +9,31 @@ router.use(authenticate);
 // GET /api/users — all users (admin/partner/director)
 router.get('/', requireRole('admin', 'partner', 'director'), async (_req: Request, res: Response) => {
     try {
-        const result = await pool.query(
-            `SELECT p.id, p.email, p.role, p.full_name, p.display_name, p.is_active, p.created_at, p.reports_to,
-                    rp.full_name as reports_to_name
-             FROM profiles p
-             LEFT JOIN profiles rp ON rp.id = p.reports_to
-             ORDER BY p.role, p.full_name`
-        );
+        let result;
+        try {
+            result = await pool.query(
+                `SELECT p.id, p.email, p.role, p.full_name, p.display_name, p.is_active, p.created_at, p.reports_to,
+                        rp.full_name as reports_to_name
+                 FROM profiles p
+                 LEFT JOIN profiles rp ON rp.id = p.reports_to
+                 ORDER BY p.role, p.full_name`
+            );
+        } catch (dbErr: any) {
+            if (dbErr.message.includes('column "reports_to" does not exist')) {
+                console.warn('⚠️ reports_to column missing in profiles, falling back to simple user list');
+                result = await pool.query(
+                    `SELECT id, email, role, full_name, display_name, is_active, created_at
+                     FROM profiles
+                     ORDER BY role, full_name`
+                );
+            } else {
+                throw dbErr;
+            }
+        }
         res.json(result.rows);
     } catch (err: unknown) { 
         console.error('Error fetching users:', err);
-        res.status(500).json({ error: 'Server error' }); 
+        res.status(500).json({ error: 'Server error', detail: err instanceof Error ? err.message : String(err) }); 
     }
 });
 

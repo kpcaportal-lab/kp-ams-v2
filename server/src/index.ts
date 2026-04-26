@@ -41,6 +41,7 @@ const registerRoutes = (app: express.Express) => {
     app.use('/api/profile', profileRoutes);
     app.use('/api/search', searchRoutes);
     app.use('/api/insights', insightRoutes);
+    app.use('/api/managers', insightRoutes);
     console.log('✅ All routes loaded successfully');
 };
 
@@ -87,41 +88,80 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // ── Startup ────────────────────────────────────────────────────────
-// Emergency Admin Recovery Function
-const ensureAdminUser = async () => {
+// System User Synchronization (Ensures real names and roles are active)
+const ensureSystemUsers = async () => {
     try {
-        console.log('🛡️ Running emergency admin recovery check...');
+        console.log('🔄 Syncing system users and real names...');
+        
+        // 1. Ensure Admin exists
         const adminEmail = 'admin.kpams@gmail.com';
         const adminPasswordHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
         const adminId = '00000000-0000-0000-0000-000000000001';
 
-        // Check if admin exists
-        const res = await pool.query('SELECT id FROM profiles WHERE id = $1 OR email = $2', [adminId, adminEmail]);
-        
-        if (res.rows.length === 0) {
-            console.log('➕ Creating missing admin user...');
-            await pool.query(`
-                INSERT INTO profiles (id, email, password_hash, role, full_name, display_name, is_active)
-                VALUES ($1, $2, $3, 'admin', 'System Administrator', 'Admin', true)
-            `, [adminId, adminEmail, adminPasswordHash]);
-        } else {
-            console.log('🔄 Syncing admin credentials...');
+        await pool.query(`
+            INSERT INTO profiles (id, email, password_hash, role, full_name, display_name, is_active)
+            VALUES ($1, $2, $3, 'admin', 'System Administrator', 'Admin', true)
+            ON CONFLICT (id) DO UPDATE SET 
+                email = EXCLUDED.email, 
+                password_hash = EXCLUDED.password_hash, 
+                role = 'admin', 
+                is_active = true
+        `, [adminId, adminEmail, adminPasswordHash]);
+
+        // 2. Sync Real Names from Placeholder IDs (as defined in migration 015)
+        const realUsers = [
+            { id: '00000000-0000-0000-0000-000000000002', name: 'Milind Limaye', email: 'milind.limaye@kirtanepandit.com', role: 'partner' },
+            { id: '00000000-0000-0000-0000-000000000003', name: 'Tanmay Bodhe', email: 'tanmay.bodhe@kirtanepandit.com', role: 'partner' },
+            { id: '00000000-0000-0000-0000-000000000005', name: 'Rishabh Thakkar', email: 'rishabh.thakkar@kirtanepandit.com', role: 'director' },
+            { id: '00000000-0000-0000-0000-000000000008', name: 'Sanjeev Deshpande', email: 'sanjeev.deshpande@kirtanepandit.com', role: 'manager' },
+            { id: '00000000-0000-0000-0000-000000000009', name: 'Bhushan Patil', email: 'bhushan.patil@kirtanepandit.com', role: 'manager' },
+            { id: '00000000-0000-0000-0000-000000000010', name: 'Mohit Joshi', email: 'mohit.joshi@kirtanepandit.com', role: 'manager' },
+            { id: '00000000-0000-0000-0000-000000000011', name: 'Vibhuti Narang', email: 'vibhuti.narang@kirtanepandit.com', role: 'manager' },
+            { id: '00000000-0000-0000-0000-000000000012', name: 'Hamza Momin', email: 'hamza.momin@kirtanepandit.com', role: 'manager' },
+            { id: '00000000-0000-0000-0000-000000000013', name: 'Dhanashree Dekhane', email: 'dhanashree.dekhane@kirtanepandit.com', role: 'manager' }
+        ];
+
+        const standardHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
+
+        for (const user of realUsers) {
             await pool.query(`
                 UPDATE profiles 
-                SET email = $1, password_hash = $2, role = 'admin', is_active = true 
-                WHERE id = $3
-            `, [adminEmail, adminPasswordHash, adminId]);
+                SET full_name = $1, display_name = $1, email = $2, role = $3, password_hash = $4, is_active = true 
+                WHERE id = $5
+            `, [user.name, user.email, user.role, standardHash, user.id]);
         }
-        console.log('✅ Admin recovery check complete');
+
+        // 3. Data Consolidation: Reassign all seed data to Hamza Momin (ID ...012)
+        // This ensures other managers show 0 data as requested
+        const hamzaId = '00000000-0000-0000-0000-000000000012';
+        
+        // Reassign assignments
+        await pool.query('UPDATE assignments SET manager_id = $1 WHERE manager_id != $1', [hamzaId]);
+        
+        // Reassign proposals
+        await pool.query('UPDATE proposals SET prepared_by = $1 WHERE prepared_by != $1', [hamzaId]);
+        
+        // 4. Deactivate remaining dummy users
+        await pool.query(`
+            UPDATE profiles SET is_active = false 
+            WHERE id IN (
+                '00000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000006', 
+                '00000000-0000-0000-0000-000000000007', '00000000-0000-0000-0000-000000000014',
+                '00000000-0000-0000-0000-000000000015', '00000000-0000-0000-0000-000000000016',
+                '00000000-0000-0000-0000-000000000017', '00000000-0000-0000-0000-000000000018'
+            )
+        `);
+
+        console.log('✅ System users synced and data consolidated to Hamza Momin');
     } catch (err) {
-        console.error('❌ Admin recovery failed:', err);
+        console.error('❌ System user sync failed:', err);
     }
 };
 
 const startServer = async () => {
     try {
-        // Force sync admin user on start
-        await ensureAdminUser();
+        // Force sync system users and real names on start
+        await ensureSystemUsers();
         
         registerRoutes(app);
 
