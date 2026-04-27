@@ -170,7 +170,7 @@ console.log('🌱 Seeding Hamza Momin\'s real spreadsheet data...');
             { client: 'MLL Mobility Pvt. Ltd', cat: 'Internal Audit', scope: 'MLL Mobility Pvt. Ltd', fee: 50000, billed: 50000, gstn: '27AABCU1234Q1ZJ' }
         ];
 
-        for (const data of realData) {
+for (const data of realData) {
             const clientRes = await pool.query(
                 'INSERT INTO clients (name, status) VALUES ($1, \'active\') ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id',
                 [data.client]
@@ -182,22 +182,16 @@ console.log('🌱 Seeding Hamza Momin\'s real spreadsheet data...');
                  VALUES ($1, $2, $3, $4, $4, $5, $6, 'Monthly', $7, $8, 'active', '2025-26') RETURNING id`,
                 [clientId, data.gstn, data.cat, data.scope, data.fee, data.billed, partnerId, hamzaId]
             );
-            const clientId = clientRes.rows[0].id;
-
-            const assignRes = await pool.query(
-                `INSERT INTO assignments (client_id, category, subcategory, scope_areas, total_fees, billed_amount, billing_cycle, partner_id, manager_id, status, fiscal_year)
-                 VALUES ($1, $2, $3, $3, $4, $5, \'Monthly\', $6, $7, \'active\', \'2025-26\') RETURNING id`,
-                [clientId, data.cat, data.scope, data.fee, data.billed, partnerId, hamzaId]
-            );
             const assignId = assignRes.rows[0].id;
 
             if (data.billed > 0) {
                 await pool.query(
                     `INSERT INTO invoices (assignment_id, invoice_number, invoice_date, professional_fees, billed_amount, status)
-                     VALUES ($1, $2, CURRENT_DATE, $3, $3, \'paid\')`,
+                     VALUES ($1, $2, CURRENT_DATE, $3, $3, 'paid')`,
                     [assignId, `INV-${Math.floor(Math.random() * 9000) + 1000}`, data.billed]
                 );
             }
+        }
         }
 
         // 4. DEACTIVATE ALL OTHER USERS
