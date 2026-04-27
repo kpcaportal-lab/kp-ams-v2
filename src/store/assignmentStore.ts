@@ -14,7 +14,7 @@ interface AssignmentStore {
   updateAssignment: (id: string, updates: Partial<Assignment>) => Promise<void>;
 }
 
-export const useAssignmentStore = create<AssignmentStore>((set, get) => ({
+export const useAssignmentStore = create<AssignmentStore>((set) => ({
   assignments: [],
   isLoading: false,
   error: null,

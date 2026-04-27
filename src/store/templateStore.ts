@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type { ProposalTemplate } from '@/types';
 import api from '@/lib/api';
 import { getErrorMessage } from '@/lib/utils';

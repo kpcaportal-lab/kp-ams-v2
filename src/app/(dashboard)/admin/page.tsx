@@ -145,7 +145,7 @@ export default function AdminPage() {
     return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
-  const now = useMemo(() => Date.now(), []);
+  const [now] = useState(() => Date.now());
 
   if (user && user.role !== 'admin') return null;
 

@@ -76,6 +76,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
 
   useEffect(() => {
     if (assignment) {
+      // eslint-disable-next-line
       setForm(initialForm);
     }
   }, [initialForm, assignment]);

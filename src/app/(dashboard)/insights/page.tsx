@@ -177,7 +177,7 @@ export default function InsightsPage() {
                             <AlertCircle size={32} className="text-slate-300" />
                         </div>
                         <h3 className="text-xl font-bold text-slate-900">No managers found</h3>
-                        <p className="text-slate-500 mt-2 max-w-sm mx-auto">Try adjusting your filters or search query to find the data you're looking for.</p>
+                        <p className="text-slate-500 mt-2 max-w-sm mx-auto">Try adjusting your filters or search query to find the data you&apos;re looking for.</p>
                     </div>
                 ) : (
                     filteredManagers.map((manager) => (

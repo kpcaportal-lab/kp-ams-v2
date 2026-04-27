@@ -32,6 +32,7 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Formats a number to Indian currency format (Lakhs, Crores).
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function formatIndianCurrency(amount: number | string, includeSymbol = true, _short = false) {
   const numAmount = Number(amount || 0);
   const formatter = new Intl.NumberFormat('en-IN', {

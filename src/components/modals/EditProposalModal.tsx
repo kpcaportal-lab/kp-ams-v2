@@ -66,6 +66,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
 
   useEffect(() => {
     if (open && proposal) {
+      // eslint-disable-next-line
       setForm(initialForm);
     }
   }, [initialForm, open, proposal]);

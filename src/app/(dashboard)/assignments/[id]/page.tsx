@@ -191,7 +191,7 @@ export default function AssignmentDetailPage() {
                       <div className="h-full rounded-full bg-blue-500" style={{ width: `${Math.min(pct, 100)}%` }} />
                     </div>
                     <span className="text-[11px] font-semibold text-slate-500 w-16 text-right">
-                      {formatIndianCurrency(alloc.billed_amount, true, true)}
+                      {formatIndianCurrency(alloc.billed_amount, true)}
                     </span>
                   </div>
                 );

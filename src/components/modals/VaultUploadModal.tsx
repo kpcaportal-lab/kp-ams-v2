@@ -83,7 +83,7 @@ export default function VaultUploadModal({ isOpen, onClose, assignmentId, client
                     </div>
                     <p className="text-xs font-bold text-blue-700 leading-relaxed">
                       Enter the secure link to your working paper (Google Drive, SharePoint, etc.). 
-                      This document will be accessible in the firm's Document Vault.
+                      This document will be accessible in the firm&apos;s Document Vault.
                     </p>
                   </div>
 

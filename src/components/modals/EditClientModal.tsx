@@ -55,6 +55,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
 
   useEffect(() => {
     if (open && client) {
+      // eslint-disable-next-line
       setForm(initialForm);
     }
   }, [initialForm, open, client]);

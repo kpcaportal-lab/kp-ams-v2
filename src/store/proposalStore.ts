@@ -17,7 +17,7 @@ interface ProposalStore {
   generateAssignments: (id: string, data: { scope_items: Omit<Assignment, 'id' | 'created_at'>[] }) => Promise<void>;
 }
 
-export const useProposalStore = create<ProposalStore>((set, get) => ({
+export const useProposalStore = create<ProposalStore>((set) => ({
   proposals: [],
   isLoading: false,
   error: null,

@@ -15,7 +15,7 @@ interface ClientStore {
   deleteClient: (id: string) => Promise<void>;
 }
 
-export const useClientStore = create<ClientStore>((set, get) => ({
+export const useClientStore = create<ClientStore>((set) => ({
   clients: [],
   isLoading: false,
   error: null,
