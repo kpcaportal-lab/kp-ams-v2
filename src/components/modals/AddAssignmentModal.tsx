@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, AlertCircle } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 import { useAssignmentStore } from '@/store/assignmentStore';
-import { CATEGORY_LABELS, SUBCATEGORY_LABELS, AssignmentCategory, AssignmentSubcategory, BillingCycle } from '@/types';
+import { CATEGORY_LABELS, SUBCATEGORY_LABELS, AssignmentCategory, AssignmentSubcategory, BillingCycle, User } from '@/types';
 import api from '@/lib/api';
 
 interface AddAssignmentModalProps {
@@ -17,20 +17,34 @@ interface ClientOption {
   name: string;
 }
 
+interface FormData {
+  client_id: string;
+  gstn: string;
+  partner_id: string;
+  manager_id: string;
+  category: AssignmentCategory;
+  subcategory: AssignmentSubcategory;
+  total_fees: number;
+  billing_cycle: BillingCycle;
+  fiscal_year: string;
+  scope_item: string;
+  scope_areas: string;
+}
+
 export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModalProps) {
   const { addAssignment } = useAssignmentStore();
   const [clients, setClients] = useState<ClientOption[]>([]);
-  const [partners, setPartners] = useState<any[]>([]);
-  const [managers, setManagers] = useState<any[]>([]);
-  const [form, setForm] = useState({
+  const [partners, setPartners] = useState<User[]>([]);
+  const [managers, setManagers] = useState<User[]>([]);
+  const [form, setForm] = useState<FormData>({
     client_id: '',
     gstn: '',
     partner_id: '',
     manager_id: '',
-    category: 'A' as AssignmentCategory,
-    subcategory: 'statutory_audit' as AssignmentSubcategory,
+    category: 'A',
+    subcategory: 'statutory_audit',
     total_fees: 0,
-    billing_cycle: 'monthly' as BillingCycle,
+    billing_cycle: 'monthly',
     fiscal_year: '2025-26',
     scope_item: '',
     scope_areas: ''
@@ -39,7 +53,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
   useEffect(() => {
     if (open) {
       api.get('/api/clients').then(res => {
-        setClients(res.data.map((c: any) => ({ id: c.id, name: c.name })));
+        setClients(res.data.map((c: ClientOption) => ({ id: c.id, name: c.name })));
       }).catch(() => setClients([]));
       
       api.get('/api/users/partners').then(res => {
@@ -54,7 +68,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const sanitizeUUID = (val: any) => (val && typeof val === 'string' && val.includes('-')) ? val : undefined;
+    const sanitizeUUID = (val: string) => (val && val.includes('-')) ? val : undefined;
 
     const payload = {
       ...form,
@@ -63,16 +77,15 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
     };
     await addAssignment(payload);
     setOpen(false);
-    // Reset form
     setForm({
       client_id: '',
       gstn: '',
       partner_id: '',
       manager_id: '',
-      category: 'A' as AssignmentCategory,
-      subcategory: 'statutory_audit' as AssignmentSubcategory,
+      category: 'A',
+      subcategory: 'statutory_audit',
       total_fees: 0,
-      billing_cycle: 'monthly' as BillingCycle,
+      billing_cycle: 'monthly',
       fiscal_year: '2025-26',
       scope_item: '',
       scope_areas: ''
@@ -172,7 +185,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Category</label>
                     <select
                       value={form.category}
-                      onChange={(e) => setForm({ ...form, category: e.target.value as any })}
+                      onChange={(e) => setForm({ ...form, category: e.target.value as AssignmentCategory })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
@@ -186,7 +199,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Subcategory</label>
                     <select
                       value={form.subcategory}
-                      onChange={(e) => setForm({ ...form, subcategory: e.target.value as any })}
+                      onChange={(e) => setForm({ ...form, subcategory: e.target.value as AssignmentSubcategory })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       {Object.entries(SUBCATEGORY_LABELS).map(([key, label]) => (
@@ -234,7 +247,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Professional Fees Cycle</label>
                     <select
                       value={form.billing_cycle}
-                      onChange={(e) => setForm({ ...form, billing_cycle: e.target.value as any })}
+                      onChange={(e) => setForm({ ...form, billing_cycle: e.target.value as BillingCycle })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       <option value="monthly">Monthly</option>

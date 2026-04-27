@@ -1,23 +1,35 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '@/lib/api';
 import { Search, Loader2 } from 'lucide-react';
 import { formatINR, cn } from '@/lib/utils';
 import { format } from 'date-fns';
+
+interface ProposalData {
+    id: string;
+    proposal_id: string;
+    client_name: string;
+    number: string;
+    status: string;
+    quotation_amount: number;
+    amount?: number;
+    date_sent?: string;
+    created_at: string;
+}
 
 interface ProposalTabProps {
     managerId: string;
 }
 
 export function ProposalTab({ managerId }: ProposalTabProps) {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<ProposalData[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         setLoading(true);
         try {
             const res = await api.get(`/api/managers/${managerId}/proposals`, {
@@ -30,11 +42,11 @@ export function ProposalTab({ managerId }: ProposalTabProps) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [managerId, search, page]);
 
     useEffect(() => {
         fetchData();
-    }, [managerId, search, page]);
+    }, [fetchData]);
 
     return (
         <div className="space-y-4">
@@ -99,7 +111,7 @@ export function ProposalTab({ managerId }: ProposalTabProps) {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right font-black text-slate-900">
-                                        {formatINR(parseFloat(proposal.amount))}
+                                        {formatINR(proposal.amount ?? proposal.quotation_amount)}
                                     </td>
                                 </tr>
                             ))}

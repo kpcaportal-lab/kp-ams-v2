@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
-import { Search, User as UserIcon, Menu, Bell, ChevronRight, LifeBuoy, Plus, X, Users } from 'lucide-react';
+import { Search, User as UserIcon, Menu, ChevronRight, LifeBuoy, Plus, X, Users } from 'lucide-react';
 import { NotificationCenter } from './NotificationCenter';
 import { cn } from '@/lib/utils';
 import { useTicketStore } from '@/store/ticketStore';
@@ -10,11 +10,43 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
 
+interface SearchClient {
+  id: string;
+  name: string;
+  gstn?: string;
+}
+
+interface SearchAssignment {
+  id: string;
+  client_name: string;
+  proposal_number?: string;
+}
+
+interface SearchProposal {
+  id: string;
+  client_name: string;
+  number?: string;
+}
+
+interface SearchInvoice {
+  id: string;
+  assignment_id: string;
+  sr_no: number;
+  client_name: string;
+  narration?: string;
+}
+
 interface SearchResultSet {
-  clients: any[];
-  assignments: any[];
-  proposals: any[];
-  invoices: any[];
+  clients: SearchClient[];
+  assignments: SearchAssignment[];
+  proposals: SearchProposal[];
+  invoices: SearchInvoice[];
+}
+
+interface ImpersonationUser {
+  id: string;
+  full_name: string;
+  role: string;
 }
 
 export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
@@ -25,7 +57,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   
   // Impersonation state
   const [isImpersonateOpen, setIsImpersonateOpen] = useState(false);
-  const [impersonationList, setImpersonationList] = useState<any[]>([]);
+  const [impersonationList, setImpersonationList] = useState<ImpersonationUser[]>([]);
   const [impersonationLoading, setImpersonationLoading] = useState(false);
   const impersonateRef = useRef<HTMLDivElement>(null);
 
@@ -234,7 +266,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                       {searchResults.clients.length > 0 && (
                         <div>
                           <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Clients</div>
-                          {searchResults.clients.map((c: any) => (
+                          {searchResults.clients.map((c) => (
                             <button key={c.id} onClick={() => { router.push(`/clients/${c.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
                               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
                               <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 text-xs font-black">{c.name?.charAt(0)}</div>
@@ -249,7 +281,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                       {searchResults.assignments.length > 0 && (
                         <div>
                           <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Assignments</div>
-                          {searchResults.assignments.map((a: any) => (
+                          {searchResults.assignments.map((a) => (
                             <button key={a.id} onClick={() => { router.push(`/assignments/${a.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
                               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-emerald-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
                               <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 text-xs font-black">{a.proposal_number?.slice(-2) || 'AS'}</div>
@@ -264,7 +296,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                       {searchResults.proposals.length > 0 && (
                         <div>
                           <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Proposals</div>
-                          {searchResults.proposals.map((p: any) => (
+                          {searchResults.proposals.map((p) => (
                             <button key={p.id} onClick={() => { router.push(`/proposals/${p.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
                               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-violet-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
                               <div className="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center text-violet-600 text-xs font-black">{p.number?.slice(-2) || 'PR'}</div>
@@ -279,7 +311,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                       {searchResults.invoices.length > 0 && (
                         <div>
                           <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Invoices</div>
-                          {searchResults.invoices.map((inv: any) => (
+                          {searchResults.invoices.map((inv) => (
                             <button key={inv.id} onClick={() => { router.push(`/assignments/${inv.assignment_id}`); setIsSearchOpen(false); setSearchQuery(''); }}
                               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-amber-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
                               <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600 text-xs font-black">#{inv.sr_no}</div>
@@ -334,7 +366,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     ) : impersonationList.length === 0 ? (
                       <div className="text-center py-4 text-xs text-slate-400 font-medium italic">No users available</div>
                     ) : (
-                      impersonationList.map((impUser: any) => (
+                      impersonationList.map((impUser) => (
                         <button
                           key={impUser.id}
                           onClick={() => handleImpersonate(impUser.id)}
@@ -411,7 +443,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Priority</label>
-                  <select value={priority} onChange={(e) => setPriority(e.target.value as any)} className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none appearance-none cursor-pointer">
+                  <select value={priority} onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')} className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-bold focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none appearance-none cursor-pointer">
                     <option value="low">Low Priority</option>
                     <option value="medium">Medium Priority</option>
                     <option value="high">High Priority</option>

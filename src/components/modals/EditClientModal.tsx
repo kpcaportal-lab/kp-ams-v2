@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save, Building2, Users, Mail, Phone, Trash2 } from 'lucide-react';
 import { useClientStore } from '@/store/clientStore';
@@ -12,14 +12,27 @@ interface EditClientModalProps {
   client: Client | null;
 }
 
+interface FormData {
+  name: string;
+  industry: string;
+  address: string;
+  billing_details: string;
+  status: 'active' | 'inactive';
+  spocName: string;
+  spocEmail: string;
+  spocPhone: string;
+  gstn: string;
+  notes: string;
+}
+
 export default function EditClientModal({ open, setOpen, client }: EditClientModalProps) {
   const { updateClient, deleteClient } = useClientStore();
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormData>({
     name: '',
     industry: '',
     address: '',
     billing_details: '',
-    status: 'active' as 'active' | 'inactive',
+    status: 'active',
     spocName: '',
     spocEmail: '',
     spocPhone: '',
@@ -27,22 +40,24 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
     notes: '',
   });
 
+  const initialForm = useMemo((): FormData => ({
+    name: client?.name || '',
+    industry: client?.industry || '',
+    address: client?.address || '',
+    billing_details: client?.billing_details || '',
+    status: (client?.status === 'active' || client?.status === 'inactive') ? client.status : 'active',
+    spocName: client?.spocName || '',
+    spocEmail: client?.spocEmail || '',
+    spocPhone: client?.spocPhone || '',
+    gstn: client?.gstn || '',
+    notes: client?.notes || '',
+  }), [client]);
+
   useEffect(() => {
     if (open && client) {
-      setForm({
-        name: client.name,
-        industry: client.industry || '',
-        address: client.address || '',
-        billing_details: client.billing_details || '',
-        status: client.status as 'active' | 'inactive',
-        spocName: client.spocName || '',
-        spocEmail: client.spocEmail || '',
-        spocPhone: client.spocPhone || '',
-        gstn: client.gstn || '',
-        notes: client.notes || '',
-      });
+      setForm(initialForm);
     }
-  }, [open, client]);
+  }, [initialForm, open, client]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

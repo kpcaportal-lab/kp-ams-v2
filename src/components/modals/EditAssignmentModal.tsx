@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, AlertCircle } from 'lucide-react';
+import { X, Save } from 'lucide-react';
 import { useAssignmentStore } from '@/store/assignmentStore';
-import { CATEGORY_LABELS, SUBCATEGORY_LABELS, Assignment } from '@/types';
-import { toast } from 'react-hot-toast';
+import { CATEGORY_LABELS, SUBCATEGORY_LABELS, Assignment, AssignmentCategory, AssignmentSubcategory, BillingCycle, User } from '@/types';
 import api from '@/lib/api';
 
 interface EditAssignmentModalProps {
@@ -14,18 +13,33 @@ interface EditAssignmentModalProps {
   assignment: Assignment;
 }
 
+interface FormData {
+  gstn: string;
+  category: AssignmentCategory;
+  subcategory: AssignmentSubcategory;
+  total_fees: number;
+  billed_amount: number;
+  out_of_pocket: number;
+  billing_cycle: BillingCycle;
+  scope_item: string;
+  scope_areas: string;
+  partner_id: string;
+  manager_id: string;
+  amount_receipt: number;
+}
+
 export default function EditAssignmentModal({ open, setOpen, assignment }: EditAssignmentModalProps) {
   const { updateAssignment } = useAssignmentStore();
-  const [partners, setPartners] = useState<any[]>([]);
-  const [managers, setManagers] = useState<any[]>([]);
-  const [form, setForm] = useState({
+  const [partners, setPartners] = useState<User[]>([]);
+  const [managers, setManagers] = useState<User[]>([]);
+  const [form, setForm] = useState<FormData>({
     gstn: '',
-    category: 'A' as any,
-    subcategory: 'internal_audit' as any,
+    category: 'A',
+    subcategory: 'internal_audit',
     total_fees: 0,
     billed_amount: 0,
     out_of_pocket: 0,
-    billing_cycle: 'monthly' as any,
+    billing_cycle: 'monthly',
     scope_item: '',
     scope_areas: '',
     partner_id: '',
@@ -45,30 +59,32 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
     }
   }, [open]);
 
+  const initialForm = useMemo(() => ({
+    gstn: assignment.gstn || '',
+    category: assignment.category,
+    subcategory: assignment.subcategory || 'internal_audit' as AssignmentSubcategory,
+    total_fees: assignment.total_fees ?? assignment.fees ?? 0,
+    billed_amount: assignment.billed_amount ?? 0,
+    out_of_pocket: assignment.out_of_pocket ?? 0,
+    billing_cycle: assignment.billing_cycle || 'monthly' as BillingCycle,
+    scope_item: assignment.scope_item || assignment.subcategory || '',
+    scope_areas: assignment.scope_areas || '',
+    partner_id: assignment.partner_id || '',
+    manager_id: assignment.manager_id || '',
+    amount_receipt: assignment.amount_receipt ?? 0
+  }), [assignment]);
+
   useEffect(() => {
     if (assignment) {
-      setForm({
-        gstn: assignment.gstn || '',
-        category: assignment.category as any,
-        subcategory: assignment.subcategory || ('internal_audit' as any),
-        total_fees: assignment.total_fees ?? (assignment as any).fees ?? 0,
-        billed_amount: assignment.billed_amount ?? 0,
-        out_of_pocket: assignment.out_of_pocket ?? 0,
-        billing_cycle: assignment.billing_cycle || ('monthly' as any),
-        scope_item: assignment.scope_item || assignment.subcategory || '',
-        scope_areas: assignment.scope_areas || '',
-        partner_id: assignment.partner_id || '',
-        manager_id: assignment.manager_id || '',
-        amount_receipt: assignment.amount_receipt ?? 0
-      });
+      setForm(initialForm);
     }
-  }, [assignment]);
+  }, [initialForm, assignment]);
 
   const billingPct = form.total_fees > 0 ? ((form.billed_amount / form.total_fees) * 100) : 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const sanitizeUUID = (val: any) => (val && typeof val === 'string' && val.includes('-')) ? val : undefined;
+    const sanitizeUUID = (val: string) => (val && val.includes('-')) ? val : undefined;
 
     await updateAssignment(assignment.id, {
       gstn: form.gstn,
@@ -172,7 +188,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Category</label>
                     <select
                       value={form.category}
-                      onChange={(e) => setForm({ ...form, category: e.target.value as any })}
+                      onChange={(e) => setForm({ ...form, category: e.target.value as AssignmentCategory })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
@@ -186,7 +202,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Subcategory</label>
                     <select
                       value={form.subcategory}
-                      onChange={(e) => setForm({ ...form, subcategory: e.target.value as any })}
+                      onChange={(e) => setForm({ ...form, subcategory: e.target.value as AssignmentSubcategory })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       {Object.entries(SUBCATEGORY_LABELS).map(([key, label]) => (
@@ -218,7 +234,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                     <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Professional Fees Cycle</label>
                     <select
                       value={form.billing_cycle}
-                      onChange={(e) => setForm({ ...form, billing_cycle: e.target.value as any })}
+                      onChange={(e) => setForm({ ...form, billing_cycle: e.target.value as BillingCycle })}
                       className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       <option value="monthly">Monthly</option>

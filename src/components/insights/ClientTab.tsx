@@ -1,23 +1,32 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '@/lib/api';
 import { Search, Loader2 } from 'lucide-react';
 import { formatINR, cn } from '@/lib/utils';
 import { format } from 'date-fns';
+
+interface ClientData {
+    id: string;
+    name: string;
+    gstn?: string;
+    status: string;
+    onboarded_date?: string;
+    billed_amount?: number;
+}
 
 interface ClientTabProps {
     managerId: string;
 }
 
 export function ClientTab({ managerId }: ClientTabProps) {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<ClientData[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         setLoading(true);
         try {
             const res = await api.get(`/api/managers/${managerId}/clients`, {
@@ -30,11 +39,11 @@ export function ClientTab({ managerId }: ClientTabProps) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [managerId, search, page]);
 
     useEffect(() => {
         fetchData();
-    }, [managerId, search, page]);
+    }, [fetchData]);
 
     return (
         <div className="space-y-4">
@@ -93,7 +102,7 @@ export function ClientTab({ managerId }: ClientTabProps) {
                                         {client.onboarded_date ? format(new Date(client.onboarded_date), 'dd MMM yyyy') : 'N/A'}
                                     </td>
                                     <td className="px-6 py-4 text-right font-black text-slate-900">
-                                        {formatINR(parseFloat(client.billed_amount))}
+                                        {formatINR(client.billed_amount ?? 0)}
                                     </td>
                                 </tr>
                             ))}

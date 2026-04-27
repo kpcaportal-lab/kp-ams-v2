@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save, FileText, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { useProposalStore } from '@/store/proposalStore';
@@ -19,19 +19,30 @@ interface ClientOption {
   name: string;
 }
 
+interface FormData {
+  client_id: string;
+  proposal_type: ProposalType;
+  assignment_type: AssignmentType;
+  quotation_amount: number;
+  status: ProposalStatus;
+  fiscal_year: string;
+  responsible_partner: string;
+  notes: string;
+}
+
 export default function EditProposalModal({ open, setOpen, proposal }: EditProposalModalProps) {
   const { updateProposal } = useProposalStore();
   const { partners } = useUserStore();
   const [clients, setClients] = useState<ClientOption[]>([]);
-  const [form, setForm] = useState({
-    client_id: proposal?.client_id || '',
-    proposal_type: proposal?.proposal_type || 'new' as ProposalType,
-    assignment_type: proposal?.assignment_type || 'internal_audit' as AssignmentType,
-    quotation_amount: proposal?.quotation_amount || 0,
-    status: proposal?.status || 'pending' as ProposalStatus,
-    fiscal_year: proposal?.fiscal_year || '2025-26',
-    responsible_partner: proposal?.responsible_partner || '',
-    notes: proposal?.notes || ''
+  const [form, setForm] = useState<FormData>({
+    client_id: '',
+    proposal_type: 'new',
+    assignment_type: 'internal_audit',
+    quotation_amount: 0,
+    status: 'pending',
+    fiscal_year: '2025-26',
+    responsible_partner: '',
+    notes: ''
   });
 
   useEffect(() => {
@@ -39,33 +50,32 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
       api.get('/api/clients').then(res => {
         setClients(res.data.map((c: ClientOption) => ({ id: c.id, name: c.name })));
       }).catch(() => setClients([]));
-      
-      // Also fetch partners if not already available in store (optional, but good for freshness)
-      // For now we'll assume they are in userStore, but we can also fetch them here
     }
   }, [open]);
 
+  const initialForm = useMemo(() => ({
+    client_id: proposal?.client_id || '',
+    proposal_type: proposal?.proposal_type || 'new',
+    assignment_type: proposal?.assignment_type || 'internal_audit',
+    quotation_amount: proposal?.quotation_amount || 0,
+    status: proposal?.status || 'pending',
+    fiscal_year: proposal?.fiscal_year || '2025-26',
+    responsible_partner: proposal?.responsible_partner || '',
+    notes: proposal?.notes || ''
+  }), [proposal]);
+
   useEffect(() => {
     if (open && proposal) {
-      setForm({
-        client_id: proposal.client_id || '',
-        proposal_type: proposal.proposal_type,
-        assignment_type: proposal.assignment_type,
-        quotation_amount: proposal.quotation_amount,
-        status: proposal.status,
-        fiscal_year: proposal.fiscal_year,
-        responsible_partner: proposal.responsible_partner || '',
-        notes: proposal.notes || ''
-      });
+      setForm(initialForm);
     }
-  }, [open, proposal]);
+  }, [initialForm, open, proposal]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const backendProposalType = form.proposal_type === 'renewal' ? 'revision' : 'new';
     await updateProposal(proposal.id, {
       client_id: form.client_id,
-      proposal_type: backendProposalType as any,
+      proposal_type: backendProposalType as ProposalType,
       assignment_type: form.assignment_type,
       quotation_amount: form.quotation_amount,
       status: form.status,

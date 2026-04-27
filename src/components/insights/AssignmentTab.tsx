@@ -1,23 +1,32 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '@/lib/api';
 import { Search, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+
+interface AssignmentData {
+    id: string;
+    assignment_id: string;
+    client_name: string;
+    work_type: string;
+    due_date?: string;
+    status: string;
+}
 
 interface AssignmentTabProps {
     managerId: string;
 }
 
 export function AssignmentTab({ managerId }: AssignmentTabProps) {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<AssignmentData[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         setLoading(true);
         try {
             const res = await api.get(`/api/managers/${managerId}/assignments`, {
@@ -30,11 +39,11 @@ export function AssignmentTab({ managerId }: AssignmentTabProps) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [managerId, search, page]);
 
     useEffect(() => {
         fetchData();
-    }, [managerId, search, page]);
+    }, [fetchData]);
 
     return (
         <div className="space-y-4">

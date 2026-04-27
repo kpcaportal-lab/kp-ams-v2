@@ -17,10 +17,21 @@ import api from '@/lib/api';
 import * as XLSX from 'xlsx';
 
 
+export type TabId = 'invoices' | 'breakdown';
+
+interface BreakdownItem {
+  id: string;
+  full_name: string;
+  display_name?: string;
+  role: 'partner' | 'manager';
+  billed: number;
+  billing_pct?: number;
+}
+
 export default function BillingPage() {
   const { invoices, loading: billingLoading, fetchInvoices } = useBillingStore();
   const { user, token } = useAuthStore();
-  const [activeTab, setActiveTab] = useState<'invoices' | 'breakdown'>('invoices');
+  const [activeTab, setActiveTab] = useState<TabId>('invoices');
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,12 +90,12 @@ export default function BillingPage() {
   };
 
 
-  const filteredBreakdown = useMemo(() => {
+  const filteredBreakdown = useMemo((): BreakdownItem[] => {
     if (!summary) return [];
     const search = searchTerm.toLowerCase();
-    const combined = [
-      ...(summary.partnerBreakdown || []).map(p => ({ ...p, role: 'partner' })),
-      ...(summary.managerBreakdown || []).map(m => ({ ...m, role: 'manager', billed: m.billed_amount }))
+    const combined: BreakdownItem[] = [
+      ...(summary.partnerBreakdown || []).map(p => ({ ...p, role: 'partner' as const })),
+      ...(summary.managerBreakdown || []).map(m => ({ ...m, role: 'manager' as const, billed: m.billed_amount, billing_pct: m.billing_pct }))
     ];
     return combined.filter(u => 
       u.full_name.toLowerCase().includes(search) || 
@@ -92,8 +103,14 @@ export default function BillingPage() {
     );
   }, [summary, searchTerm]);
 
+  interface Tab {
+    id: TabId;
+    label: string;
+    icon: React.ComponentType<{ size: number }>;
+  }
+
   // Tab configurations matching Admin page
-  const tabs = [
+  const tabs: Tab[] = [
     { id: 'invoices', label: 'All Invoices', icon: Receipt },
     { id: 'breakdown', label: 'Revenue Breakdown', icon: Users },
   ];
@@ -183,7 +200,7 @@ export default function BillingPage() {
         {tabs.map(tab => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id)}
             style={{
               display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px',
               borderRadius: 10, border: 'none', background: activeTab === tab.id ? 'var(--bg-primary-light)' : 'transparent',
@@ -333,9 +350,9 @@ export default function BillingPage() {
                     }}>
                       {formatIndianCurrency(Number(item.billed || 0), true, true)}
                     </div>
-                    {item.role === 'manager' && (item as any).billing_pct !== undefined && (
+                    {item.role === 'manager' && item.billing_pct !== undefined && (
                       <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)', marginTop: 4, textAlign: 'center' }}>
-                        {Number((item as any).billing_pct || 0).toFixed(0)}% of target
+                        {Number(item.billing_pct || 0).toFixed(0)}% of target
                       </div>
                     )}
                   </div>

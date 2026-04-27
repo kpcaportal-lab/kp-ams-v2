@@ -9,7 +9,8 @@ import { useAssignmentStore } from '@/store/assignmentStore';
 import { useBillingStore } from '@/store/billingStore';
 import {
   SUBCATEGORY_LABELS, CATEGORY_LABELS, BILLING_CYCLE_LABELS,
-  FISCAL_MONTHS, formatDate, formatCurrency
+  FISCAL_MONTHS, formatDate, formatCurrency,
+  AssignmentCategory, AssignmentSubcategory, BillingCycle
 } from '@/types';
 import { formatIndianCurrency, cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -79,7 +80,7 @@ export default function AssignmentDetailPage() {
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">{assignment.client_name}</h1>
             <p className="text-sm text-slate-400 mt-0.5 font-medium">
-              {assignment.scope_item || (SUBCATEGORY_LABELS as any)[assignment.subcategory]} • {assignment.fiscal_year}
+              {assignment.scope_item || (assignment.subcategory && SUBCATEGORY_LABELS[assignment.subcategory as AssignmentSubcategory])} • {assignment.fiscal_year}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -127,9 +128,9 @@ export default function AssignmentDetailPage() {
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Assignment Details</h3>
           <div className="space-y-3">
             {[
-              { label: 'Category', value: `${assignment.category} — ${(CATEGORY_LABELS as any)[assignment.category]}` },
-              { label: 'Subcategory', value: (SUBCATEGORY_LABELS as any)[assignment.subcategory] },
-              { label: 'Billing Cycle', value: (BILLING_CYCLE_LABELS as any)[assignment.billing_cycle] },
+              { label: 'Category', value: `${assignment.category} — ${CATEGORY_LABELS[assignment.category as AssignmentCategory]}` },
+              { label: 'Subcategory', value: SUBCATEGORY_LABELS[assignment.subcategory as AssignmentSubcategory] },
+              { label: 'Billing Cycle', value: BILLING_CYCLE_LABELS[assignment.billing_cycle as BillingCycle] },
               { label: 'Partner', value: assignment.partner_name || '—' },
               { label: 'Manager', value: assignment.manager_name || '—' },
               { label: 'Fiscal Year', value: assignment.fiscal_year },

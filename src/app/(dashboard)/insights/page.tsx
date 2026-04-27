@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { InsightsHeader } from '@/components/insights/InsightsHeader';
 import { KPIStrip } from '@/components/insights/KPIStrip';
 import { FilterBar } from '@/components/insights/FilterBar';
@@ -14,6 +14,26 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
+interface ManagerData {
+    id: string;
+    full_name: string;
+    display_name: string;
+    role: string;
+    email: string;
+    client_count: number;
+    proposal_count: number;
+    assignment_count: number;
+    billed_amount: number;
+    billing_pct: number;
+}
+
+interface SummaryData {
+    totalClients: number;
+    totalProposals: number;
+    activeAssignments: number;
+    totalBilled: number;
+}
+
 export default function InsightsPage() {
     const { user, isAuthenticated, isLoading: authLoading } = useAuthStore();
     const router = useRouter();
@@ -25,8 +45,8 @@ export default function InsightsPage() {
     const [searchQuery, setSearchQuery] = useState('');
 
     // Data States
-    const [summaryData, setSummaryData] = useState(null);
-    const [managers, setManagers] = useState<any[]>([]);
+    const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
+    const [managers, setManagers] = useState<ManagerData[]>([]);
     const [loading, setLoading] = useState(true);
     const [expandedManagerId, setExpandedManagerId] = useState<string | null>(null);
 
@@ -41,7 +61,7 @@ export default function InsightsPage() {
         }
     }, [user, isAuthenticated, authLoading, router]);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         setLoading(true);
         try {
             const [summaryRes, managersRes] = await Promise.all([
@@ -49,20 +69,23 @@ export default function InsightsPage() {
                 api.get('/api/insights/managers', { params: { period, sort: sortBy } })
             ]);
             setSummaryData(summaryRes.data);
-            setManagers(managersRes.data);
+            setManagers(managersRes.data.map((m: { display_name?: string; full_name: string }) => ({
+                ...m,
+                display_name: m.display_name || m.full_name
+            })));
         } catch (err) {
             console.error('Failed to fetch insights:', err);
             toast.error('Failed to load insights data');
         } finally {
             setLoading(false);
         }
-    };
+    }, [period, sortBy]);
 
     useEffect(() => {
         if (isAuthenticated && user && ['admin', 'partner', 'director'].includes(user.role)) {
             fetchData();
         }
-    }, [isAuthenticated, user, period, sortBy]);
+    }, [isAuthenticated, user, fetchData]);
 
     const filteredManagers = managers.filter(m => 
         m.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||

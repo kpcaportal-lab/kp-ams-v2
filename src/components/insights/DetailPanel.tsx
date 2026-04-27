@@ -8,15 +8,23 @@ import { ProposalTab } from './ProposalTab';
 import { AssignmentTab } from './AssignmentTab';
 import { BillingTab } from './BillingTab';
 
+type TabId = 'clients' | 'proposals' | 'assignments' | 'billing';
+
+interface Tab {
+    id: TabId;
+    label: string;
+    icon: React.ComponentType<{ size: number }>;
+}
+
 interface DetailPanelProps {
     managerId: string;
     fiscalYear: string;
 }
 
 export function DetailPanel({ managerId, fiscalYear }: DetailPanelProps) {
-    const [activeTab, setActiveTab] = useState<'clients' | 'proposals' | 'assignments' | 'billing'>('clients');
+    const [activeTab, setActiveTab] = useState<TabId>('clients');
 
-    const tabs = [
+    const tabs: Tab[] = [
         { id: 'clients', label: 'Clients', icon: Users },
         { id: 'proposals', label: 'Proposals', icon: FileText },
         { id: 'assignments', label: 'Assignments', icon: Briefcase },
@@ -30,7 +38,7 @@ export function DetailPanel({ managerId, fiscalYear }: DetailPanelProps) {
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id as any)}
+                        onClick={() => setActiveTab(tab.id)}
                         className={cn(
                             "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all",
                             activeTab === tab.id 

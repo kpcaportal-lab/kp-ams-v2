@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '@/lib/api';
 import { Loader2, TrendingUp, CreditCard } from 'lucide-react';
 import { formatINR } from '@/lib/utils';
@@ -9,17 +9,30 @@ import {
     ResponsiveContainer, Legend, Cell 
 } from 'recharts';
 
+interface ChartDataPoint {
+    month: string;
+    billed: string | number;
+    target: string | number;
+    collected?: string | number;
+}
+
+interface TableDataRow {
+    month_name: string;
+    amount_billed: string | number;
+    amount_collected: string | number;
+}
+
 interface BillingTabProps {
     managerId: string;
     fiscalYear: string;
 }
 
 export function BillingTab({ managerId, fiscalYear }: BillingTabProps) {
-    const [chartData, setChartData] = useState<any[]>([]);
-    const [tableData, setTableData] = useState<any[]>([]);
+    const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
+    const [tableData, setTableData] = useState<TableDataRow[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         setLoading(true);
         try {
             const res = await api.get(`/api/managers/${managerId}/billing`, {
@@ -32,29 +45,97 @@ export function BillingTab({ managerId, fiscalYear }: BillingTabProps) {
         } finally {
             setLoading(false);
         }
-    };
+    }, [managerId, fiscalYear]);
 
     useEffect(() => {
         fetchData();
-    }, [managerId, fiscalYear]);
+    }, [fetchData]);
 
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     const formattedChartData = chartData.map(d => ({
         ...d,
-        name: monthNames[parseInt(d.month) - 1],
-        billed: parseFloat(d.billed),
-        collected: parseFloat(d.collected)
+        name: monthNames[parseInt(String(d.month)) - 1],
+        billed: parseFloat(String(d.billed)),
+        collected: parseFloat(String(d.collected))
     }));
 
-    if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center py-20">
-                <Loader2 size={32} className="text-[var(--brand-navy)] animate-spin mb-4" />
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-[0.2em] font-accent">Analyzing Revenue</p>
-            </div>
-        );
-    }
+const toNumber = (val: string | number | undefined) => parseFloat(String(val ?? 0));
+
+    return (
+        <div className="space-y-6">
+            {loading ? (
+                <div className="flex flex-col items-center justify-center py-20">
+                    <Loader2 size={32} className="text-[var(--brand-navy)] animate-spin mb-4" />
+                    <p className="text-sm font-bold text-slate-500 uppercase tracking-[0.2em] font-accent">Analyzing Revenue</p>
+                </div>
+            ) : chartData.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20">
+                    <TrendingUp size={32} className="text-slate-300 mb-4" />
+                    <p className="text-sm font-bold text-slate-500 uppercase tracking-[0.2em] font-accent">No billing data available</p>
+                </div>
+            ) : (
+                <>
+                    {/* Charts Section */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="bg-white rounded-2xl border border-slate-200 p-6">
+                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Monthly Billing Trend</h3>
+                            <div className="h-64">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={formattedChartData}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                                        <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="#94a3b8" />
+                                        <YAxis tick={{ fontSize: 12 }} stroke="#94a3b8" tickFormatter={(v) => `₹${v / 100000}L`} />
+                                        <Tooltip formatter={(val) => formatINR(Number(val))} />
+                                        <Bar dataKey="billed" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
+                                        <Bar dataKey="target" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-2xl border border-slate-200 p-6">
+                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Collections vs Billed</h3>
+                            <div className="h-64">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={formattedChartData}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                                        <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="#94a3b8" />
+                                        <YAxis tick={{ fontSize: 12 }} stroke="#94a3b8" tickFormatter={(v) => `₹${v / 100000}L`} />
+                                        <Tooltip formatter={(val) => formatINR(Number(val))} />
+                                        <Bar dataKey="collected" fill="#10b981" radius={[4, 4, 0, 0]} />
+                                        <Bar dataKey="billed" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Table Section */}
+                    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                        <table className="w-full">
+                            <thead className="bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th className="py-3 px-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Month</th>
+                                    <th className="py-3 px-4 text-right text-xs font-bold text-slate-400 uppercase tracking-wider">Amount Billed</th>
+                                    <th className="py-3 px-4 text-right text-xs font-bold text-slate-400 uppercase tracking-wider">Amount Collected</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                {tableData.map((row, idx) => (
+                                    <tr key={idx} className="group">
+                                        <td className="py-3.5 text-sm font-bold text-slate-700">{row.month_name}</td>
+                                        <td className="py-3.5 text-sm font-black text-slate-900 text-right">{formatINR(toNumber(row.amount_billed))}</td>
+                                        <td className="py-3.5 text-sm font-bold text-[var(--brand-navy)] text-right">{formatINR(toNumber(row.amount_collected))}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </>
+            )}
+        </div>
+    );
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -123,8 +204,8 @@ export function BillingTab({ managerId, fiscalYear }: BillingTabProps) {
                             {tableData.map((row, idx) => (
                                 <tr key={idx} className="group">
                                     <td className="py-3.5 text-sm font-bold text-slate-700">{row.month_name}</td>
-                                    <td className="py-3.5 text-sm font-black text-slate-900 text-right">{formatINR(parseFloat(row.amount_billed))}</td>
-                                    <td className="py-3.5 text-sm font-bold text-[var(--brand-navy)] text-right">{formatINR(parseFloat(row.amount_collected))}</td>
+                                    <td className="py-3.5 text-sm font-black text-slate-900 text-right">{formatINR(toNumber(row.amount_billed))}</td>
+                                    <td className="py-3.5 text-sm font-bold text-[var(--brand-navy)] text-right">{formatINR(toNumber(row.amount_collected))}</td>
                                 </tr>
                             ))}
                         </tbody>

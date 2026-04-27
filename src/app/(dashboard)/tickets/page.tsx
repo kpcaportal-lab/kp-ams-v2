@@ -17,6 +17,20 @@ const fadeUp = {
   })
 };
 
+type TicketPriority = 'low' | 'medium' | 'high';
+
+interface Ticket {
+  id: string;
+  title: string;
+  description: string;
+  priority: TicketPriority;
+  status: string;
+  attachment_url?: string;
+  created_at: string;
+  created_by_name?: string;
+  submitted_by_name?: string;
+}
+
 export default function TicketsPage() {
     const { tickets, isLoading, fetchTickets, createTicket } = useTicketStore();
     const [searchTerm, setSearchTerm] = useState('');
@@ -27,8 +41,8 @@ export default function TicketsPage() {
     // Form state
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('low');
-    const [selectedTicket, setSelectedTicket] = useState<any>(null);
+    const [priority, setPriority] = useState<TicketPriority>('low');
+    const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
     const [attachment, setAttachment] = useState<string | null>(null);
 
     useEffect(() => {
@@ -318,7 +332,7 @@ export default function TicketsPage() {
                                         <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Priority</label>
                                         <select 
                                             value={priority}
-                                            onChange={(e) => setPriority(e.target.value as any)}
+                                            onChange={(e) => setPriority(e.target.value as TicketPriority)}
                                             className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
                                         >
                                             <option value="low">Low - General query or minor issue</option>
