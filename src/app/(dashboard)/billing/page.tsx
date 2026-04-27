@@ -106,7 +106,7 @@ export default function BillingPage() {
   interface Tab {
     id: TabId;
     label: string;
-    icon: React.ComponentType<{ size: number }>;
+    icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
   }
 
   // Tab configurations matching Admin page
@@ -120,7 +120,7 @@ export default function BillingPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 drop-shadow-sm font-accent">
+          <h1 className="text-3xl font-black tracking-tight text-brand-navy drop-shadow-sm font-accent">
             Billing <span className="text-brand-gold">& Revenue</span>
           </h1>
           <p className="text-slate-500 mt-1 font-medium italic">Unified financial oversight and performance tracking</p>
@@ -180,8 +180,10 @@ export default function BillingPage() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black transition-all",
-              activeTab === tab.id ? "bg-brand-navy/5 text-brand-navy" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+              "flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all duration-300 border",
+              activeTab === tab.id 
+                ? "bg-brand-navy/5 text-brand-navy border-brand-navy/10 shadow-sm" 
+                : "text-slate-500 hover:text-slate-700 hover:bg-slate-50 border-transparent"
             )}
           >
             <tab.icon size={18} strokeWidth={2.5} />
@@ -198,7 +200,7 @@ export default function BillingPage() {
           placeholder={activeTab === 'invoices' ? "Search client, UDIN or reference..." : "Search manager or partner performance..."}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 transition-all"
+          className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-white focus:bg-white focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 outline-none transition-all text-sm font-black text-slate-900 placeholder:text-slate-400 shadow-sm"
         />
       </div>
 

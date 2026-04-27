@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
@@ -104,7 +105,7 @@ export function Sidebar({
                 className={cn(
                   "flex items-center group relative h-12 px-4 rounded-2xl transition-all duration-300 ease-in-out",
                   isActive 
-                    ? "bg-[var(--brand-navy)]/5 text-[var(--brand-navy)] font-black shadow-sm shadow-brand-navy/5" 
+                    ? "bg-brand-navy/5 text-brand-navy font-black shadow-sm shadow-brand-navy/5" 
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
                   isCollapsed ? "justify-center px-0" : "justify-start gap-4"
                 )}
@@ -114,7 +115,7 @@ export function Sidebar({
                 {isActive && (
                   <motion.div 
                     layoutId="sidebar-active"
-                    className="absolute left-0 top-3 bottom-3 w-1 bg-[var(--brand-gold)] rounded-full shadow-[2px_0_12px_rgba(212,175,55,0.6)]" 
+                    className="absolute left-0 top-3 bottom-3 w-1 bg-brand-gold rounded-full shadow-[2px_0_12px_rgba(212,175,55,0.6)]" 
                   />
                 )}
                 <item.icon 
@@ -122,11 +123,11 @@ export function Sidebar({
                   strokeWidth={isActive ? 3 : 2.5}
                   className={cn(
                     "shrink-0 transition-all duration-300 group-hover:scale-110",
-                    isActive ? "text-[var(--brand-navy)]" : "text-slate-400 group-hover:text-[var(--brand-navy)]"
+                    isActive ? "text-brand-navy" : "text-slate-400 group-hover:text-brand-navy"
                   )} 
                 />
                 {(!isCollapsed || isMobileOpen) && (
-                  <span className="text-sm font-bold tracking-tight uppercase text-[10px] letter-spacing-wide">{item.name}</span>
+                  <span className="font-black tracking-[0.2em] text-[10px] uppercase">{item.name}</span>
                 )}
               </Link>
             );
@@ -140,7 +141,7 @@ export function Sidebar({
             className={cn(
               "flex items-center h-12 px-4 rounded-2xl transition-all duration-300",
               pathname === '/profile' 
-                ? "bg-white text-[var(--brand-navy)] font-black shadow-md shadow-brand-navy/5" 
+                ? "bg-white text-brand-navy font-black shadow-md shadow-brand-navy/5" 
                 : "text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-md",
               isCollapsed ? "justify-center px-0" : "justify-start gap-4"
             )}
@@ -148,7 +149,7 @@ export function Sidebar({
             onClick={() => setIsMobileOpen?.(false)}
           >
             <UserCog size={20} strokeWidth={2.5} className="shrink-0" />
-            {(!isCollapsed || isMobileOpen) && <span className="text-sm font-bold tracking-tight uppercase text-[10px]">Security & Profile</span>}
+            {(!isCollapsed || isMobileOpen) && <span className="font-black tracking-[0.15em] text-[10px] uppercase">Security & Profile</span>}
           </Link>
           
           <button
@@ -165,14 +166,14 @@ export function Sidebar({
             title={isCollapsed ? "Logout Session" : undefined}
           >
             <LogOut size={20} strokeWidth={2.5} className="shrink-0 group-hover:translate-x-1 transition-transform" />
-            {(!isCollapsed || isMobileOpen) && <span className="text-sm font-bold tracking-tight uppercase text-[10px]">End Session</span>}
+            {(!isCollapsed || isMobileOpen) && <span className="font-black tracking-[0.15em] text-[10px] uppercase">End Session</span>}
           </button>
         </div>
 
         {/* Collapse Toggle */}
         <button
           onClick={toggleCollapse}
-          className="hidden lg:flex absolute top-[24px] right-[-14px] w-7 h-7 bg-white border border-slate-200 rounded-full items-center justify-center text-slate-400 hover:text-[var(--brand-navy)] hover:border-[var(--brand-navy)]/20 hover:shadow-lg transition-all z-10"
+          className="hidden lg:flex absolute top-[24px] right-[-14px] w-7 h-7 bg-white border border-slate-200 rounded-full items-center justify-center text-slate-400 hover:text-brand-navy hover:border-brand-navy/20 hover:shadow-lg transition-all z-10"
         >
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>

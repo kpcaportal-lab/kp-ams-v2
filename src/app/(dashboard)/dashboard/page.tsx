@@ -119,7 +119,7 @@ export default function DashboardPage() {
     };
     const config = configs[status] || 'bg-slate-50 text-slate-600 border-slate-100';
     return (
-      <span className={cn("px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border", config)}>
+      <span className={cn("px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border", config)}>
         {status}
       </span>
     );
@@ -228,7 +228,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <div className="text-sm font-black text-slate-900">{item.value}</div>
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.label}</div>
+              <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.label}</div>
             </div>
           </div>
         ))}
@@ -258,7 +258,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="flex items-center justify-between pt-2 border-t border-slate-50">
-              <span className="text-xs font-bold text-slate-500">{card.trend}</span>
+              <span className="text-xs font-black text-slate-500">{card.trend}</span>
               <span className="flex items-center gap-1 text-[11px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
                 <TrendingUp size={12} strokeWidth={3} /> {card.trendVal}
               </span>
@@ -287,7 +287,7 @@ export default function DashboardPage() {
                   "px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300",
                   dashboardTab === 'revenue' 
                     ? "bg-white text-brand-navy shadow-xl" 
-                    : "text-slate-500 hover:text-slate-700"
+                    : "text-slate-500 hover:text-slate-700 font-black"
                 )}
               >
                 Revenue
@@ -298,7 +298,7 @@ export default function DashboardPage() {
                   "px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300",
                   dashboardTab === 'billing' 
                     ? "bg-white text-brand-navy shadow-xl" 
-                    : "text-slate-500 hover:text-slate-700"
+                    : "text-slate-500 hover:text-slate-700 font-black"
                 )}
               >
                 Billing
@@ -321,7 +321,7 @@ export default function DashboardPage() {
                     <div className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter mb-6">
                       {formatIndianCurrency(stats.totalFees, true, true)}
                     </div>
-                    <div className="flex items-center gap-4 text-sm font-bold text-slate-500 mb-8">
+                    <div className="flex items-center gap-4 text-sm font-black text-slate-500 mb-8">
                       <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-100">
                         <CheckCircle size={16} className="text-emerald-600" /> Professional Fees
                       </div>
@@ -508,7 +508,6 @@ export default function DashboardPage() {
           </motion.div>
         </div>
       </div>
->
 
     </div>
   );

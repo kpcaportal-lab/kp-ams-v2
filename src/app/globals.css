@@ -13,6 +13,10 @@
   --font-accent: "Playfair Display", serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
   
+  /* Brand Identity Tokens */
+  --color-brand-navy: #1E3A5F;
+  --color-brand-gold: #D4A574;
+  
   /* Override default blue with KPCA Navy */
   --color-blue-50: #EEF2F6;
   --color-blue-100: #C7D8E5;
