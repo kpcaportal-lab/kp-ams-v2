@@ -133,24 +133,18 @@ const ensureSystemUsers = async () => {
             `, [user.name, user.email, user.role, standardHash, user.id]);
         }
 
-        // 3. FORCE DATA RESET (As requested: "no seed data but the one i gave you")
-        // We check if Hamza has assignments. If not, or if we want to ensure fresh data, we wipe.
-        const hamzaId = '00000000-0000-0000-0000-000000000012';
-        const dataCheck = await pool.query('SELECT COUNT(*) FROM assignments WHERE manager_id = $1', [hamzaId]);
+// Only seed if Hamza has NO assignments (preserves data on restarts)
+        const hamzaDataId = '00000000-0000-0000-0000-000000000012';
+        const dataCheck = await pool.query('SELECT COUNT(*) as cnt FROM assignments WHERE manager_id = $1', [hamzaDataId]);
         
-        // Always reset for now to ensure consistency with user request
-        console.log('🧹 Wiping stale data to ensure data integrity...');
-        await pool.query('DELETE FROM invoices');
-        await pool.query('DELETE FROM assignments');
-        await pool.query('DELETE FROM proposals');
-        await pool.query('DELETE FROM clients');
+        if (Number(dataCheck.rows[0].cnt) > 0) {
+            console.log('✅ Hamza data already exists, skipping seed');
+        } else {
+            console.log('🧹 Seeding Hamza data for first time...');
+            const milindPartner = await pool.query(`SELECT id FROM profiles WHERE role = 'partner' AND is_active = true LIMIT 1`);
+            const partnerId = milindPartner.rows[0]?.id || '00000000-0000-0000-0000-000000000002';
 
-console.log('🌱 Seeding Hamza Momin\'s real spreadsheet data...');
-        // Use correct Milind ID from database
-        const milindPartner = await pool.query(`SELECT id FROM profiles WHERE role = 'partner' AND is_active = true LIMIT 1`);
-        const partnerId = milindPartner.rows[0]?.id || '00000000-0000-0000-0000-000000000002';
-
-        const realData = [
+            const realData = [
             { client: 'Swadhar IDWC', cat: 'Forensic Audits', scope: 'Embezzelment', fee: 250000, billed: 250000, gstn: '27AAAAA0000A1ZR' },
             { client: 'ACG PAM Pharma Pvt Ltd', cat: 'Forensic Audits', scope: 'Contract Labour', fee: 200000, billed: 200000, gstn: '27AABCB0892Q1ZS' },
             { client: 'ATS Nashik', cat: 'Forensic Audits', scope: 'JIIU', fee: 250000, billed: 250000, gstn: '27AABCU9602Q1ZT' },
@@ -170,17 +164,17 @@ console.log('🌱 Seeding Hamza Momin\'s real spreadsheet data...');
             { client: 'MLL Mobility Pvt. Ltd', cat: 'Internal Audit', scope: 'MLL Mobility Pvt. Ltd', fee: 50000, billed: 50000, gstn: '27AABCU1234Q1ZJ' }
         ];
 
-for (const data of realData) {
+        for (const data of realData) {
             const clientRes = await pool.query(
                 'INSERT INTO clients (name, status) VALUES ($1, \'active\') ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id',
                 [data.client]
             );
-            const clientId = clientRes.rows[0].id;
+            const clientDbId = clientRes.rows[0].id;
 
             const assignRes = await pool.query(
                 `INSERT INTO assignments (client_id, gstn, category, subcategory, scope_areas, total_fees, billed_amount, billing_cycle, partner_id, manager_id, status, fiscal_year)
                  VALUES ($1, $2, $3, $4, $4, $5, $6, 'Monthly', $7, $8, 'active', '2025-26') RETURNING id`,
-                [clientId, data.gstn, data.cat, data.scope, data.fee, data.billed, partnerId, hamzaId]
+                [clientDbId, data.gstn, data.cat, data.scope, data.fee, data.billed, partnerId, hamzaId]
             );
             const assignId = assignRes.rows[0].id;
 
@@ -191,7 +185,6 @@ for (const data of realData) {
                     [assignId, `INV-${Math.floor(Math.random() * 9000) + 1000}`, data.billed]
                 );
             }
-        }
         }
 
         // 4. DEACTIVATE ALL OTHER USERS
@@ -214,8 +207,10 @@ for (const data of realData) {
 
 const startServer = async () => {
     try {
-        // Force sync system users and real names on start
-        await ensureSystemUsers();
+        // Force sync system users and real names on start (only if not in production)
+        if (process.env.NODE_ENV !== 'production') {
+            await ensureSystemUsers();
+        }
         
         registerRoutes(app);
 
