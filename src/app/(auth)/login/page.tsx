@@ -50,8 +50,8 @@ export default function LoginPage() {
         <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: '60%', height: '60%', background: 'radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)', borderRadius: '50%' }} />
 
         <div style={{ maxWidth: 480, position: 'relative', zIndex: 1 }}>
-          <div style={{ marginBottom: '3rem', background: '#fff', padding: '1rem', borderRadius: '12px', display: 'inline-block' }}>
-            <img src="/images/logo_full.png" alt="Kirtane & Pandit" style={{ height: '60px', width: 'auto' }} />
+          <div style={{ marginBottom: '3.5rem', display: 'inline-block' }}>
+            <img src="/images/logo_full.png" alt="Kirtane & Pandit" style={{ height: '90px', width: 'auto', objectFit: 'contain' }} />
           </div>
           <h1 style={{ fontSize: '3rem', fontWeight: 700, lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.02em', fontFamily: 'var(--font-accent)' }}>
             Assignment Management System
@@ -72,8 +72,8 @@ export default function LoginPage() {
       }}>
         <div style={{ width: '100%', maxWidth: 420 }}>
           <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-            <div className="lg:hidden" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
-              <img src="/images/logo_full.png" alt="Kirtane & Pandit" style={{ height: '64px', width: 'auto' }} />
+            <div className="lg:hidden" style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'center' }}>
+              <img src="/images/logo_full.png" alt="Kirtane & Pandit" style={{ height: '90px', width: 'auto', objectFit: 'contain' }} />
             </div>
             <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem', fontFamily: 'var(--font-accent)' }}>
               Welcome Back

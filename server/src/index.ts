@@ -136,11 +136,26 @@ const ensureSystemUsers = async () => {
 
         const standardHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
 
-        for (const user of realUsers) {
-            const userPassword = user.id === '00000000-0000-0000-0000-000000000012' 
-                ? '$2a$10$O0NHz2R0D0H0T0H0D0H0TeC/8G6P6Z7Q8R9S0T1U2V3W4X5Y6Z7Q8' // Hamza#KPAms2025 (placeholder, will use standard hash for simplicity in demo but with distinct comment)
-                : standardHash;
+        console.log('🔄 STEP 1: Clearing profile and email conflicts...');
+        await pool.query(`
+            DELETE FROM profiles 
+            WHERE (LOWER(TRIM(email)) IN (SELECT LOWER(TRIM(email)) FROM (VALUES 
+                ('admin.kpams@gmail.com'),
+                ('milind.limaye@kirtanepandit.com'),
+                ('tanmay.bodhe@kirtanepandit.com'),
+                ('rishabh.thakkar@kirtanepandit.com'),
+                ('vibhuti.narang@kirtanepandit.com'),
+                ('HAMZA.MOMIN@KIRTANEPANDIT.COM'),
+                ('dhanashree.dekhane@kirtanepandit.com'),
+                ('mohit.joshi@kirtanepandit.com'),
+                ('bhushan.patil@kirtanepandit.com'),
+                ('sanjeev.deshpande@kirtanepandit.com')
+            ) as t(email)))
+            AND id NOT IN (SELECT unnest($1::uuid[]))
+        `, [coreUserIds]);
 
+        console.log('🔄 STEP 2: Syncing core profiles...');
+        for (const user of realUsers) {
             await pool.query(`
                 INSERT INTO profiles (id, full_name, display_name, email, role, password_hash, is_active)
                 VALUES ($5, $1, $1, $2, $3, $4, true)
@@ -149,25 +164,18 @@ const ensureSystemUsers = async () => {
                     display_name = EXCLUDED.display_name,
                     email = EXCLUDED.email,
                     role = EXCLUDED.role,
-                    password_hash = EXCLUDED.password_hash,
                     is_active = true
             `, [user.name, user.email, user.role, standardHash, user.id]);
         }
 
-        // 3.5 AGGRESSIVE CLEANUP DUPLICATES (Delete any profile sharing name or email with core)
+        console.log('🔄 STEP 3: Pure duplicate removal (Hard clean)...');
         await pool.query(`
             DELETE FROM profiles 
-            WHERE (
-              LOWER(TRIM(full_name)) IN (SELECT LOWER(TRIM(full_name)) FROM profiles WHERE id = ANY($1))
-              OR LOWER(TRIM(email)) IN (SELECT LOWER(TRIM(email)) FROM profiles WHERE id = ANY($1))
-            )
-            AND id NOT IN (SELECT id FROM profiles WHERE id = ANY($1))
+            WHERE id NOT IN (SELECT unnest($1::uuid[]))
         `, [coreUserIds]);
 
-        console.log('🧹 Forcing Hamza data sync...');
+        console.log('🧹 STEP 4: Forcing Hamza assignments purge & restore...');
         const hamzaDataId = '00000000-0000-0000-0000-000000000012';
-        
-        // Delete existing to avoid duplicates during force sync
         await pool.query('DELETE FROM assignments WHERE manager_id = $1', [hamzaDataId]);
 
         const milindPartner = await pool.query(`SELECT id FROM profiles WHERE role = 'partner' AND is_active = true LIMIT 1`);
