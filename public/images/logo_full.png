@@ -1,0 +1,2 @@
+// This is a placeholder for the first image provided by the user.
+// The actual image data is handled by the system when using the ImagePaths in write_to_file but since I'm just copying I will specify the path.

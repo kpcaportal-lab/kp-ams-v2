@@ -86,8 +86,8 @@ export function Sidebar({
           <Link href="/dashboard" className="flex items-center">
             {(!isCollapsed || isMobileOpen) ? (
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-white p-1.5 shadow-xl shadow-black/20">
-                  <img src="/logo.png" alt="KPCA" className="h-full w-auto object-contain" />
+                <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded-xl bg-white/10 backdrop-blur-md p-1 shadow-2xl border border-white/20">
+                  <img src="/images/logo_monogram.png" alt="K&P" className="h-full w-auto object-contain" />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm font-black tracking-tight text-white leading-tight uppercase font-sans">
@@ -99,8 +99,8 @@ export function Sidebar({
                 </div>
               </div>
             ) : (
-              <div className="w-10 h-10 flex items-center justify-center shrink-0 rounded-xl bg-white p-1.5 shadow-xl shadow-black/20">
-                <img src="/logo.png" alt="KP AMS" className="h-full w-auto object-contain" />
+              <div className="w-12 h-12 flex items-center justify-center shrink-0 rounded-xl bg-white/10 backdrop-blur-md p-1 shadow-2xl border border-white/20">
+                <img src="/images/logo_monogram.png" alt="K&P" className="h-full w-auto object-contain" />
               </div>
             )}
           </Link>

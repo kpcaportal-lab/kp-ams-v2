@@ -16,32 +16,48 @@ export function LoadingOverlay() {
         <div className="absolute -inset-10 bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-3xl group-hover:opacity-100 transition-opacity duration-1000 opacity-70"></div>
         
         <div className="relative z-10 flex flex-col items-center">
-          <div className="relative w-16 h-16 mb-6">
-            <div className="absolute inset-0 rounded-full border-4 border-white/10 border-t-blue-500 animate-spin"></div>
-            <div className="absolute inset-2 rounded-full border-4 border-white/5 border-t-purple-400 animate-spin-slow"></div>
+          <div className="relative w-32 h-32 mb-8 animate-float">
+            <img 
+              src="/images/loading_logo.png" 
+              alt="Loading" 
+              className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(59,130,246,0.5)] animate-pulse-gentle" 
+            />
           </div>
           
-          <span className="text-xl font-bold text-white tracking-widest uppercase">
-            Processing
-            <span className="inline-flex ml-1">
-              <span className="animate-bounce" style={{ animationDelay: '0s' }}>.</span>
-              <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>.</span>
-              <span className="animate-bounce" style={{ animationDelay: '0.4s' }}>.</span>
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-2xl font-black text-white tracking-[0.3em] uppercase mb-1">
+              Initializing
             </span>
-          </span>
-          <p className="mt-2 text-blue-200/80 text-sm font-medium tracking-wide">
-            Syncing with KP Enterprise
+            <div className="flex gap-1.5">
+              {[0, 1, 2].map((i) => (
+                <div 
+                  key={i}
+                  className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" 
+                  style={{ animationDelay: `${i * 0.2}s` }}
+                />
+              ))}
+            </div>
+          </div>
+          <p className="mt-6 text-blue-200/60 text-[10px] font-black tracking-[0.2em] uppercase">
+            KP Enterprise Systems Secured
           </p>
         </div>
       </div>
 
       <style jsx global>{`
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(-360deg); }
+        @keyframes pulse-gentle {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(0.98); }
         }
-        .animate-spin-slow {
-          animation: spin-slow 3s linear infinite;
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        .animate-pulse-gentle {
+          animation: pulse-gentle 2s ease-in-out infinite;
+        }
+        .animate-float {
+          animation: float 4s ease-in-out infinite;
         }
       `}</style>
     </div>
