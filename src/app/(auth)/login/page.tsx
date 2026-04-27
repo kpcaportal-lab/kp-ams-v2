@@ -1,4 +1,6 @@
 'use client';
+// Force HMR to clear cached images and load BrandedLogo
+
 
 import { useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
@@ -52,7 +54,10 @@ export default function LoginPage() {
 
         <div style={{ maxWidth: 480, position: 'relative', zIndex: 1 }}>
           <div style={{ marginBottom: '3.5rem' }}>
-            <BrandedLogo variant="full" theme="dark" className="scale-150 origin-left" />
+            {/* Using official KPCA logo */}
+            <div className="w-56 bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10 shadow-xl inline-block">
+               <img src="/KPCA-logo.png" alt="Kirtane & Pandit Logo" className="w-full h-auto object-contain drop-shadow-md brightness-0 invert opacity-90" />
+            </div>
           </div>
           <h1 style={{ fontSize: '3.5rem', fontWeight: 800, lineHeight: 1, marginBottom: '1.5rem', letterSpacing: '-0.03em', fontFamily: 'var(--font-accent)' }}>
             Assignment Management System
@@ -73,8 +78,9 @@ export default function LoginPage() {
       }}>
         <div style={{ width: '100%', maxWidth: 420 }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <div className="lg:hidden" style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'center' }}>
-              <BrandedLogo variant="full" theme="light" className="scale-125" />
+            <div className="lg:hidden flex justify-center mb-10 w-48 mx-auto">
+              {/* Using official KPCA logo */}
+              <img src="/KPCA-logo.png" alt="Kirtane & Pandit Logo" className="w-full h-auto object-contain drop-shadow-sm" />
             </div>
             <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem', fontFamily: 'var(--font-accent)' }}>
               Welcome Back

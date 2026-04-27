@@ -83,22 +83,16 @@ export function Sidebar({
         )}
       >
         {/* Brand logo */}
-        <div className="h-[88px] flex items-center px-5 border-b border-white/5 overflow-hidden whitespace-nowrap bg-white/5 backdrop-blur-sm">
-          <Link href="/dashboard" className="flex items-center">
+        <div className="h-[88px] flex items-center px-4 border-b border-white/5 bg-white/5 backdrop-blur-sm">
+          <Link href="/dashboard" className="flex items-center w-full justify-center">
             {(!isCollapsed || isMobileOpen) ? (
-              <div className="flex items-center gap-3">
-                <BrandedLogo variant="monogram" theme="dark" className="shrink-0" />
-                <div className="flex flex-col">
-                  <span className="text-sm font-black tracking-tight text-white leading-tight uppercase font-sans">
-                    Kirtane & Pandit
-                  </span>
-                  <span className="text-[10px] font-black tracking-[0.2em] text-brand-gold uppercase opacity-90">
-                    Portal v2
-                  </span>
-                </div>
+              <div className="flex items-center justify-center w-full bg-white/10 rounded-xl p-2.5 shadow-inner backdrop-blur-md">
+                 <img src="/KPCA-logo.png" alt="KPCA" className="h-10 w-auto object-contain brightness-0 invert" />
               </div>
             ) : (
-              <BrandedLogo variant="monogram" theme="dark" className="shrink-0" />
+              <div className="w-12 h-12 flex items-center justify-center bg-white/10 rounded-xl p-2 shadow-inner">
+                 <img src="/KPCA-logo.png" alt="KPCA" className="w-full h-full object-contain brightness-0 invert scale-125" />
+              </div>
             )}
           </Link>
         </div>

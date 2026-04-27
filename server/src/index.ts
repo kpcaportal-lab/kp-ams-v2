@@ -123,39 +123,44 @@ const ensureSystemUsers = async () => {
         ];
 
         const realUsers = [
-            { id: coreUserIds[1], name: 'Milind Limaye', email: 'milind.limaye@gmail.com', role: 'partner' },
-            { id: coreUserIds[2], name: 'Tanmay Bodhe', email: 'tanmay.bodhe@gmail.com', role: 'partner' },
-            { id: coreUserIds[3], name: 'Rishabh Thakkar', email: 'rishabh.thakkar@gmail.com', role: 'director' },
-            { id: coreUserIds[4], name: 'Vibhuti Narang', email: 'vibhuti.narang@gmail.com', role: 'manager' },
-            { id: coreUserIds[5], name: 'Hamza Momin', email: 'hamza.momin@gmail.com', role: 'manager' },
-            { id: coreUserIds[6], name: 'Dhanashree Dekhane', email: 'dhanashree.dekhane@gmail.com', role: 'manager' },
-            { id: coreUserIds[7], name: 'Mohit Joshi', email: 'mohit.joshi@gmail.com', role: 'manager' },
-            { id: coreUserIds[8], name: 'Bhushan Patil', email: 'bhushan.patil@gmail.com', role: 'manager' },
-            { id: coreUserIds[9], name: 'Sanjeev Deshpande', email: 'sanjeev.deshpande@gmail.com', role: 'manager' }
+            { id: coreUserIds[1], name: 'Milind Limaye', email: 'MILIND.LIMAYE@GMAIL.COM', role: 'partner' },
+            { id: coreUserIds[2], name: 'Tanmay Bodhe', email: 'TANMAY.BODHE@GMAIL.COM', role: 'partner' },
+            { id: coreUserIds[3], name: 'Rishabh Thakkar', email: 'RISHABH.THAKKAR@GMAIL.COM', role: 'director' },
+            { id: coreUserIds[4], name: 'Vibhuti Narang', email: 'VIBHUTI.NARANG@GMAIL.COM', role: 'manager' },
+            { id: coreUserIds[5], name: 'Hamza Momin', email: 'HAMZA.MOMIN@GMAIL.COM', role: 'manager' },
+            { id: coreUserIds[6], name: 'Dhanashree Dekhane', email: 'DHANASHREE.DEKHANE@GMAIL.COM', role: 'manager' },
+            { id: coreUserIds[7], name: 'Mohit Joshi', email: 'MOHIT.JOSHI@GMAIL.COM', role: 'manager' },
+            { id: coreUserIds[8], name: 'Bhushan Patil', email: 'BHUSHAN.PATIL@GMAIL.COM', role: 'manager' },
+            { id: coreUserIds[9], name: 'Sanjeev Deshpande', email: 'SANJEEV.DESHPANDE@GMAIL.COM', role: 'manager' }
         ];
+
+        console.log('--- EXACT DOMAIN MAPPING ---');
+        realUsers.forEach(u => console.log(u.email));
 
         const standardHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
 
-        console.log('🔄 STEP 1: Purging legacy accounts and any potential ID conflicts...');
-        const legacyEmails = [
-            'milind.limaye@gmail.com', 'tanmay.bodhe@gmail.com', 'rishabh.thakkar@gmail.com',
-            'vibhuti.narang@gmail.com', 'hamza.momin@gmail.com', 'dhanashree.dekhane@gmail.com',
-            'mohit.joshi@gmail.com', 'bhushan.patil@gmail.com', 'sanjeev.deshpande@gmail.com',
-            'milind.limaye@kirtanepandit.com', 'tanmay.bodhe@kirtanepandit.com',
-            'vibhuti.narang@kirtanepandit.com', 'HAMZA.MOMIN@KIRTANEPANDIT.COM'
-        ];
+        console.log('🔄 STEP 1: Absolute purge of non-core IDs...');
+        // First get the admin ID if it exists, so we don't accidentally delete it if it's not in coreUserIds list
+        const adminRes = await pool.query("SELECT id FROM profiles WHERE email = 'admin.kpams@gmail.com'");
+        const adminIdToProtect = adminRes.rows[0]?.id || '00000000-0000-0000-0000-000000000001';
 
-        // 1a. Hard purge any profile matches to clear for fresh ID-forced sync
-        await pool.query('DELETE FROM profiles WHERE LOWER(TRIM(email)) = ANY($1) AND id NOT IN (SELECT unnest($2::uuid[]))', [legacyEmails, coreUserIds]);
-
-        // 1b. Delete by name match against core (any ID not in our core but sharing a name)
+        // Delete EVERYTHING that is not our 9 core ids or admin ID
         await pool.query(`
             DELETE FROM profiles 
-            WHERE LOWER(TRIM(full_name)) IN (SELECT LOWER(TRIM(full_name)) FROM profiles WHERE id = ANY($1))
-            AND id NOT IN (SELECT unnest($1::uuid[]))
-        `, [coreUserIds]);
+            WHERE id NOT IN (SELECT unnest($1::uuid[]))
+            AND id != $2
+        `, [coreUserIds, adminIdToProtect]);
 
-        console.log('🔄 STEP 2: Syncing core profiles with forced IDs...');
+        // Also delete any dangling records that match names/emails exactly but somehow have different IDs
+        const exactEmails = realUsers.map(u => u.email.toLowerCase());
+        await pool.query(`
+            DELETE FROM profiles 
+            WHERE LOWER(TRIM(email)) = ANY($1) 
+            AND id NOT IN (SELECT unnest($2::uuid[]))
+        `, [exactEmails, coreUserIds]);
+
+        console.log('🔄 STEP 2: Syncing EXACT emails...');
+
         for (const user of realUsers) {
             await pool.query(`
                 INSERT INTO profiles (id, full_name, display_name, email, role, password_hash, is_active)
