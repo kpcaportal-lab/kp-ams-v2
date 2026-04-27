@@ -145,45 +145,46 @@ const ensureSystemUsers = async () => {
             const partnerId = milindPartner.rows[0]?.id || '00000000-0000-0000-0000-000000000002';
 
             const realData = [
-            { client: 'Swadhar IDWC', cat: 'Forensic Audits', scope: 'Embezzelment', fee: 250000, billed: 250000, gstn: '27AAAAA0000A1ZR' },
-            { client: 'ACG PAM Pharma Pvt Ltd', cat: 'Forensic Audits', scope: 'Contract Labour', fee: 200000, billed: 200000, gstn: '27AABCB0892Q1ZS' },
-            { client: 'ATS Nashik', cat: 'Forensic Audits', scope: 'JIIU', fee: 250000, billed: 250000, gstn: '27AABCU9602Q1ZT' },
-            { client: 'EOW', cat: 'Forensic Audits', scope: 'Mohan Bajaj and Pote Family', fee: 200000, billed: 200000, gstn: '27AAAAA0000A1ZR' },
-            { client: 'Accent Packaging Pvt Ltd', cat: 'Forensic Audits', scope: 'Liquidation', fee: 190000, billed: 190000, gstn: '27AABCB0892Q1ZS' },
-            { client: 'Eka Mobility Pvt Ltd', cat: 'Internal Audit', scope: 'IA', fee: 800000, billed: 800000, gstn: '27AABCE8921Q1ZT' },
-            { client: 'Cooper Corporation Pvt Ltd', cat: 'Internal Audit', scope: 'ATR', fee: 375000, billed: 375000, gstn: '27AABCF1234Q1ZZ' },
-            { client: 'John Deere India Pvt Ltd', cat: 'Internal Audit', scope: 'Stock Take', fee: 190400, billed: 190400, gstn: '27AABCE5678Q1ZA' },
-            { client: 'Mah Logistics Ltd', cat: 'Internal Audit', scope: 'Mah Logistics Ltd', fee: 450000, billed: 450000, gstn: '27AABCE9012Q1ZB' },
-            { client: 'Mah Accelo Ltd', cat: 'Internal Audit', scope: 'Mah Accelo Ltd', fee: 425000, billed: 425000, gstn: '27AABCE3456Q1ZC' },
-            { client: 'Bristlecone India Ltd', cat: 'Internal Audit', scope: 'Bristlecone India Ltd', fee: 250000, billed: 250000, gstn: '27AABCE7890Q1ZD' },
-            { client: 'Mah Auto Steel Pvt Ltd', cat: 'Internal Audit', scope: 'Mah Auto Pvt Ltd', fee: 250000, billed: 250000, gstn: '27AABCE1234Q1ZE' },
-            { client: 'Mah Steel Service Center Ltd', cat: 'Internal Audit', scope: 'Mah Steel Service Center Ltd', fee: 150000, billed: 150000, gstn: '27AABCE5678Q1ZF' },
-            { client: 'Mahindra MSTC Recycling Pvt. Ltd', cat: 'Internal Audit', scope: 'Mahindra MSTC Recycling Pvt. Ltd', fee: 50000, billed: 50000, gstn: '27AABCE9012Q1ZG' },
-            { client: 'LORDS Freight (India) Private Limited', cat: 'Internal Audit', scope: 'LORDS Freight (India) Private Limited', fee: 50000, billed: 50000, gstn: '27AABCU3456Q1ZH' },
-            { client: 'MLL Express Services Private Limited', cat: 'Internal Audit', scope: 'MLL Express Services Private Limited', fee: 80000, billed: 80000, gstn: '27AABCU7890Q1ZI' },
-            { client: 'MLL Mobility Pvt. Ltd', cat: 'Internal Audit', scope: 'MLL Mobility Pvt. Ltd', fee: 50000, billed: 50000, gstn: '27AABCU1234Q1ZJ' }
-        ];
+                { client: 'Swadhar IDWC', cat: 'C', scope: 'Embezzelment', sub: 'forensic_investigation', fee: 250000, billed: 250000, gstn: '27AAAAA0000A1ZR' },
+                { client: 'ACG PAM Pharma Pvt Ltd', cat: 'C', scope: 'Contract Labour', sub: 'forensic_investigation', fee: 200000, billed: 200000, gstn: '27AABCB0892Q1ZS' },
+                { client: 'ATS Nashik', cat: 'C', scope: 'JIIU', sub: 'forensic_investigation', fee: 250000, billed: 250000, gstn: '27AABCU9602Q1ZT' },
+                { client: 'EOW', cat: 'C', scope: 'Mohan Bajaj and Pote Family', sub: 'forensic_investigation', fee: 200000, billed: 200000, gstn: '27AAAAA0000A1ZR' },
+                { client: 'Accent Packaging Pvt Ltd', cat: 'C', scope: 'Liquidation', sub: 'forensic_investigation', fee: 190000, billed: 190000, gstn: '27AABCB0892Q1ZS' },
+                { client: 'Eka Mobility Pvt Ltd', cat: 'A', scope: 'IA', sub: 'internal_audit', fee: 800000, billed: 800000, gstn: '27AABCE8921Q1ZT' },
+                { client: 'Cooper Corporation Pvt Ltd', cat: 'A', scope: 'ATR', sub: 'internal_audit', fee: 375000, billed: 375000, gstn: '27AABCF1234Q1ZZ' },
+                { client: 'John Deere India Pvt Ltd', cat: 'A', scope: 'Stock Take', sub: 'internal_audit', fee: 190400, billed: 190400, gstn: '27AABCE5678Q1ZA' },
+                { client: 'Mah Logistics Ltd', cat: 'A', scope: 'Mah Logistics Ltd', sub: 'internal_audit', fee: 450000, billed: 450000, gstn: '27AABCE9012Q1ZB' },
+                { client: 'Mah Accelo Ltd', cat: 'A', scope: 'Mah Accelo Ltd', sub: 'internal_audit', fee: 425000, billed: 425000, gstn: '27AABCE3456Q1ZC' },
+                { client: 'Bristlecone India Ltd', cat: 'A', scope: 'Bristlecone India Ltd', sub: 'internal_audit', fee: 250000, billed: 250000, gstn: '27AABCE7890Q1ZD' },
+                { client: 'Mah Auto Steel Pvt Ltd', cat: 'A', scope: 'Mah Auto Pvt Ltd', sub: 'internal_audit', fee: 250000, billed: 250000, gstn: '27AABCE1234Q1ZE' },
+                { client: 'Mah Steel Service Center Ltd', cat: 'A', scope: 'Mah Steel Service Center Ltd', sub: 'internal_audit', fee: 150000, billed: 150000, gstn: '27AABCE5678Q1ZF' },
+                { client: 'Mahindra MSTC Recycling Pvt. Ltd', cat: 'A', scope: 'Recycling IA', sub: 'internal_audit', fee: 50000, billed: 50000, gstn: '27AABCE9012Q1ZG' },
+                { client: 'LORDS Freight (India) Private Limited', cat: 'A', scope: 'IA', sub: 'internal_audit', fee: 50000, billed: 50000, gstn: '27AABCU3456Q1ZH' },
+                { client: 'MLL Express Services Private Limited', cat: 'A', scope: 'IA', sub: 'internal_audit', fee: 80000, billed: 80000, gstn: '27AABCU7890Q1ZI' },
+                { client: 'MLL Mobility Pvt. Ltd', cat: 'A', scope: 'IA', sub: 'internal_audit', fee: 50000, billed: 50000, gstn: '27AABCU1234Q1ZJ' }
+            ];
 
-        for (const data of realData) {
-            const clientRes = await pool.query(
-                'INSERT INTO clients (name, status) VALUES ($1, \'active\') ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id',
-                [data.client]
-            );
-            const clientDbId = clientRes.rows[0].id;
-
-            const assignRes = await pool.query(
-                `INSERT INTO assignments (client_id, gstn, category, subcategory, scope_areas, total_fees, billed_amount, billing_cycle, partner_id, manager_id, status, fiscal_year)
-                 VALUES ($1, $2, $3, $4, $4, $5, $6, 'Monthly', $7, $8, 'active', '2025-26') RETURNING id`,
-                [clientDbId, data.gstn, data.cat, data.scope, data.fee, data.billed, partnerId, hamzaId]
-            );
-            const assignId = assignRes.rows[0].id;
-
-            if (data.billed > 0) {
-                await pool.query(
-                    `INSERT INTO invoices (assignment_id, invoice_number, invoice_date, professional_fees, billed_amount, status)
-                     VALUES ($1, $2, CURRENT_DATE, $3, $3, 'paid')`,
-                    [assignId, `INV-${Math.floor(Math.random() * 9000) + 1000}`, data.billed]
+            for (const data of realData) {
+                const clientRes = await pool.query(
+                    'INSERT INTO clients (name, status) VALUES ($1, \'active\') ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id',
+                    [data.client]
                 );
+                const clientDbId = clientRes.rows[0].id;
+
+                const assignRes = await pool.query(
+                    `INSERT INTO assignments (client_id, gstn, category, subcategory, scope_areas, total_fees, billed_amount, billing_cycle, partner_id, manager_id, status, fiscal_year)
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, 'Monthly', $8, $9, 'active', '2025-26') RETURNING id`,
+                    [clientDbId, data.gstn, data.cat, data.sub, data.scope, data.fee, data.billed, partnerId, hamzaDataId]
+                );
+                const assignId = assignRes.rows[0].id;
+
+                if (data.billed > 0) {
+                    await pool.query(
+                        `INSERT INTO invoices (assignment_id, invoice_number, invoice_date, professional_fees, status)
+                         VALUES ($1, $2, CURRENT_DATE, $3, 'paid')`,
+                        [assignId, `INV-${Math.floor(Math.random() * 9000) + 1000}`, data.billed]
+                    );
+                }
             }
         }
 

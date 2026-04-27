@@ -39,6 +39,19 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
   const { user: currentUser } = useAuthStore();
   const isAdmin = currentUser?.role === 'admin';
 
+  const fetchSupervisors = React.useCallback(async () => {
+    try {
+      const res = await api.get('/api/users');
+      // Filter for users who can be supervisors
+      const potentialSupervisors = res.data.filter((u: User) =>
+        (u.role === 'partner' || u.role === 'director' || u.role === 'manager') && u.id !== user?.id
+      );
+      setSupervisors(potentialSupervisors);
+    } catch (err) {
+      console.error('Error fetching supervisors:', err);
+    }
+  }, [user?.id]);
+
   useEffect(() => {
     if (isOpen && user) {
       setFormData({
@@ -50,20 +63,7 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
       });
       fetchSupervisors();
     }
-  }, [isOpen, user]);
-
-  const fetchSupervisors = async () => {
-    try {
-      const res = await api.get('/api/users');
-      // Filter for users who can be supervisors
-      const potentialSupervisors = res.data.filter((u: User) =>
-        (u.role === 'partner' || u.role === 'director' || u.role === 'manager') && u.id !== user?.id
-      );
-      setSupervisors(potentialSupervisors);
-    } catch (err) {
-      console.error('Error fetching supervisors:', err);
-    }
-  };
+  }, [isOpen, user, fetchSupervisors]);
 
   if (!isOpen || !user) return null;
 
@@ -84,9 +84,12 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
       toast.success('User updated successfully');
       onSuccess();
       onClose();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error updating user:', err);
-      toast.error(err.response?.data?.error || 'Failed to update user');
+      const errorMessage = err instanceof Error && 'response' in err 
+        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error 
+        : 'Failed to update user';
+      toast.error(errorMessage || 'Failed to update user');
     } finally {
       setLoading(false);
     }

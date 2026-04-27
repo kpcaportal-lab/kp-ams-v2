@@ -34,13 +34,7 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
   const [supervisors, setSupervisors] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchSupervisors();
-    }
-  }, [isOpen]);
-
-  const fetchSupervisors = async () => {
+  const fetchSupervisors = React.useCallback(async () => {
     try {
       const res = await api.get('/api/users');
       // Filter for users who can be supervisors (Partners and Directors)
@@ -51,7 +45,13 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
     } catch (err) {
       console.error('Error fetching supervisors:', err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchSupervisors();
+    }
+  }, [isOpen, fetchSupervisors]);
 
   if (!isOpen) return null;
 
@@ -81,9 +81,12 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
         password: '',
         reports_to: ''
       });
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error adding user:', err);
-      toast.error(err.response?.data?.error || 'Failed to invite user');
+      const errorMessage = err instanceof Error && 'response' in err 
+        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error 
+        : 'Failed to invite user';
+      toast.error(errorMessage || 'Failed to invite user');
     } finally {
       setLoading(false);
     }

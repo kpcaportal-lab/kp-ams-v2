@@ -36,9 +36,10 @@ export function ProposalDownloadButton({ proposal, variant = 'icon', className }
       link.remove();
       window.URL.revokeObjectURL(url);
       toast.success('Proposal downloaded successfully', { id: toastId });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('PDF Download Error:', error);
-      toast.error(error.message || 'Failed to download PDF', { id: toastId });
+      const message = error instanceof Error ? error.message : 'Failed to download PDF';
+      toast.error(message, { id: toastId });
     } finally {
       setIsDownloading(false);
     }

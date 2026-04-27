@@ -59,14 +59,14 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
     }
   }, [open]);
 
-  const initialForm = useMemo(() => ({
+  const initialForm = useMemo((): FormData => ({
     gstn: assignment.gstn || '',
     category: assignment.category,
-    subcategory: assignment.subcategory || 'internal_audit' as AssignmentSubcategory,
+    subcategory: assignment.subcategory || 'internal_audit',
     total_fees: assignment.total_fees ?? assignment.fees ?? 0,
     billed_amount: assignment.billed_amount ?? 0,
     out_of_pocket: assignment.out_of_pocket ?? 0,
-    billing_cycle: assignment.billing_cycle || 'monthly' as BillingCycle,
+    billing_cycle: assignment.billing_cycle || 'monthly',
     scope_item: assignment.scope_item || assignment.subcategory || '',
     scope_areas: assignment.scope_areas || '',
     partner_id: assignment.partner_id || '',
@@ -241,6 +241,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                       <option value="monthly">Monthly</option>
                       <option value="quarterly">Quarterly</option>
                       <option value="annually">Annually</option>
+                      <option value="one_time">One Time</option>
+                      <option value="as_when">As and When</option>
                     </select>
                   </div>
                 </div>

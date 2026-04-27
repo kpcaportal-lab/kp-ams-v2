@@ -37,9 +37,12 @@ export default function VaultUploadModal({ isOpen, onClose, assignmentId, client
           setFileUrl('');
         }, 300);
       }, 1500);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Vault upload error:', err);
-      toast.error(err.response?.data?.error || 'Failed to upload document');
+      const errorMessage = err instanceof Error && 'response' in err 
+        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error 
+        : 'Failed to upload document';
+      toast.error(errorMessage || 'Failed to upload document');
     } finally {
       setIsSubmitting(false);
     }
