@@ -115,7 +115,11 @@ const ensureSystemUsers = async () => {
             '00000000-0000-0000-0000-000000000003', // Tanmay
             '00000000-0000-0000-0000-000000000005', // Rishabh
             '00000000-0000-0000-0000-000000000011', // Vibhuti
-            '00000000-0000-0000-0000-000000000012'  // Hamza
+            '00000000-0000-0000-0000-000000000012', // Hamza
+            '00000000-0000-0000-0000-000000000015', // Dhanashree
+            '00000000-0000-0000-0000-000000000016', // Mohit
+            '00000000-0000-0000-0000-000000000017', // Bhushan
+            '00000000-0000-0000-0000-000000000018'  // Sanjeev
         ];
 
         const realUsers = [
@@ -123,7 +127,11 @@ const ensureSystemUsers = async () => {
             { id: coreUserIds[2], name: 'Tanmay Bodhe', email: 'tanmay.bodhe@kirtanepandit.com', role: 'partner' },
             { id: coreUserIds[3], name: 'Rishabh Thakkar', email: 'rishabh.thakkar@kirtanepandit.com', role: 'director' },
             { id: coreUserIds[4], name: 'Vibhuti Narang', email: 'vibhuti.narang@kirtanepandit.com', role: 'manager' },
-            { id: coreUserIds[5], name: 'Hamza Momin', email: 'hamzamomin.kpams@gmail.com', role: 'manager' }
+            { id: coreUserIds[5], name: 'Hamza Momin', email: 'HAMZA.MOMIN@KIRTANEPANDIT.COM', role: 'manager' },
+            { id: coreUserIds[6], name: 'Dhanashree Dekhane', email: 'dhanashree.dekhane@kirtanepandit.com', role: 'manager' },
+            { id: coreUserIds[7], name: 'Mohit Joshi', email: 'mohit.joshi@kirtanepandit.com', role: 'manager' },
+            { id: coreUserIds[8], name: 'Bhushan Patil', email: 'bhushan.patil@kirtanepandit.com', role: 'manager' },
+            { id: coreUserIds[9], name: 'Sanjeev Deshpande', email: 'sanjeev.deshpande@kirtanepandit.com', role: 'manager' }
         ];
 
         const standardHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
@@ -146,24 +154,24 @@ const ensureSystemUsers = async () => {
             `, [user.name, user.email, user.role, standardHash, user.id]);
         }
 
-        // 3.5 CLEANUP DUPLICATES (Delete any profile with same name but different ID)
+        // 3.5 AGGRESSIVE CLEANUP DUPLICATES (Delete any profile sharing name or email with core)
         await pool.query(`
             DELETE FROM profiles 
-            WHERE (full_name IN (SELECT full_name FROM profiles WHERE id IN ($1, $2, $3, $4, $5, $6))
-               OR email IN (SELECT email FROM profiles WHERE id IN ($1, $2, $3, $4, $5, $6)))
-            AND id NOT IN ($1, $2, $3, $4, $5, $6)
-        `, coreUserIds);
+            WHERE (
+              LOWER(TRIM(full_name)) IN (SELECT LOWER(TRIM(full_name)) FROM profiles WHERE id = ANY($1))
+              OR LOWER(TRIM(email)) IN (SELECT LOWER(TRIM(email)) FROM profiles WHERE id = ANY($1))
+            )
+            AND id NOT IN (SELECT id FROM profiles WHERE id = ANY($1))
+        `, [coreUserIds]);
 
-// Only seed if Hamza has NO assignments (preserves data on restarts)
+        console.log('🧹 Forcing Hamza data sync...');
         const hamzaDataId = '00000000-0000-0000-0000-000000000012';
-        const dataCheck = await pool.query('SELECT COUNT(*) as cnt FROM assignments WHERE manager_id = $1', [hamzaDataId]);
         
-        if (Number(dataCheck.rows[0].cnt) > 0) {
-            console.log('✅ Hamza data already exists, skipping seed');
-        } else {
-            console.log('🧹 Seeding Hamza data for first time...');
-            const milindPartner = await pool.query(`SELECT id FROM profiles WHERE role = 'partner' AND is_active = true LIMIT 1`);
-            const partnerId = milindPartner.rows[0]?.id || '00000000-0000-0000-0000-000000000002';
+        // Delete existing to avoid duplicates during force sync
+        await pool.query('DELETE FROM assignments WHERE manager_id = $1', [hamzaDataId]);
+
+        const milindPartner = await pool.query(`SELECT id FROM profiles WHERE role = 'partner' AND is_active = true LIMIT 1`);
+        const partnerId = milindPartner.rows[0]?.id || '00000000-0000-0000-0000-000000000002';
 
             const realData = [
                 // Forensic Audits (Cat C)
@@ -207,6 +215,8 @@ const ensureSystemUsers = async () => {
                 { client: 'MLL Mobility Pvt. Ltd', cat: 'A', scope: 'IA', sub: 'internal_audit', fee: 50000, billed: 50000, gstn: '27AABCU1234Q1ZJ', rec: 0 }
             ];
 
+        const years = ['2024-25', '2025-26', '2026-27'];
+        for (const fy of years) {
             for (const data of realData) {
                 const clientRes = await pool.query(
                     'INSERT INTO clients (name, status) VALUES ($1, \'active\') ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id',
@@ -216,8 +226,8 @@ const ensureSystemUsers = async () => {
 
                 const assignRes = await pool.query(
                     `INSERT INTO assignments (client_id, gstn, category, subcategory, scope_areas, total_fees, billed_amount, amount_receipt, billing_cycle, partner_id, manager_id, status, fiscal_year)
-                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'Monthly', $9, $10, 'active', '2025-26') RETURNING id`,
-                    [clientDbId, data.gstn, data.cat, data.sub, data.scope, data.fee, data.billed, data.rec || 0, partnerId, hamzaDataId]
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'Monthly', $9, $10, 'active', $11) RETURNING id`,
+                    [clientDbId, data.gstn, data.cat, data.sub, data.scope, data.fee, data.billed, data.rec || 0, partnerId, hamzaDataId, fy]
                 );
                 const assignId = assignRes.rows[0].id;
 
@@ -232,17 +242,10 @@ const ensureSystemUsers = async () => {
         }
 
         // 4. CLEANUP DUPLICATES
-        await pool.query('UPDATE profiles SET is_active = false WHERE id NOT IN ($1, $2, $3, $4, $5, $6)', coreUserIds);
+        // 4. DEACTIVATE REST
+        await pool.query('UPDATE profiles SET is_active = false WHERE id NOT IN (SELECT unnest($1::uuid[]))', [coreUserIds]);
         
-        // Ensure assignments exist for current FY 2024-25 as well
-        await pool.query(`
-            INSERT INTO assignments (client_id, gstn, category, subcategory, scope_areas, total_fees, billed_amount, amount_receipt, billing_cycle, partner_id, manager_id, status, fiscal_year)
-            SELECT client_id, gstn, category, subcategory, scope_areas, total_fees, billed_amount, amount_receipt, billing_cycle, partner_id, manager_id, status, '2024-25'
-            FROM assignments WHERE manager_id = $1 AND fiscal_year = '2025-26'
-            ON CONFLICT DO NOTHING
-        `, [hamzaDataId]);
-        
-        console.log('✅ Success: Data integrity restored. Hamza Momin data active for 2025-26.');
+        console.log('✅ Success: Data integrity restored. Hamza Momin data synced for multiple years.');
     } catch (err) {
         console.error('❌ System user sync failed:', err);
     }
