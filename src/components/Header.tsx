@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
-import { Search, User as UserIcon, Menu, ChevronRight, LifeBuoy, Plus, X, Users } from 'lucide-react';
+import { Search, User as UserIcon, Menu, ChevronRight, LifeBuoy, Plus, X, Users, ArrowUpRight } from 'lucide-react';
 import { NotificationCenter } from './NotificationCenter';
 import { cn } from '@/lib/utils';
 import { useTicketStore } from '@/store/ticketStore';

@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, FormEvent } from 'react';
 import { useTicketStore } from '@/store/ticketStore';
 import { useAuthStore } from '@/store/authStore';
 import { formatDistanceToNow } from 'date-fns';
-import { Plus, X, LifeBuoy, AlertCircle, CheckCircle, Clock, Search } from 'lucide-react';
+import { Plus, X, LifeBuoy, AlertCircle, CheckCircle, Clock, Search, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import LoadingScreen from '@/components/ui/LoadingScreen';
