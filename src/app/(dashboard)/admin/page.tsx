@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import api from '@/lib/api';
 import { cn } from '@/lib/utils';
+import LoadingScreen from '@/components/ui/LoadingScreen';
 
 interface AuditLog {
   id: string;
@@ -250,9 +251,7 @@ export default function AdminPage() {
           {/* Logs Table */}
           <div className="bg-white border border-slate-200 rounded-[2rem] shadow-sm overflow-hidden">
             {loading ? (
-              <div className="px-8 py-20 text-center text-slate-400 font-medium italic">
-                Scanning audit intelligence...
-              </div>
+              <LoadingScreen message="Scanning audit intelligence" submessage="Accessing the neural core" />
             ) : logs.length === 0 ? (
               <div className="px-8 py-20 text-center">
                 <AlertTriangle size={40} className="mx-auto mb-4 text-slate-200" />

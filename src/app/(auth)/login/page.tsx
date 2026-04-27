@@ -51,7 +51,7 @@ export default function LoginPage() {
 
         <div style={{ maxWidth: 480, position: 'relative', zIndex: 1 }}>
           <div style={{ marginBottom: '3rem' }}>
-            <img src="/files/logo-white.svg" alt="Kirtane & Pandit" style={{ height: '64px', width: 'auto' }} />
+            <img src="/KPCA-logo.png" alt="KPCA" style={{ height: '80px', width: 'auto' }} />
           </div>
           <h1 style={{ fontSize: '3rem', fontWeight: 700, lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.02em', fontFamily: 'var(--font-accent)' }}>
             Assignment Management System

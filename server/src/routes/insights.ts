@@ -120,13 +120,6 @@ router.get('/managers', async (req: Request, res: Response) => {
                 params.push(visibleIds);
             }
 
-            // Only show managers with data OR core members (Hamza, Milind, Tanmay, Rishabh, Admin)
-            query += ` AND (
-                EXISTS (SELECT 1 FROM assignments a WHERE a.manager_id = p.id OR a.partner_id = p.id)
-                OR EXISTS (SELECT 1 FROM proposals pr WHERE pr.prepared_by = p.id OR pr.responsible_partner = p.id)
-                OR p.id IN ('00000000-0000-0000-0000-000000000012', '00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000005')
-            )`;
-
             if (sort === 'billed') query += ` ORDER BY billed_amount DESC, p.full_name ASC`;
             else if (sort === 'clients') query += ` ORDER BY client_count DESC, p.full_name ASC`;
             else if (sort === 'assignments') query += ` ORDER BY assignment_count DESC, p.full_name ASC`;

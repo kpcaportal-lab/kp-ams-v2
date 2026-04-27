@@ -1,15 +1,22 @@
 import pool from './src/db/pool.js';
-(async () => {
-    try {
-        const schema = await pool.query('SELECT column_name, data_type FROM information_schema.columns WHERE table_name = $1', ['client_spocs']);
-        console.log('Client SPOCs Table Schema:', schema.rows);
-        
-        const fyCheck = await pool.query('SELECT fiscal_year, COUNT(*) FROM assignments GROUP BY fiscal_year');
-        console.log('Fiscal Years in Assignments:', fyCheck.rows);
 
-        process.exit(0);
-    } catch (err) {
-        console.error(err);
-        process.exit(1);
-    }
-})();
+// Show total counts
+const assignmentsCount = await pool.query(`SELECT COUNT(*) as cnt FROM assignments`);
+console.log('Assignments count:', assignmentsCount.rows[0].cnt);
+
+const clientsCount = await pool.query(`SELECT COUNT(*) as cnt FROM clients`);
+console.log('Clients count:', clientsCount.rows[0].cnt);
+
+const proposalsCount = await pool.query(`SELECT COUNT(*) as cnt FROM proposals`);
+console.log('Proposals count:', proposalsCount.rows[0].cnt);
+
+// The old Hamza was 'partner' role - let's recreate him
+const checkPartner = await pool.query(`
+  SELECT * FROM profiles 
+  WHERE email = 'hamza.momin@kirtanepandit.com'
+`);
+console.log('\nHamza profiles:');
+console.table(checkPartner.rows);
+
+await pool.end();
+process.exit();

@@ -1,36 +1,25 @@
-import pkg from 'pg';
-const { Pool } = pkg;
+import pool from './src/db/pool.js';
 
-const pool = new Pool({
-  connectionString: "postgresql://postgres:thedeveloper%40321@db.dtwdrlxfqozoqmenhpih.supabase.co:5432/postgres",
-  ssl: { rejectUnauthorized: false }
-});
+// Check Hamza's assignments
+const hamzaAssignments = await pool.query(`
+  SELECT a.id, a.client_id, c.name as client_name, a.category, a.manager_id, a.partner_id, a.total_fees
+  FROM assignments a
+  JOIN clients c ON a.client_id = c.id
+  WHERE a.manager_id = '00000000-0000-0000-0000-000000000012'
+`);
+console.log('Hamza Assignments:', hamzaAssignments.rows.length);
+console.table(hamzaAssignments.rows.slice(0, 5));
 
-async function check() {
-  try {
-    console.log('--- USERS AND ROLES ---');
-    const users = await pool.query('SELECT full_name, email, role FROM profiles');
-    console.table(users.rows);
+// Check if there's data
+const totalClients = await pool.query(`SELECT COUNT(*) as cnt FROM clients`);
+const totalAssignments = await pool.query(`SELECT COUNT(*) as cnt FROM assignments`);
+console.log('\nTotal Clients:', totalClients.rows[0].cnt);
+console.log('Total Assignments:', totalAssignments.rows[0].cnt);
 
-    console.log('\n--- HAMZA MOMIN DATA ---');
-    const hamza = await pool.query("SELECT id FROM profiles WHERE full_name = 'Hamza Momin'");
-    if (hamza.rows.length === 0) {
-      console.log('Hamza Momin profile NOT FOUND');
-    } else {
-      const hId = hamza.rows[0].id;
-      console.log('Hamza ID:', hId);
-      const assignments = await pool.query("SELECT id, client_name, scope_item FROM assignments WHERE manager_id = $1", [hId]);
-      console.log('Assignments for Hamza:', assignments.rows);
-      
-      const allAssignments = await pool.query("SELECT id, client_name, manager_id FROM assignments");
-      console.log('All Assignments Manager IDs:', allAssignments.rows);
-    }
+// Check all active profiles
+const profiles = await pool.query(`SELECT id, email, full_name, role, is_active FROM profiles WHERE is_active = true ORDER BY role, full_name`);
+console.log('\nActive Profiles:');
+console.table(profiles.rows);
 
-    process.exit(0);
-  } catch (err) {
-    console.error(err);
-    process.exit(1);
-  }
-}
-
-check();
+await pool.end();
+process.exit();

@@ -11,6 +11,7 @@ import api from '@/lib/api';
 import type { UserWorkProgress } from '@/types';
 import { formatIndianCurrency, cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
+import LoadingScreen from '@/components/ui/LoadingScreen';
 
 const container = {
   hidden: { opacity: 0 },
@@ -46,10 +47,7 @@ export default function WorkProgressPage() {
   }, []);
 
   if (loading) return (
-    <div className="flex flex-col items-center justify-center py-32 space-y-4">
-      <Loader2 className="w-12 h-12 text-brand-navy animate-spin" />
-      <p className="text-slate-400 font-bold uppercase tracking-[0.2em] animate-pulse">Analyzing Firm Progress...</p>
-    </div>
+    <LoadingScreen message="Analyzing firm progress" submessage="Syncing work intelligence" />
   );
 
   if (!progress) return (
