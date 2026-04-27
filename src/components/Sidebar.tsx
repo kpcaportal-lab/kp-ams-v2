@@ -76,26 +76,38 @@ export function Sidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 lg:static z-50 flex flex-col bg-white border-r border-slate-200/60 transition-all duration-300 ease-in-out shadow-xl lg:shadow-none",
+          "fixed inset-y-0 left-0 lg:static z-50 flex flex-col bg-brand-navy text-white border-r border-brand-gold/10 transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none",
           isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
           isCollapsed ? "w-20" : "w-64"
         )}
       >
         {/* Brand logo */}
-        <div className="h-[72px] flex items-center px-5 border-b border-slate-100/80 overflow-hidden whitespace-nowrap">
+        <div className="h-[72px] flex items-center px-5 border-b border-white/5 overflow-hidden whitespace-nowrap bg-white/5 backdrop-blur-sm">
           <Link href="/dashboard" className="flex items-center">
             {(!isCollapsed || isMobileOpen) ? (
-              <img src="/files/logo-horizontal.svg" alt="Kirtane & Pandit AMS" className="h-10 w-auto" />
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-white p-1.5 shadow-xl shadow-black/20">
+                  <img src="/logo.png" alt="KPCA" className="h-full w-auto object-contain" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm font-black tracking-tight text-white leading-tight uppercase font-sans">
+                    Kirtane & Pandit
+                  </span>
+                  <span className="text-[10px] font-black tracking-[0.2em] text-brand-gold uppercase opacity-90">
+                    Portal v2
+                  </span>
+                </div>
+              </div>
             ) : (
-              <div className="w-10 h-10 flex items-center justify-center shrink-0">
-                <img src="/files/logo-icon.svg" alt="KP AMS" className="h-8 w-auto" />
+              <div className="w-10 h-10 flex items-center justify-center shrink-0 rounded-xl bg-white p-1.5 shadow-xl shadow-black/20">
+                <img src="/logo.png" alt="KP AMS" className="h-full w-auto object-contain" />
               </div>
             )}
           </Link>
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex-1 px-4 py-8 flex flex-col gap-2 overflow-y-auto">
+        <nav className="flex-1 px-4 py-8 flex flex-col gap-2 overflow-y-auto custom-scrollbar">
           {filteredNav.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return (
@@ -105,8 +117,8 @@ export function Sidebar({
                 className={cn(
                   "flex items-center group relative h-12 px-4 rounded-2xl transition-all duration-300 ease-in-out",
                   isActive 
-                    ? "bg-brand-navy/5 text-brand-navy font-black shadow-sm shadow-brand-navy/5" 
-                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
+                    ? "bg-brand-gold text-brand-navy font-black shadow-lg shadow-brand-gold/20" 
+                    : "text-white/70 hover:bg-white/10 hover:text-white",
                   isCollapsed ? "justify-center px-0" : "justify-start gap-4"
                 )}
                 title={isCollapsed ? item.name : undefined}
@@ -115,7 +127,7 @@ export function Sidebar({
                 {isActive && (
                   <motion.div 
                     layoutId="sidebar-active"
-                    className="absolute left-0 top-3 bottom-3 w-1 bg-brand-gold rounded-full shadow-[2px_0_12px_rgba(212,175,55,0.6)]" 
+                    className="absolute right-2 w-1.5 h-1.5 bg-brand-navy rounded-full" 
                   />
                 )}
                 <item.icon 
@@ -123,7 +135,7 @@ export function Sidebar({
                   strokeWidth={isActive ? 3 : 2.5}
                   className={cn(
                     "shrink-0 transition-all duration-300 group-hover:scale-110",
-                    isActive ? "text-brand-navy" : "text-slate-400 group-hover:text-brand-navy"
+                    isActive ? "text-brand-navy" : "text-brand-gold/70 group-hover:text-brand-gold"
                   )} 
                 />
                 {(!isCollapsed || isMobileOpen) && (
@@ -135,14 +147,14 @@ export function Sidebar({
         </nav>
 
         {/* Bottom Profile & Logout */}
-        <div className="p-4 bg-slate-50/30 backdrop-blur-sm border-t border-slate-100 flex flex-col gap-2">
+        <div className="p-4 border-t border-white/5 bg-white/5 backdrop-blur-sm flex flex-col gap-2">
           <Link
             href="/profile"
             className={cn(
               "flex items-center h-12 px-4 rounded-2xl transition-all duration-300",
               pathname === '/profile' 
-                ? "bg-white text-brand-navy font-black shadow-md shadow-brand-navy/5" 
-                : "text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-md",
+                ? "bg-brand-gold text-brand-navy font-black shadow-lg shadow-brand-gold/20" 
+                : "text-white/60 hover:bg-white/10 hover:text-white",
               isCollapsed ? "justify-center px-0" : "justify-start gap-4"
             )}
             title={isCollapsed ? "Profile Settings" : undefined}
@@ -160,7 +172,7 @@ export function Sidebar({
               }
             }}
             className={cn(
-              "flex items-center h-12 px-4 rounded-2xl text-slate-400 hover:bg-rose-50 hover:text-rose-600 group transition-all duration-300",
+              "flex items-center h-12 px-4 rounded-2xl text-white/50 hover:bg-red-500/10 hover:text-red-400 group transition-all duration-300",
               isCollapsed ? "justify-center px-0" : "justify-start gap-4"
             )}
             title={isCollapsed ? "Logout Session" : undefined}
@@ -173,7 +185,7 @@ export function Sidebar({
         {/* Collapse Toggle */}
         <button
           onClick={toggleCollapse}
-          className="hidden lg:flex absolute top-[24px] right-[-14px] w-7 h-7 bg-white border border-slate-200 rounded-full items-center justify-center text-slate-400 hover:text-brand-navy hover:border-brand-navy/20 hover:shadow-lg transition-all z-10"
+          className="hidden lg:flex absolute top-[24px] right-[-14px] w-7 h-7 bg-brand-gold text-brand-navy rounded-full items-center justify-center shadow-lg shadow-brand-gold/30 hover:scale-110 transition-all z-10"
         >
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>

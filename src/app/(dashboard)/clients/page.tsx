@@ -99,13 +99,13 @@ export default function ClientsPage() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}
         className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 group">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-navy transition-colors" />
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" />
           <input
             type="text"
             placeholder="Search clients, industry, or contact person..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-white/80 backdrop-blur-sm text-sm font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-navy/5 focus:border-brand-navy/30 transition-all"
+            className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-white/80 backdrop-blur-sm text-sm font-black text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 transition-all"
           />
         </div>
         <select

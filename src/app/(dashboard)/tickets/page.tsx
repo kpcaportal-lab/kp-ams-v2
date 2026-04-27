@@ -238,12 +238,12 @@ export default function TicketsPage() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm border-separate border-spacing-0">
                             <thead>
-                                <tr className="bg-slate-50/50">
-                                    <th className="text-left px-8 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Issue Details</th>
-                                    <th className="text-left px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Priority</th>
-                                    <th className="text-left px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Submitted By</th>
-                                    <th className="text-left px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Created</th>
-                                    <th className="text-right px-8 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Status</th>
+                                <tr className="bg-brand-navy">
+                                    <th className="text-left px-8 py-5 text-[10px] font-black text-brand-gold border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Issue Details</th>
+                                    <th className="text-left px-6 py-5 text-[10px] font-black text-brand-gold border-b border-white/5 uppercase tracking-[0.2em]">Priority</th>
+                                    <th className="text-left px-6 py-5 text-[10px] font-black text-brand-gold border-b border-white/5 uppercase tracking-[0.2em]">Submitted By</th>
+                                    <th className="text-left px-6 py-5 text-[10px] font-black text-brand-gold border-b border-white/5 uppercase tracking-[0.2em]">Created</th>
+                                    <th className="text-right px-8 py-5 text-[10px] font-black text-brand-gold border-b border-white/5 uppercase tracking-[0.2em] rounded-tr-[1.5rem]">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">

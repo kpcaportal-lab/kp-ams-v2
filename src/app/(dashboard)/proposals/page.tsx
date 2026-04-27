@@ -371,13 +371,13 @@ export default function ProposalListPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-200/60 bg-slate-50/50">
-                <th className="px-8 py-5 text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em]">Sequence & Date</th>
-                <th className="px-8 py-5 text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em]">Client Portfolio</th>
-                <th className="px-8 py-5 text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em]">Quotation Details</th>
-                <th className="px-8 py-5 text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em]">Engagement Team</th>
-                <th className="px-8 py-5 text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em]">Status</th>
-                <th className="px-8 py-5 text-right font-black text-slate-400"></th>
+              <tr>
+                <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Sequence & Date</th>
+                <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Client Portfolio</th>
+                <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Quotation Details</th>
+                <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Engagement Team</th>
+                <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Status</th>
+                <th className="px-8 py-5 text-right font-black text-brand-gold bg-brand-navy border-b border-white/5 rounded-tr-[1.5rem]"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100/60">

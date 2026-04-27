@@ -11,6 +11,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 
 import api from '@/lib/api';
+import { cn } from '@/lib/utils';
 
 interface AuditLog {
   id: string;
@@ -96,6 +97,12 @@ export default function AdminPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
+  const [currentTime, setCurrentTime] = useState(() => Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(Date.now()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Role guard
   useEffect(() => {
@@ -158,32 +165,31 @@ export default function AdminPage() {
   if (user && user.role !== 'admin') return null;
 
   return (
-    <div style={{ padding: '32px', maxWidth: 1400, margin: '0 auto' }}>
+    <div className="space-y-8 max-w-7xl mx-auto pb-12">
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
-        <div style={{
-          width: 48, height: 48, borderRadius: 14, background: 'var(--brand-navy)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 8px 16px rgba(30, 58, 95, 0.15)'
-        }}>
-          <Shield size={24} color="var(--brand-gold)" />
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-5">
+          <div className="w-14 h-14 rounded-2xl bg-brand-navy flex items-center justify-center shadow-[0_8px_20px_rgba(30,58,95,0.2)] border border-slate-800">
+            <Shield size={28} className="text-brand-gold" strokeWidth={2.5} />
+          </div>
+          <div>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight font-accent">
+              Admin <span className="text-brand-gold">Intelligence</span>
+            </h1>
+            <p className="text-sm text-slate-500 mt-1 font-medium italic">Secure oversight of system monitoring, audit logs, and mission activity.</p>
+          </div>
         </div>
-        <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'var(--font-accent)' }}>
-            Admin <span style={{ color: 'var(--brand-gold)' }}>Panel</span>
-          </h1>
-          <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
-            System monitoring, audit logs & user activity
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Systems Nominal</span>
+          </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Tabs */}
-      <div style={{
-        display: 'flex', gap: 8, background: 'rgba(255, 255, 255, 0.7)', backdropFilter: 'blur(10px)', 
-        borderRadius: 20, padding: 6, marginBottom: 32, border: '1px solid var(--border)', 
-        width: 'fit-content', boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
-      }}>
+      <div className="flex gap-2 bg-white/60 backdrop-blur-md rounded-[1.5rem] p-1.5 border border-slate-200 w-fit shadow-sm">
         {[
           { key: 'logs' as const, label: 'Audit Intelligence', icon: FileText },
           { key: 'users' as const, label: 'Session Monitor', icon: Globe },
@@ -192,17 +198,14 @@ export default function AdminPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 10, padding: '12px 24px',
-              borderRadius: 16, border: 'none', cursor: 'pointer', fontWeight: 700,
-              fontSize: '0.875rem', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              background: activeTab === tab.key ? 'var(--brand-navy)' : 'transparent',
-              color: activeTab === tab.key ? 'var(--brand-gold)' : 'var(--text-secondary)',
-              boxShadow: activeTab === tab.key ? '0 10px 20px rgba(30, 58, 95, 0.2)' : 'none',
-              fontFamily: 'var(--font-accent)'
-            }}
+            className={cn(
+              "flex items-center gap-2.5 px-6 py-3 rounded-[1.25rem] text-sm font-black transition-all duration-300 uppercase tracking-widest",
+              activeTab === tab.key 
+                ? "bg-brand-navy text-brand-gold shadow-[0_10px_20px_rgba(30,58,95,0.2)]" 
+                : "text-slate-500 hover:bg-slate-50"
+            )}
           >
-            <tab.icon size={18} strokeWidth={2.5} />
+            <tab.icon size={16} strokeWidth={2.5} />
             {tab.label}
           </button>
         ))}
@@ -210,35 +213,25 @@ export default function AdminPage() {
 
       {/* -- Tab: Audit Logs -- */}
       {activeTab === 'logs' && (
-        <div>
+        <div className="space-y-6">
           {/* Filters */}
-          <div style={{
-            display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center'
-          }}>
-            <div style={{ position: 'relative', flex: 1, minWidth: 250 }}>
-              <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1 group">
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" />
               <input
                 type="text"
-                placeholder="Search by email or entity..."
+                placeholder="Search audit trail by email or entity..."
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
-                style={{
-                  width: '100%', padding: '10px 12px 10px 36px', borderRadius: 10,
-                  border: '1px solid var(--border)', background: 'var(--bg-card)',
-                  color: 'var(--text-primary)', fontSize: '0.875rem', outline: 'none'
-                }}
+                className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-black text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 transition-all shadow-sm"
               />
             </div>
             <select
               value={actionFilter}
               onChange={(e) => { setActionFilter(e.target.value); setPage(1); }}
-              style={{
-                padding: '10px 16px', borderRadius: 10, border: '1px solid var(--border)',
-                background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '0.875rem',
-                cursor: 'pointer', outline: 'none'
-              }}
+              className="px-6 py-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-black text-slate-700 focus:outline-none focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 transition-all shadow-sm min-w-[180px] cursor-pointer appearance-none uppercase tracking-widest"
             >
-              <option value="">All Actions</option>
+              <option value="">All Directives</option>
               <option value="login">Login</option>
               <option value="create">Create</option>
               <option value="update">Update</option>
@@ -247,100 +240,84 @@ export default function AdminPage() {
             </select>
             <button
               onClick={() => fetchLogs()}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px',
-                borderRadius: 10, border: '1px solid var(--border)', background: 'var(--bg-card)',
-                color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.875rem'
-              }}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-50 transition-all active:scale-95 shadow-sm uppercase tracking-widest"
             >
-              <RefreshCw size={14} />
-              Refresh
+              <RefreshCw size={16} />
+              Re-Sync
             </button>
           </div>
 
           {/* Logs Table */}
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)',
-            overflow: 'hidden'
-          }}>
+          <div className="bg-white border border-slate-200 rounded-[2rem] shadow-sm overflow-hidden">
             {loading ? (
-              <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-muted)' }}>
-                Loading audit logs...
+              <div className="px-8 py-20 text-center text-slate-400 font-medium italic">
+                Scanning audit intelligence...
               </div>
             ) : logs.length === 0 ? (
-              <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-muted)' }}>
-                <AlertTriangle size={40} style={{ marginBottom: 12, opacity: 0.4 }} />
-                <p style={{ margin: 0 }}>No audit logs found</p>
+              <div className="px-8 py-20 text-center">
+                <AlertTriangle size={40} className="mx-auto mb-4 text-slate-200" />
+                <p className="text-slate-500 font-medium italic">No mission records found in current database.</p>
               </div>
             ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                    {['Time', 'User', 'Role', 'Action', 'Entity', 'IP', ''].map(h => (
-                      <th key={h} style={{
-                        padding: '14px 16px', textAlign: 'left', fontSize: '0.75rem',
-                        fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase',
-                        letterSpacing: '0.05em'
-                      }}>{h}</th>
-                    ))}
+                  <tr>
+                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Timeline</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Operator</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Clearance</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Directive</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Entity</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Source IP</th>
+                    <th className="px-8 py-5 text-right font-black text-brand-gold bg-brand-navy border-b border-white/5 rounded-tr-[1.5rem]"></th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-slate-100/60">
                   {logs.map(log => {
                     const IconComp = actionIcons[log.action] || Eye;
                     const color = actionColors[log.action] || '#888';
                     return (
-                      <tr key={log.id} style={{ borderBottom: '1px solid var(--border)' }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-card-hover)'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                      >
-                        <td style={{ padding: '12px 16px', fontSize: '0.8rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                          <Clock size={12} style={{ marginRight: 4, verticalAlign: 'middle' }} />
-                          {formatTime(log.created_at)}
+                      <tr key={log.id} className="group hover:bg-slate-50/50 transition-colors">
+                        <td className="px-8 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2 text-[13px] font-medium text-slate-500">
+                            <Clock size={12} className="text-slate-400" />
+                            {formatTime(log.created_at)}
+                          </div>
                         </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        <td className="px-8 py-4">
+                          <div className="text-[15px] font-bold text-slate-900 group-hover:text-brand-navy transition-colors">
                             {log.user_name || log.user_email}
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{log.user_email}</div>
+                          <div className="text-[11px] font-medium text-slate-400">{log.user_email}</div>
                         </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <span style={{
-                            padding: '3px 10px', borderRadius: 20, fontSize: '0.7rem',
-                            fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em',
-                            background: `${roleColors[log.user_role] || '#888'}18`,
-                            color: roleColors[log.user_role] || '#888'
-                          }}>{log.user_role}</span>
+                        <td className="px-8 py-4">
+                          <span className={cn(
+                            "px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider border",
+                            log.user_role === 'admin' ? "bg-brand-navy/5 text-brand-navy border-brand-navy/10" :
+                            log.user_role === 'partner' ? "bg-brand-gold/5 text-brand-gold border-brand-gold/10" :
+                            "bg-slate-50 text-slate-500 border-slate-200"
+                          )}>
+                            {log.user_role}
+                          </span>
                         </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <span
-                            title={actionTooltips[log.action] || log.action}
-                            style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 6,
-                            padding: '4px 12px', borderRadius: 20, fontSize: '0.8rem',
-                            fontWeight: 600, background: `${color}15`, color
-                          }}>
-                            <IconComp size={13} />
+                        <td className="px-8 py-4">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-tight"
+                            style={{ background: `${color}10`, color }}>
+                            <IconComp size={12} strokeWidth={2.5} />
                             {log.action}
                           </span>
                         </td>
-                        <td style={{ padding: '12px 16px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                        <td className="px-8 py-4 text-[13px] font-medium text-slate-600">
                           {log.entity_type || '—'}
                         </td>
-                        <td style={{ padding: '12px 16px', fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                        <td className="px-8 py-4 text-[12px] font-mono text-slate-400">
                           {log.ip_address || '—'}
                         </td>
-                        <td style={{ padding: '12px 16px', textAlign: 'right' }}>
+                        <td className="px-8 py-4 text-right">
                           <button
                             onClick={() => setSelectedLog(log)}
-                            style={{
-                              background: 'transparent', border: '1px solid var(--border)',
-                              padding: '6px 12px', borderRadius: 8, fontSize: '0.75rem',
-                              fontWeight: 600, color: 'var(--text-secondary)', cursor: 'pointer',
-                              display: 'inline-flex', alignItems: 'center', gap: 6
-                            }}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-[11px] font-black text-slate-600 hover:bg-white hover:border-brand-navy/30 hover:text-brand-navy transition-all active:scale-95 uppercase tracking-widest"
                           >
-                            <Eye size={12} /> Details
+                            <Eye size={14} /> Details
                           </button>
                         </td>
                       </tr>
@@ -389,202 +366,172 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* -- Tab: Active Users -- */}
+      {/* -- Tab: Users (Session Monitor) -- */}
       {activeTab === 'users' && (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(450px, 1fr))', gap: 20 }}
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {activeUsers.map((u, i) => {
-            const lastActiveTime = u.last_active ? new Date(u.last_active).getTime() : 0;
-            const isOnlineRecently = lastActiveTime && (now - lastActiveTime) < 15 * 60 * 1000; // 15 mins
+            const lastActiveTime = u.last_active || '';
+            const isOnlineRecently = new Date(lastActiveTime).getTime() > currentTime - 5 * 60 * 1000;
             return (
-              <motion.div 
+              <motion.div
                 key={u.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                style={{
-                  background: 'white', borderRadius: 24, border: '1px solid var(--border)',
-                  padding: '28px', display: 'flex', flexDirection: 'column', gap: 20,
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.02)', position: 'relative', overflow: 'hidden'
-                }}
+                className="group relative bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl hover:shadow-brand-navy/5 hover:border-brand-navy/10 transition-all duration-300 overflow-hidden"
               >
                 {isOnlineRecently && (
-                  <div style={{ 
-                    position: 'absolute', top: 0, right: 0, padding: '8px 16px', 
-                    background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', 
-                    fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', 
-                    letterSpacing: '0.1em', borderRadius: '0 0 0 16px' 
-                  }}>
-                    Live Now
+                  <div className="absolute top-0 right-0 px-5 py-2 bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase tracking-[0.2em] rounded-bl-2xl border-l border-b border-emerald-100 flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Live Signal
                   </div>
                 )}
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                  <div style={{ position: 'relative' }}>
-                    <div style={{
-                      width: 56, height: 56, borderRadius: 20, background: 'var(--brand-navy)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: 'var(--brand-gold)', fontSize: '1.25rem', fontWeight: 900,
-                      boxShadow: '0 8px 16px rgba(30, 58, 95, 0.15)'
-                    }}>
+                <div className="flex items-center gap-5 mb-8">
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-2xl bg-brand-navy flex items-center justify-center text-brand-gold text-2xl font-black shadow-[0_8px_20px_rgba(30,58,95,0.2)]">
                       {(u.display_name || u.full_name).charAt(0)}
                     </div>
-                    <div style={{
-                      position: 'absolute', bottom: -2, right: -2, width: 16, height: 16,
-                      borderRadius: '50%', background: isOnlineRecently ? '#10b981' : '#94a3b8',
-                      border: '3px solid white', boxShadow: isOnlineRecently ? '0 0 10px rgba(16, 185, 129, 0.4)' : 'none'
-                    }} />
+                    <div className={cn(
+                      "absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-4 border-white shadow-sm",
+                      isOnlineRecently ? "bg-emerald-500 shadow-emerald-200" : "bg-slate-300"
+                    )} />
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-primary)', fontFamily: 'var(--font-accent)' }}>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-black text-slate-900 font-accent truncate leading-tight">
                       {u.display_name || u.full_name}
-                    </div>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>{u.email}</div>
+                    </h3>
+                    <p className="text-xs font-bold text-slate-400 truncate">{u.email}</p>
                   </div>
-                  <span style={{
-                    padding: '6px 14px', borderRadius: 12, fontSize: '10px',
-                    fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em',
-                    background: `${roleColors[u.role] || '#888'}10`,
-                    color: roleColors[u.role] || '#888', border: `1px solid ${roleColors[u.role] || '#888'}30`
-                  }}>{u.role}</span>
                 </div>
 
-                <div style={{ 
-                  display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12,
-                  padding: '16px', background: 'var(--bg-primary-light)', borderRadius: 16
-                }}>
+                <div className="grid grid-cols-2 gap-3 mb-8 p-4 bg-slate-50/50 rounded-2xl border border-slate-100/50">
                   <div>
-                    <div style={{ fontSize: '9px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Last Action</div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--brand-navy)' }}>{u.last_action || 'Silent Session'}</div>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Last Intel</p>
+                    <p className="text-xs font-black text-brand-navy truncate">
+                      {u.last_action ? (
+                        <span className="flex items-center gap-1">
+                          {u.last_action}
+                        </span>
+                      ) : 'Idle Mission'}
+                    </p>
                   </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '9px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Activity Level</div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>{u.total_actions_today} actions <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>today</span></div>
+                  <div className="text-right">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Daily Cycles</p>
+                    <p className="text-xs font-black text-slate-700">
+                      {u.total_actions_today} <span className="text-[10px] text-slate-400 font-medium lowercase">actions</span>
+                    </p>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600 }}>
-                    <Clock size={14} />
-                    Active {formatTime(u.last_active)}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 italic">
+                    <Clock size={12} className="text-slate-300" />
+                    {formatTime(u.last_active)}
                   </div>
                   <button
-                    style={{
-                      padding: '10px 20px', borderRadius: 14, border: 'none', background: 'var(--brand-navy)',
-                      color: 'var(--brand-gold)', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer', 
-                      boxShadow: '0 10px 20px rgba(30, 58, 95, 0.15)', display: 'flex', alignItems: 'center', gap: 8,
-                      transition: 'all 0.2s ease', textTransform: 'uppercase', letterSpacing: '0.05em'
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 15px 25px rgba(30, 58, 95, 0.2)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(30, 58, 95, 0.15)'; }}
                     onClick={() => handleImpersonateUser(u.id)}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-navy text-brand-gold text-[10px] font-black uppercase tracking-widest shadow-[0_10px_20px_rgba(30,58,95,0.2)] hover:bg-slate-800 transition-all active:scale-95 group-hover:px-6"
                   >
-                    <LogIn size={16} strokeWidth={2.5} /> Impersonate
+                    <LogIn size={14} strokeWidth={2.5} /> Impersonate
                   </button>
                 </div>
               </motion.div>
             );
           })}
           {activeUsers.length === 0 && (
-            <div style={{
-              padding: 80, textAlign: 'center', color: 'var(--text-muted)',
-              background: 'white', borderRadius: 24, border: '1px solid var(--border)', gridColumn: '1 / -1'
-            }}>
-              <Database size={48} style={{ marginBottom: 16, opacity: 0.2, margin: '0 auto' }} />
-              <p style={{ fontWeight: 700 }}>No live session data available in current monitoring window</p>
+            <div className="col-span-full py-24 text-center bg-white border border-slate-100 rounded-[3rem] shadow-sm">
+              <Database size={48} className="mx-auto mb-4 text-slate-100" />
+              <p className="text-slate-400 font-bold italic">No active session signals detected in current window.</p>
             </div>
           )}
         </motion.div>
       )}
 
-      {/* -- Tab: Statistics -- */}
+      {/* -- Tab: Statistics (Systems Analytics) -- */}
       {activeTab === 'stats' && stats && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: 20 }}>
-          {/* Login Chart */}
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)',
-            padding: 24
-          }}>
-            <h3 style={{ margin: '0 0 20px', fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
-              <LogIn size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
-              Logins (Last 7 Days)
-            </h3>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', height: 120 }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          {/* Login Intelligence */}
+          <div className="bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between mb-10">
+              <h3 className="text-lg font-black text-slate-900 font-accent flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-brand-navy/5 flex items-center justify-center text-brand-navy">
+                  <LogIn size={18} strokeWidth={2.5} />
+                </div>
+                Login <span className="text-brand-gold">Intelligence</span>
+              </h3>
+              <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">Last 7 Days</div>
+            </div>
+            
+            <div className="flex items-end gap-3 h-48 mb-6">
               {stats.loginsByDay.map(day => {
                 const maxLogins = Math.max(...stats.loginsByDay.map(d => Number(d.logins)), 1);
                 const height = (Number(day.logins) / maxLogins) * 100;
                 return (
-                  <div key={day.date} style={{ flex: 1, textAlign: 'center' }}>
-                    <div style={{
-                      height: `${height}%`, background: 'var(--brand-gold)',
-                      borderRadius: '4px 4px 0 0', minHeight: 4, transition: 'height 0.3s ease',
-                      boxShadow: '0 -2px 10px rgba(212, 165, 116, 0.2)'
-                    }} />
-                    <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: 6 }}>
-                      {new Date(day.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                  <div key={day.date} className="flex-1 flex flex-col items-center group">
+                    <div className="w-full bg-slate-50 rounded-t-xl relative overflow-hidden flex flex-col justify-end h-full">
+                      <motion.div 
+                        initial={{ height: 0 }}
+                        animate={{ height: `${height}%` }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="w-full bg-gradient-to-t from-brand-navy to-brand-navy/80 group-hover:from-brand-gold group-hover:to-brand-gold/80 transition-colors duration-500 rounded-t-lg relative"
+                      >
+                        <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] font-black text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                          {day.logins}
+                        </div>
+                      </motion.div>
                     </div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                      {day.logins}
+                    <div className="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                      {new Date(day.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
                     </div>
                   </div>
                 );
               })}
-              {stats.loginsByDay.length === 0 && (
-                <div style={{ flex: 1, textAlign: 'center', color: 'var(--text-muted)', padding: 30 }}>
-                  No login data yet
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Action Breakdown */}
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)',
-            padding: 24
-          }}>
-            <h3 style={{ margin: '0 0 20px', fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
-              <Activity size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
-              Today&apos;s Activity
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {/* Action Frequency */}
+          <div className="bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between mb-10">
+              <h3 className="text-lg font-black text-slate-900 font-accent flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-brand-navy/5 flex items-center justify-center text-brand-navy">
+                  <Activity size={18} strokeWidth={2.5} />
+                </div>
+                Action <span className="text-brand-gold">Frequency</span>
+              </h3>
+              <div className="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100">Live Today</div>
+            </div>
+
+            <div className="space-y-6">
               {stats.actionBreakdown.map(ab => {
                 const color = actionColors[ab.action] || '#888';
                 const maxCount = Math.max(...stats.actionBreakdown.map(a => Number(a.count)), 1);
                 const width = (Number(ab.count) / maxCount) * 100;
                 return (
-                  <div key={ab.action} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{
-                      width: 70, fontSize: '0.8rem', fontWeight: 600,
-                      color, textTransform: 'capitalize'
-                    }}>{ab.action}</span>
-                    <div style={{ flex: 1, height: 8, background: 'var(--bg-card-hover)', borderRadius: 4 }}>
-                      <div style={{
-                        width: `${width}%`, height: '100%', background: color,
-                        borderRadius: 4, transition: 'width 0.5s ease'
-                      }} />
+                  <div key={ab.action} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-black uppercase tracking-wider text-slate-700" style={{ color }}>{ab.action}</span>
+                      <span className="text-[11px] font-black text-slate-900">{ab.count}</span>
                     </div>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', minWidth: 30, textAlign: 'right' }}>
-                      {ab.count}
-                    </span>
+                    <div className="h-2.5 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${width}%` }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        className="h-full rounded-full"
+                        style={{ backgroundColor: color }}
+                      />
+                    </div>
                   </div>
                 );
               })}
               {stats.actionBreakdown.length === 0 && (
-                <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 20 }}>
-                  No activity today
-                </div>
+                <div className="text-center py-4 text-slate-500 text-sm italic">No actions recorded today</div>
               )}
             </div>
           </div>
-
-          {/* Top Users */}
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)',
-            padding: 24, gridColumn: 'span 2'
-          }}>
+          
+          <div style={{ background: '#fff', borderRadius: 16, padding: 24, border: '1px solid var(--border)' }}>
             <h3 style={{ margin: '0 0 20px', fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
               <Users size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
               Most Active Users Today
@@ -614,75 +561,75 @@ export default function AdminPage() {
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
       {/* Log Details Modal */}
-      {selectedLog && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000,
-          background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center'
-        }} onClick={() => setSelectedLog(null)}>
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)',
-            width: '100%', maxWidth: 700, maxHeight: '85vh', overflow: 'hidden',
-            display: 'flex', flexDirection: 'column', boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
-          }} onClick={e => e.stopPropagation()}>
-            <div style={{
-              padding: '20px 24px', borderBottom: '1px solid var(--border)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-            }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                  Audit Log Details
-                </h3>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 4 }}>
-                  {formatTime(selectedLog.created_at)}
-                </div>
-              </div>
-              <button 
-                onClick={() => setSelectedLog(null)}
-                style={{
-                  background: 'transparent', border: 'none', color: 'var(--text-muted)',
-                  cursor: 'pointer', padding: 8, borderRadius: '50%', display: 'flex'
-                }}
-              >
-                <X size={20} />
-              </button>
-            </div>
-            
-            <div style={{ padding: 24, overflowY: 'auto' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 24 }}>
+      <AnimatePresence>
+        {selectedLog && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-brand-navy/60 backdrop-blur-sm"
+              onClick={() => setSelectedLog(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh]"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div>
-                  <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 700, marginBottom: 4 }}>User</div>
-                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{selectedLog.user_name || selectedLog.user_email}</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{selectedLog.user_role}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 700, marginBottom: 4 }}>Action</div>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 600, color: actionColors[selectedLog.action] || 'var(--text-primary)' }}>
-                    {selectedLog.action}
+                  <h3 className="text-xl font-black text-slate-900 font-accent tracking-tight">Audit <span className="text-brand-gold">Intelligence</span></h3>
+                  <div className="text-xs font-bold text-slate-400 mt-1 italic">
+                    Recorded at {formatTime(selectedLog.created_at)}
                   </div>
                 </div>
-                <div>
-                  <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 700, marginBottom: 4 }}>Entity</div>
-                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{selectedLog.entity_type} {selectedLog.entity_id ? `(${selectedLog.entity_id.substring(0,8)}...)` : ''}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 700, marginBottom: 4 }}>IP Address</div>
-                  <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'monospace' }}>{selectedLog.ip_address}</div>
-                </div>
-              </div>
-
-              <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 700, marginBottom: 12 }}>
-                {selectedLog.action === 'update' ? 'Changes Detected' : 'Payload Details'}
+                <button 
+                  onClick={() => setSelectedLog(null)}
+                  className="p-2.5 rounded-full hover:bg-slate-200 transition-colors text-slate-400"
+                >
+                  <X size={24} strokeWidth={2.5} />
+                </button>
               </div>
               
-              <RenderLogDetails details={selectedLog.details} action={selectedLog.action} />
-            </div>
+              <div className="p-10 overflow-y-auto custom-scrollbar">
+                <div className="grid grid-cols-2 gap-8 mb-10">
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Operator</p>
+                    <p className="text-sm font-black text-slate-900">{selectedLog.user_name || selectedLog.user_email}</p>
+                    <p className="text-[11px] font-bold text-brand-gold uppercase mt-0.5 tracking-wider">{selectedLog.user_role}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Directive</p>
+                    <p className="text-sm font-black uppercase tracking-tight" style={{ color: actionColors[selectedLog.action] || '#1e3a5f' }}>
+                      {selectedLog.action}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Intel Entity</p>
+                    <p className="text-sm font-black text-slate-800">{selectedLog.entity_type} {selectedLog.entity_id ? `(#${selectedLog.entity_id.substring(0,8)})` : ''}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Digital Signature</p>
+                    <p className="text-sm font-mono text-slate-500 font-bold">{selectedLog.ip_address}</p>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">
+                    {selectedLog.action === 'update' ? 'Comparative Analysis' : 'Intel Payload'}
+                  </p>
+                  <RenderLogDetails details={selectedLog.details} action={selectedLog.action} />
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -691,29 +638,26 @@ function RenderLogDetails({ details, action }: { details: Record<string, any>, a
   if (action === 'update' && details.changedFields && typeof details.changedFields === 'object') {
     const fields = Object.keys(details.changedFields);
     return (
-      <div style={{ 
-        background: 'var(--bg-primary-light)', borderRadius: 12, border: '1px solid var(--border)',
-        overflow: 'hidden'
-      }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr style={{ background: 'var(--bg-card)', borderBottom: '1px solid var(--border)' }}>
-              <th style={{ textAlign: 'left', padding: '10px 16px', color: 'var(--text-muted)', width: '30%' }}>Field</th>
-              <th style={{ textAlign: 'left', padding: '10px 16px', color: 'var(--text-muted)' }}>Old Value</th>
-              <th style={{ textAlign: 'left', padding: '10px 16px', color: 'var(--text-muted)' }}>New Value</th>
+            <tr className="bg-slate-50 border-b border-slate-100">
+              <th className="px-6 py-4 font-black text-slate-400 uppercase tracking-widest w-1/3">Field</th>
+              <th className="px-6 py-4 font-black text-slate-400 uppercase tracking-widest">Previous</th>
+              <th className="px-6 py-4 font-black text-slate-400 uppercase tracking-widest">Terminal</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-slate-50">
             {fields.map(field => {
               const diff = details.changedFields[field];
               return (
-                <tr key={field} style={{ borderBottom: '1px solid var(--border)', verticalAlign: 'top' }}>
-                  <td style={{ padding: '10px 16px', fontWeight: 600, color: 'var(--text-secondary)' }}>{field}</td>
-                  <td style={{ padding: '10px 16px', color: '#ef4444', wordBreak: 'break-all' }}>
-                    {String(diff.old ?? 'None/Empty')}
+                <tr key={field} className="group hover:bg-slate-50/30 transition-colors">
+                  <td className="px-6 py-4 font-black text-slate-700">{field}</td>
+                  <td className="px-6 py-4 text-rose-500 font-medium line-through decoration-rose-500/30">
+                    {String(diff.old ?? '—')}
                   </td>
-                  <td style={{ padding: '10px 16px', color: '#10b981', wordBreak: 'break-all' }}>
-                    {String(diff.new ?? 'None/Empty')}
+                  <td className="px-6 py-4 text-emerald-600 font-bold bg-emerald-50/30">
+                    {String(diff.new ?? '—')}
                   </td>
                 </tr>
               );
@@ -725,11 +669,11 @@ function RenderLogDetails({ details, action }: { details: Record<string, any>, a
   }
 
   return (
-    <div style={{ 
-      background: 'var(--bg-primary-light)', padding: 16, borderRadius: 12, 
-      border: '1px solid var(--border)', overflowX: 'auto' 
-    }}>
-      <pre style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-primary)', fontFamily: 'monospace' }}>
+    <div className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-2xl relative group overflow-hidden">
+      <div className="absolute top-0 right-0 p-4 opacity-10">
+        <Database size={100} className="text-brand-gold" />
+      </div>
+      <pre className="relative z-10 text-[13px] font-mono text-brand-gold/90 leading-relaxed whitespace-pre-wrap">
         {JSON.stringify(details, null, 2)}
       </pre>
     </div>

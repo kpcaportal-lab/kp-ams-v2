@@ -186,7 +186,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         <span key={part} className="flex items-center">
           <span className={cn(
             "text-sm font-medium transition-colors",
-            isLast ? "text-slate-900 font-bold" : "text-slate-400 hover:text-slate-600"
+            isLast ? "text-brand-navy font-bold" : "text-slate-400 hover:text-brand-gold"
           )}>
             {label}
           </span>
@@ -198,11 +198,11 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
 
   return (
     <>
-    <header className="sticky top-0 z-40 w-full h-[72px] flex items-center justify-between px-6 bg-white/70 backdrop-blur-md border-b border-slate-200/60">
+    <header className="sticky top-0 z-40 w-full h-[72px] flex items-center justify-between px-6 bg-white/80 backdrop-blur-xl border-b border-brand-gold/10 shadow-sm">
       <div className="flex items-center gap-4">
         <button 
           onClick={onMenuClick}
-          className="p-2 -ml-2 text-slate-500 hover:text-slate-900 lg:hidden transition-colors"
+          className="p-2 -ml-2 text-brand-navy hover:text-brand-gold lg:hidden transition-colors"
           aria-label="Toggle Menu"
         >
           <Menu size={24} />
@@ -217,10 +217,10 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         {/* Support Ticket Button */}
         <button
           onClick={() => setIsTicketModalOpen(true)}
-          className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-black transition-all shadow-sm active:scale-95"
+          className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-gold text-brand-navy text-xs font-black transition-all shadow-lg shadow-brand-gold/20 hover:shadow-brand-gold/30 active:scale-95 border border-brand-gold/20"
         >
-          <LifeBuoy size={14} />
-          Raise Ticket
+          <LifeBuoy size={14} className="animate-pulse" />
+          Support
         </button>
 
         {/* Search - Expandable on focus with live results */}
@@ -228,11 +228,11 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors z-10" />
           <input 
             type="text" 
-            placeholder="Search everything..." 
+            placeholder="Search documents, clients..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsSearchOpen(true)}
-            className="w-48 focus:w-72 h-10 pl-10 pr-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 outline-none transition-all text-sm font-medium text-slate-700"
+            className="w-48 focus:w-72 h-10 pl-10 pr-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 outline-none transition-all text-sm font-semibold text-brand-navy"
           />
           
           <AnimatePresence>
@@ -241,13 +241,13 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                 initial={{ opacity: 0, y: 8, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                className="absolute top-full right-0 mt-2 w-[420px] bg-white border border-slate-200 shadow-2xl rounded-2xl overflow-hidden z-[200]"
+                className="absolute top-full right-0 mt-2 w-[420px] bg-white border border-brand-gold/10 shadow-2xl rounded-2xl overflow-hidden z-[200]"
               >
-                <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.15em]">
+                <div className="px-4 py-2.5 border-b border-slate-100 bg-brand-navy flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase text-brand-gold tracking-[0.15em]">
                     {searchLoading ? 'Searching...' : 'Search Results'}
                   </span>
-                  <button onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }} className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
+                  <button onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }} className="p-1 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors">
                     <X size={14} />
                   </button>
                 </div>
@@ -265,11 +265,11 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     <>
                       {searchResults.clients.length > 0 && (
                         <div>
-                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Clients</div>
+                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-brand-navy uppercase tracking-widest border-b border-slate-100">Clients</div>
                           {searchResults.clients.map((c) => (
                             <button key={c.id} onClick={() => { router.push(`/clients/${c.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
                               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-brand-navy/5 transition-colors text-left border-b border-slate-50 last:border-0">
-                              <div className="w-8 h-8 rounded-lg bg-brand-navy/10 flex items-center justify-center text-brand-navy text-xs font-black">{c.name?.charAt(0)}</div>
+                              <div className="w-8 h-8 rounded-lg bg-brand-navy text-brand-gold flex items-center justify-center text-xs font-black">{c.name?.charAt(0)}</div>
                               <div className="flex-1 min-w-0">
                                 <div className="text-sm font-bold text-slate-800 truncate">{c.name}</div>
                                 <div className="text-[10px] text-slate-400 font-medium">{c.gstn || 'No GSTN'}</div>
@@ -280,7 +280,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                       )}
                       {searchResults.assignments.length > 0 && (
                         <div>
-                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Assignments</div>
+                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-brand-navy uppercase tracking-widest border-b border-slate-100">Assignments</div>
                           {searchResults.assignments.map((a) => (
                             <button key={a.id} onClick={() => { router.push(`/assignments/${a.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
                               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-emerald-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
@@ -295,7 +295,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                       )}
                       {searchResults.proposals.length > 0 && (
                         <div>
-                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Proposals</div>
+                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-brand-navy uppercase tracking-widest border-b border-slate-100">Proposals</div>
                           {searchResults.proposals.map((p) => (
                             <button key={p.id} onClick={() => { router.push(`/proposals/${p.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
                               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-brand-gold/5 transition-colors text-left border-b border-slate-50 last:border-0">
@@ -310,7 +310,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                       )}
                       {searchResults.invoices.length > 0 && (
                         <div>
-                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">Invoices</div>
+                          <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-brand-navy uppercase tracking-widest border-b border-slate-100">Invoices</div>
                           {searchResults.invoices.map((inv) => (
                             <button key={inv.id} onClick={() => { router.push(`/assignments/${inv.assignment_id}`); setIsSearchOpen(false); setSearchQuery(''); }}
                               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-amber-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
@@ -338,11 +338,11 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           <div className="relative" ref={impersonateRef}>
             <button
               onClick={() => setIsImpersonateOpen(!isImpersonateOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-brand-gold/20 hover:bg-brand-gold/5 transition-colors"
               title="View As"
             >
-              <Users size={16} className="text-slate-500" />
-              <span className="text-xs font-black text-slate-700 hidden sm:block">View As</span>
+              <Users size={16} className="text-brand-navy" />
+              <span className="text-xs font-black text-brand-navy hidden sm:block">View As</span>
             </button>
             
             <AnimatePresence>
@@ -351,10 +351,10 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                   initial={{ opacity: 0, y: 8, scale: 0.96 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                  className="absolute top-full right-0 mt-2 w-64 bg-white border border-slate-200 shadow-2xl rounded-2xl overflow-hidden z-[200]"
+                  className="absolute top-full right-0 mt-2 w-64 bg-white border border-brand-gold/10 shadow-2xl rounded-2xl overflow-hidden z-[200]"
                 >
-                  <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
-                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.15em]">
+                  <div className="px-4 py-2.5 border-b border-slate-100 bg-brand-navy">
+                    <span className="text-[10px] font-black uppercase text-brand-gold tracking-[0.15em]">
                       Impersonate User
                     </span>
                   </div>
@@ -370,9 +370,9 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                         <button
                           key={impUser.id}
                           onClick={() => handleImpersonate(impUser.id)}
-                          className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 transition-colors flex flex-col"
+                          className="w-full text-left px-3 py-2 rounded-xl hover:bg-brand-navy/5 transition-colors flex flex-col"
                         >
-                          <span className="text-sm font-bold text-slate-800">{impUser.full_name}</span>
+                          <span className="text-sm font-bold text-brand-navy">{impUser.full_name}</span>
                           <span className="text-[10px] font-medium text-slate-400 uppercase">{impUser.role}</span>
                         </button>
                       ))
@@ -387,10 +387,10 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         {/* User Profile */}
           <div 
             onClick={() => router.push('/profile')}
-            className="flex items-center gap-3 pl-4 border-l border-slate-200 cursor-pointer group"
+            className="flex items-center gap-3 pl-4 border-l border-brand-gold/20 cursor-pointer group"
           >
             <div className="text-right hidden sm:block">
-              <div className="text-sm font-black text-slate-900 group-hover:text-brand-navy transition-colors leading-tight">
+              <div className="text-sm font-black text-brand-navy transition-colors leading-tight group-hover:text-brand-gold">
                 {user?.full_name || 'Guest User'}
               </div>
               <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
@@ -399,7 +399,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
             </div>
             
             <div className="relative">
-              <div className="w-10 h-10 rounded-xl bg-brand-navy text-brand-gold flex items-center justify-center font-black shadow-lg shadow-brand-navy/10 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-brand-navy text-brand-gold flex items-center justify-center font-black shadow-lg shadow-brand-navy/10 group-hover:scale-105 group-hover:shadow-brand-navy/20 transition-all border border-brand-gold/10">
                 {user?.full_name ? user.full_name.charAt(0) : <UserIcon size={20} />}
               </div>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>

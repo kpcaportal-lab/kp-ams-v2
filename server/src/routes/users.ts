@@ -17,7 +17,20 @@ router.get('/', requireRole('admin', 'partner', 'director'), async (_req: Reques
                         p.work_file_url, rp.full_name as reports_to_name
                  FROM profiles p
                  LEFT JOIN profiles rp ON rp.id = p.reports_to
-                 ORDER BY p.role, p.full_name`
+                 ORDER BY 
+                    CASE p.role
+                        WHEN 'admin' THEN 1
+                        WHEN 'partner' THEN 2
+                        WHEN 'director' THEN 3
+                        WHEN 'manager' THEN 4
+                        WHEN 'assistant_manager' THEN 5
+                        WHEN 'sr_executive' THEN 6
+                        WHEN 'executive' THEN 7
+                        WHEN 'analyst' THEN 8
+                        WHEN 'staff' THEN 9
+                        ELSE 10
+                    END,
+                    p.full_name`
             );
         } catch (dbErr: any) {
             console.warn('⚠️ Standard user query failed, attempting safe fallback:', dbErr.message);
@@ -44,10 +57,10 @@ router.get('/impersonation-list', requireRole('admin', 'partner', 'director'), a
         const userRole = req.user!.role;
         
         if (userRole === 'admin') {
-            // Admin can see all managers, assistant_managers, and directors
+            // Admin can see all managers and assistant_managers (no directors)
             result = await pool.query(
                 `SELECT id, full_name, role, display_name FROM profiles 
-                 WHERE role IN ('manager', 'assistant_manager', 'director') 
+                 WHERE role IN ('manager', 'assistant_manager') 
                  AND id != $1
                  AND is_active = true
                  ORDER BY role, full_name`,

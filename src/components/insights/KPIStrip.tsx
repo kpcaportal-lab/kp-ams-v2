@@ -56,35 +56,35 @@ export function KPIStrip({ data, isLoading }: KPIStripProps) {
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {stats.map((stat, idx) => (
                 <motion.div
                     key={stat.label}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className={`bg-white p-5 rounded-2xl border ${stat.border} shadow-sm hover:shadow-md transition-all relative overflow-hidden group`}
+                    className={`bg-white p-7 rounded-[2.5rem] border ${stat.border} shadow-[0_2px_8px_rgba(15,23,42,0.02)] hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)] transition-all duration-500 relative overflow-hidden group hover:-translate-y-1`}
                 >
-                    <div className={`absolute top-0 right-0 w-24 h-24 ${stat.bg} rounded-full -mr-12 -mt-12 opacity-40 group-hover:scale-110 transition-transform`} />
+                    <div className={`absolute -right-4 -top-4 w-24 h-24 ${stat.bg} rounded-full opacity-40 group-hover:scale-125 transition-transform duration-700`} />
                     
-                    <div className="flex items-start justify-between relative z-10">
+                    <div className="flex flex-col gap-4 relative z-10">
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner-sm ${stat.bg} ${stat.text}`}>
+                            <stat.icon size={28} strokeWidth={2.5} />
+                        </div>
                         <div>
-                            <p className="text-[13px] font-bold text-slate-500 uppercase tracking-wider mb-1 font-accent">{stat.label}</p>
                             {isLoading ? (
-                                <div className="h-8 w-24 bg-slate-100 animate-pulse rounded mt-1" />
+                                <div className="h-10 w-24 bg-slate-100 animate-pulse rounded mt-1" />
                             ) : (
-                                <h3 className="text-2xl font-black text-slate-900">
+                                <h3 className="text-3xl font-black text-slate-900 tracking-tight">
                                     {stat.isCurrency ? formatINR(stat.value as number) : stat.value.toLocaleString()}
                                 </h3>
                             )}
-                        </div>
-                        <div className={`p-3 rounded-xl ${stat.bg} ${stat.text}`}>
-                            <stat.icon size={24} />
+                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1 font-accent">{stat.label}</p>
                         </div>
                     </div>
 
-                    <div className="mt-4 flex items-center gap-1.5 text-[11px] font-bold text-slate-400 relative z-10">
-                        <TrendingUp size={12} className="text-emerald-500" />
+                    <div className="mt-5 pt-4 border-t border-slate-50 flex items-center gap-1.5 text-[11px] font-bold text-slate-400 relative z-10">
+                        <TrendingUp size={12} strokeWidth={3} className="text-emerald-500" />
                         <span>+12% from last quarter</span>
                     </div>
                 </motion.div>

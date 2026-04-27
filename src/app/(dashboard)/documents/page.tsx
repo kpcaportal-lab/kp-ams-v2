@@ -87,18 +87,18 @@ export default function DocumentVaultPage() {
 
         <div className="flex items-center gap-4 w-full md:w-auto">
           <div className="relative flex-1 md:w-80 group">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" />
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-navy transition-colors" />
             <input 
               type="text" 
               placeholder="Search clients or files..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 transition-all font-semibold text-slate-700 shadow-sm"
+              className="w-full pl-11 pr-4 py-3 rounded-[1.5rem] border border-slate-200 bg-white focus:outline-none focus:ring-4 focus:ring-brand-navy/5 focus:border-brand-navy/30 transition-all font-semibold text-slate-800 shadow-thin"
             />
           </div>
           <button 
             onClick={() => window.location.href = '/assignments'}
-            className="hidden md:flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-brand-navy text-white text-sm font-black hover:bg-slate-900 transition-all hover:shadow-xl active:scale-95 shrink-0 border border-slate-800"
+            className="hidden md:flex items-center gap-2 px-6 py-3.5 rounded-[1.5rem] bg-brand-navy text-white text-sm font-black hover:bg-slate-800 transition-all hover:shadow-[0_20px_40px_rgba(30,58,95,0.25)] hover:-translate-y-1 active:scale-95 shrink-0 border-b-4 border-brand-gold/30"
           >
             <ExternalLink size={18} className="text-brand-gold" />
             Secure New Document

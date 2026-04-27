@@ -143,65 +143,63 @@ export default function BillingPage() {
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <motion.div variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } }} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Total Billed', value: Number(summary?.totalBilled || 0), icon: DollarSign, color: 'text-brand-navy', bg: 'bg-brand-navy/5' },
-          { label: 'Overdue Revenue', value: Number(summary?.overdue || 0), icon: Clock, color: 'text-rose-600', bg: 'bg-rose-50' },
-          { label: 'Collection %', value: `${Number(summary?.billingPct || 0).toFixed(1)}%`, isRaw: true, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { label: 'Active Invoices', value: Number(invoices.length || 0), isRaw: true, icon: FileText, color: 'text-brand-gold', bg: 'bg-brand-gold/5' },
+          { label: 'Total Billed', value: Number(summary?.totalBilled || 0), icon: DollarSign, color: 'text-brand-navy', bg: 'bg-brand-navy/5', accent: 'from-brand-navy to-brand-navy/80' },
+          { label: 'Overdue Revenue', value: Number(summary?.overdue || 0), icon: Clock, color: 'text-rose-600', bg: 'bg-rose-50', accent: 'from-rose-500 to-rose-600' },
+          { label: 'Collection %', value: `${Number(summary?.billingPct || 0).toFixed(1)}%`, isRaw: true, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50', accent: 'from-emerald-500 to-emerald-600' },
+          { label: 'Active Invoices', value: Number(invoices.length || 0), isRaw: true, icon: FileText, color: 'text-brand-gold', bg: 'bg-brand-gold/5', accent: 'from-brand-gold to-brand-gold/80' },
         ].map((kpi, i) => (
           <motion.div
             key={kpi.label}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="group p-6 bg-white border border-slate-200/60 rounded-[2rem] shadow-sm hover:shadow-[0_20px_40px_rgba(15,23,42,0.06)] transition-all flex items-center gap-5 hover:-translate-y-1"
+            variants={{ hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}
+            className="group relative overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white p-7 shadow-[0_2px_8px_rgba(15,23,42,0.02)] hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)] transition-all duration-500 hover:-translate-y-1"
           >
-            <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110", kpi.bg, kpi.color)}>
-               <kpi.icon size={24} strokeWidth={2.5} />
-            </div>
-            <div>
-              <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                {kpi.label}
+            <div className={cn("absolute -right-4 -top-4 w-24 h-24 rounded-full opacity-5 group-hover:opacity-10 transition-opacity", kpi.bg)} />
+            <div className="flex flex-col gap-4">
+              <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner-sm", kpi.bg)}>
+                 <kpi.icon size={28} className={kpi.color} strokeWidth={2.5} />
               </div>
-              <div className="text-2xl font-black text-slate-900 tracking-tight tabular-nums">
-                {kpi.isRaw ? kpi.value : formatIndianCurrency(Number(kpi.value || 0), true, true)}
+              <div>
+                <div className="text-3xl font-black text-slate-900 tracking-tight">{kpi.isRaw ? kpi.value : formatIndianCurrency(Number(kpi.value || 0), true, true)}</div>
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">{kpi.label}</div>
               </div>
             </div>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
 
-      {/* Tabs Switcher */}
-      <div className="flex gap-2 border-b border-slate-100 pb-4">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={cn(
-              "flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all duration-300 border",
-              activeTab === tab.id 
-                ? "bg-brand-navy/5 text-brand-navy border-brand-navy/10 shadow-sm" 
-                : "text-slate-500 hover:text-slate-700 hover:bg-slate-50 border-transparent"
-            )}
-          >
-            <tab.icon size={18} strokeWidth={2.5} />
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <div className="flex flex-col lg:flex-row gap-4 justify-between">
+        {/* Tabs Switcher */}
+        <div className="flex gap-2 bg-white/60 backdrop-blur-md rounded-[1.5rem] p-1.5 border border-slate-200 w-fit shadow-sm">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                "flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-black transition-all duration-300",
+                activeTab === tab.id 
+                  ? "bg-white text-brand-navy shadow-sm ring-1 ring-slate-200/50" 
+                  : "text-slate-500 hover:text-slate-700 hover:bg-slate-50/50"
+              )}
+            >
+              <tab.icon size={18} strokeWidth={2.5} />
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-      {/* Search Bar */}
-      <div className="relative max-w-md group">
-        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" />
-        <input
-          type="text"
-          placeholder={activeTab === 'invoices' ? "Search client, UDIN or reference..." : "Search manager or partner performance..."}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-white focus:bg-white focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 outline-none transition-all text-sm font-black text-slate-900 placeholder:text-slate-400 shadow-sm"
-        />
+        {/* Search Bar */}
+        <div className="relative flex-1 lg:max-w-md group">
+          <Search size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-navy transition-colors" />
+          <input
+            type="text"
+            placeholder={activeTab === 'invoices' ? "Search client, UDIN or reference..." : "Search manager or partner performance..."}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-14 pr-6 py-4 rounded-[1.5rem] border border-slate-200 bg-white text-sm font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-navy/5 focus:border-brand-navy/30 focus:shadow-sm transition-all shadow-thin"
+          />
+        </div>
       </div>
 
       {/* Tab Content */}
@@ -217,13 +215,13 @@ export default function BillingPage() {
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50/50">
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Client & Particulars</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Prof. Fees</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Net Amount</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">UDIN</th>
-                    <th className="px-6 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Action</th>
+                  <tr>
+                    <th className="px-6 py-5 text-left text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Date</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Client & Particulars</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Prof. Fees</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Net Amount</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">UDIN</th>
+                    <th className="px-6 py-5 text-right text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tr-[1.5rem]">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">

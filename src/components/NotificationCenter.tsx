@@ -56,13 +56,13 @@ export function NotificationCenter() {
         className={cn(
           "relative w-10 h-10 flex items-center justify-center rounded-xl border transition-all active:scale-95",
           isOpen 
-            ? "bg-slate-100 border-slate-200 text-slate-900 shadow-inner" 
-            : "bg-white border-slate-200/60 text-slate-500 hover:text-slate-900 hover:border-slate-300 shadow-sm"
+            ? "bg-brand-navy border-brand-navy text-brand-gold shadow-lg shadow-brand-navy/20" 
+            : "bg-white border-brand-gold/10 text-slate-500 hover:text-brand-navy hover:border-brand-gold/30 shadow-sm"
         )}
       >
         <Bell size={20} className={cn(unreadCount > 0 && "animate-none")} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-brand-gold text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm ring-2 ring-brand-gold/10">
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-brand-gold text-brand-navy text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm ring-2 ring-brand-gold/10">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -75,17 +75,17 @@ export function NotificationCenter() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full right-0 mt-3 w-[360px] max-h-[520px] bg-white border border-slate-200 rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.12)] z-50 overflow-hidden flex flex-col"
+            className="absolute top-full right-0 mt-3 w-[360px] max-h-[520px] bg-white border border-brand-gold/10 rounded-[1.5rem] shadow-[0_20px_50px_rgba(30,58,95,0.12)] z-50 overflow-hidden flex flex-col"
           >
-            <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <div className="px-5 py-4 border-b border-white/5 flex justify-between items-center bg-brand-navy">
               <div>
-                <h3 className="text-sm font-black text-slate-900">Notifications</h3>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{unreadCount} UNREAD MESSAGES</p>
+                <h3 className="text-sm font-black text-brand-gold">Notifications</h3>
+                <p className="text-[10px] text-brand-gold/60 font-bold uppercase tracking-widest">{unreadCount} UNREAD MESSAGES</p>
               </div>
               {unreadCount > 0 && (
                 <button 
                   onClick={() => markAllAsRead()}
-                  className="text-[11px] font-black text-brand-navy hover:text-brand-gold flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors uppercase tracking-wider"
+                  className="text-[11px] font-black text-brand-gold hover:text-white flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors uppercase tracking-wider"
                 >
                   <Check size={14} strokeWidth={3} /> Mark all read
                 </button>
@@ -118,7 +118,7 @@ export function NotificationCenter() {
                         "w-10 h-10 rounded-xl shrink-0 flex items-center justify-center border transition-all shadow-sm",
                         n.is_read 
                           ? "bg-slate-50 border-slate-100 group-hover:bg-white" 
-                          : "bg-white border-brand-gold/20 shadow-brand-gold/5 group-hover:scale-110"
+                          : "bg-white border-brand-gold/20 shadow-brand-gold/5 group-hover:scale-110 shadow-lg"
                       )}>
                         {getNotificationIcon(n.type)}
                       </div>
@@ -148,7 +148,7 @@ export function NotificationCenter() {
             <div className="p-3 bg-slate-50/50 border-t border-slate-100">
               <button 
                 onClick={() => { router.push('/dashboard'); setIsOpen(false); }}
-                className="w-full py-2.5 rounded-xl bg-white border border-slate-200 text-[11px] font-black text-slate-400 uppercase tracking-widest hover:text-brand-navy hover:border-brand-navy/20 hover:shadow-md transition-all active:scale-[0.98]"
+                className="w-full py-2.5 rounded-xl bg-white border border-brand-gold/20 text-[11px] font-black text-brand-gold uppercase tracking-widest hover:bg-brand-gold hover:text-brand-navy hover:shadow-lg transition-all active:scale-[0.98]"
               >
                 View Dashboard Settings
               </button>

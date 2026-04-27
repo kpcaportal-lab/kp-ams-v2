@@ -88,22 +88,22 @@ export default function AssignmentsPage() {
 
 
   const kpiCards = [
-    { label: 'Expected Fees', value: formatIndianCurrency(stats.totalFees, true, true), icon: IndianRupee, color: 'text-brand-navy', bg: 'bg-brand-navy/5', subValue: 'Total pipeline' },
-    { label: 'Total Billed', value: formatIndianCurrency(stats.totalBilled, true, true), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50', subValue: 'Invoiced to date' },
-    { label: 'Total Receipt', value: formatIndianCurrency(stats.totalReceipt, true, true), icon: CheckCircle, color: 'text-brand-gold', bg: 'bg-brand-gold/5', subValue: 'Payments received' },
-    { label: 'Assignments', value: stats.total.toString(), icon: Briefcase, color: 'text-slate-600', bg: 'bg-slate-50', subValue: 'Total engagements' },
+    { label: 'Expected Fees', value: formatIndianCurrency(stats.totalFees, true, true), icon: IndianRupee, color: 'text-brand-navy', bg: 'bg-brand-navy/5', subValue: 'Total pipeline', accent: 'from-brand-navy to-brand-navy/80' },
+    { label: 'Total Billed', value: formatIndianCurrency(stats.totalBilled, true, true), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50', subValue: 'Invoiced to date', accent: 'from-emerald-500 to-emerald-600' },
+    { label: 'Total Receipt', value: formatIndianCurrency(stats.totalReceipt, true, true), icon: CheckCircle, color: 'text-brand-gold', bg: 'bg-brand-gold/5', subValue: 'Payments received', accent: 'from-brand-gold to-brand-gold/80' },
+    { label: 'Assignments', value: stats.total.toString(), icon: Briefcase, color: 'text-slate-600', bg: 'bg-slate-50', subValue: 'Total engagements', accent: 'from-slate-600 to-slate-700' },
   ];
 
   if (isLoading) return <LoadingScreen message="Fetching assignment intelligence..." />;
 
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto pb-12">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-1">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 drop-shadow-sm font-accent">
-            Assignment <span className="text-brand-gold">Control Center</span>
+          <h1 className="text-4xl font-black tracking-tight text-slate-900 drop-shadow-sm font-accent">
+            Assignment <span className="text-brand-gold">Intelligence</span>
           </h1>
-          <p className="text-slate-500 mt-1 font-medium italic">Operational oversight and assignment performance tracking</p>
+          <p className="text-slate-500 mt-1 font-medium italic">Operational oversight and strategic engagement tracking</p>
         </motion.div>
         
         <motion.div initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="flex items-center gap-3">
@@ -112,25 +112,25 @@ export default function AssignmentsPage() {
             className="flex items-center gap-2.5 px-5 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-600 text-sm font-black transition-all hover:bg-slate-50 hover:shadow-sm active:scale-95"
           >
             <Download size={18} strokeWidth={3} className="text-emerald-500" />
-            Export
+            Export Data
           </button>
-          <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200 shadow-sm">
-             <button onClick={() => setViewMode('table')} className={cn("px-3 py-2 rounded-xl transition-all", viewMode === 'table' ? "bg-white text-brand-navy shadow-sm ring-1 ring-slate-200" : "text-slate-400")}>
-               <List size={18} strokeWidth={2.5} />
+          <div className="flex p-1.5 bg-slate-100 rounded-2xl border border-slate-200 shadow-sm">
+             <button onClick={() => setViewMode('table')} className={cn("px-4 py-2 rounded-xl transition-all", viewMode === 'table' ? "bg-white text-brand-navy shadow-sm ring-1 ring-slate-200" : "text-slate-400")}>
+               <List size={18} strokeWidth={3} />
              </button>
-             <button onClick={() => setViewMode('grid')} className={cn("px-3 py-2 rounded-xl transition-all", viewMode === 'grid' ? "bg-white text-brand-navy shadow-sm ring-1 ring-slate-200" : "text-slate-400")}>
-               <LayoutGrid size={18} strokeWidth={2.5} />
+             <button onClick={() => setViewMode('grid')} className={cn("px-4 py-2 rounded-xl transition-all", viewMode === 'grid' ? "bg-white text-brand-navy shadow-sm ring-1 ring-slate-200" : "text-slate-400")}>
+               <LayoutGrid size={18} strokeWidth={3} />
              </button>
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="group flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-brand-navy hover:bg-slate-800 text-white text-sm font-black transition-all hover:shadow-[0_20px_40px_rgba(30,58,95,0.25)] hover:-translate-y-1 active:scale-95"
+            className="group flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-brand-navy text-white text-sm font-black transition-all hover:shadow-[0_20px_40px_rgba(30,58,95,0.25)] hover:-translate-y-1 active:scale-95 border-b-4 border-brand-gold/30"
           >
             <Plus size={20} strokeWidth={3} className="text-brand-gold group-hover:scale-125 transition-transform" />
-            Add New Assignment
+            New Assignment
           </button>
         </motion.div>
-      </div>
+      </div>"
 
       {/* KPI Cards */}
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -204,17 +204,17 @@ export default function AssignmentsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border-separate border-spacing-0">
                   <thead>
-                    <tr className="bg-slate-50/50">
-                      <th className="text-left px-8 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Client & Scope</th>
-                      <th className="text-left px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Audit Type</th>
-                      <th className="text-left px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest leading-none flex items-center gap-1.5 pt-6.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Lead
+                    <tr>
+                      <th className="text-left px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Client & Scope</th>
+                      <th className="text-left px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Audit Type</th>
+                      <th className="text-left px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">
+                        Lead Partner
                       </th>
-                      <th className="text-right px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Fees</th>
-                      <th className="text-right px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest text-emerald-600">Billed</th>
-                      <th className="text-right px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest text-blue-600">Receipt</th>
-                      <th className="text-center px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Cycle</th>
-                      <th className="text-center px-6 py-5 text-[11px] font-black text-slate-400 border-b border-slate-100 uppercase tracking-widest">Vault</th>
+                      <th className="text-right px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Fees</th>
+                      <th className="text-right px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Billed</th>
+                      <th className="text-right px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Receipt</th>
+                      <th className="text-center px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Cycle</th>
+                      <th className="text-center px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tr-[1.5rem]">Vault</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">

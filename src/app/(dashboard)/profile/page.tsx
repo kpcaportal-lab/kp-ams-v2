@@ -77,26 +77,26 @@ export default function ProfilePage() {
 
     return (
         <div className="space-y-8 pb-10">
-            {/* Page Header */}
+"            {/* Page Header */}
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative overflow-hidden rounded-[2rem] bg-[var(--brand-navy)] px-8 py-10 md:px-12 md:py-14 text-white shadow-2xl shadow-brand-navy/20"
+                className="relative overflow-hidden rounded-[2.5rem] bg-[var(--brand-navy)] px-8 py-10 md:px-12 md:py-14 text-white shadow-[0_20px_40px_rgba(30,58,95,0.25)]"
             >
-                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-[var(--brand-gold)]/10 rounded-full blur-[100px]" />
+                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-[var(--brand-gold)]/15 rounded-full blur-[100px]" />
                 <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-white/5 rounded-full blur-[100px]" />
                 
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-6">
-                        <div className="w-20 h-20 rounded-[1.5rem] bg-[var(--brand-gold)] flex items-center justify-center text-[var(--brand-navy)] text-3xl font-black shadow-2xl shadow-brand-gold/20">
+                        <div className="w-20 h-20 rounded-[1.5rem] bg-[var(--brand-gold)] flex items-center justify-center text-[var(--brand-navy)] text-4xl font-black shadow-xl shadow-brand-gold/20">
                             {user.full_name?.charAt(0)}
                         </div>
                         <div>
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--brand-gold)]/10 border border-[var(--brand-gold)]/20 text-[var(--brand-gold)] text-[10px] font-black uppercase tracking-[0.2em] mb-2">
                                 <Sparkles size={14} /> Account Settings
                             </div>
-                            <h1 className="text-3xl md:text-4xl font-black tracking-tight font-accent">{user.full_name}</h1>
-                            <p className="text-white/60 text-sm font-medium mt-1">{user.email}</p>
+                            <h1 className="text-3xl md:text-5xl font-black tracking-tight font-accent">{user.full_name}</h1>
+                            <p className="text-white/60 text-sm font-medium mt-1 tracking-wide">{user.email}</p>
                         </div>
                     </div>
 
@@ -104,20 +104,20 @@ export default function ProfilePage() {
                         {!isEditing && (
                             <button 
                                 onClick={() => setIsEditing(true)}
-                                className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 text-sm font-bold transition-all"
+                                className="flex items-center gap-2 px-5 py-3 rounded-[1.5rem] bg-white/10 hover:bg-white/20 border border-white/10 text-sm font-bold transition-all hover:-translate-y-1 active:scale-95"
                             >
                                 <Edit2 size={16} /> Edit Profile
                             </button>
                         )}
                         <button 
                             onClick={handleLogout}
-                            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-300 text-sm font-bold transition-all"
+                            className="flex items-center gap-2 px-5 py-3 rounded-[1.5rem] bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-300 text-sm font-bold transition-all hover:-translate-y-1 active:scale-95"
                         >
                             <LogOut size={16} /> Logout
                         </button>
                     </div>
                 </div>
-            </motion.div>
+            </motion.div>"
 
             {/* Cards Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -324,7 +324,7 @@ export default function ProfilePage() {
                                 >
                                     <button 
                                         type="button" 
-                                        className="flex items-center gap-2 px-6 py-3 rounded-2xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all"
+                                        className="flex items-center gap-2 px-6 py-3 rounded-[1.5rem] border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all hover:-translate-y-1 active:scale-95"
                                         onClick={() => {
                                             setIsEditing(false);
                                             setDisplayName(user.display_name || '');
@@ -336,7 +336,7 @@ export default function ProfilePage() {
                                     </button>
                                     <button 
                                         type="submit" 
-                                        className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-[var(--brand-navy)] text-[var(--brand-gold)] text-sm font-bold shadow-xl shadow-brand-navy/10 hover:shadow-brand-navy/20 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50"
+                                        className="flex items-center gap-2 px-6 py-3 rounded-[1.5rem] bg-[var(--brand-navy)] text-[var(--brand-gold)] text-sm font-bold shadow-xl shadow-brand-navy/10 hover:shadow-[0_15px_30px_rgba(30,58,95,0.2)] hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-50"
                                         disabled={loading}
                                     >
                                         {loading ? (

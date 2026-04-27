@@ -67,6 +67,18 @@ export default function UsersPage() {
     staff: profiles.filter(u => ['manager', 'assistant_manager', 'sr_executive', 'executive', 'staff', 'analyst'].includes(u.role)).length
   };
 
+  const roleOrder: Record<UserRole, number> = {
+    admin: 1,
+    partner: 2,
+    director: 3,
+    manager: 4,
+    assistant_manager: 5,
+    sr_executive: 6,
+    executive: 7,
+    analyst: 8,
+    staff: 9
+  };
+
   const filtered = profiles.filter(u => {
     const fullName = u.full_name || '';
     const email = u.email || '';
@@ -75,6 +87,9 @@ export default function UsersPage() {
     const matchesRole = roleFilter === 'all' || u.role === roleFilter;
     return matchesSearch && matchesRole;
   }).sort((a, b) => {
+    const orderA = roleOrder[a.role] ?? 99;
+    const orderB = roleOrder[b.role] ?? 99;
+    if (orderA !== orderB) return orderA - orderB;
     const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
     const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
     return dateB - dateA;
