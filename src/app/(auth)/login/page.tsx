@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { useNavigate } from '@/hooks/useNavigate';
 import { Building2, Lock, Mail, AlertCircle } from 'lucide-react';
+import { BrandedLogo } from '@/components/BrandedLogo';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -50,13 +51,13 @@ export default function LoginPage() {
         <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: '60%', height: '60%', background: 'radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)', borderRadius: '50%' }} />
 
         <div style={{ maxWidth: 480, position: 'relative', zIndex: 1 }}>
-          <div style={{ marginBottom: '3.5rem', display: 'inline-block' }}>
-            <img src="/images/logo_full.png" alt="Kirtane & Pandit" style={{ height: '90px', width: 'auto', objectFit: 'contain' }} />
+          <div style={{ marginBottom: '3.5rem' }}>
+            <BrandedLogo variant="full" theme="dark" className="scale-150 origin-left" />
           </div>
-          <h1 style={{ fontSize: '3rem', fontWeight: 700, lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.02em', fontFamily: 'var(--font-accent)' }}>
+          <h1 style={{ fontSize: '3.5rem', fontWeight: 800, lineHeight: 1, marginBottom: '1.5rem', letterSpacing: '-0.03em', fontFamily: 'var(--font-accent)' }}>
             Assignment Management System
           </h1>
-          <p style={{ fontSize: '1.125rem', color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.6 }}>
+          <p style={{ fontSize: '1.25rem', color: 'rgba(255, 255, 255, 0.7)', lineHeight: 1.6, maxWidth: '90%' }}>
             Streamlined tracking, efficient professional workflows, and centralized assignment controls for Kirtane &amp; Pandit.
           </p>
         </div>
@@ -71,11 +72,11 @@ export default function LoginPage() {
         padding: '2rem'
       }}>
         <div style={{ width: '100%', maxWidth: 420 }}>
-          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <div className="lg:hidden" style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'center' }}>
-              <img src="/images/logo_full.png" alt="Kirtane & Pandit" style={{ height: '90px', width: 'auto', objectFit: 'contain' }} />
+              <BrandedLogo variant="full" theme="light" className="scale-125" />
             </div>
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem', fontFamily: 'var(--font-accent)' }}>
+            <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem', fontFamily: 'var(--font-accent)' }}>
               Welcome Back
             </h2>
             <p style={{ color: 'var(--text-muted)' }}>Sign in to your K&amp;P portal account</p>

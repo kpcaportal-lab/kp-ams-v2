@@ -22,6 +22,7 @@ import {
 import { useAuthStore } from '@/store/authStore';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { BrandedLogo } from './BrandedLogo';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'partner', 'director', 'manager', 'assistant_manager', 'staff', 'sr_executive', 'executive', 'analyst'] },
@@ -82,13 +83,11 @@ export function Sidebar({
         )}
       >
         {/* Brand logo */}
-        <div className="h-[72px] flex items-center px-5 border-b border-white/5 overflow-hidden whitespace-nowrap bg-white/5 backdrop-blur-sm">
+        <div className="h-[88px] flex items-center px-5 border-b border-white/5 overflow-hidden whitespace-nowrap bg-white/5 backdrop-blur-sm">
           <Link href="/dashboard" className="flex items-center">
             {(!isCollapsed || isMobileOpen) ? (
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 shrink-0 flex items-center justify-center p-0">
-                  <img src="/images/logo_monogram.png" alt="K&P" className="h-full w-full object-contain" />
-                </div>
+                <BrandedLogo variant="monogram" theme="dark" className="shrink-0" />
                 <div className="flex flex-col">
                   <span className="text-sm font-black tracking-tight text-white leading-tight uppercase font-sans">
                     Kirtane & Pandit
@@ -99,9 +98,7 @@ export function Sidebar({
                 </div>
               </div>
             ) : (
-              <div className="w-14 h-14 flex items-center justify-center shrink-0 p-0">
-                <img src="/images/logo_monogram.png" alt="K&P" className="h-full w-full object-contain" />
-              </div>
+              <BrandedLogo variant="monogram" theme="dark" className="shrink-0" />
             )}
           </Link>
         </div>

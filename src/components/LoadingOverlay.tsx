@@ -16,15 +16,22 @@ export function LoadingOverlay() {
         <div className="absolute -inset-10 bg-gradient-to-br from-blue-600/10 via-transparent to-indigo-600/10 blur-3xl opacity-50 group-hover:opacity-80 transition-opacity duration-1000"></div>
         
         <div className="relative z-10 flex flex-col items-center">
-          <div className="relative w-48 h-48 mb-8 animate-float">
-            <img 
-              src="/images/loading_logo.png" 
-              alt="Loading" 
-              className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(59,130,246,0.3)] animate-pulse-gentle" 
-            />
+          <div className="relative w-32 h-32 mb-10 flex items-center justify-center">
+            {/* Inner glow */}
+            <div className="absolute inset-0 bg-brand-gold/20 blur-3xl animate-pulse" />
+            
+            {/* Branded Circular Spinner */}
+            <div className="relative w-24 h-24">
+              {/* Static background ring */}
+              <div className="absolute inset-0 border-[6px] border-white/5 rounded-full" />
+              {/* Spinning branded ring */}
+              <div className="absolute inset-0 border-[6px] border-transparent border-t-brand-gold border-r-brand-gold/40 rounded-full animate-spin shadow-[0_0_15px_rgba(212,165,116,0.2)]" />
+              {/* Pulsing center dot */}
+              <div className="absolute inset-[38px] bg-brand-gold rounded-full animate-pulse shadow-[0_0_20px_#D4A574]" />
+            </div>
           </div>
           
-          <div className="flex flex-col items-center gap-1">
+          <div className="flex flex-col items-center gap-2">
             <span className="text-2xl font-black text-white tracking-[0.3em] uppercase mb-1">
               Initializing
             </span>
