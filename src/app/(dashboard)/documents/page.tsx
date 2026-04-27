@@ -65,8 +65,8 @@ export default function DocumentVaultPage() {
   if (loading) {
     return (
       <div className="p-8 flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="w-12 h-12 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
-        <p className="text-slate-500 font-medium">Securing access to vault...</p>
+        <div className="w-12 h-12 border-4 border-brand-navy/10 border-t-brand-gold rounded-full animate-spin shadow-[0_0_15px_rgba(212,175,55,0.2)]" />
+        <p className="text-slate-500 font-black italic tracking-tight">Securing access to KP-AMS Vault...</p>
       </div>
     );
   }
@@ -76,31 +76,31 @@ export default function DocumentVaultPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-            <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-500/20">
-              <Shield className="text-white w-6 h-6" />
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3 font-accent">
+            <div className="p-2 bg-brand-navy rounded-xl shadow-lg shadow-brand-navy/20 border border-slate-800">
+              <Shield className="text-brand-gold w-6 h-6" />
             </div>
-            Document <span className="text-indigo-600">Vault</span>
+            Document <span className="text-brand-navy">Vault</span>
           </h1>
           <p className="text-slate-500 mt-1 font-medium italic">Secure repository for audit working papers and reports</p>
         </div>
 
         <div className="flex items-center gap-4 w-full md:w-auto">
           <div className="relative flex-1 md:w-80 group">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" />
             <input 
               type="text" 
               placeholder="Search clients or files..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-400 transition-all font-medium text-slate-700 shadow-sm"
+              className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-white focus:outline-none focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 transition-all font-semibold text-slate-700 shadow-sm"
             />
           </div>
           <button 
             onClick={() => window.location.href = '/assignments'}
-            className="hidden md:flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-slate-900 text-white text-sm font-black hover:bg-slate-800 transition-all hover:shadow-xl active:scale-95 shrink-0"
+            className="hidden md:flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-brand-navy text-white text-sm font-black hover:bg-slate-900 transition-all hover:shadow-xl active:scale-95 shrink-0 border border-slate-800"
           >
-            <ExternalLink size={18} />
+            <ExternalLink size={18} className="text-brand-gold" />
             Secure New Document
           </button>
         </div>
@@ -111,29 +111,32 @@ export default function DocumentVaultPage() {
         
         {/* Left Stats/Folders sidebar */}
         <div className="space-y-6">
-          <div className="bg-slate-900 rounded-[2rem] p-6 text-white shadow-xl">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-slate-800 rounded-lg">
-                <HardDrive className="w-5 h-5 text-indigo-400" />
+          <div className="bg-brand-navy rounded-[2rem] p-6 text-white shadow-xl border border-slate-800 relative overflow-hidden">
+            {/* Decorative element */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-gold/5 rounded-full -mr-16 -mt-16 blur-3xl" />
+            
+            <div className="flex items-center gap-3 mb-6 relative z-10">
+              <div className="p-2 bg-slate-800/50 rounded-lg border border-slate-700/50">
+                <HardDrive className="w-5 h-5 text-brand-gold" />
               </div>
-              <div className="font-black tracking-tight">Vault Storage</div>
+              <div className="font-black tracking-tight uppercase text-xs">Vault Storage</div>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 relative z-10">
               <div>
                 <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
                   <span>Capacity Used</span>
-                  <span>42%</span>
+                  <span className="text-brand-gold">42%</span>
                 </div>
-                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                  <div className="h-full bg-indigo-500 w-[42%] rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                <div className="h-1.5 w-full bg-slate-800/50 rounded-full overflow-hidden border border-slate-700/30">
+                  <div className="h-full bg-brand-gold w-[42%] rounded-full shadow-[0_0_10px_rgba(212,175,55,0.4)]" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="p-3 bg-slate-800/50 rounded-2xl border border-slate-700/50">
+                <div className="p-3 bg-slate-800/30 rounded-2xl border border-slate-700/30">
                   <div className="text-xl font-black text-white">{Object.keys(documents).length}</div>
                   <div className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Clients</div>
                 </div>
-                <div className="p-3 bg-slate-800/50 rounded-2xl border border-slate-700/50">
+                <div className="p-3 bg-slate-800/30 rounded-2xl border border-slate-700/30">
                   <div className="text-xl font-black text-white">{Object.values(documents).flat().length}</div>
                   <div className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Total Files</div>
                 </div>
@@ -145,8 +148,8 @@ export default function DocumentVaultPage() {
             <div className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-2 mb-4">Quick Filters</div>
             <div className="space-y-1">
               {['Audit Reports', 'Signed LOEs', 'Working Papers', 'Misc'].map(filter => (
-                <button key={filter} className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all flex items-center gap-3">
-                  <Folder className="w-4 h-4 text-slate-300" />
+                <button key={filter} className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-brand-navy transition-all flex items-center gap-3 group">
+                  <Folder className="w-4 h-4 text-slate-300 group-hover:text-brand-gold transition-colors" />
                   {filter}
                 </button>
               ))}
@@ -166,13 +169,13 @@ export default function DocumentVaultPage() {
                   onClick={() => toggleClient(clientName)}
                   className={cn(
                     "w-full flex items-center justify-between p-5 text-left transition-colors",
-                    isExpanded ? "bg-indigo-50/30" : "hover:bg-slate-50"
+                    isExpanded ? "bg-brand-navy/[0.02]" : "hover:bg-slate-50"
                   )}
                 >
                   <div className="flex items-center gap-4">
                     <div className={cn(
-                      "p-2.5 rounded-xl transition-all",
-                      isExpanded ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200" : "bg-slate-100 text-slate-400"
+                      "p-2.5 rounded-xl transition-all border",
+                      isExpanded ? "bg-brand-navy text-brand-gold border-slate-800 shadow-lg shadow-brand-navy/10" : "bg-slate-100 text-slate-400 border-transparent"
                     )}>
                       <Folder className="w-5 h-5" />
                     </div>
@@ -196,21 +199,21 @@ export default function DocumentVaultPage() {
                         {clientDocs.map((doc) => (
                           <div 
                             key={doc.id}
-                            className="group bg-white p-4 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all flex items-center justify-between"
+                            className="group bg-white p-4 rounded-2xl border border-slate-200 hover:border-brand-gold/30 hover:shadow-md transition-all flex items-center justify-between"
                           >
                             <div className="flex items-center gap-3 overflow-hidden">
-                              <div className="p-2 bg-rose-50 text-rose-500 rounded-lg group-hover:bg-rose-500 group-hover:text-white transition-colors">
+                              <div className="p-2 bg-rose-50 text-rose-500 rounded-lg group-hover:bg-brand-navy group-hover:text-brand-gold transition-colors border border-transparent group-hover:border-slate-800">
                                 <FileText className="w-5 h-5" />
                               </div>
                               <div className="overflow-hidden">
                                 <div className="text-sm font-black text-slate-800 truncate" title={doc.title}>{doc.title}</div>
-                                <div className="text-[10px] font-bold text-slate-400 uppercase">{doc.fiscal_year} • {doc.category}</div>
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{doc.fiscal_year} • {doc.category}</div>
                               </div>
                             </div>
                             <div className="flex items-center gap-1">
                               <button 
                                 onClick={() => setPreviewUrl(doc.file_url)}
-                                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                                className="p-2 text-slate-400 hover:text-brand-navy hover:bg-brand-navy/5 rounded-lg transition-all"
                                 title="Quick Preview"
                               >
                                 <Eye size={18} />
@@ -240,7 +243,7 @@ export default function DocumentVaultPage() {
                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
                  <Folder className="w-10 h-10 text-slate-200" />
                </div>
-               <h3 className="text-xl font-black text-slate-900">No folders found</h3>
+               <h3 className="text-xl font-black text-slate-900 font-accent">No folders found</h3>
                <p className="text-slate-500 mt-2 font-medium italic">Try adjusting your search query or check another fiscal year</p>
             </div>
           )}
@@ -252,33 +255,40 @@ export default function DocumentVaultPage() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10">
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="absolute inset-0 bg-slate-900/80 backdrop-blur-md"
+            className="absolute inset-0 bg-slate-900/90 backdrop-blur-md"
             onClick={() => setPreviewUrl(null)}
           />
           <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-            className="relative w-full h-full bg-white rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden"
+            initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }}
+            className="relative w-full h-full bg-white rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden border border-slate-200"
           >
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white relative">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-navy via-brand-gold to-brand-navy" />
               <div className="flex items-center gap-4">
-                <div className="p-2 bg-indigo-600 rounded-xl text-white">
+                <div className="p-2 bg-brand-navy rounded-xl text-brand-gold border border-slate-800 shadow-lg">
                   <Shield size={20} />
                 </div>
-                <div className="font-black text-slate-900 tracking-tight">Vault Preview Mode</div>
+                <div>
+                  <div className="font-black text-slate-900 tracking-tight font-accent">Vault Preview Mode</div>
+                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">Secure Document Access</div>
+                </div>
               </div>
               <button 
                 onClick={() => setPreviewUrl(null)}
-                className="p-2.5 rounded-full bg-slate-100 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all active:scale-90 shadow-sm"
+                className="p-2.5 rounded-full bg-slate-100 text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-all active:scale-90 shadow-sm border border-slate-200"
               >
                 <X size={24} />
               </button>
             </div>
-            <div className="flex-1 bg-slate-800">
+            <div className="flex-1 bg-slate-900 flex items-center justify-center">
                <iframe 
                 src={previewUrl} 
                 className="w-full h-full border-none"
                 title="Document Preview"
                />
+            </div>
+            <div className="p-4 bg-slate-50 border-t border-slate-100 text-center">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Kirtane & Pandit Confidential • Secure Audit Working Paper</p>
             </div>
           </motion.div>
         </div>

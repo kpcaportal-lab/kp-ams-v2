@@ -63,19 +63,19 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
             className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden"
           >
             {/* Header */}
-            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white">
+            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-[var(--brand-navy)]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-blue-500/10 flex items-center justify-center">
-                  <Building2 className="text-blue-600" size={20} />
+                <div className="w-10 h-10 rounded-2xl bg-[var(--brand-gold)]/20 flex items-center justify-center">
+                  <Building2 className="text-[var(--brand-gold)]" size={20} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900 tracking-tight">Add Client</h2>
-                  <p className="text-xs text-slate-500 mt-0.5 font-medium">Register a new client in the system</p>
+                  <h2 className="text-xl font-bold text-[var(--brand-gold)] tracking-tight font-accent">Add Client</h2>
+                  <p className="text-xs text-[var(--brand-gold)]/60 mt-0.5 font-medium">Register a new client in the system</p>
                 </div>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all border border-transparent hover:border-rose-100"
+                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10 text-[var(--brand-gold)]/60 hover:text-[var(--brand-gold)] transition-all border border-transparent hover:border-white/10"
               >
                 <X size={20} />
               </button>
@@ -90,7 +90,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all placeholder:text-slate-300"
                     placeholder="e.g. Acme Corp India"
                   />
                 </div>
@@ -103,7 +103,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                       required
                       value={form.industry}
                       onChange={(e) => setForm({ ...form, industry: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       <option value="">Select Industry</option>
                       <option value="Manufacturing">Manufacturing</option>
@@ -118,7 +118,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                     <select
                       value={form.status}
                       onChange={(e) => setForm({ ...form, status: e.target.value as 'active' | 'inactive' })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
@@ -133,7 +133,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                     <input
                       value={form.gstn}
                       onChange={(e) => setForm({ ...form, gstn: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 shadow-sm"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all placeholder:text-slate-300 shadow-sm"
                       placeholder="e.g. 27AAAC..."
                     />
                   </div>
@@ -144,7 +144,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                     <input
                       value={form.notes}
                       onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 shadow-sm"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all placeholder:text-slate-300 shadow-sm"
                       placeholder="Internal reference..."
                     />
                   </div>
@@ -157,7 +157,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                     <textarea
                       value={form.address}
                       onChange={(e) => setForm({ ...form, address: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 resize-none h-20"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all placeholder:text-slate-300 resize-none h-20"
                       placeholder="Client's office address"
                     />
                   </div>
@@ -168,7 +168,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                     <textarea
                       value={form.billing_details}
                       onChange={(e) => setForm({ ...form, billing_details: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 resize-none h-20"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all placeholder:text-slate-300 resize-none h-20"
                       placeholder="Specific billing instructions"
                     />
                   </div>
@@ -188,7 +188,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                         required
                         value={form.spocName}
                         onChange={(e) => setForm({ ...form, spocName: e.target.value })}
-                        className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
+                        className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all placeholder:text-slate-300"
                         placeholder="e.g. John Doe"
                       />
                     </div>
@@ -205,7 +205,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                           required
                           value={form.spocEmail}
                           onChange={(e) => setForm({ ...form, spocEmail: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
+                          className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all placeholder:text-slate-300"
                           placeholder="john@example.com"
                         />
                       </div>
@@ -220,7 +220,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                           required
                           value={form.spocPhone}
                           onChange={(e) => setForm({ ...form, spocPhone: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
+                          className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all placeholder:text-slate-300"
                           placeholder="+91 XXXXX XXXXX"
                         />
                       </div>
@@ -240,7 +240,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-bold shadow-[0_8px_20px_rgba(37,99,235,0.25)] hover:shadow-[0_12px_28px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3.5 rounded-2xl bg-[var(--brand-navy)] text-[var(--brand-gold)] text-sm font-bold shadow-[0_8px_20px_rgba(30,58,95,0.25)] hover:shadow-[0_12px_28px_rgba(30,58,95,0.35)] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2"
                 >
                   <Save size={18} />
                   Save Client

@@ -33,11 +33,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', background: 'var(--bg-main)' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', background: 'var(--bg-main)', fontFamily: 'var(--font-sans)' }}>
       {/* Left side: Branding / Illustration (Hidden on small screens) */}
       <div className="hidden lg:flex" style={{ 
         flex: 1, 
-        background: 'linear-gradient(135deg, #1E1B4B 0%, #4338CA 100%)',
+        background: 'linear-gradient(135deg, var(--brand-navy) 0%, var(--navy-900) 100%)',
         flexDirection: 'column',
         justifyContent: 'center',
         padding: '4rem',
@@ -46,25 +46,18 @@ export default function LoginPage() {
         overflow: 'hidden'
       }}>
         {/* Decorative background elements */}
-        <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '50%', height: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)', borderRadius: '50%' }} />
-        <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: '60%', height: '60%', background: 'radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '50%', height: '50%', background: 'radial-gradient(circle, rgba(212,165,116,0.15) 0%, transparent 70%)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: '60%', height: '60%', background: 'radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)', borderRadius: '50%' }} />
 
         <div style={{ maxWidth: 480, position: 'relative', zIndex: 1 }}>
-          <div style={{ 
-            width: 64, height: 64, borderRadius: 16, 
-            background: 'rgba(255, 255, 255, 0.1)', 
-            backdropFilter: 'blur(10px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            marginBottom: '2rem',
-            border: '1px solid rgba(255, 255, 255, 0.2)'
-          }}>
-            <Building2 size={32} color="#fff" />
+          <div style={{ marginBottom: '3rem' }}>
+            <img src="/files/logo-white.svg" alt="Kirtane & Pandit" style={{ height: '64px', width: 'auto' }} />
           </div>
-          <h1 style={{ fontSize: '3rem', fontWeight: 800, lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
-            K&amp;P Assignment Management System
+          <h1 style={{ fontSize: '3rem', fontWeight: 700, lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.02em', fontFamily: 'var(--font-accent)' }}>
+            Assignment Management System
           </h1>
           <p style={{ fontSize: '1.125rem', color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.6 }}>
-            Streamlined tracking, efficient professional workflows, and centralized assignment controls.
+            Streamlined tracking, efficient professional workflows, and centralized assignment controls for Kirtane &amp; Pandit.
           </p>
         </div>
       </div>
@@ -79,15 +72,10 @@ export default function LoginPage() {
       }}>
         <div style={{ width: '100%', maxWidth: 420 }}>
           <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-            <div className="lg:hidden" style={{ 
-              width: 48, height: 48, borderRadius: 12, 
-              background: 'linear-gradient(135deg, #2563EB, #4F46E5)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 1.5rem'
-            }}>
-              <Building2 size={24} color="#fff" />
+            <div className="lg:hidden" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
+              <img src="/files/logo-primary.svg" alt="Kirtane & Pandit" style={{ height: '48px', width: 'auto' }} />
             </div>
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem', fontFamily: 'var(--font-accent)' }}>
               Welcome Back
             </h2>
             <p style={{ color: 'var(--text-muted)' }}>Sign in to your K&amp;P portal account</p>

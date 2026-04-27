@@ -111,14 +111,14 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
             className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden"
           >
             {/* Header */}
-            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white">
+            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-[var(--brand-navy)]">
               <div>
-                <h2 className="text-xl font-bold text-slate-900 tracking-tight">Add New Assignment</h2>
-                <p className="text-xs text-slate-500 mt-0.5 font-medium">Create a new client engagement</p>
+                <h2 className="text-xl font-bold text-[var(--brand-gold)] tracking-tight font-accent">Add New Assignment</h2>
+                <p className="text-xs text-[var(--brand-gold)]/60 mt-0.5 font-medium">Create a new client engagement</p>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all border border-transparent hover:border-rose-100"
+                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10 text-[var(--brand-gold)]/60 hover:text-[var(--brand-gold)] transition-all border border-transparent hover:border-white/10"
               >
                 <X size={20} />
               </button>
@@ -133,7 +133,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     required
                     value={form.client_id}
                     onChange={(e) => setForm({ ...form, client_id: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all cursor-pointer appearance-none"
                   >
                     <option value="">Select a client</option>
                     {clients.map(c => (
@@ -149,7 +149,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     required
                     value={form.gstn}
                     onChange={(e) => setForm({ ...form, gstn: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 pattern-uppercase"
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all placeholder:text-slate-300 pattern-uppercase"
                     placeholder="29ABCDE1234F1Z5"
                   />
                 </div>
@@ -161,7 +161,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     required
                     value={form.scope_item}
                     onChange={(e) => setForm({ ...form, scope_item: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300"
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all placeholder:text-slate-300"
                     placeholder="e.g. Statutory Audit FY 23-24"
                   />
                 </div>
@@ -174,7 +174,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     rows={3}
                     value={form.scope_areas}
                     onChange={(e) => setForm({ ...form, scope_areas: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 resize-none"
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all placeholder:text-slate-300 resize-none"
                     placeholder="Describe the scope areas in detail..."
                   />
                 </div>
@@ -186,7 +186,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     <select
                       value={form.category}
                       onChange={(e) => setForm({ ...form, category: e.target.value as AssignmentCategory })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
                         <option key={key} value={key}>{label}</option>
@@ -200,7 +200,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     <select
                       value={form.subcategory}
                       onChange={(e) => setForm({ ...form, subcategory: e.target.value as AssignmentSubcategory })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       {Object.entries(SUBCATEGORY_LABELS).map(([key, label]) => (
                         <option key={key} value={key}>{label}</option>
@@ -216,7 +216,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     <select
                       value={form.fiscal_year}
                       onChange={(e) => setForm({ ...form, fiscal_year: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       <option value="2024-25">2024-25</option>
                       <option value="2025-26">2025-26</option>
@@ -236,7 +236,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                         required
                         value={form.total_fees || ''}
                         onChange={(e) => setForm({ ...form, total_fees: Number(e.target.value) })}
-                        className="w-full pl-8 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all"
+                        className="w-full pl-8 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all"
                         placeholder="0.00"
                       />
                     </div>
@@ -248,7 +248,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     <select
                       value={form.billing_cycle}
                       onChange={(e) => setForm({ ...form, billing_cycle: e.target.value as BillingCycle })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       <option value="monthly">Monthly</option>
                       <option value="quarterly">Quarterly</option>
@@ -264,7 +264,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     <select
                       value={form.partner_id}
                       onChange={(e) => setForm({ ...form, partner_id: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       <option value="">Select partner</option>
                       {partners.map(p => (
@@ -279,7 +279,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                     <select
                       value={form.manager_id}
                       onChange={(e) => setForm({ ...form, manager_id: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all cursor-pointer appearance-none"
                     >
                       <option value="">Select manager</option>
                       {managers.map(m => (
@@ -301,7 +301,7 @@ export default function AddAssignmentModal({ open, setOpen }: AddAssignmentModal
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-bold shadow-[0_8px_20px_rgba(37,99,235,0.25)] hover:shadow-[0_12px_28px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 transition-all active:scale-95"
+                  className="flex-1 px-6 py-3.5 rounded-2xl bg-[var(--brand-navy)] text-[var(--brand-gold)] text-sm font-bold shadow-[0_8px_20px_rgba(30,58,95,0.25)] hover:shadow-[0_12px_28px_rgba(30,58,95,0.35)] hover:-translate-y-0.5 transition-all active:scale-95"
                 >
                   Create Assignment
                 </button>

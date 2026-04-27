@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80">
+  <!-- KPCA HORIZONTAL LOCKUP -->
+  <rect width="300" height="80" fill="none"/>
+  
+  <!-- Icon -->
+  <rect x="5" y="5" width="70" height="70" rx="6" fill="#1E3A5F" stroke="#D4A574" stroke-width="2"/>
+  <text x="40" y="60" text-anchor="middle" fill="#D4A574" font-family="serif" font-size="48" font-weight="bold">K&P</text>
+  
+  <!-- Text group -->
+  <g>
+    <!-- Main text -->
+    <text x="90" y="35" fill="#1E3A5F" font-family="Georgia, serif" font-size="28" font-weight="bold">KIRTANE</text>
+    <text x="245" y="35" fill="#D4A574" font-family="Georgia, serif" font-size="14" font-style="italic">&amp;</text>
+    <text x="90" y="62" fill="#1E3A5F" font-family="Georgia, serif" font-size="24" font-weight="bold">PANDIT</text>
+    
+    <!-- Descriptor -->
+    <text x="280" y="62" fill="#666666" font-family="Arial, sans-serif" font-size="10" font-weight="bold">CHARTERED</text>
+    <text x="280" y="72" fill="#666666" font-family="Arial, sans-serif" font-size="10" font-weight="bold">ACCOUNTANTS</text>
+  </g>
+  
+  <!-- Info -->
+  <text x="150" y="78" text-anchor="middle" fill="#999999" font-family="Arial, sans-serif" font-size="8">HORIZONTAL LOCKUP</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- KPCA ICON MARK - Mark only, no text -->
+  <rect width="100" height="100" fill="none"/>
+  
+  <!-- Icon square -->
+  <rect x="10" y="10" width="80" height="80" rx="8" fill="#1E3A5F" stroke="#D4A574" stroke-width="2"/>
+  
+  <!-- K&P text -->
+  <text x="50" y="75" text-anchor="middle" fill="#D4A574" font-family="serif" font-size="56" font-weight="bold">K&P</text>
+  
+  <!-- Info -->
+  <text x="50" y="95" text-anchor="middle" fill="#999999" font-family="Arial, sans-serif" font-size="8">ICON MARK</text>
+</svg>

@@ -81,22 +81,22 @@ export default function ProfilePage() {
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative overflow-hidden rounded-[2rem] bg-slate-900 px-8 py-10 md:px-12 md:py-14 text-white shadow-2xl"
+                className="relative overflow-hidden rounded-[2rem] bg-[var(--brand-navy)] px-8 py-10 md:px-12 md:py-14 text-white shadow-2xl shadow-brand-navy/20"
             >
-                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-violet-500/20 rounded-full blur-[100px]" />
-                <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-[100px]" />
+                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-[var(--brand-gold)]/10 rounded-full blur-[100px]" />
+                <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-white/5 rounded-full blur-[100px]" />
                 
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-6">
-                        <div className="w-20 h-20 rounded-[1.5rem] bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-3xl font-black shadow-2xl shadow-blue-500/30">
+                        <div className="w-20 h-20 rounded-[1.5rem] bg-[var(--brand-gold)] flex items-center justify-center text-[var(--brand-navy)] text-3xl font-black shadow-2xl shadow-brand-gold/20">
                             {user.full_name?.charAt(0)}
                         </div>
                         <div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-bold uppercase tracking-[0.2em] mb-2">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--brand-gold)]/10 border border-[var(--brand-gold)]/20 text-[var(--brand-gold)] text-[10px] font-black uppercase tracking-[0.2em] mb-2">
                                 <Sparkles size={14} /> Account Settings
                             </div>
-                            <h1 className="text-3xl md:text-4xl font-black tracking-tight">{user.full_name}</h1>
-                            <p className="text-slate-400 text-sm font-medium mt-1">{user.email}</p>
+                            <h1 className="text-3xl md:text-4xl font-black tracking-tight font-accent">{user.full_name}</h1>
+                            <p className="text-white/60 text-sm font-medium mt-1">{user.email}</p>
                         </div>
                     </div>
 
@@ -128,19 +128,19 @@ export default function ProfilePage() {
                     className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden"
                 >
                     <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/30">
-                        <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
-                            <UserCircle size={20} className="text-blue-600" /> Overview
+                        <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2 font-accent">
+                            <UserCircle size={20} className="text-[var(--brand-navy)]" /> Overview
                         </h3>
                     </div>
                     <div className="p-8 flex flex-col items-center text-center">
                         <div className="relative mb-6">
-                            <div className="w-24 h-24 rounded-[1.5rem] bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white text-3xl font-black shadow-xl shadow-blue-200">
+                            <div className="w-24 h-24 rounded-[1.5rem] bg-[var(--brand-navy)] flex items-center justify-center text-[var(--brand-gold)] text-3xl font-black shadow-xl shadow-brand-navy/10">
                                 {user.full_name?.charAt(0)}
                             </div>
                             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-[3px] border-white rounded-full" />
                         </div>
                         <h2 className="text-xl font-black text-slate-900 mb-1">{user.full_name}</h2>
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-[0.15em] border border-indigo-100 mb-6">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--brand-navy)]/5 text-[var(--brand-navy)] text-[10px] font-black uppercase tracking-[0.15em] border border-[var(--brand-navy)]/10 mb-6">
                             <Shield size={10} /> {user.role}
                         </span>
 
@@ -183,11 +183,11 @@ export default function ProfilePage() {
                     className="lg:col-span-2 bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col"
                 >
                     <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/30 flex items-center justify-between">
-                        <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
-                            <User size={20} className="text-blue-600" /> Personal Information
+                        <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2 font-accent">
+                            <User size={20} className="text-[var(--brand-navy)]" /> Personal Information
                         </h3>
                         {isEditing && (
-                            <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Editing</span>
+                            <span className="text-[10px] font-black text-[var(--brand-gold)] uppercase tracking-[0.2em] bg-[var(--brand-gold)]/10 px-3 py-1 rounded-full border border-[var(--brand-gold)]/20">Editing</span>
                         )}
                     </div>
                     
@@ -233,7 +233,7 @@ export default function ProfilePage() {
                                         className={cn(
                                             "w-full px-4 py-3.5 rounded-2xl border text-sm font-bold transition-all outline-none",
                                             isEditing 
-                                                ? "border-blue-400 bg-white ring-4 ring-blue-500/10 text-slate-900 focus:border-blue-500" 
+                                                ? "border-[var(--brand-gold)] bg-white ring-4 ring-[var(--brand-gold)]/10 text-slate-900 focus:border-[var(--brand-gold)]" 
                                                 : "border-slate-200 bg-slate-50/50 text-slate-700"
                                         )}
                                         placeholder="How others see you"
@@ -253,7 +253,7 @@ export default function ProfilePage() {
                                             className={cn(
                                                 "w-full pl-11 pr-4 py-3.5 rounded-2xl border text-sm font-bold transition-all outline-none",
                                                 isEditing 
-                                                    ? "border-blue-400 bg-white ring-4 ring-blue-500/10 text-slate-900 focus:border-blue-500" 
+                                                    ? "border-[var(--brand-gold)] bg-white ring-4 ring-[var(--brand-gold)]/10 text-slate-900 focus:border-[var(--brand-gold)]" 
                                                     : "border-slate-200 bg-slate-50/50 text-slate-700"
                                             )}
                                             placeholder="Enter phone number"
@@ -275,7 +275,7 @@ export default function ProfilePage() {
                                         className={cn(
                                             "w-full pl-11 pr-4 py-3.5 rounded-2xl border text-sm font-bold transition-all outline-none",
                                             isEditing 
-                                                ? "border-blue-400 bg-white ring-4 ring-blue-500/10 text-slate-900 focus:border-blue-500" 
+                                                ? "border-[var(--brand-gold)] bg-white ring-4 ring-[var(--brand-gold)]/10 text-slate-900 focus:border-[var(--brand-gold)]" 
                                                 : "border-slate-200 bg-slate-50/50 text-slate-700"
                                         )}
                                         placeholder="https://link-to-your-work-file.com"
@@ -291,9 +291,9 @@ export default function ProfilePage() {
 
                             {/* Work File Link Display */}
                             {!isEditing && user.work_file_url && (
-                                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-blue-200 transition-all">
+                                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-[var(--brand-navy)]/20 transition-all">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform">
+                                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-[var(--brand-navy)] shadow-sm group-hover:scale-110 transition-transform">
                                             <ExternalLink size={22} />
                                         </div>
                                         <div>
@@ -305,7 +305,7 @@ export default function ProfilePage() {
                                         href={user.work_file_url} 
                                         target="_blank" 
                                         rel="noopener noreferrer"
-                                        className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-blue-600 hover:bg-blue-50 hover:border-blue-200 transition-all"
+                                        className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-[var(--brand-navy)] hover:bg-[var(--brand-navy)]/5 hover:border-[var(--brand-navy)]/20 transition-all"
                                     >
                                         Open Portal
                                     </a>
@@ -336,11 +336,11 @@ export default function ProfilePage() {
                                     </button>
                                     <button 
                                         type="submit" 
-                                        className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-slate-900 text-white text-sm font-bold shadow-xl shadow-slate-200 hover:shadow-slate-300 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50"
+                                        className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-[var(--brand-navy)] text-[var(--brand-gold)] text-sm font-bold shadow-xl shadow-brand-navy/10 hover:shadow-brand-navy/20 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50"
                                         disabled={loading}
                                     >
                                         {loading ? (
-                                            <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                                            <span className="animate-spin rounded-full h-4 w-4 border-2 border-[var(--brand-gold)] border-t-transparent" />
                                         ) : (
                                             <Save size={16} />
                                         )}

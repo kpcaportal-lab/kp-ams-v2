@@ -50,13 +50,15 @@ router.get('/', async (req: Request, res: Response) => {
                 console.warn('⚠️ Some columns missing in assignments query, falling back to basic select');
                 const fallbackQuery = `
                     SELECT a.id, a.client_id, a.category, a.total_fees, a.status, a.fiscal_year, 
-                           a.manager_id, a.partner_id, a.created_at,
+                           a.manager_id, a.partner_id, a.created_at, a.billed_amount, a.subcategory,
                            c.name as client_name,
-                           pm.full_name as manager_name, pp.full_name as partner_name
+                           pm.full_name as manager_name, pp.full_name as partner_name,
+                           p.number as proposal_number
                     FROM assignments a
                     LEFT JOIN clients c ON c.id = a.client_id
                     LEFT JOIN profiles pm ON pm.id = a.manager_id
                     LEFT JOIN profiles pp ON pp.id = a.partner_id
+                    LEFT JOIN proposals p ON p.id = a.proposal_id
                     WHERE 1=1
                     ${visibleIds ? ` AND (a.manager_id = ANY($1) OR a.partner_id = ANY($1))` : ''}
                     ORDER BY a.created_at DESC

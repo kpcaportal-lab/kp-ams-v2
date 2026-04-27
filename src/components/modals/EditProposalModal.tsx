@@ -106,19 +106,19 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
             className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden"
           >
             {/* Header */}
-            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white">
+            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-[var(--brand-navy)]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-blue-500/10 flex items-center justify-center">
-                  <FileText className="text-blue-600" size={20} />
+                <div className="w-10 h-10 rounded-2xl bg-[var(--brand-gold)]/20 flex items-center justify-center border border-[var(--brand-gold)]/30">
+                  <FileText className="text-[var(--brand-gold)]" size={20} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900 tracking-tight">Edit Proposal</h2>
-                  <p className="text-xs text-slate-500 mt-0.5 font-medium">{proposal.number}</p>
+                  <h2 className="text-xl font-bold text-[var(--brand-gold)] tracking-tight font-accent">Edit Proposal</h2>
+                  <p className="text-xs text-[var(--brand-gold)]/60 mt-0.5 font-medium">{proposal.number}</p>
                 </div>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all border border-transparent hover:border-rose-100"
+                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10 text-[var(--brand-gold)]/60 hover:text-[var(--brand-gold)] transition-all border border-transparent hover:border-white/10"
               >
                 <X size={20} />
               </button>
@@ -133,7 +133,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                     required
                     value={form.client_id}
                     onChange={(e) => setForm({ ...form, client_id: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
                   >
                     <option value="">Select a client</option>
                     {clients.map(c => (
@@ -154,10 +154,10 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                         className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold border transition-all ${
                           form.status === s
                             ? s === 'won'
-                              ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/25'
+                              ? 'bg-[var(--brand-navy)] border-[var(--brand-navy)] text-[var(--brand-gold)] shadow-lg shadow-blue-900/20'
                               : s === 'lost'
                               ? 'bg-rose-500 border-rose-500 text-white shadow-lg shadow-rose-500/25'
-                              : 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/25'
+                              : 'bg-[var(--brand-gold)] border-[var(--brand-gold)] text-white shadow-lg shadow-[var(--brand-gold)]/25'
                             : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
                         }`}
                       >
@@ -177,7 +177,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                     <select
                       value={form.proposal_type}
                       onChange={(e) => setForm({ ...form, proposal_type: e.target.value as ProposalType })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
                     >
                       <option value="new">New Proposal</option>
                       <option value="revision">Renewal</option>
@@ -190,7 +190,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                     <select
                       value={form.assignment_type}
                       onChange={(e) => setForm({ ...form, assignment_type: e.target.value as AssignmentType })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
                     >
                       {Object.entries(ASSIGNMENT_TYPE_LABELS).map(([key, label]) => (
                         <option key={key} value={key}>{label}</option>
@@ -210,7 +210,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                         required
                         value={form.quotation_amount || ''}
                         onChange={(e) => setForm({ ...form, quotation_amount: Number(e.target.value) })}
-                        className="w-full pl-8 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all"
+                        className="w-full pl-8 pr-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all shadow-sm"
                       />
                     </div>
                   </div>
@@ -221,7 +221,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                     <select
                       value={form.fiscal_year}
                       onChange={(e) => setForm({ ...form, fiscal_year: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
                     >
                       <option value="2024-25">2024-25</option>
                       <option value="2025-26">2025-26</option>
@@ -237,7 +237,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                     required
                     value={form.responsible_partner}
                     onChange={(e) => setForm({ ...form, responsible_partner: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all cursor-pointer appearance-none"
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
                   >
                     <option value="">Select a partner</option>
                     {partners.map(p => (
@@ -253,7 +253,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
                     rows={2}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all placeholder:text-slate-300 resize-none"
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all placeholder:text-slate-300 shadow-sm resize-none"
                   />
                 </div>
               </div>
@@ -269,7 +269,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-bold shadow-[0_8px_20px_rgba(37,99,235,0.25)] hover:shadow-[0_12px_28px_rgba(37,99,235,0.35)] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3.5 rounded-2xl bg-[var(--brand-navy)] text-[var(--brand-gold)] text-sm font-bold shadow-[0_8px_20px_rgba(30,58,95,0.25)] hover:shadow-[0_12px_28px_rgba(30,58,95,0.35)] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2"
                 >
                   <Save size={18} />
                   Update Proposal

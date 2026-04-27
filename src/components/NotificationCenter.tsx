@@ -29,9 +29,9 @@ export function NotificationCenter() {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'ticket_update': return <Ticket className="text-blue-500" size={16} />;
-      case 'assignment_update': return <ClipboardList className="text-amber-500" size={16} />;
-      case 'system': return <Shield className="text-indigo-500" size={16} />;
+      case 'ticket_update': return <Ticket className="text-brand-gold" size={16} />;
+      case 'assignment_update': return <ClipboardList className="text-brand-navy" size={16} />;
+      case 'system': return <Shield className="text-brand-navy" size={16} />;
       default: return <Info className="text-slate-400" size={16} />;
     }
   };
@@ -62,7 +62,7 @@ export function NotificationCenter() {
       >
         <Bell size={20} className={cn(unreadCount > 0 && "animate-none")} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-blue-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm ring-2 ring-blue-100">
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-brand-gold text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm ring-2 ring-brand-gold/10">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -85,9 +85,9 @@ export function NotificationCenter() {
               {unreadCount > 0 && (
                 <button 
                   onClick={() => markAllAsRead()}
-                  className="text-[11px] font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
+                  className="text-[11px] font-black text-brand-navy hover:text-brand-gold flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors uppercase tracking-wider"
                 >
-                  <Check size={14} /> Mark all read
+                  <Check size={14} strokeWidth={3} /> Mark all read
                 </button>
               )}
             </div>
@@ -95,10 +95,10 @@ export function NotificationCenter() {
             <div className="overflow-y-auto flex-1 custom-scrollbar">
               {notifications.length === 0 ? (
                 <div className="py-20 flex flex-col items-center justify-center px-8 text-center">
-                  <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4 border border-slate-100">
+                  <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4 border border-slate-100 shadow-inner">
                     <Bell className="text-slate-200" size={32} />
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900">All caught up!</h4>
+                  <h4 className="text-sm font-black text-slate-900">All caught up!</h4>
                   <p className="text-xs text-slate-400 mt-1 font-medium">No new notifications at the moment.</p>
                 </div>
               ) : (
@@ -108,17 +108,17 @@ export function NotificationCenter() {
                       key={n.id}
                       onClick={() => handleNotificationClick(n)}
                       className={cn(
-                        "group relative px-5 py-4 flex gap-4 transition-all cursor-pointer",
-                        n.is_read ? "opacity-70 hover:opacity-100" : "bg-blue-50/30 hover:bg-blue-50/60"
+                        "group relative px-5 py-4 flex gap-4 transition-all cursor-pointer border-l-4",
+                        n.is_read 
+                          ? "opacity-70 hover:opacity-100 border-transparent" 
+                          : "bg-brand-navy/[0.02] hover:bg-brand-navy/[0.04] border-brand-gold shadow-[inset_0_0_20px_rgba(0,0,0,0.01)]"
                       )}
                     >
-                      {!n.is_read && (
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 shadow-[2px_0_8px_rgba(59,130,246,0.4)]" />
-                      )}
-                      
                       <div className={cn(
-                        "w-10 h-10 rounded-xl shrink-0 flex items-center justify-center border transition-colors shadow-sm",
-                        n.is_read ? "bg-slate-50 border-slate-100" : "bg-white border-blue-100 shadow-blue-100"
+                        "w-10 h-10 rounded-xl shrink-0 flex items-center justify-center border transition-all shadow-sm",
+                        n.is_read 
+                          ? "bg-slate-50 border-slate-100 group-hover:bg-white" 
+                          : "bg-white border-brand-gold/20 shadow-brand-gold/5 group-hover:scale-110"
                       )}>
                         {getNotificationIcon(n.type)}
                       </div>
@@ -148,7 +148,7 @@ export function NotificationCenter() {
             <div className="p-3 bg-slate-50/50 border-t border-slate-100">
               <button 
                 onClick={() => { router.push('/dashboard'); setIsOpen(false); }}
-                className="w-full py-2.5 rounded-xl bg-white border border-slate-200 text-[11px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 hover:border-slate-300 hover:shadow-sm transition-all active:scale-[0.98]"
+                className="w-full py-2.5 rounded-xl bg-white border border-slate-200 text-[11px] font-black text-slate-400 uppercase tracking-widest hover:text-brand-navy hover:border-brand-navy/20 hover:shadow-md transition-all active:scale-[0.98]"
               >
                 View Dashboard Settings
               </button>

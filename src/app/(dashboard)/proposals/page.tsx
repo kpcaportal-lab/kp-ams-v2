@@ -164,27 +164,27 @@ export default function ProposalListPage() {
       {/* Header Area */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 drop-shadow-sm">
-            Proposals <span className="text-amber-500">Repository</span>
+          <h1 className="text-3xl font-black tracking-tight text-slate-900 drop-shadow-sm font-accent">
+            Strategic <span className="text-brand-gold">Proposals</span>
           </h1>
-          <p className="text-slate-500 mt-1 font-medium italic">Strategic business development and proposal lifecycle tracking</p>
+          <p className="text-slate-500 mt-1 font-medium italic">Business development and proposal lifecycle tracking</p>
         </div>
         <div className="flex items-center gap-3">
           <button 
             onClick={handleExport}
-            className="flex items-center gap-2.5 bg-white text-slate-700 px-5 py-2.5 rounded-xl font-bold border border-slate-200 hover:bg-slate-50 transition-all shadow-sm active:scale-95"
+            className="flex items-center gap-2.5 bg-white text-slate-700 px-6 py-3 rounded-xl font-black border border-slate-200 hover:bg-slate-50 transition-all shadow-sm active:scale-95"
           >
-            <Download size={18} className="text-emerald-500" /> 
-            <span>Export</span>
+            <Download size={18} strokeWidth={3} className="text-emerald-500" /> 
+            <span>Export Registry</span>
           </button>
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg shadow-slate-200 hover:shadow-slate-300 transition-all border border-slate-800"
+            className="flex items-center gap-2 bg-brand-navy text-white px-6 py-3 rounded-xl font-black shadow-[0_15px_30px_rgba(30,58,95,0.15)] hover:shadow-[0_20px_40px_rgba(30,58,95,0.25)] transition-all border border-slate-800"
           >
-            <Plus size={20} className="text-amber-400" /> 
-            <span>Create Strategic Proposal</span>
+            <Plus size={20} strokeWidth={3} className="text-brand-gold" /> 
+            <span>New Proposal</span>
           </motion.button>
         </div>
       </div>
@@ -192,27 +192,26 @@ export default function ProposalListPage() {
       {/* Modern Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Total Proposals', value: stats.total, icon: FileText, color: 'blue' },
-          { label: 'Conversion Rate', value: `${stats.winRate}%`, icon: TrendingUp, color: 'emerald' },
-          { label: 'Won Portfolio', value: formatIndianCurrency(stats.wonValue, true, true), icon: DollarSign, color: 'amber' },
-          { label: 'Pipeline Value', value: formatIndianCurrency(stats.pendingValue, true, true), icon: Briefcase, color: 'indigo' },
+          { label: 'Total Proposals', value: stats.total, icon: FileText, color: 'text-brand-navy', bg: 'bg-brand-navy/5' },
+          { label: 'Conversion Rate', value: `${stats.winRate}%`, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          { label: 'Won Portfolio', value: formatIndianCurrency(stats.wonValue, true, true), icon: DollarSign, color: 'text-brand-gold', bg: 'bg-brand-gold/5' },
+          { label: 'Pipeline Value', value: formatIndianCurrency(stats.pendingValue, true, true), icon: Briefcase, color: 'text-slate-600', bg: 'bg-slate-50' },
         ].map((stat, i) => (
           <motion.div
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="group relative overflow-hidden p-6 rounded-3xl bg-white/70 backdrop-blur-xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300"
+            className="group relative overflow-hidden p-7 rounded-[2rem] bg-white border border-slate-200/60 shadow-sm hover:shadow-[0_20px_40px_rgba(15,23,42,0.08)] transition-all duration-400"
           >
-            <div className={`absolute top-0 left-0 w-1 h-full bg-${stat.color}-500 opacity-0 group-hover:opacity-100 transition-opacity`} />
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
-                <p className="text-2xl font-black text-slate-900 tabular-nums">{stat.value}</p>
+                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">{stat.label}</p>
+                <p className="text-3xl font-black text-slate-900 tabular-nums tracking-tight">{stat.value}</p>
               </div>
               <div className={cn(
-                "p-3 rounded-2xl bg-white shadow-sm border border-slate-100 transition-transform group-hover:scale-110 group-hover:rotate-3",
-                `text-${stat.color}-500`
+                "w-12 h-12 rounded-xl flex items-center justify-center transition-all group-hover:scale-110",
+                stat.bg, stat.color
               )}>
                 <stat.icon size={24} strokeWidth={2.5} />
               </div>
@@ -224,13 +223,13 @@ export default function ProposalListPage() {
       {/* Search & Filter Bar */}
       <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
         <div className="relative flex-1 w-full lg:max-w-md group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-amber-500 transition-colors" size={20} />
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" size={20} />
           <input
             type="text"
-            placeholder="Search proposals, clients, or numbers..."
+            placeholder="Search proposals, clients, or reference numbers..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white/50 backdrop-blur-md border border-slate-200 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 outline-none transition-all font-medium text-slate-700 shadow-sm"
+            className="w-full pl-13 pr-6 py-4 rounded-[1.5rem] bg-white border border-slate-200 focus:border-brand-gold/40 focus:ring-4 focus:ring-brand-gold/5 outline-none transition-all font-bold text-slate-700 shadow-sm"
           />
         </div>
         
@@ -238,23 +237,23 @@ export default function ProposalListPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="flex-1 lg:flex-none px-4 py-3.5 rounded-2xl bg-white/50 backdrop-blur-md border border-slate-200 focus:border-amber-400 outline-none transition-all font-bold text-slate-600 shadow-sm min-w-[180px]"
+            className="flex-1 lg:flex-none px-6 py-4 rounded-[1.5rem] bg-white border border-slate-200 focus:border-brand-gold/40 outline-none transition-all font-black text-slate-600 shadow-sm min-w-[200px] appearance-none cursor-pointer"
           >
-            <option value="all">All Statuses</option>
-            <option value="pending">🟡 Pending Pipeline</option>
-            <option value="won">🟢 Won Projects</option>
-            <option value="lost">🔴 Lost Opportunities</option>
+            <option value="all">All Engagement Stages</option>
+            <option value="pending">🟡 Pipeline Review</option>
+            <option value="won">🟢 Won Mandates</option>
+            <option value="lost">🔴 Closed/Lost</option>
           </select>
           
           <button 
             onClick={() => setShowAdvanced(!showAdvanced)}
             className={cn(
-              "flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl border transition-all shadow-sm active:scale-95 text-sm font-bold",
-              showAdvanced ? "bg-amber-500 text-white border-amber-600" : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              "flex items-center justify-center gap-2 px-8 py-4 rounded-[1.5rem] border transition-all shadow-sm active:scale-95 text-sm font-black",
+              showAdvanced ? "bg-brand-gold text-white border-brand-gold shadow-lg shadow-brand-gold/20" : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
             )}
           >
-            <Filter size={18} />
-            <span>Advanced Filters</span>
+            <Filter size={18} strokeWidth={3} />
+            <span>Strategic Filters</span>
           </button>
         </div>
       </div>
@@ -389,7 +388,7 @@ export default function ProposalListPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.1 + (idx * 0.03) }}
-                    className="hover:bg-amber-50/30 transition-all cursor-pointer group"
+                    className="hover:bg-brand-navy/[0.02] transition-all cursor-pointer group"
                     onClick={(e) => {
                       if (!(e.target as HTMLElement).closest('button, a')) { // Added "a" to prevent link clicks from triggering row click
                         window.location.href = `/proposals/${proposal.id}`;
@@ -398,10 +397,10 @@ export default function ProposalListPage() {
                   >
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-3 mb-1.5">
-                        <div className="p-2 rounded-xl bg-slate-100 text-slate-500 group-hover:bg-amber-100 group-hover:text-amber-600 transition-colors">
-                          <FileText size={18} />
+                        <div className="p-2 rounded-xl bg-slate-100 text-slate-500 group-hover:bg-brand-gold/10 group-hover:text-brand-gold transition-colors">
+                          <FileText size={18} strokeWidth={2.5} />
                         </div>
-                        <span className="font-black text-slate-900 group-hover:text-amber-600 transition-colors">
+                        <span className="font-black text-slate-900 group-hover:text-brand-navy transition-colors">
                           {proposal.number}
                         </span>
                         {proposal.revision_flag && (

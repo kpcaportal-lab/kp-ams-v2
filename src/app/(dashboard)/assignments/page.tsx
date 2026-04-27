@@ -88,9 +88,9 @@ export default function AssignmentsPage() {
 
 
   const kpiCards = [
-    { label: 'Expected Fees', value: formatIndianCurrency(stats.totalFees, true, true), icon: IndianRupee, color: 'text-blue-600', bg: 'bg-blue-50', subValue: 'Total pipeline' },
+    { label: 'Expected Fees', value: formatIndianCurrency(stats.totalFees, true, true), icon: IndianRupee, color: 'text-brand-navy', bg: 'bg-brand-navy/5', subValue: 'Total pipeline' },
     { label: 'Total Billed', value: formatIndianCurrency(stats.totalBilled, true, true), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50', subValue: 'Invoiced to date' },
-    { label: 'Total Receipt', value: formatIndianCurrency(stats.totalReceipt, true, true), icon: CheckCircle, color: 'text-indigo-600', bg: 'bg-indigo-50', subValue: 'Payments received' },
+    { label: 'Total Receipt', value: formatIndianCurrency(stats.totalReceipt, true, true), icon: CheckCircle, color: 'text-brand-gold', bg: 'bg-brand-gold/5', subValue: 'Payments received' },
     { label: 'Assignments', value: stats.total.toString(), icon: Briefcase, color: 'text-slate-600', bg: 'bg-slate-50', subValue: 'Total engagements' },
   ];
 
@@ -100,8 +100,8 @@ export default function AssignmentsPage() {
     <div className="space-y-8 max-w-[1600px] mx-auto pb-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 drop-shadow-sm">
-            Assignment <span className="text-primary-600">Control Center</span>
+          <h1 className="text-3xl font-black tracking-tight text-slate-900 drop-shadow-sm font-accent">
+            Assignment <span className="text-brand-gold">Control Center</span>
           </h1>
           <p className="text-slate-500 mt-1 font-medium italic">Operational oversight and assignment performance tracking</p>
         </motion.div>
@@ -115,18 +115,18 @@ export default function AssignmentsPage() {
             Export
           </button>
           <div className="flex p-1 bg-slate-100 rounded-2xl border border-slate-200 shadow-sm">
-             <button onClick={() => setViewMode('table')} className={cn("px-3 py-2 rounded-xl transition-all", viewMode === 'table' ? "bg-white text-blue-600 shadow-sm ring-1 ring-slate-200" : "text-slate-400")}>
+             <button onClick={() => setViewMode('table')} className={cn("px-3 py-2 rounded-xl transition-all", viewMode === 'table' ? "bg-white text-brand-navy shadow-sm ring-1 ring-slate-200" : "text-slate-400")}>
                <List size={18} strokeWidth={2.5} />
              </button>
-             <button onClick={() => setViewMode('grid')} className={cn("px-3 py-2 rounded-xl transition-all", viewMode === 'grid' ? "bg-white text-blue-600 shadow-sm ring-1 ring-slate-200" : "text-slate-400")}>
+             <button onClick={() => setViewMode('grid')} className={cn("px-3 py-2 rounded-xl transition-all", viewMode === 'grid' ? "bg-white text-brand-navy shadow-sm ring-1 ring-slate-200" : "text-slate-400")}>
                <LayoutGrid size={18} strokeWidth={2.5} />
              </button>
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="group flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-black transition-all hover:shadow-[0_20px_40px_rgba(15,23,42,0.25)] hover:-translate-y-1 active:scale-95"
+            className="group flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-brand-navy hover:bg-slate-800 text-white text-sm font-black transition-all hover:shadow-[0_20px_40px_rgba(30,58,95,0.25)] hover:-translate-y-1 active:scale-95"
           >
-            <Plus size={20} strokeWidth={3} className="text-blue-400 group-hover:scale-125 transition-transform" />
+            <Plus size={20} strokeWidth={3} className="text-brand-gold group-hover:scale-125 transition-transform" />
             Add New Assignment
           </button>
         </motion.div>
@@ -220,7 +220,7 @@ export default function AssignmentsPage() {
                   <tbody className="divide-y divide-slate-50">
                     {filteredAssignments.map((a, i) => (
                       <motion.tr key={a.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }}
-                        className="group hover:bg-slate-50/30 transition-colors cursor-pointer"
+                        className="group hover:bg-brand-navy/[0.02] transition-colors cursor-pointer"
                         onClick={(e) => {
                           if (!(e.target as HTMLElement).closest('button, a')) {
                             window.location.href = `/assignments/${a.id}`;
@@ -229,7 +229,7 @@ export default function AssignmentsPage() {
                       >
                         <td className="px-8 py-6">
                           <div className="block">
-                            <div className="font-black text-slate-900 group-hover:text-blue-600 transition-colors text-base">{a.client_name}</div>
+                            <div className="font-black text-slate-900 group-hover:text-brand-navy transition-colors text-base">{a.client_name}</div>
                             <div className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-tight line-clamp-1">{a.scope_item || SUBCATEGORY_LABELS[a.subcategory] || a.subcategory || '—'}</div>
                           </div>
                         </td>
@@ -253,7 +253,7 @@ export default function AssignmentsPage() {
                           <div className="font-black text-emerald-600 text-sm">{formatIndianCurrency(Number(a.billed_amount || 0), true, true)}</div>
                         </td>
                         <td className="px-6 py-6 text-right">
-                          <div className="font-black text-blue-600 text-sm">{formatIndianCurrency(Number(a.amount_receipt || 0), true, true)}</div>
+                          <div className="font-black text-brand-navy text-sm">{formatIndianCurrency(Number(a.amount_receipt || 0), true, true)}</div>
                         </td>
                         <td className="px-6 py-6 text-center">
                           <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter bg-slate-100 px-2 py-1 rounded-md">
@@ -271,7 +271,7 @@ export default function AssignmentsPage() {
                               "p-2 rounded-lg transition-all",
                               a.file_url 
                                 ? "bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100" 
-                                : "bg-slate-50 text-slate-400 border border-slate-200 hover:bg-blue-50 hover:text-blue-600"
+                                : "bg-slate-50 text-slate-400 border border-slate-200 hover:bg-brand-navy/5 hover:text-brand-navy"
                             )}
                             title={a.file_url ? "View in Vault" : "Upload to Vault"}
                           >
@@ -294,9 +294,9 @@ export default function AssignmentsPage() {
               >
                  <div className="flex flex-col h-full gap-5">
                    <div>
-                     <div className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-2 px-1">Engagement</div>
+                     <div className="text-[10px] font-black text-brand-gold uppercase tracking-[0.2em] mb-2 px-1">Engagement</div>
                      <Link href={`/assignments/${a.id}`}>
-                       <h3 className="text-xl font-black text-slate-900 group-hover:text-blue-600 transition-colors leading-tight line-clamp-1">{a.client_name}</h3>
+                       <h3 className="text-xl font-black text-slate-900 group-hover:text-brand-navy transition-colors leading-tight line-clamp-1">{a.client_name}</h3>
                      </Link>
                      <p className="text-sm font-bold text-slate-400 mt-2 leading-relaxed h-10 overflow-hidden text-ellipsis line-clamp-2">{a.scope_item || SUBCATEGORY_LABELS[a.subcategory] || a.subcategory || '—'}</p>
                    </div>
@@ -335,7 +335,7 @@ export default function AssignmentsPage() {
                             "p-2 rounded-lg transition-all",
                             a.file_url 
                               ? "bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100" 
-                              : "bg-slate-50 text-slate-400 border border-slate-200 hover:bg-blue-50 hover:text-blue-600"
+                              : "bg-slate-50 text-slate-400 border border-slate-200 hover:bg-brand-navy/5 hover:text-brand-navy"
                           )}
                           title={a.file_url ? "View in Vault" : "Upload to Vault"}
                         >

@@ -56,41 +56,41 @@ export default function VaultUploadModal({ isOpen, onClose, assignmentId, client
             className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-slate-50 px-8 py-6 flex items-center justify-between border-b border-slate-100">
+            <div className="bg-[var(--brand-navy)] px-8 py-6 flex items-center justify-between border-b border-white/10">
               <div>
-                <h3 className="text-xl font-black text-slate-900">Upload Working Paper</h3>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">{clientName}</p>
+                <h3 className="text-xl font-bold text-[var(--brand-gold)] font-accent">Upload Working Paper</h3>
+                <p className="text-[10px] font-bold text-[var(--brand-gold)]/60 uppercase tracking-widest mt-1">{clientName}</p>
               </div>
-              <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-200 text-slate-400 transition-colors">
-                <X size={20} strokeWidth={3} />
+              <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/10 text-[var(--brand-gold)]/60 hover:text-[var(--brand-gold)] transition-colors">
+                <X size={20} strokeWidth={2.5} />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="p-8">
               {isSuccess ? (
                 <div className="py-12 flex flex-col items-center text-center">
-                  <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500 mb-6 border-4 border-emerald-100">
+                  <div className="w-20 h-20 bg-[var(--brand-gold)]/10 rounded-3xl flex items-center justify-center text-[var(--brand-gold)] mb-6 border-2 border-[var(--brand-gold)]/20 shadow-xl shadow-[var(--brand-gold)]/5">
                     <CheckCircle2 size={40} />
                   </div>
-                  <h4 className="text-2xl font-black text-slate-900 mb-2">Vault Updated!</h4>
+                  <h4 className="text-2xl font-bold text-[var(--brand-navy)] mb-2 font-accent">Vault Updated!</h4>
                   <p className="text-slate-500 font-medium">The document link has been securely saved to the assignment vault.</p>
                 </div>
               ) : (
                 <div className="space-y-6">
-                  <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-start gap-4">
-                    <div className="p-2 bg-white rounded-lg text-blue-600 shadow-sm">
+                  <div className="p-4 bg-[var(--brand-gold)]/5 rounded-2xl border border-[var(--brand-gold)]/10 flex items-start gap-4">
+                    <div className="p-2 bg-white rounded-lg text-[var(--brand-gold)] shadow-sm border border-[var(--brand-gold)]/10">
                       <FileText size={18} />
                     </div>
-                    <p className="text-xs font-bold text-blue-700 leading-relaxed">
+                    <p className="text-xs font-bold text-[var(--brand-navy)]/70 leading-relaxed">
                       Enter the secure link to your working paper (Google Drive, SharePoint, etc.). 
                       This document will be accessible in the firm&apos;s Document Vault.
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Secure Document URL</label>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">Secure Document URL</label>
                     <div className="relative group">
-                      <LinkIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                      <LinkIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[var(--brand-gold)] transition-colors" />
                       <input
                         autoFocus
                         required
@@ -98,7 +98,7 @@ export default function VaultUploadModal({ isOpen, onClose, assignmentId, client
                         placeholder="https://drive.google.com/..."
                         value={fileUrl}
                         onChange={(e) => setFileUrl(e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-slate-200 bg-slate-50 text-sm font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 focus:bg-white transition-all shadow-inner-sm"
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl border border-slate-200 bg-slate-50 text-sm font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all shadow-sm"
                       />
                     </div>
                   </div>
@@ -107,20 +107,20 @@ export default function VaultUploadModal({ isOpen, onClose, assignmentId, client
                     <button
                       type="button"
                       onClick={onClose}
-                      className="flex-1 py-4 rounded-2xl border border-slate-200 text-sm font-black text-slate-400 hover:bg-slate-50 transition-all"
+                      className="flex-1 py-4 rounded-2xl border border-slate-200 text-sm font-bold text-slate-400 hover:bg-slate-50 transition-all"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isSubmitting || !fileUrl}
-                      className="flex-[2] py-4 rounded-2xl bg-slate-900 text-white text-sm font-black flex items-center justify-center gap-2 hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 disabled:opacity-50 disabled:shadow-none"
+                      className="flex-[2] py-4 rounded-2xl bg-[var(--brand-navy)] text-[var(--brand-gold)] text-sm font-bold flex items-center justify-center gap-2 hover:shadow-xl hover:shadow-[var(--brand-navy)]/20 transition-all disabled:opacity-50 disabled:shadow-none shadow-[0_8px_20px_rgba(30,58,95,0.2)]"
                     >
                       {isSubmitting ? (
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <div className="w-5 h-5 border-2 border-[var(--brand-gold)] border-t-transparent rounded-full animate-spin" />
                       ) : (
                         <>
-                          <Upload size={18} strokeWidth={3} />
+                          <Upload size={18} strokeWidth={2.5} />
                           Secure to Vault
                         </>
                       )}

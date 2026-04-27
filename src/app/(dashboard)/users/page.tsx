@@ -81,27 +81,27 @@ export default function UsersPage() {
   });
 
   const roleConfig: Record<UserRole, { color: string, bg: string, border: string, icon: any }> = {
-    admin: { color: '#0ea5e9', bg: '#0ea5e910', border: '#0ea5e930', icon: Key },
-    partner: { color: '#8b5cf6', bg: '#8b5cf610', border: '#8b5cf630', icon: Shield },
-    director: { color: '#f59e0b', bg: '#f59e0b10', border: '#f59e0b30', icon: Briefcase },
-    manager: { color: '#10b981', bg: '#10b98110', border: '#10b98130', icon: CheckCircle },
-    assistant_manager: { color: '#14b8a6', bg: '#14b8a610', border: '#14b8a630', icon: CheckCircle },
-    sr_executive: { color: '#6366f1', bg: '#6366f110', border: '#6366f130', icon: User },
-    executive: { color: '#a855f7', bg: '#a855f710', border: '#a855f730', icon: User },
-    analyst: { color: '#ec4899', bg: '#ec489910', border: '#ec489930', icon: Activity },
-    staff: { color: '#64748b', bg: '#64748b10', border: '#64748b30', icon: User }
+    admin: { color: 'var(--brand-gold)', bg: 'rgba(30, 58, 95, 0.05)', border: 'rgba(30, 58, 95, 0.1)', icon: Key },
+    partner: { color: 'var(--brand-navy)', bg: 'rgba(212, 165, 116, 0.1)', border: 'rgba(212, 165, 116, 0.2)', icon: Shield },
+    director: { color: 'var(--brand-navy)', bg: 'rgba(212, 165, 116, 0.05)', border: 'rgba(212, 165, 116, 0.1)', icon: Briefcase },
+    manager: { color: '#1e3a5f', bg: 'rgba(30, 58, 95, 0.03)', border: 'rgba(30, 58, 95, 0.08)', icon: CheckCircle },
+    assistant_manager: { color: '#1e3a5f', bg: 'rgba(30, 58, 95, 0.03)', border: 'rgba(30, 58, 95, 0.08)', icon: CheckCircle },
+    sr_executive: { color: '#475569', bg: 'rgba(71, 85, 105, 0.03)', border: 'rgba(71, 85, 105, 0.08)', icon: User },
+    executive: { color: '#475569', bg: 'rgba(71, 85, 105, 0.03)', border: 'rgba(71, 85, 105, 0.08)', icon: User },
+    analyst: { color: '#475569', bg: 'rgba(71, 85, 105, 0.03)', border: 'rgba(71, 85, 105, 0.08)', icon: Activity },
+    staff: { color: '#64748b', bg: 'rgba(100, 116, 139, 0.03)', border: 'rgba(100, 116, 139, 0.08)', icon: User }
   };
 
   const roleStyles: Record<UserRole, string> = {
-    admin: 'bg-cyan-50 text-cyan-700 border-cyan-200',
-    partner: 'bg-blue-50 text-blue-700 border-blue-200',
-    director: 'bg-amber-50 text-amber-700 border-amber-200',
-    manager: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    assistant_manager: 'bg-teal-50 text-teal-700 border-teal-200',
-    sr_executive: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-    executive: 'bg-violet-50 text-violet-700 border-violet-200',
-    analyst: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200',
-    staff: 'bg-gray-50 text-gray-700 border-gray-200'
+    admin: 'bg-brand-navy text-brand-gold border-brand-navy/20',
+    partner: 'bg-brand-gold/10 text-brand-navy border-brand-gold/20',
+    director: 'bg-brand-gold/5 text-brand-navy border-brand-gold/10',
+    manager: 'bg-slate-50 text-brand-navy border-slate-200',
+    assistant_manager: 'bg-slate-50 text-brand-navy border-slate-200',
+    sr_executive: 'bg-slate-50 text-slate-700 border-slate-200',
+    executive: 'bg-slate-50 text-slate-700 border-slate-200',
+    analyst: 'bg-slate-50 text-slate-700 border-slate-200',
+    staff: 'bg-slate-50 text-slate-600 border-slate-200'
   };
 
   const handleEdit = (user: UserType) => {
@@ -111,81 +111,78 @@ export default function UsersPage() {
 
   if (loading) return (
     <div className="flex justify-center py-12">
-      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-brand-navy border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   return (
-    <div className="space-y-8 max-w-[1400px] mx-auto p-4 sm:p-8">
-      {/* ── Header Area ── */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+    <div className="space-y-8 max-w-[1600px] mx-auto pb-12">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-4 sm:px-0">
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 rounded-xl bg-blue-600/10 text-blue-600">
-              <Users size={24} />
-            </div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">User Management</h1>
-          </div>
-          <p className="text-slate-500 font-medium">Coordinate your team, manage permissions, and control access levels.</p>
+          <h1 className="text-3xl font-black tracking-tight text-slate-900 drop-shadow-sm font-accent">
+            Team <span className="text-brand-gold">& Access</span>
+          </h1>
+          <p className="text-slate-500 mt-1 font-medium italic">Coordinate your firm&apos;s human capital and permissions</p>
         </div>
         
         {isAdmin && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-95"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-navy text-white text-sm font-black shadow-[0_10px_20px_rgba(30,58,95,0.15)] hover:shadow-[0_15px_30px_rgba(30,58,95,0.25)] transition-all border border-slate-800 active:scale-95"
           >
-            <Plus size={20} />
+            <Plus size={18} strokeWidth={3} className="text-brand-gold" />
             Add New Member
           </button>
         )}
       </div>
 
-      {/* ── Stats Landing Grid ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      {/* Stats Landing Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 px-4 sm:px-0">
         {[
-          { label: 'Total Members', val: stats.total, icon: Users, color: '#3b82f6' },
-          { label: 'Active Now', val: stats.active, icon: Activity, color: '#10b981' },
-          { label: 'Administrators', val: stats.admins, icon: Shield, color: '#0ea5e9' },
-          { label: 'Partners/Directors', val: stats.partners, icon: Briefcase, color: '#8b5cf6' },
-          { label: 'Staff & Ops', val: stats.staff, icon: CheckCircle, color: '#f59e0b' },
+          { label: 'Total Members', val: stats.total, icon: Users, color: 'text-brand-navy', bg: 'bg-brand-navy/5' },
+          { label: 'Active Now', val: stats.active, icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          { label: 'Administrators', val: stats.admins, icon: Shield, color: 'text-brand-gold', bg: 'bg-brand-gold/5' },
+          { label: 'Partners/Directors', val: stats.partners, icon: Briefcase, color: 'text-brand-navy', bg: 'bg-brand-navy/5' },
+          { label: 'Staff & Ops', val: stats.staff, icon: CheckCircle, color: 'text-slate-600', bg: 'bg-slate-50' },
         ].map((s, idx) => (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
             key={s.label}
-            className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-200 transition-colors group"
+            className="bg-white p-5 rounded-[2rem] border border-slate-200/60 shadow-sm hover:shadow-[0_15px_30px_rgba(15,23,42,0.05)] transition-all group"
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-lg group-hover:scale-110 transition-transform" style={{ background: `${s.color}10`, color: s.color }}>
-                <s.icon size={18} />
+              <div className={cn("p-2 rounded-lg group-hover:scale-110 transition-transform", s.bg, s.color)}>
+                <s.icon size={18} strokeWidth={2.5} />
               </div>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{s.label}</span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.label}</span>
             </div>
-            <div className="text-3xl font-extrabold text-slate-900 line-height-1">{s.val}</div>
+            <div className="text-3xl font-black text-slate-900 tracking-tighter">{s.val}</div>
           </motion.div>
         ))}
       </div>
 
-      {/* ── Toolbar: Search & Filters ── */}
-      <div className="flex flex-col sm:flex-row gap-4 bg-white/50 p-2 rounded-2xl border border-slate-200/60 backdrop-blur-md">
-        <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+      {/* Toolbar: Search & Filters */}
+      <div className="flex flex-col sm:flex-row gap-4 px-4 sm:px-0">
+        <div className="relative flex-1 group">
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" />
           <input
             type="text"
             placeholder="Search by name, email or designation..."
-            className="w-full bg-white border border-slate-200 rounded-xl pl-12 pr-4 py-3 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+            className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3.5 text-sm font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 transition-all shadow-sm"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <div className="flex gap-2">
-          <div className="relative">
-            <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+          <div className="relative group">
+            <Filter size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold" />
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-3 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 outline-none appearance-none cursor-pointer"
+              className="bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-3.5 text-sm font-black text-slate-700 focus:outline-none focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 transition-all outline-none appearance-none cursor-pointer shadow-sm"
             >
               <option value="all">All Roles</option>
               {Object.keys(roleConfig).map(r => (
@@ -195,15 +192,15 @@ export default function UsersPage() {
           </div>
           <button 
             onClick={fetchUsers}
-            className="p-3 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 transition-colors shadow-sm"
+            className="px-4 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-brand-navy hover:bg-slate-50 transition-all shadow-sm active:scale-95"
           >
-            <Activity size={18} />
+            <Activity size={20} strokeWidth={2.5} />
           </button>
         </div>
       </div>
 
-      {/* ── Users Grid ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {/* Users Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 sm:px-0">
         <AnimatePresence mode="popLayout">
           {filtered.map((user, i) => {
             const config = roleConfig[user.role as UserRole] || roleConfig.staff;
@@ -215,69 +212,66 @@ export default function UsersPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.2, delay: i * 0.05 }}
-                className="group relative bg-white rounded-3xl border border-slate-200 p-6 hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300"
+                className="group relative bg-white rounded-[2rem] border border-slate-200/60 p-7 hover:border-brand-gold/30 hover:shadow-[0_20px_50px_rgba(30,58,95,0.08)] transition-all duration-300"
               >
                 {/* Status indicator absolute */}
                 <div className={cn(
-                  "absolute top-5 right-5 w-2.5 h-2.5 rounded-full ring-4 ring-white",
+                  "absolute top-6 right-6 w-3 h-3 rounded-full ring-4 ring-white shadow-sm",
                   user.is_active ? "bg-emerald-500" : "bg-slate-300"
                 )} />
 
-                <div className="flex items-center gap-5 mb-6">
+                <div className="flex items-center gap-5 mb-8">
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 flex items-center justify-center text-slate-900 font-black text-2xl shadow-inner group-hover:from-blue-600 group-hover:to-indigo-600 group-hover:text-white transition-all duration-500">
+                    <div className="w-16 h-16 rounded-[1.2rem] bg-brand-navy text-brand-gold flex items-center justify-center font-black text-2xl shadow-inner group-hover:scale-105 transition-transform duration-500">
                       {(user.full_name || 'U').charAt(0)}
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight font-accent group-hover:text-brand-navy transition-colors">
                       {user.full_name}
                     </h3>
-                    <div className="flex items-center gap-1.5 text-slate-400 text-sm font-medium">
-                      <Mail size={12} />
+                    <div className="flex items-center gap-1.5 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
+                      <Mail size={12} strokeWidth={3} className="text-brand-gold" />
                       {user.email}
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="px-3 py-1.5 rounded-lg flex items-center gap-2 text-[10px] font-black uppercase tracking-widest border"
-                      style={{ background: config.bg, color: config.color, borderColor: config.border }}
-                    >
-                      <config.icon size={12} />
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <div className="px-4 py-1.5 rounded-lg bg-brand-navy/5 text-brand-navy text-[10px] font-black uppercase tracking-[0.15em] border border-brand-navy/10 flex items-center gap-2">
+                      <config.icon size={12} strokeWidth={3} className="text-brand-gold" />
                       {user.role.replace('_', ' ')}
                     </div>
                     {!user.is_active && (
-                      <div className="px-3 py-1.5 rounded-lg bg-red-50 text-red-500 border border-red-100 text-[10px] font-black uppercase tracking-widest">
+                      <div className="px-4 py-1.5 rounded-lg bg-rose-50 text-rose-600 border border-rose-100 text-[10px] font-black uppercase tracking-widest">
                         Deactivated
                       </div>
                     )}
                   </div>
 
                   {user.reports_to_name && (
-                    <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                      <div className="p-1.5 bg-white rounded-lg border border-slate-200 text-slate-400">
-                        <ArrowUpRight size={14} />
+                    <div className="flex items-center gap-3 p-3.5 bg-slate-50/80 rounded-2xl border border-slate-100/60 group-hover:bg-brand-navy/[0.02] transition-colors">
+                      <div className="p-1.5 bg-white rounded-lg border border-slate-200 text-brand-gold shadow-sm">
+                        <ArrowUpRight size={14} strokeWidth={3} />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Direct Report</span>
-                        <span className="text-xs font-bold text-slate-900 uppercase tracking-tight truncate">{user.reports_to_name}</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Reports To</span>
+                        <span className="text-xs font-black text-slate-700 uppercase tracking-tight truncate">{user.reports_to_name}</span>
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">
+                <div className="mt-10 pt-6 border-t border-slate-50 flex items-center justify-between">
+                  <div className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] leading-tight">
                     Member Since<br />
-                    <span className="text-slate-600 text-[11px] font-black leading-tight">
+                    <span className="text-brand-navy text-xs font-black tracking-normal">
                       {user.created_at ? new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : 'N/A'}
                     </span>
                   </div>
                   
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     {isAdmin && user.id !== currentUser?.id && (
                       <button 
                         onClick={async () => {
@@ -290,18 +284,18 @@ export default function UsersPage() {
                             }
                           }
                         }}
-                        className="p-2.5 rounded-xl bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200 transition-all hover:-translate-y-0.5"
+                        className="p-2.5 rounded-xl bg-white text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200 shadow-sm transition-all hover:-translate-y-1 active:scale-95"
                         title="Impersonate User"
                       >
-                        <User size={18} />
+                        <User size={18} strokeWidth={2.5} />
                       </button>
                     )}
                     <button 
                       onClick={() => handleEdit(user)}
-                      className="p-2.5 rounded-xl bg-slate-50 text-slate-400 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 transition-all hover:-translate-y-0.5"
+                      className="p-2.5 rounded-xl bg-white text-slate-400 hover:bg-brand-navy hover:text-white border border-slate-200 shadow-sm transition-all hover:-translate-y-1 active:scale-95"
                       title="Edit Profile"
                     >
-                      <Edit3 size={18} />
+                      <Edit3 size={18} strokeWidth={2.5} />
                     </button>
                   </div>
                 </div>

@@ -6,8 +6,9 @@ import { useRouter } from 'next/navigation';
 import {
   Shield, Activity, Clock, Users, FileText, AlertTriangle,
   Search, Filter, RefreshCw, ChevronLeft, ChevronRight,
-  LogIn, Edit, Trash, Eye, Plus, Download, X
+  LogIn, Edit, Trash, Eye, Plus, Download, X, Globe, Zap, Database
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import api from '@/lib/api';
 
@@ -48,8 +49,12 @@ const actionIcons: Record<string, typeof LogIn> = {
 };
 
 const actionColors: Record<string, string> = {
-  login: '#10b981', create: '#3b82f6', update: '#f59e0b',
-  delete: '#ef4444', view: '#8b5cf6', export: '#06b6d4',
+  login: '#1e3a5f', // Navy
+  create: '#d4a574', // Gold
+  update: '#1e3a5f',
+  delete: '#be123c', // Maintain red for destructive
+  view: '#64748b',
+  export: '#d4a574',
 };
 
 const actionTooltips: Record<string, string> = {
@@ -62,7 +67,10 @@ const actionTooltips: Record<string, string> = {
 };
 
 const roleColors: Record<string, string> = {
-  admin: '#ef4444', partner: '#3b82f6', director: '#f59e0b', manager: '#10b981',
+  admin: 'var(--brand-navy)', 
+  partner: 'var(--brand-gold)', 
+  director: 'var(--brand-navy)', 
+  manager: '#475569',
 };
 
 export default function AdminPage() {
@@ -154,14 +162,15 @@ export default function AdminPage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
         <div style={{
-          width: 48, height: 48, borderRadius: 14, background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center'
+          width: 48, height: 48, borderRadius: 14, background: 'var(--brand-navy)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 8px 16px rgba(30, 58, 95, 0.15)'
         }}>
-          <Shield size={24} color="#fff" />
+          <Shield size={24} color="var(--brand-gold)" />
         </div>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-            Admin Panel
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'var(--font-accent)' }}>
+            Admin <span style={{ color: 'var(--brand-gold)' }}>Panel</span>
           </h1>
           <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
             System monitoring, audit logs & user activity
@@ -171,26 +180,29 @@ export default function AdminPage() {
 
       {/* Tabs */}
       <div style={{
-        display: 'flex', gap: 4, background: 'var(--bg-card)', borderRadius: 14,
-        padding: 4, marginBottom: 24, border: '1px solid var(--border)', width: 'fit-content'
+        display: 'flex', gap: 8, background: 'rgba(255, 255, 255, 0.7)', backdropFilter: 'blur(10px)', 
+        borderRadius: 20, padding: 6, marginBottom: 32, border: '1px solid var(--border)', 
+        width: 'fit-content', boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
       }}>
         {[
-          { key: 'logs' as const, label: 'Audit Logs', icon: FileText },
-          { key: 'users' as const, label: 'Active Users', icon: Users },
-          { key: 'stats' as const, label: 'Statistics', icon: Activity },
+          { key: 'logs' as const, label: 'Audit Intelligence', icon: FileText },
+          { key: 'users' as const, label: 'Session Monitor', icon: Globe },
+          { key: 'stats' as const, label: 'Systems Analytics', icon: Activity },
         ].map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             style={{
-              display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
-              borderRadius: 10, border: 'none', cursor: 'pointer', fontWeight: 600,
-              fontSize: '0.875rem', transition: 'all 0.2s ease',
-              background: activeTab === tab.key ? 'var(--color-primary)' : 'transparent',
-              color: activeTab === tab.key ? '#fff' : 'var(--text-secondary)',
+              display: 'flex', alignItems: 'center', gap: 10, padding: '12px 24px',
+              borderRadius: 16, border: 'none', cursor: 'pointer', fontWeight: 700,
+              fontSize: '0.875rem', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              background: activeTab === tab.key ? 'var(--brand-navy)' : 'transparent',
+              color: activeTab === tab.key ? 'var(--brand-gold)' : 'var(--text-secondary)',
+              boxShadow: activeTab === tab.key ? '0 10px 20px rgba(30, 58, 95, 0.2)' : 'none',
+              fontFamily: 'var(--font-accent)'
             }}
           >
-            <tab.icon size={16} />
+            <tab.icon size={18} strokeWidth={2.5} />
             {tab.label}
           </button>
         ))}
@@ -379,80 +391,113 @@ export default function AdminPage() {
 
       {/* -- Tab: Active Users -- */}
       {activeTab === 'users' && (
-        <div style={{ display: 'grid', gap: 16 }}>
-          {activeUsers.map(u => {
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(450px, 1fr))', gap: 20 }}
+        >
+          {activeUsers.map((u, i) => {
             const lastActiveTime = u.last_active ? new Date(u.last_active).getTime() : 0;
             const isOnlineRecently = lastActiveTime && (now - lastActiveTime) < 15 * 60 * 1000; // 15 mins
             return (
-              <div key={u.id} style={{
-                background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)',
-                padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                transition: 'box-shadow 0.2s ease'
-              }}
-                onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.06)'}
-                onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}
+              <motion.div 
+                key={u.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.05 }}
+                style={{
+                  background: 'white', borderRadius: 24, border: '1px solid var(--border)',
+                  padding: '28px', display: 'flex', flexDirection: 'column', gap: 20,
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.02)', position: 'relative', overflow: 'hidden'
+                }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                  {/* Status indicator */}
-                  <div style={{
-                    width: 10, height: 10, borderRadius: '50%',
-                    background: isOnlineRecently ? '#10b981' : '#94a3b8',
-                    boxShadow: isOnlineRecently ? '0 0 8px rgba(16, 185, 129, 0.4)' : 'none'
-                  }} />
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                {isOnlineRecently && (
+                  <div style={{ 
+                    position: 'absolute', top: 0, right: 0, padding: '8px 16px', 
+                    background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', 
+                    fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', 
+                    letterSpacing: '0.1em', borderRadius: '0 0 0 16px' 
+                  }}>
+                    Live Now
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+                  <div style={{ position: 'relative' }}>
+                    <div style={{
+                      width: 56, height: 56, borderRadius: 20, background: 'var(--brand-navy)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: 'var(--brand-gold)', fontSize: '1.25rem', fontWeight: 900,
+                      boxShadow: '0 8px 16px rgba(30, 58, 95, 0.15)'
+                    }}>
+                      {(u.display_name || u.full_name).charAt(0)}
+                    </div>
+                    <div style={{
+                      position: 'absolute', bottom: -2, right: -2, width: 16, height: 16,
+                      borderRadius: '50%', background: isOnlineRecently ? '#10b981' : '#94a3b8',
+                      border: '3px solid white', boxShadow: isOnlineRecently ? '0 0 10px rgba(16, 185, 129, 0.4)' : 'none'
+                    }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-primary)', fontFamily: 'var(--font-accent)' }}>
                       {u.display_name || u.full_name}
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{u.email}</div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>{u.email}</div>
+                  </div>
+                  <span style={{
+                    padding: '6px 14px', borderRadius: 12, fontSize: '10px',
+                    fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em',
+                    background: `${roleColors[u.role] || '#888'}10`,
+                    color: roleColors[u.role] || '#888', border: `1px solid ${roleColors[u.role] || '#888'}30`
+                  }}>{u.role}</span>
+                </div>
+
+                <div style={{ 
+                  display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12,
+                  padding: '16px', background: 'var(--bg-primary-light)', borderRadius: 16
+                }}>
+                  <div>
+                    <div style={{ fontSize: '9px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Last Action</div>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--brand-navy)' }}>{u.last_action || 'Silent Session'}</div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '9px', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>Activity Level</div>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>{u.total_actions_today} actions <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>today</span></div>
                   </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-                  <span style={{
-                    padding: '4px 12px', borderRadius: 20, fontSize: '0.7rem',
-                    fontWeight: 700, textTransform: 'uppercase',
-                    background: `${roleColors[u.role] || '#888'}18`,
-                    color: roleColors[u.role] || '#888'
-                  }}>{u.role}</span>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                      {u.last_action || 'No activity'}
-                    </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      {formatTime(u.last_active)}
-                    </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600 }}>
+                    <Clock size={14} />
+                    Active {formatTime(u.last_active)}
                   </div>
-                  <div style={{
-                    minWidth: 50, textAlign: 'center', padding: '6px 12px',
-                    borderRadius: 10, background: 'var(--bg-primary-light)',
-                    color: 'var(--color-primary)', fontWeight: 700, fontSize: '0.85rem'
-                  }}>
-                    {u.total_actions_today}
-                    <div style={{ fontSize: '0.6rem', fontWeight: 500, opacity: 0.7 }}>today</div>
-                  </div>
-                  {/* Login as User button for admin */}
                   <button
                     style={{
-                      padding: '8px 16px', borderRadius: 10, border: 'none', background: 'linear-gradient(90deg,#3b82f6,#06b6d4)',
-                      color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', boxShadow: '0 2px 8px #3b82f633',
-                      marginLeft: 12
+                      padding: '10px 20px', borderRadius: 14, border: 'none', background: 'var(--brand-navy)',
+                      color: 'var(--brand-gold)', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer', 
+                      boxShadow: '0 10px 20px rgba(30, 58, 95, 0.15)', display: 'flex', alignItems: 'center', gap: 8,
+                      transition: 'all 0.2s ease', textTransform: 'uppercase', letterSpacing: '0.05em'
                     }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 15px 25px rgba(30, 58, 95, 0.2)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 20px rgba(30, 58, 95, 0.15)'; }}
                     onClick={() => handleImpersonateUser(u.id)}
                   >
-                    <LogIn size={16} style={{ marginRight: 8 }} /> Login as User
+                    <LogIn size={16} strokeWidth={2.5} /> Impersonate
                   </button>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
           {activeUsers.length === 0 && (
             <div style={{
-              padding: 60, textAlign: 'center', color: 'var(--text-muted)',
-              background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border)'
+              padding: 80, textAlign: 'center', color: 'var(--text-muted)',
+              background: 'white', borderRadius: 24, border: '1px solid var(--border)', gridColumn: '1 / -1'
             }}>
-              No user activity data available yet
+              <Database size={48} style={{ marginBottom: 16, opacity: 0.2, margin: '0 auto' }} />
+              <p style={{ fontWeight: 700 }}>No live session data available in current monitoring window</p>
             </div>
           )}
-        </div>
+        </motion.div>
       )}
 
       {/* -- Tab: Statistics -- */}
@@ -474,8 +519,9 @@ export default function AdminPage() {
                 return (
                   <div key={day.date} style={{ flex: 1, textAlign: 'center' }}>
                     <div style={{
-                      height: `${Math.max(height, 5)}%`, background: 'linear-gradient(180deg, #3b82f6, #2563eb)',
-                      borderRadius: '6px 6px 0 0', minHeight: 4, transition: 'height 0.3s ease'
+                      height: `${height}%`, background: 'var(--brand-gold)',
+                      borderRadius: '4px 4px 0 0', minHeight: 4, transition: 'height 0.3s ease',
+                      boxShadow: '0 -2px 10px rgba(212, 165, 116, 0.2)'
                     }} />
                     <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: 6 }}>
                       {new Date(day.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
@@ -555,7 +601,7 @@ export default function AdminPage() {
                       fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase',
                       color: roleColors[tu.role] || '#888'
                     }}>{tu.role}</span>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-primary)' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--brand-navy)' }}>
                       {tu.actions} actions
                     </span>
                   </div>

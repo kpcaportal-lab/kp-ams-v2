@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <!-- KPCA WHITE LOGO - For dark backgrounds -->
+  <rect width="200" height="60" fill="#1E3A5F"/>
+  
+  <!-- Icon/Mark -->
+  <rect x="5" y="5" width="50" height="50" rx="4" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+  <text x="30" y="42" text-anchor="middle" fill="#FFFFFF" font-family="serif" font-size="32" font-weight="bold">K&P</text>
+  
+  <!-- Text -->
+  <text x="65" y="25" fill="#FFFFFF" font-family="Georgia, serif" font-size="18" font-weight="bold">KIRTANE</text>
+  <text x="120" y="25" fill="#FFFFFF" font-family="Georgia, serif" font-size="10" font-style="italic">&amp;</text>
+  <text x="65" y="42" fill="#FFFFFF" font-family="Georgia, serif" font-size="16" font-weight="bold">PANDIT</text>
+  <text x="140" y="42" fill="#D4A574" font-family="Arial, sans-serif" font-size="8">CA</text>
+  
+  <!-- Info -->
+  <text x="100" y="58" text-anchor="middle" fill="#AAAAAA" font-family="Arial, sans-serif" font-size="7">WHITE LOGO - REPLACE WITH ACTUAL</text>
+</svg>
