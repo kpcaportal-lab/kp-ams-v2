@@ -107,7 +107,7 @@ export function Sidebar({
                 className={cn(
                   "flex items-center group relative h-12 px-4 rounded-xl transition-all duration-300 ease-in-out",
                   isActive 
-                    ? "bg-white/10 text-white font-black shadow-[0_0_15px_rgba(0,212,255,0.1)]" 
+                    ? "bg-white/10 text-white font-black shadow-[0_0_15px_rgba(0,123,255,0.1)]" 
                     : "text-white/70 hover:bg-white/5 hover:text-white",
                   isCollapsed ? "justify-center px-0" : "justify-start gap-4"
                 )}
@@ -117,7 +117,7 @@ export function Sidebar({
                 {isActive && (
                   <motion.div 
                     layoutId="sidebar-active"
-                    className="absolute left-0 w-1 h-6 bg-brand-gold rounded-r-full shadow-[0_0_8px_#00D4FF]" 
+                    className="absolute left-0 w-1 h-6 bg-brand-gold rounded-r-full shadow-[0_0_8px_#007BFF]" 
                   />
                 )}
                 <item.icon 
@@ -143,7 +143,7 @@ export function Sidebar({
             className={cn(
               "flex items-center h-12 px-4 rounded-xl transition-all duration-300",
               pathname === '/profile' 
-                ? "bg-white/10 text-white font-black shadow-[0_0_15px_rgba(0,212,255,0.1)]" 
+                ? "bg-white/10 text-white font-black shadow-[0_0_15px_rgba(0,123,255,0.1)]" 
                 : "text-white/60 hover:bg-white/5 hover:text-white",
               isCollapsed ? "justify-center px-0" : "justify-start gap-4"
             )}
@@ -175,7 +175,7 @@ export function Sidebar({
         {/* Collapse Toggle */}
         <button
           onClick={toggleCollapse}
-          className="hidden lg:flex absolute top-[24px] right-[-14px] w-7 h-7 bg-brand-gold text-brand-navy rounded-full items-center justify-center shadow-lg shadow-brand-gold/30 hover:scale-110 transition-all z-10"
+          className="hidden lg:flex absolute top-[24px] right-[-14px] w-7 h-7 bg-brand-gold text-white rounded-full items-center justify-center shadow-lg shadow-brand-gold/30 hover:scale-110 transition-all z-10"
         >
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>

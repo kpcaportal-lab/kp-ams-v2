@@ -429,7 +429,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                   <p className="text-[11px] text-white/60 font-medium">How can we help you today?</p>
                 </div>
               </div>
-              <button onClick={() => setIsTicketModalOpen(false)} className="p-2 rounded-xl hover:bg-cyan-50 text-slate-400 hover:text-cyan-500 transition-colors">
+              <button onClick={() => setIsTicketModalOpen(false)} className="p-2 rounded-xl hover:bg-blue-50 text-slate-400 hover:text-blue-500 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -469,7 +469,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
 
               <div className="flex gap-3 pt-4">
                 <button type="button" onClick={() => setIsTicketModalOpen(false)} className="flex-1 py-3.5 rounded-2xl border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
-                <button type="submit" disabled={creating} className="flex-1 py-3.5 rounded-2xl bg-brand-gold text-brand-navy text-sm font-black shadow-xl shadow-brand-gold/10 hover:shadow-brand-gold/20 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50">
+                <button type="submit" disabled={creating} className="flex-1 py-3.5 rounded-2xl bg-brand-gold text-white text-sm font-black shadow-xl shadow-brand-gold/10 hover:shadow-brand-gold/20 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50">
                   {creating ? 'Sending...' : 'Submit Issue'}
                 </button>
               </div>

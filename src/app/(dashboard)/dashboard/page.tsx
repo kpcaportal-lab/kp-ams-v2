@@ -79,8 +79,8 @@ export default function DashboardPage() {
       icon: Briefcase,
       trend: `${assignments.length} Total`,
       trendVal: '+12%',
-      accent: 'from-brand-navy to-navy-600',
-      iconColor: 'bg-brand-navy text-white',
+      accent: 'from-[#002366] to-[#0040B3]',
+      iconColor: 'bg-[#002366] text-white',
     },
     {
       label: 'Opportunities',
@@ -88,8 +88,8 @@ export default function DashboardPage() {
       icon: Clock,
       trend: `${stats.wonProposals} Won`,
       trendVal: '+5%',
-      accent: 'from-brand-gold to-gold-600',
-      iconColor: 'bg-brand-gold text-brand-navy',
+      accent: 'from-[#007BFF] to-[#0056B3]',
+      iconColor: 'bg-[#007BFF] text-white',
     },
     {
       label: 'Client Network',
@@ -97,8 +97,8 @@ export default function DashboardPage() {
       icon: Users,
       trend: `${clients.length} Active`,
       trendVal: '+8%',
-      accent: 'from-brand-navy to-navy-700',
-      iconColor: 'bg-brand-navy text-white',
+      accent: 'from-[#002366] to-[#003399]',
+      iconColor: 'bg-[#002366] text-white',
     },
     {
       label: 'Financial achievement',
@@ -106,8 +106,8 @@ export default function DashboardPage() {
       icon: FileText,
       trend: 'Settled',
       trendVal: '+15%',
-      accent: 'from-brand-navy to-brand-gold',
-      iconColor: 'bg-brand-gold text-brand-navy',
+      accent: 'from-[#007BFF] to-[#0056B3]',
+      iconColor: 'bg-[#007BFF] text-white',
     },
   ];
 
@@ -227,7 +227,7 @@ export default function DashboardPage() {
               <item.icon size={20} strokeWidth={2.5} />
             </div>
             <div>
-              <div className="text-sm font-black text-slate-900">{item.value}</div>
+              <div className="text-sm font-black text-[#333333]">{item.value}</div>
               <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.label}</div>
             </div>
           </div>
