@@ -21,9 +21,9 @@ export function BrandedLogo({
         isDark ? "bg-white/10 border-white/10 text-white" : "bg-brand-navy border-brand-navy/10 text-white",
         className
       )} style={{ width: '48px', height: '48px', fontSize: '20px', letterSpacing: '-0.05em' }}>
-        <span className="text-brand-gold">K</span>
-        <span className="mx-0.5 text-brand-red">&</span>
-        <span className="text-brand-gold">P</span>
+        <span className="text-white">K</span>
+        <span className="mx-0.5 text-brand-red font-serif italic">&</span>
+        <span className="text-white">P</span>
       </div>
     );
   }
@@ -40,11 +40,12 @@ export function BrandedLogo({
       </div>
       <span className={cn(
         "text-[9px] font-black tracking-[0.3em] uppercase opacity-80",
-        isDark ? "text-brand-gold/90" : "text-brand-navy/70"
+        isDark ? "text-white/70" : "text-brand-navy/70"
       )}>
         Chartered Accountants
       </span>
     </div>
   );
 }
+
 

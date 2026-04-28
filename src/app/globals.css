@@ -17,35 +17,37 @@
   
   /* Official Brand Identity Tokens */
   --color-brand-navy: #054C7D;
-  --color-brand-gold: #F8982D;
   --color-brand-red: #C0272D;
+  --color-brand-gold: #CDE2E7; /* Subdued Teal-Grey */
   
-  /* Brand Navy Palette (K&P Official) */
+  /* Brand Navy Palette */
   --color-blue-50: #E1F0F7;
   --color-blue-100: #B3D6E9;
   --color-blue-200: #80B6D9;
   --color-blue-400: #1D79BA;
-  --color-blue-500: #054C7D; /* Brand Primary */
+  --color-blue-500: #054C7D;
   --color-blue-600: #043D64; 
   --color-blue-700: #032F4D;
   --color-blue-900: #021A2B;
 
-  /* Brand Action Palette (K&P Orange) */
-  --color-gold-50: #FFF8EE;
-  --color-gold-100: #FFF0D9;
-  --color-gold-200: #FFE1B3;
-  --color-gold-400: #FBAC5A;
-  --color-gold-500: #F8982D; /* Brand Accent */
-  --color-gold-600: #DF8828;
-  --color-gold-700: #B97121;
+  /* Brand Accent Palette (Red) */
+  --color-red-50: #FDF2F2;
+  --color-red-100: #FDE2E2;
+  --color-red-500: #C0272D;
+  --color-red-600: #A51D24;
+
+  /* Subtle Secondary Palette (Teal) */
+  --color-gold-50: #F0F7F8;
+  --color-gold-100: #E0F1F4;
+  --color-gold-500: #CDE2E7;
 }
 
 /* ── CSS Custom Properties ────────────────────────────────────── */
 :root {
   /* ── KPCA OFFICIAL BRAND COLORS ────────────────────────────── */
   --brand-navy: #054C7D;
-  --brand-gold: #F8982D;
   --brand-red: #C0272D;
+  --brand-gold: #CDE2E7; /* Replaced Orange with subtle Teal-Grey */
   --brand-paper: #FFFFFF;
   
   /* Brand Navy Tints */
@@ -58,22 +60,24 @@
   --navy-100: #B3D6E9;
   --navy-50: #E1F0F7;
 
-  /* Official Accent Palette (Orange/Gold) */
-  --color-gold: #F8982D;
-  --gold-50: #FFF8EE;
-  --gold-100: #FFF0D9;
-  --gold-200: #FFE1B3;
-  --gold-400: #FBAC5A;
-  --gold-500: #F8982D;
-  --gold-600: #DF8828;
-  --gold-700: #B97121;
+  /* Official Accent Palette (Red & Teal) */
+  --color-red: #C0272D;
+  --red-50: #FDF2F2;
+  --red-100: #FDE2E2;
+  --red-500: #C0272D;
+  --red-600: #A51D24;
+  
+  --color-teal: #CDE2E7;
+  --teal-50: #F0F7F8;
+  --teal-100: #E0F1F4;
+  --teal-500: #CDE2E7;
 
   /* Base background & text colors */
   --bg-main: #FFFFFF;
   --bg-card: #ffffff;
-  --bg-card-hover: #E0F1F4; /* Light teal tint from website */
+  --bg-card-hover: #F8FAFC; 
   --bg-surface: #ffffff;
-  --bg-muted: #E0F1F4;
+  --bg-muted: #F1F5F9;
   
   --text-primary: #122830;
   --text-main: var(--text-primary);
@@ -92,10 +96,10 @@
   --color-primary-glow: rgba(5, 76, 125, 0.12);
   --bg-primary-light: var(--navy-50);
   
-  /* Action colors - Official K&P Orange */
-  --color-accent: var(--brand-gold);
-  --color-accent-hover: var(--gold-600);
-  --color-accent-light: var(--gold-100);
+  /* Action colors - Moved to RED instead of Orange */
+  --color-accent: var(--brand-red);
+  --color-accent-hover: var(--red-600);
+  --color-accent-light: var(--red-100);
   
   /* Success & Danger */
   --color-success: #10b981;
