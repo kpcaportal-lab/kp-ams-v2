@@ -27,12 +27,13 @@ interface FormData {
   status: ProposalStatus;
   fiscal_year: string;
   responsible_partner: string;
+  manager_id: string;
   notes: string;
 }
 
 export default function EditProposalModal({ open, setOpen, proposal }: EditProposalModalProps) {
   const { updateProposal } = useProposalStore();
-  const { partners } = useUserStore();
+  const { partners, managers, fetchPartners, fetchManagers } = useUserStore();
   const [clients, setClients] = useState<ClientOption[]>([]);
   const [form, setForm] = useState<FormData>({
     client_id: '',
@@ -42,6 +43,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
     status: 'pending',
     fiscal_year: '2025-26',
     responsible_partner: '',
+    manager_id: '',
     notes: ''
   });
 
@@ -50,6 +52,9 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
       api.get('/api/clients').then(res => {
         setClients(res.data.map((c: ClientOption) => ({ id: c.id, name: c.name })));
       }).catch(() => setClients([]));
+      
+      if (partners.length === 0) fetchPartners();
+      if (managers.length === 0) fetchManagers();
     }
   }, [open]);
 
@@ -61,6 +66,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
     status: proposal?.status || 'pending',
     fiscal_year: proposal?.fiscal_year || '2025-26',
     responsible_partner: proposal?.responsible_partner || '',
+    manager_id: proposal?.manager_id || '',
     notes: proposal?.notes || ''
   }), [proposal]);
 
@@ -82,6 +88,7 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
       status: form.status,
       fiscal_year: form.fiscal_year,
       responsible_partner: form.responsible_partner,
+      manager_id: form.manager_id,
       notes: form.notes
     });
     setOpen(false);
@@ -230,20 +237,38 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                   </div>
                 </div>
 
-                {/* Responsible Partner */}
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Responsible Partner</label>
-                  <select
-                    required
-                    value={form.responsible_partner}
-                    onChange={(e) => setForm({ ...form, responsible_partner: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
-                  >
-                    <option value="">Select a partner</option>
-                    {partners.map(p => (
-                      <option key={p.id} value={p.id}>{p.full_name}</option>
-                    ))}
-                  </select>
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Responsible Partner */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Responsible Partner (Leader)</label>
+                    <select
+                      required
+                      value={form.responsible_partner}
+                      onChange={(e) => setForm({ ...form, responsible_partner: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
+                    >
+                      <option value="">Select Partner</option>
+                      {partners.map(p => (
+                        <option key={p.id} value={p.id}>{p.full_name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Manager/Lead */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Project Lead (Under Partner)</label>
+                    <select
+                      required
+                      value={form.manager_id}
+                      onChange={(e) => setForm({ ...form, manager_id: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
+                    >
+                      <option value="">Select Lead</option>
+                      {managers.map(m => (
+                        <option key={m.id} value={m.id}>{m.full_name}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 {/* Notes */}

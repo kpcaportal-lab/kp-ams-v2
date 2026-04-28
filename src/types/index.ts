@@ -114,6 +114,8 @@ export interface Proposal {
   parent_proposal_id?: string;
   versions?: ProposalVersion[];
   assignment_count?: number;
+  manager_id?: string;
+  manager_name?: string;
   notes?: string;
   fiscal_year: string;
   created_at: string;

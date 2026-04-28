@@ -20,6 +20,8 @@ interface ClientOption {
 export default function AddProposalModal({ open, setOpen }: AddProposalModalProps) {
   const { addProposal } = useProposalStore();
   const [clients, setClients] = useState<ClientOption[]>([]);
+  const [partners, setPartners] = useState<any[]>([]);
+  const [managers, setManagers] = useState<any[]>([]);
   const [form, setForm] = useState({
     client_id: '',
     proposal_type: 'new' as ProposalType,
@@ -27,7 +29,9 @@ export default function AddProposalModal({ open, setOpen }: AddProposalModalProp
     quotation_amount: 0,
     fiscal_year: '2025-26',
     scope_areas: '',
-    notes: ''
+    notes: '',
+    responsible_partner: '',
+    manager_id: ''
   });
 
   useEffect(() => {
@@ -35,6 +39,9 @@ export default function AddProposalModal({ open, setOpen }: AddProposalModalProp
       api.get('/api/clients').then(res => {
         setClients(res.data.map((c: ClientOption) => ({ id: c.id, name: c.name })));
       }).catch(() => setClients([]));
+
+      api.get('/api/users/partners').then(res => setPartners(res.data)).catch(() => setPartners([]));
+      api.get('/api/users/managers').then(res => setManagers(res.data)).catch(() => setManagers([]));
     }
   }, [open]);
 
@@ -51,7 +58,9 @@ export default function AddProposalModal({ open, setOpen }: AddProposalModalProp
       quotation_amount: 0,
       fiscal_year: '2025-26',
       scope_areas: '',
-      notes: ''
+      notes: '',
+      responsible_partner: '',
+      manager_id: ''
     });
   };
 
@@ -108,6 +117,40 @@ export default function AddProposalModal({ open, setOpen }: AddProposalModalProp
                       <option key={c.id} value={c.id}>{c.name}</option>
                     ))}
                   </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Responsible Partner */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Responsible Partner (Leader)</label>
+                    <select
+                      required
+                      value={form.responsible_partner}
+                      onChange={(e) => setForm({ ...form, responsible_partner: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all cursor-pointer appearance-none"
+                    >
+                      <option value="">Select Partner</option>
+                      {partners.map(p => (
+                        <option key={p.id} value={p.id}>{p.full_name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Manager/Lead */}
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Project Lead (Under Partner)</label>
+                    <select
+                      required
+                      value={form.manager_id}
+                      onChange={(e) => setForm({ ...form, manager_id: e.target.value })}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] focus:bg-white transition-all cursor-pointer appearance-none"
+                    >
+                      <option value="">Select Lead</option>
+                      {managers.map(m => (
+                        <option key={m.id} value={m.id}>{m.full_name}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

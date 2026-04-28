@@ -83,6 +83,7 @@ export default function ProposalListPage() {
       'Quotation Amount': Number(p.quotation_amount || 0),
       'Fee Category': p.fee_category,
       'Partner': p.partner_name,
+      'Project Lead': p.manager_name,
       'Prepared By': p.prepared_by_name,
       'Status': p.status,
       'Version': p.version_number
@@ -443,14 +444,24 @@ export default function ProposalListPage() {
                     <td className="px-8 py-6">
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                          <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500">
                             {proposal.partner_name?.charAt(0)}
                           </div>
-                          <span className="text-sm font-bold text-slate-700">{proposal.partner_name}</span>
+                          <span className="text-sm font-bold text-slate-700">{proposal.partner_name} <span className="text-[10px] text-slate-400 font-normal ml-1">(Partner)</span></span>
                         </div>
-                        <div className="text-[0.65rem] text-slate-400 ml-8 font-medium italic">
-                          Drafted by: {proposal.prepared_by_name}
-                        </div>
+                        {proposal.manager_name && (
+                          <div className="flex items-center gap-2 ml-2">
+                            <div className="w-5 h-5 rounded-full bg-brand-gold/10 flex items-center justify-center text-[8px] font-bold text-brand-gold">
+                              {proposal.manager_name?.charAt(0)}
+                            </div>
+                            <span className="text-xs font-semibold text-slate-600">{proposal.manager_name} <span className="text-[9px] text-slate-400 font-normal ml-0.5">(Lead)</span></span>
+                          </div>
+                        )}
+                        {!proposal.manager_name && (
+                          <div className="text-[0.65rem] text-slate-400 ml-8 font-medium italic">
+                            Drafted by: {proposal.prepared_by_name}
+                          </div>
+                        )}
                       </div>
                     </td>
 

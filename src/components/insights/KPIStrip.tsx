@@ -83,7 +83,7 @@ export function KPIStrip({ data, isLoading }: KPIStripProps) {
                             {isLoading ? (
                                 <div className="h-10 w-32 bg-slate-100 animate-pulse rounded-xl mb-2" />
                             ) : (
-                                <h3 className="text-4xl font-black text-slate-900 tracking-[-0.04em] mb-1">
+                                <h3 className="text-4xl font-black text-slate-900 tracking-[-0.04em] mb-1 font-number">
                                     {stat.isCurrency ? formatINR(stat.value as number) : stat.value.toLocaleString()}
                                 </h3>
                             )}

@@ -254,7 +254,7 @@ export default function DashboardPage() {
               </div>
               <div className="flex flex-col items-end">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{card.label}</span>
-                <span className="text-3xl font-black text-slate-900 tracking-tighter">{card.value}</span>
+                <span className="text-3xl font-black text-slate-900 tracking-tighter font-number">{card.value}</span>
               </div>
             </div>
             <div className="flex items-center justify-between pt-2 border-t border-slate-50">
@@ -318,7 +318,7 @@ export default function DashboardPage() {
                 >
                   <div className="flex-1">
                     <span className="text-[10px] font-black text-brand-navy uppercase tracking-[0.3em] mb-4 block opacity-60">Estimated Gross Value</span>
-                    <div className="text-6xl md:text-7xl font-black text-slate-900 tracking-[-0.05em] mb-8 drop-shadow-sm">
+                    <div className="text-6xl md:text-7xl font-black text-slate-900 tracking-[-0.05em] mb-8 drop-shadow-sm font-number">
                       {formatIndianCurrency(stats.totalFees, true, true)}
                     </div>
                     <div className="flex items-center gap-4 text-xs font-black text-slate-600 mb-10">
@@ -333,13 +333,13 @@ export default function DashboardPage() {
                       Total projected revenue from across all practice areas. Includes current active assignments and recently completed missions awaiting final closure.
                     </p>
                   </div>
-                  <div className="w-full md:w-80 p-10 rounded-[2.5rem] bg-brand-navy text-white shadow-[0_30px_60px_-15px_rgba(30,58,95,0.4)] relative overflow-hidden group border border-slate-800 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_80px_-15px_rgba(30,58,95,0.6)]">
+                  <div className="w-full md:w-[26rem] p-8 rounded-[2.5rem] bg-brand-navy text-white shadow-[0_30px_60px_-15px_rgba(30,58,95,0.4)] relative overflow-hidden group border border-slate-800 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_80px_-15px_rgba(30,58,95,0.6)]">
                     <div className="absolute inset-0 bg-gradient-to-br from-brand-gold/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                     <div className="relative z-10">
                       <div className="flex items-center gap-2 text-brand-gold text-[10px] font-black uppercase tracking-[0.2em] mb-8">
                         <div className="w-2 h-2 rounded-full bg-brand-gold animate-pulse shadow-[0_0_10px_rgba(212,175,55,0.8)]" /> Finalized Billing
                       </div>
-                      <div className="text-4xl font-black mb-3 tracking-tighter">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
+                      <div className="text-4xl font-black mb-3 tracking-tighter font-number whitespace-nowrap">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
                       <div className="text-xs font-bold text-slate-400 mb-10 tracking-wide">Net billing achievement</div>
                       <Link href="/billing" className="inline-flex items-center gap-2.5 px-6 py-3 bg-white/10 hover:bg-white text-white hover:text-brand-navy border border-white/10 rounded-2xl text-xs font-black transition-all duration-300 shadow-xl group/btn">
                         Financial Audit <ArrowUpRight size={16} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
@@ -359,12 +359,12 @@ export default function DashboardPage() {
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
                       <span className="text-xs font-black text-brand-navy uppercase tracking-[0.2em] mb-3 block">Billing Status</span>
-                      <div className="text-6xl font-black text-slate-900 tracking-tighter">
+                      <div className="text-6xl font-black text-slate-900 tracking-tighter font-number">
                         {stats.billingPct.toFixed(1)}%
                       </div>
                     </div>
                     <div className="text-right space-y-1">
-                      <div className="text-2xl font-black text-slate-800">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
+                      <div className="text-2xl font-black text-slate-800 font-number">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
                       <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Invoiced to date</div>
                     </div>
                   </div>
@@ -385,15 +385,15 @@ export default function DashboardPage() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
                       <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Scope</div>
-                      <div className="text-lg font-black text-slate-800">{formatIndianCurrency(stats.totalFees, true, true)}</div>
+                      <div className="text-lg font-black text-slate-800 font-number">{formatIndianCurrency(stats.totalFees, true, true)}</div>
                     </div>
                     <div className="p-5 rounded-2xl bg-brand-navy/5 border border-brand-navy/10">
                       <div className="text-[10px] font-black text-brand-navy uppercase tracking-widest mb-1">Billed Net</div>
-                      <div className="text-lg font-black text-brand-navy">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
+                      <div className="text-lg font-black text-brand-navy font-number">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
                     </div>
                     <div className="p-5 rounded-2xl bg-brand-gold/5 border border-brand-gold/10">
                       <div className="text-[10px] font-black text-brand-gold uppercase tracking-widest mb-1">Outstanding</div>
-                      <div className="text-lg font-black text-brand-gold">{formatIndianCurrency(stats.totalFees - stats.totalBilled, true, true)}</div>
+                      <div className="text-lg font-black text-brand-gold font-number">{formatIndianCurrency(stats.totalFees - stats.totalBilled, true, true)}</div>
                     </div>
                   </div>
                 </motion.div>
@@ -461,7 +461,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex items-end justify-between">
                       <div className="text-xs text-slate-500 font-medium">
-                        Unbilled: <span className="font-black text-slate-700">{formatIndianCurrency(Number(a.total_fees) - Number(a.billed_amount), true, true)}</span>
+                        Unbilled: <span className="font-black text-slate-700 font-number">{formatIndianCurrency(Number(a.total_fees) - Number(a.billed_amount), true, true)}</span>
                       </div>
                       <Link href="/billing" className="text-[10px] font-black text-brand-navy hover:text-brand-gold transition-colors flex items-center gap-0.5 uppercase tracking-wider">
                         Invoiced <ArrowUpRight size={10} />
@@ -499,7 +499,7 @@ export default function DashboardPage() {
                       {SUBCATEGORY_LABELS[a.subcategory] || a.subcategory || '—'}
                     </div>
                   </div>
-                  <div className="text-xs font-black text-slate-900 self-center tabular-nums">
+                  <div className="text-xs font-black text-slate-900 self-center tabular-nums font-number">
                     {formatIndianCurrency(Number(a.total_fees || 0), true, true)}
                   </div>
                 </Link>

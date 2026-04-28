@@ -109,11 +109,13 @@ router.get('/', async (req: Request, res: Response) => {
         try {
             let query = `
                 SELECT p.*, c.name as client_name, 
-                    pr.full_name as prepared_by_name, pa.full_name as partner_name
+                    pr.full_name as prepared_by_name, pa.full_name as partner_name,
+                    mg.full_name as manager_name
                 FROM proposals p
                 LEFT JOIN clients c ON c.id = p.client_id
                 LEFT JOIN profiles pr ON pr.id = p.prepared_by
                 LEFT JOIN profiles pa ON pa.id = p.responsible_partner
+                LEFT JOIN profiles mg ON mg.id = p.manager_id
                 WHERE 1=1`;
             const params: unknown[] = [];
             
@@ -163,11 +165,13 @@ router.get('/:id', async (req: Request, res: Response) => {
         try {
             const result = await pool.query(`
                 SELECT p.*, c.name as client_name, c.gstn as client_gstn,
-                    pr.full_name as prepared_by_name, pa.full_name as partner_name
+                    pr.full_name as prepared_by_name, pa.full_name as partner_name,
+                    mg.full_name as manager_name
                 FROM proposals p
                 LEFT JOIN clients c ON c.id = p.client_id
                 LEFT JOIN profiles pr ON pr.id = p.prepared_by
                 LEFT JOIN profiles pa ON pa.id = p.responsible_partner
+                LEFT JOIN profiles mg ON mg.id = p.manager_id
                 WHERE p.id = $1`, [req.params.id]);
             if (!result.rows.length) return res.status(404).json({ error: 'Not found' });
             proposal = result.rows[0];
@@ -218,7 +222,7 @@ router.post('/', ...validateCreateProposal, async (req: Request, res: Response) 
         const {
             client_id, proposal_type, assignment_type, scope_areas, quotation_amount,
             fee_category, increment_details, revised_fee, proposal_date, responsible_partner,
-            status, revision_flag, revision_details, notes, fiscal_year, template_id
+            status, revision_flag, revision_details, notes, fiscal_year, template_id, manager_id
         } = req.body;
 
         const fy = fiscal_year || '2025-26';
@@ -230,13 +234,13 @@ router.post('/', ...validateCreateProposal, async (req: Request, res: Response) 
                 INSERT INTO proposals (
                     number, client_id, proposal_type, assignment_type, scope_areas, quotation_amount,
                     fee_category, increment_details, revised_fee, proposal_date, prepared_by,
-                    responsible_partner, revision_flag, revision_details, notes, fiscal_year,
+                    responsible_partner, manager_id, revision_flag, revision_details, notes, fiscal_year,
                     version_number, template_id, status
-                ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING *`,
+                ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20) RETURNING *`,
                 [number, client_id, proposal_type || 'new', assignment_type, scope_areas || '', 
                  quotation_amount || 0, fee_category || null, increment_details || null, revised_fee || null,
                  proposal_date || new Date().toISOString().split('T')[0], req.user!.id, 
-                 responsible_partner || req.user!.id, revision_flag || false, revision_details || null, 
+                 responsible_partner || req.user!.id, manager_id || null, revision_flag || false, revision_details || null, 
                  notes || null, fy, 1, template_id || null, status || 'pending'
                 ]
             );
@@ -271,7 +275,7 @@ router.put('/:id', ...validateUpdateProposal, async (req: Request, res: Response
     try {
         const fields = ['client_id', 'proposal_type', 'assignment_type', 'scope_areas', 'quotation_amount',
             'fee_category', 'increment_details', 'revised_fee', 'proposal_date', 'responsible_partner',
-            'status', 'fiscal_year', 'revision_flag', 'revision_details', 'file_url', 'notes', 'template_id'];
+            'status', 'fiscal_year', 'revision_flag', 'revision_details', 'file_url', 'notes', 'template_id', 'manager_id'];
         const updates: string[] = [];
         const params: unknown[] = [];
 
@@ -467,7 +471,7 @@ router.post('/:id/generate-assignments', async (req: Request, res: Response) => 
                                 item.fees || 0,
                                 billing_cycle || item.billing_cycle || 'monthly',
                                 partner_id || p.responsible_partner || req.user!.id,
-                                manager_id || req.user!.id,
+                                manager_id || p.manager_id || req.user!.id,
                                 item.assessment_year || p.fiscal_year,
                                 item.subcategory || 'other',
                                 item.assessment_year || p.fiscal_year,

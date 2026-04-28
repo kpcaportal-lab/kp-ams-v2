@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 /* ═══════════════════════════════════════════════════════════════════
    KP-AMS Design System — Kirtane & Pandit LLP
@@ -10,8 +10,10 @@
   --color-background: #F8FAFC;
   --color-foreground: #1E3A5F;
   --font-sans: "Roboto", "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-accent: "Playfair Display", serif;
+  --font-accent: "Plus Jakarta Sans", sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
+  --font-outfit: "Outfit", sans-serif;
+  --font-number: "Outfit", sans-serif;
   
   /* Brand Identity Tokens */
   --color-brand-navy: #1E3A5F;
