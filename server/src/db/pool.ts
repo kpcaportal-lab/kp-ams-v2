@@ -2,14 +2,14 @@ import { Pool } from 'pg';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const dbUrl = process.env.DATABASE_URL || 'postgresql://postgres:thedeveloper%40321@db.dtwdrlxfqozoqmenhpih.supabase.co:5432/postgres';
+const dbUrl = process.env.DATABASE_URL || 'postgresql://postgres.dtwdrlxfqozoqmenhpih:thedeveloper%40321@aws-0-ap-south-1.pooler.supabase.com:5432/postgres';
 
 const pool = new Pool({
     connectionString: dbUrl,
     ssl: { rejectUnauthorized: false },
-    max: 20, // Increased for stability
+    max: 20,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 60000, // 60s timeout for stability
+    connectionTimeoutMillis: 60000,
 });
 
 pool.on('connect', () => {

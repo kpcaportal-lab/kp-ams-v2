@@ -89,8 +89,16 @@ export function ManagerCard({ manager, isExpanded, onToggle, fiscalYear }: Manag
     );
 }
 
-function StatItem({ icon: Icon, label, value, color, isCurrency = false }: any) {
-    const colors: any = {
+interface StatItemProps {
+    icon: React.ElementType; // Better than 'any'
+    label: string;
+    value: string | number;
+    color: 'navy';
+    isCurrency?: boolean;
+}
+
+function StatItem({ icon: Icon, label, value, color, isCurrency = false }: StatItemProps) {
+    const colors: Record<string, string> = {
         navy: "text-[var(--brand-navy)] bg-[var(--navy-50)]",
     };
 

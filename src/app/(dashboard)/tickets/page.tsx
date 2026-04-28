@@ -303,7 +303,7 @@ export default function TicketsPage() {
                             <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                                 <div>
                                     <h2 className="text-xl font-black text-slate-900 tracking-tight font-accent uppercase">Create Ticket</h2>
-                                    <p className="text-xs text-slate-500 mt-0.5 font-medium italic">Report an issue to our firm's tech team</p>
+                                    <p className="text-xs text-slate-500 mt-0.5 font-medium italic">Report an issue to our firm&apos;s tech team</p>
                                 </div>
                                 <button
                                     onClick={() => setCreateModalOpen(false)}

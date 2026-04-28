@@ -61,12 +61,12 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
 
   const initialForm = useMemo((): FormData => ({
     gstn: assignment.gstn || '',
-    category: assignment.category,
-    subcategory: assignment.subcategory || 'internal_audit',
+    category: assignment.category as AssignmentCategory,
+    subcategory: (assignment.subcategory || 'internal_audit') as AssignmentSubcategory,
     total_fees: assignment.total_fees ?? assignment.fees ?? 0,
     billed_amount: assignment.billed_amount ?? 0,
     out_of_pocket: assignment.out_of_pocket ?? 0,
-    billing_cycle: assignment.billing_cycle || 'monthly',
+    billing_cycle: (assignment.billing_cycle || 'monthly') as BillingCycle,
     scope_item: assignment.scope_item || assignment.subcategory || '',
     scope_areas: assignment.scope_areas || '',
     partner_id: assignment.partner_id || '',

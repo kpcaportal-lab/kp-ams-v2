@@ -6,7 +6,8 @@ import { fileURLToPath } from 'url';
 
 dotenv.config();
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// ES module directory name helper (if needed later)
+// const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 import authRoutes from './routes/auth.js';
 import clientRoutes from './routes/clients.js';
@@ -23,7 +24,7 @@ import profileRoutes from './routes/profile.js';
 import searchRoutes from './routes/search.js';
 import insightRoutes from './routes/insights.js';
 
-import { generalLimiter, authLimiter } from './middleware/rateLimiter.js';
+import { generalLimiter } from './middleware/rateLimiter.js';
 
 // Route registration helper
 const registerRoutes = (app: express.Express) => {

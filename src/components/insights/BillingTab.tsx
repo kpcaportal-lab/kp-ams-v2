@@ -5,8 +5,7 @@ import api from '@/lib/api';
 import { Loader2, TrendingUp, CreditCard } from 'lucide-react';
 import { formatINR } from '@/lib/utils';
 import { 
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
-    ResponsiveContainer, Legend, Cell 
+    BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid
 } from 'recharts';
 
 interface ChartDataPoint {
@@ -75,143 +74,82 @@ const toNumber = (val: string | number | undefined) => parseFloat(String(val ?? 
                     <p className="text-sm font-bold text-slate-500 uppercase tracking-[0.2em] font-accent">No billing data available</p>
                 </div>
             ) : (
-                <>
-                    {/* Charts Section */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Monthly Billing Trend</h3>
-                            <div className="h-64">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={formattedChartData}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                                        <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="#94a3b8" />
-                                        <YAxis tick={{ fontSize: 12 }} stroke="#94a3b8" tickFormatter={(v) => `₹${v / 100000}L`} />
-                                        <Tooltip formatter={(val) => formatINR(Number(val))} />
-                                        <Bar dataKey="billed" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
-                                        <Bar dataKey="target" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
-                                    </BarChart>
-                                </ResponsiveContainer>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Chart Section */}
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="flex items-center justify-between mb-8">
+                            <div>
+                                <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider font-accent">Revenue Trend</h4>
+                                <p className="text-xs text-slate-500 font-medium">Monthly Billed vs Collected</p>
+                            </div>
+                            <div className="p-2 bg-[var(--navy-50)] text-[var(--brand-navy)] rounded-lg">
+                                <TrendingUp size={18} />
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Collections vs Billed</h3>
-                            <div className="h-64">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={formattedChartData}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                                        <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="#94a3b8" />
-                                        <YAxis tick={{ fontSize: 12 }} stroke="#94a3b8" tickFormatter={(v) => `₹${v / 100000}L`} />
-                                        <Tooltip formatter={(val) => formatINR(Number(val))} />
-                                        <Bar dataKey="collected" fill="#10b981" radius={[4, 4, 0, 0]} />
-                                        <Bar dataKey="billed" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
+                        <div className="h-[300px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={formattedChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                    <XAxis 
+                                        dataKey="name" 
+                                        axisLine={false} 
+                                        tickLine={false} 
+                                        tick={{ fontSize: 11, fontWeight: 700, fill: '#94a3b8' }} 
+                                    />
+                                    <YAxis 
+                                        axisLine={false} 
+                                        tickLine={false} 
+                                        tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }}
+                                        tickFormatter={(val) => `₹${val >= 100000 ? val/100000 + 'L' : val/1000 + 'K'}`}
+                                    />
+                                    <Tooltip 
+                                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontFamily: 'Public Sans' }}
+                                        formatter={(value: number | string) => formatINR(Number(value))}
+                                    />
+                                    <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '11px', fontWeight: 700, fontFamily: 'Urbanist' }} />
+                                    <Bar dataKey="billed" name="Billed Amount" fill="var(--brand-navy)" radius={[4, 4, 0, 0]} barSize={20} />
+                                    <Bar dataKey="collected" name="Collected Amount" fill="var(--color-mid-blue)" radius={[4, 4, 0, 0]} barSize={20} />
+                                </BarChart>
+                            </ResponsiveContainer>
                         </div>
                     </div>
 
                     {/* Table Section */}
-                    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-                        <table className="w-full">
-                            <thead className="bg-slate-50 border-b border-slate-200">
-                                <tr>
-                                    <th className="py-3 px-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Month</th>
-                                    <th className="py-3 px-4 text-right text-xs font-bold text-slate-400 uppercase tracking-wider">Amount Billed</th>
-                                    <th className="py-3 px-4 text-right text-xs font-bold text-slate-400 uppercase tracking-wider">Amount Collected</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {tableData.map((row, idx) => (
-                                    <tr key={idx} className="group">
-                                        <td className="py-3.5 text-sm font-bold text-slate-700">{row.month_name}</td>
-                                        <td className="py-3.5 text-sm font-black text-slate-900 text-right">{formatINR(toNumber(row.amount_billed))}</td>
-                                        <td className="py-3.5 text-sm font-bold text-[var(--brand-navy)] text-right">{formatINR(toNumber(row.amount_collected))}</td>
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider font-accent">Monthly Breakdown</h4>
+                                <p className="text-xs text-slate-500 font-medium">Detailed figures per month</p>
+                            </div>
+                            <div className="p-2 bg-[var(--navy-50)] text-[var(--brand-navy)] rounded-lg">
+                                <CreditCard size={18} />
+                            </div>
+                        </div>
+
+                        <div className="overflow-hidden">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="border-b border-slate-100">
+                                        <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider font-accent">Month</th>
+                                        <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right font-accent">Billed</th>
+                                        <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right font-accent">Collected</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="divide-y divide-slate-50">
+                                    {tableData.map((row, idx) => (
+                                        <tr key={idx} className="group">
+                                            <td className="py-3.5 text-sm font-bold text-slate-700">{row.month_name}</td>
+                                            <td className="py-3.5 text-sm font-black text-slate-900 text-right">{formatINR(toNumber(row.amount_billed))}</td>
+                                            <td className="py-3.5 text-sm font-bold text-[var(--brand-navy)] text-right">{formatINR(toNumber(row.amount_collected))}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </>
+                </div>
             )}
-        </div>
-    );
-
-    return (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Chart Section */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider font-accent">Revenue Trend</h4>
-                        <p className="text-xs text-slate-500 font-medium">Monthly Billed vs Collected</p>
-                    </div>
-                    <div className="p-2 bg-[var(--navy-50)] text-[var(--brand-navy)] rounded-lg">
-                        <TrendingUp size={18} />
-                    </div>
-                </div>
-
-                <div className="h-[300px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={formattedChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                            <XAxis 
-                                dataKey="name" 
-                                axisLine={false} 
-                                tickLine={false} 
-                                tick={{ fontSize: 11, fontWeight: 700, fill: '#94a3b8' }} 
-                            />
-                            <YAxis 
-                                axisLine={false} 
-                                tickLine={false} 
-                                tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }}
-                                tickFormatter={(val) => `₹${val >= 100000 ? val/100000 + 'L' : val/1000 + 'K'}`}
-                            />
-                            <Tooltip 
-                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontFamily: 'Public Sans' }}
-                                formatter={(value: any) => formatINR(value)}
-                            />
-                            <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '11px', fontWeight: 700, fontFamily: 'Urbanist' }} />
-                            <Bar dataKey="billed" name="Billed Amount" fill="var(--brand-navy)" radius={[4, 4, 0, 0]} barSize={20} />
-                            <Bar dataKey="collected" name="Collected Amount" fill="var(--color-mid-blue)" radius={[4, 4, 0, 0]} barSize={20} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
-
-            {/* Table Section */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                    <div>
-                        <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider font-accent">Monthly Breakdown</h4>
-                        <p className="text-xs text-slate-500 font-medium">Detailed figures per month</p>
-                    </div>
-                    <div className="p-2 bg-[var(--navy-50)] text-[var(--brand-navy)] rounded-lg">
-                        <CreditCard size={18} />
-                    </div>
-                </div>
-
-                <div className="overflow-hidden">
-                    <table className="w-full text-left">
-                        <thead>
-                            <tr className="border-b border-slate-100">
-                                <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider font-accent">Month</th>
-                                <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right font-accent">Billed</th>
-                                <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right font-accent">Collected</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-50">
-                            {tableData.map((row, idx) => (
-                                <tr key={idx} className="group">
-                                    <td className="py-3.5 text-sm font-bold text-slate-700">{row.month_name}</td>
-                                    <td className="py-3.5 text-sm font-black text-slate-900 text-right">{formatINR(toNumber(row.amount_billed))}</td>
-                                    <td className="py-3.5 text-sm font-bold text-[var(--brand-navy)] text-right">{formatINR(toNumber(row.amount_collected))}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     );
 }

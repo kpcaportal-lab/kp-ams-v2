@@ -5,8 +5,8 @@ import { useAuthStore } from '@/store/authStore';
 import { useRouter } from 'next/navigation';
 import {
   Shield, Activity, Clock, Users, FileText, AlertTriangle,
-  Search, Filter, RefreshCw, ChevronLeft, ChevronRight,
-  LogIn, Edit, Trash, Eye, Plus, Download, X, Globe, Zap, Database
+  Search, RefreshCw, ChevronLeft, ChevronRight,
+  LogIn, Edit, Trash, Eye, Plus, Download, X, Globe, Database
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -59,14 +59,7 @@ const actionColors: Record<string, string> = {
   export: '#d4a574',
 };
 
-const actionTooltips: Record<string, string> = {
-  login: 'User logged into the system',
-  create: 'A new record was created',
-  update: 'An existing record was modified',
-  delete: 'A record was removed',
-  view: 'A record was viewed or accessed',
-  export: 'Data was exported or downloaded',
-};
+/* Removed unused actionTooltips */
 
 const roleColors: Record<string, string> = {
   admin: 'var(--brand-navy)', 
@@ -140,9 +133,14 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    if (activeTab === 'logs') fetchLogs();
-    if (activeTab === 'users') fetchActiveUsers();
-    if (activeTab === 'stats') fetchStats();
+    let isMounted = true;
+    const load = async () => {
+      if (activeTab === 'logs') await fetchLogs();
+      if (activeTab === 'users') await fetchActiveUsers();
+      if (activeTab === 'stats') await fetchStats();
+    };
+    if (isMounted) load();
+    return () => { isMounted = false; };
   }, [activeTab, fetchLogs, fetchActiveUsers, fetchStats]);
 
   const formatTime = (dateStr: string | null) => {
@@ -161,7 +159,7 @@ export default function AdminPage() {
     return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
   };
 
-  const [now] = useState(() => Date.now());
+  // Removed unused 'now' variable
 
   if (user && user.role !== 'admin') return null;
 

@@ -1,0 +1,408 @@
+﻿
+> kp-ams-v2@0.1.0 lint
+> eslint
+
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\check_duplicates.js
+  1:14  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\diagnose_ts.js
+  2:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\fix_admin.js
+  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\fix_admin_2.js
+  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\fix_quotes.js
+  1:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\scratch_check.js
+  2:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\apply_016.cjs
+  1:20  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  2:12  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  3:14  error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  4:1   error  A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\check_db_state.ts
+  13:18  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\check_mahindra_data.ts
+  14:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\cleanup_clients.ts
+  30:68  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  34:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\fix_subcat.ts
+  20:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\force_migrate.ts
+  27:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\repair_db.ts
+  49:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\db\db_test.ts
+  32:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\db\migrate.ts
+  24:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  35:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\db\pool.ts
+  28:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\index.ts
+    9:7   warning  '__dirname' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   26:26  warning  'authLimiter' is defined but never used         @typescript-eslint/no-unused-vars
+  291:78  warning  '_next' is defined but never used               @typescript-eslint/no-unused-vars
+  344:19  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\middleware\auth.ts
+  14:5   error  ES2015 module syntax is preferred over namespaces  @typescript-eslint/no-namespace
+  34:19  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\middleware\validation.ts
+  16:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\routes\assignments.ts
+   12:15  warning  'role' is assigned a value but never used    @typescript-eslint/no-unused-vars
+   13:15  warning  'userId' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   48:25  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  346:25  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  355:19  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\routes\auth.ts
+    6:25  warning  'validateCreateUser' is defined but never used  @typescript-eslint/no-unused-vars
+   30:66  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+   94:66  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  147:19  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\routes\clients.ts
+  38:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  67:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  78:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\routes\dashboard.ts
+   34:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+   49:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+   73:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  104:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  107:31  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  127:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  130:32  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  151:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  204:18  warning  'dbErr' is defined but never used         @typescript-eslint/no-unused-vars
+  204:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  242:66  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  347:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  353:50  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  353:61  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  362:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\routes\insights.ts
+   21:33  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   28:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+   34:35  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   41:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+   47:37  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   54:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+   65:33  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   72:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+   77:22  warning  'e2' is defined but never used            @typescript-eslint/no-unused-vars
+  116:27  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  128:18  warning  'dbErr' is defined but never used         @typescript-eslint/no-unused-vars
+  128:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\routes\invoices.ts
+   18:40  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   40:29  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  122:30  warning  'logErr' is defined but never used        @typescript-eslint/no-unused-vars
+  163:25  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\routes\profile.ts
+  12:45  warning  'notification_preferences' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  14:13  error    'updateFields' is never reassigned. Use 'const' instead        prefer-const
+  15:13  error    'params' is never reassigned. Use 'const' instead              prefer-const
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\routes\proposals.ts
+    3:56  warning  'logAuditEvent' is defined but never used       @typescript-eslint/no-unused-vars
+    8:8   warning  'fs' is defined but never used                  @typescript-eslint/no-unused-vars
+   10:7   warning  '__dirname' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   65:14  warning  'err' is defined but never used                 @typescript-eslint/no-unused-vars
+  133:25  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  174:25  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  199:18  warning  'e' is defined but never used                   @typescript-eslint/no-unused-vars
+  206:18  warning  'e' is defined but never used                   @typescript-eslint/no-unused-vars
+  244:25  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  624:40  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  652:80  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+  675:77  error    Unexpected any. Specify a different type        @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\routes\tickets.ts
+  18:13  error  'params' is never reassigned. Use 'const' instead  prefer-const
+  51:25  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\src\routes\users.ts
+   35:25  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   41:19  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+   94:14  warning  'err' is defined but never used                     @typescript-eslint/no-unused-vars
+  104:14  warning  'err' is defined but never used                     @typescript-eslint/no-unused-vars
+  110:77  warning  'work_file_url' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  125:25  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  139:19  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  149:34  warning  'display_name' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  149:71  warning  'work_file_url' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  162:23  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  183:29  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  194:19  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\test_all_routes.ts
+  31:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\test_dashboard_query.ts
+  14:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\test_direct_db.ts
+  14:11  warning  'res' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\test_hamza_visibility.ts
+  13:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\test_local_api.ts
+  20:11  warning  'docsRes' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  25:17  error    Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\test_prod_api.ts
+  25:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\server\verify_hamza_production.ts
+  40:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(auth)\login\page.tsx
+   8:10  warning  'Building2' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   9:10  warning  'BrandedLogo' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  33:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  59:16  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  83:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\admin\page.tsx
+    3:44  warning  'useMemo' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+    8:11  warning  'Filter' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+    9:54  warning  'Zap' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+   26:27  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+   62:7   warning  'actionTooltips' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  143:31  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\admin\page.tsx:143:31
+  141 |
+  142 |   useEffect(() => {
+> 143 |     if (activeTab === 'logs') fetchLogs();
+      |                               ^^^^^^^^^ Avoid calling setState() directly within an effect
+  144 |     if (activeTab === 'users') fetchActiveUsers();
+  145 |     if (activeTab === 'stats') fetchStats();
+  146 |   }, [activeTab, fetchLogs, fetchActiveUsers, fetchStats]);  react-hooks/set-state-in-effect
+  164:10  warning  'now' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-unused-vars
+  636:74  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\assignments\[id]\page.tsx
+    3:17   warning  'useMemo' is defined but never used                @typescript-eslint/no-unused-vars
+    6:21   warning  'Calendar' is defined but never used               @typescript-eslint/no-unused-vars
+    6:31   warning  'User' is defined but never used                   @typescript-eslint/no-unused-vars
+    6:47   warning  'CheckCircle2' is defined but never used           @typescript-eslint/no-unused-vars
+    6:61   warning  'Clock' is defined but never used                  @typescript-eslint/no-unused-vars
+    6:76   warning  'Trash2' is defined but never used                 @typescript-eslint/no-unused-vars
+    6:84   warning  'ChevronRight' is defined but never used           @typescript-eslint/no-unused-vars
+    6:132  warning  'Layout' is defined but never used                 @typescript-eslint/no-unused-vars
+    6:140  warning  'MoreVertical' is defined but never used           @typescript-eslint/no-unused-vars
+    6:154  warning  'Search' is defined but never used                 @typescript-eslint/no-unused-vars
+    6:162  warning  'Filter' is defined but never used                 @typescript-eslint/no-unused-vars
+   12:30   warning  'formatCurrency' is defined but never used         @typescript-eslint/no-unused-vars
+   25:10   warning  'activeTab' is assigned a value but never used     @typescript-eslint/no-unused-vars
+   25:21   warning  'setActiveTab' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   27:62   error    Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  106:22   warning  'i' is defined but never used                      @typescript-eslint/no-unused-vars
+  185:40   error    Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  260:36   warning  'err' is defined but never used                    @typescript-eslint/no-unused-vars
+  284:45   error    Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\assignments\page.tsx
+    5:56  warning  'Clock' is defined but never used                                @typescript-eslint/no-unused-vars
+    5:63  warning  'AlertCircle' is defined but never used                          @typescript-eslint/no-unused-vars
+    5:76  warning  'XCircle' is defined but never used                              @typescript-eslint/no-unused-vars
+    8:69  warning  'formatDate' is defined but never used                           @typescript-eslint/no-unused-vars
+  133:13  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  137:30  warning  'i' is defined but never used                                    @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\billing\page.tsx
+    6:10  warning  'Filter' is defined but never used            @typescript-eslint/no-unused-vars
+    6:37  warning  'CreditCard' is defined but never used        @typescript-eslint/no-unused-vars
+    6:49  warning  'ChevronLeft' is defined but never used       @typescript-eslint/no-unused-vars
+    6:62  warning  'ChevronRight' is defined but never used      @typescript-eslint/no-unused-vars
+    9:50  warning  'Invoice' is defined but never used           @typescript-eslint/no-unused-vars
+   15:8   warning  'toast' is defined but never used             @typescript-eslint/no-unused-vars
+   33:11  warning  'user' is assigned a value but never used     @typescript-eslint/no-unused-vars
+   40:9   warning  'headers' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  152:21  warning  'i' is defined but never used                 @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\clients\[id]\page.tsx
+   8:16  warning  'Clock' is defined but never used           @typescript-eslint/no-unused-vars
+  13:66  warning  'formatCurrency' is defined but never used  @typescript-eslint/no-unused-vars
+  14:32  warning  'cn' is defined but never used              @typescript-eslint/no-unused-vars
+  27:56  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  69:46  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\clients\page.tsx
+  7:10  warning  'formatDate' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\dashboard\page.tsx
+    6:15  warning  'TrendingDown' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   31:11  warning  'invoices' is assigned a value but never used                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+   69:9   warning  'recentProposals' is assigned a value but never used                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  427:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\documents\page.tsx
+  6:30  warning  'Filter' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\layout.tsx
+   8:10  warning  'cn' is defined but never used                                                                  @typescript-eslint/no-unused-vars
+  21:5   warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\profile\page.tsx
+   18:5   warning  'CheckCircle' is defined but never used                          @typescript-eslint/no-unused-vars
+   80:1   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  120:26  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\proposals\[id]\page.tsx
+    7:28   warning  'Clock' is defined but never used                                                                                    @typescript-eslint/no-unused-vars
+    7:51   warning  'User' is defined but never used                                                                                     @typescript-eslint/no-unused-vars
+    8:13   warning  'Edit' is defined but never used                                                                                     @typescript-eslint/no-unused-vars
+    9:37   warning  'MapPin' is defined but never used                                                                                   @typescript-eslint/no-unused-vars
+   10:54   warning  'AlertCircle' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+   10:67   warning  'Plus' is defined but never used                                                                                     @typescript-eslint/no-unused-vars
+   10:80   warning  'Check' is defined but never used                                                                                    @typescript-eslint/no-unused-vars
+   11:3    warning  'Trash2' is defined but never used                                                                                   @typescript-eslint/no-unused-vars
+   11:11   warning  'Shield' is defined but never used                                                                                   @typescript-eslint/no-unused-vars
+   11:19   warning  'Clock3' is defined but never used                                                                                   @typescript-eslint/no-unused-vars
+   11:27   warning  'Tag' is defined but never used                                                                                      @typescript-eslint/no-unused-vars
+   11:32   warning  'Smartphone' is defined but never used                                                                               @typescript-eslint/no-unused-vars
+   11:44   warning  'Mail' is defined but never used                                                                                     @typescript-eslint/no-unused-vars
+   11:50   warning  'Hash' is defined but never used                                                                                     @typescript-eslint/no-unused-vars
+   11:56   warning  'UserCircle' is defined but never used                                                                               @typescript-eslint/no-unused-vars
+   11:68   warning  'Calculator' is defined but never used                                                                               @typescript-eslint/no-unused-vars
+   11:80   warning  'ChevronRight' is defined but never used                                                                             @typescript-eslint/no-unused-vars
+   11:94   warning  'LayoutTemplate' is defined but never used                                                                           @typescript-eslint/no-unused-vars
+   11:110  warning  'Activity' is defined but never used                                                                                 @typescript-eslint/no-unused-vars
+  185:7    error    Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  186:36   error    Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  220:14   warning  'error' is defined but never used                                                                                    @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\proposals\new\page.tsx
+   19:3   warning  'FileText' is defined but never used                  @typescript-eslint/no-unused-vars
+   23:3   warning  'Plus' is defined but never used                      @typescript-eslint/no-unused-vars
+   75:39  error    Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  119:12  error    Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  144:14  warning  'error' is defined but never used                     @typescript-eslint/no-unused-vars
+  158:13  warning  'selectedPartner' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  167:47  error    Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  187:14  warning  'error' is defined but never used                     @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\proposals\page.tsx
+   4:8   warning  'Link' is defined but never used                          @typescript-eslint/no-unused-vars
+  23:28  warning  'setSelectedProposal' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  26:24  warning  'setClientFilter' is assigned a value but never used      @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\tickets\page.tsx
+  306:128  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  374:53   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  478:49   warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\users\page.tsx
+    8:3   warning  'UserPlus' is defined but never used             @typescript-eslint/no-unused-vars
+    8:35  warning  'MoreVertical' is defined but never used         @typescript-eslint/no-unused-vars
+   20:7   warning  'fadeUp' is assigned a value but never used      @typescript-eslint/no-unused-vars
+   51:19  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   99:89  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  111:9   warning  'roleStyles' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\(dashboard)\work-progress\page.tsx
+  3:31  warning  'useMemo' is defined but never used          @typescript-eslint/no-unused-vars
+  7:3   warning  'Loader2' is defined but never used          @typescript-eslint/no-unused-vars
+  9:18  warning  'AnimatePresence' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\api\auth\login\route.ts
+  27:12  warning  'err' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\app\layout.tsx
+  5:10  warning  'LoadingOverlay' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\components\Header.tsx
+    5:82   warning  'ArrowUpRight' is defined but never used                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+    9:39   warning  'useCallback' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+   92:14   warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  465:124  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  465:124  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\components\NotificationCenter.tsx
+   4:23  warning  'Trash2' is defined but never used        @typescript-eslint/no-unused-vars
+   4:68  warning  'X' is defined but never used             @typescript-eslint/no-unused-vars
+   4:78  warning  'AlertCircle' is defined but never used   @typescript-eslint/no-unused-vars
+  39:45  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\components\Sidebar.tsx
+   7:3   warning  'Building2' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+  25:10  warning  'BrandedLogo' is defined but never used                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  90:18  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  94:18  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\components\billing\InvoiceDownloadButton.tsx
+   3:17  warning  'useRef' is defined but never used           @typescript-eslint/no-unused-vars
+   4:20  warning  'FileText' is defined but never used         @typescript-eslint/no-unused-vars
+   5:8   warning  'html2canvas' is defined but never used      @typescript-eslint/no-unused-vars
+   6:8   warning  'jsPDF' is defined but never used            @typescript-eslint/no-unused-vars
+   7:10  warning  'InvoiceTemplate' is defined but never used  @typescript-eslint/no-unused-vars
+  10:10  warning  'motion' is defined but never used           @typescript-eslint/no-unused-vars
+  10:18  warning  'AnimatePresence' is defined but never used  @typescript-eslint/no-unused-vars
+  43:21  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\components\insights\AssignmentTab.tsx
+  26:18  warning  'setPage' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  27:12  warning  'total' is assigned a value but never used    @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\components\insights\BillingTab.tsx
+    9:34  warning  'Cell' is defined but never used          @typescript-eslint/no-unused-vars
+  172:52  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\components\insights\InsightsHeader.tsx
+  3:37  warning  'Download' is defined but never used  @typescript-eslint/no-unused-vars
+  4:10  warning  'format' is defined but never used    @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\components\insights\ManagerCard.tsx
+  92:76  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  93:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\components\insights\ProposalTab.tsx
+  29:18  warning  'setPage' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  30:12  warning  'total' is assigned a value but never used    @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\components\modals\AddAssignmentModal.tsx
+  5:13  warning  'Plus' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\User\Documents\GitHub\kp-ams-v2\src\components\modals\AddClientModal.tsx
+  5:50  warning  'Briefcase' is defined but never used  @typescript-eslint/no-unused-vars
+
+Γ£û 253 problems (99 errors, 154 warnings)
+  3 errors and 1 warning potentially fixable with the `--fix` option.
+

@@ -77,7 +77,7 @@ export default function ProfilePage() {
 
     return (
         <div className="space-y-8 pb-10">
-"            {/* Page Header */}
+            {/* Page Header */}
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -117,7 +117,7 @@ export default function ProfilePage() {
                         </button>
                     </div>
                 </div>
-            </motion.div>"
+            </motion.div>
 
             {/* Cards Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, Building2, Users, Mail, Phone, Briefcase } from 'lucide-react';
+import { X, Save, Building2, Users, Mail, Phone } from 'lucide-react';
 import { useClientStore } from '@/store/clientStore';
 
 interface AddClientModalProps {

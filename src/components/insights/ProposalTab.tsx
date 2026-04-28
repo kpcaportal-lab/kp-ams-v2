@@ -26,23 +26,19 @@ export function ProposalTab({ managerId }: ProposalTabProps) {
     const [data, setData] = useState<ProposalData[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
-    const [page, setPage] = useState(1);
-    const [total, setTotal] = useState(0);
-
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
             const res = await api.get(`/api/managers/${managerId}/proposals`, {
-                params: { search, page, limit: 10 }
+                params: { search, limit: 10 }
             });
             setData(res.data.data);
-            setTotal(res.data.total);
         } catch (err) {
             console.error('Failed to fetch proposals:', err);
         } finally {
             setLoading(false);
         }
-    }, [managerId, search, page]);
+    }, [managerId, search]); // Removed page dependency
 
     useEffect(() => {
         fetchData();

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useAssignmentStore } from '@/store/assignmentStore';
 import { CATEGORY_LABELS, SUBCATEGORY_LABELS, AssignmentCategory, AssignmentSubcategory, BillingCycle, User } from '@/types';
 import api from '@/lib/api';

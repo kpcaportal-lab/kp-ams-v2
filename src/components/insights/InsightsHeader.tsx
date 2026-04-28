@@ -1,7 +1,7 @@
 'use client';
 
-import { FileDown, FileSpreadsheet, Download } from 'lucide-react';
-import { format } from 'date-fns';
+import { FileDown, FileSpreadsheet } from 'lucide-react';
+// import { format } from 'date-fns'; // Not used
 import { useAuthStore } from '@/store/authStore';
 
 interface InsightsHeaderProps {

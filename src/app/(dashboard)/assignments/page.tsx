@@ -130,7 +130,7 @@ export default function AssignmentsPage() {
             New Assignment
           </button>
         </motion.div>
-      </div>"
+      </div>
 
       {/* KPI Cards */}
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

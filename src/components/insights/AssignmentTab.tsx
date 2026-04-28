@@ -23,23 +23,23 @@ export function AssignmentTab({ managerId }: AssignmentTabProps) {
     const [data, setData] = useState<AssignmentData[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
-    const [page, setPage] = useState(1);
-    const [total, setTotal] = useState(0);
+    // Pagination state removed as it was unused
+    // const [page, setPage] = useState(1);
+    // const [total, setTotal] = useState(0);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
             const res = await api.get(`/api/managers/${managerId}/assignments`, {
-                params: { search, page, limit: 10 }
+                params: { search, limit: 10 }
             });
             setData(res.data.data);
-            setTotal(res.data.total);
         } catch (err) {
             console.error('Failed to fetch assignments:', err);
         } finally {
             setLoading(false);
         }
-    }, [managerId, search, page]);
+    }, [managerId, search]);
 
     useEffect(() => {
         fetchData();
