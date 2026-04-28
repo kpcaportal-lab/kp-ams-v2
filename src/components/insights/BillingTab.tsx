@@ -105,7 +105,7 @@ const toNumber = (val: string | number | undefined) => parseFloat(String(val ?? 
                                     />
                                     <Tooltip 
                                         contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontFamily: 'Public Sans' }}
-                                        formatter={(value: number | string) => formatINR(Number(value))}
+                                        formatter={(value: any) => formatINR(Number(value || 0))}
                                     />
                                     <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '11px', fontWeight: 700, fontFamily: 'Urbanist' }} />
                                     <Bar dataKey="billed" name="Billed Amount" fill="var(--brand-navy)" radius={[4, 4, 0, 0]} barSize={20} />

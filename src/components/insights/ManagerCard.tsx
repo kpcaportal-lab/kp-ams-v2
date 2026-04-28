@@ -110,7 +110,7 @@ function StatItem({ icon: Icon, label, value, color, isCurrency = false }: StatI
             <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-accent">{label}</p>
                 <p className="text-sm font-black text-slate-900">
-                    {isCurrency ? formatINR(value) : value}
+                    {isCurrency ? formatINR(Number(value)) : value}
                 </p>
             </div>
         </div>
