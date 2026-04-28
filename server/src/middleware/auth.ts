@@ -59,7 +59,7 @@ export const requireRole = (...roles: string[]) => {
  */
 export const getVisibleUserIds = async (user: AuthUser): Promise<string[] | null> => {
     try {
-        if (user.role === 'admin' || user.role === 'partner') {
+        if (user.role === 'admin' || user.role === 'partner' || user.role === 'director') {
             return null; // No filter — see all
         }
 
