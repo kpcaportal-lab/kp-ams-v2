@@ -18,16 +18,16 @@ export function LoadingOverlay() {
         <div className="relative z-10 flex flex-col items-center">
           <div className="relative w-32 h-32 mb-10 flex items-center justify-center">
             {/* Inner glow */}
-            <div className="absolute inset-0 bg-brand-red/10 blur-3xl animate-pulse" />
+            <div className="absolute inset-0 bg-brand-gold/20 blur-3xl animate-pulse" />
             
             {/* Branded Circular Spinner */}
             <div className="relative w-24 h-24">
               {/* Static background ring */}
               <div className="absolute inset-0 border-[6px] border-white/5 rounded-full" />
               {/* Spinning branded ring */}
-              <div className="absolute inset-0 border-[6px] border-transparent border-t-brand-red border-r-brand-red/40 rounded-full animate-spin shadow-[0_0_15px_var(--brand-red)]" />
+              <div className="absolute inset-0 border-[6px] border-transparent border-t-brand-gold border-r-brand-gold/40 rounded-full animate-spin shadow-[0_0_15px_var(--brand-gold)]" />
               {/* Pulsing center dot */}
-              <div className="absolute inset-[38px] bg-brand-red rounded-full animate-pulse shadow-[0_0_20px_var(--brand-red)]" />
+              <div className="absolute inset-[38px] bg-brand-gold rounded-full animate-pulse shadow-[0_0_20px_var(--brand-gold)]" />
             </div>
           </div>
           
@@ -39,13 +39,13 @@ export function LoadingOverlay() {
               {[0, 1, 2].map((i) => (
                 <div 
                   key={i}
-                  className="w-2 h-2 bg-brand-red rounded-full animate-bounce" 
+                  className="w-2 h-2 bg-brand-gold rounded-full animate-bounce" 
                   style={{ animationDelay: `${i * 0.2}s` }}
                 />
               ))}
             </div>
           </div>
-          <p className="mt-6 text-brand-red/60 text-[10px] font-black tracking-[0.2em] uppercase">
+          <p className="mt-6 text-brand-gold/60 text-[10px] font-black tracking-[0.2em] uppercase">
             KP Enterprise Systems Secured
           </p>
         </div>

@@ -107,7 +107,7 @@ export function Sidebar({
                 className={cn(
                   "flex items-center group relative h-12 px-4 rounded-xl transition-all duration-300 ease-in-out",
                   isActive 
-                    ? "bg-white/10 text-white font-black shadow-lg" 
+                    ? "bg-white/10 text-white font-black shadow-[0_0_15px_rgba(0,212,255,0.1)]" 
                     : "text-white/70 hover:bg-white/5 hover:text-white",
                   isCollapsed ? "justify-center px-0" : "justify-start gap-4"
                 )}
@@ -117,7 +117,7 @@ export function Sidebar({
                 {isActive && (
                   <motion.div 
                     layoutId="sidebar-active"
-                    className="absolute left-0 w-1 h-6 bg-brand-red rounded-r-full" 
+                    className="absolute left-0 w-1 h-6 bg-brand-gold rounded-r-full shadow-[0_0_8px_#00D4FF]" 
                   />
                 )}
                 <item.icon 
@@ -125,7 +125,7 @@ export function Sidebar({
                   strokeWidth={isActive ? 3 : 2.5}
                   className={cn(
                     "shrink-0 transition-all duration-300 group-hover:scale-110",
-                    isActive ? "text-brand-red" : "text-white/40 group-hover:text-white"
+                    isActive ? "text-brand-gold" : "text-white/40 group-hover:text-white"
                   )} 
                 />
                 {(!isCollapsed || isMobileOpen) && (
@@ -143,7 +143,7 @@ export function Sidebar({
             className={cn(
               "flex items-center h-12 px-4 rounded-xl transition-all duration-300",
               pathname === '/profile' 
-                ? "bg-white/10 text-white font-black shadow-lg" 
+                ? "bg-white/10 text-white font-black shadow-[0_0_15px_rgba(0,212,255,0.1)]" 
                 : "text-white/60 hover:bg-white/5 hover:text-white",
               isCollapsed ? "justify-center px-0" : "justify-start gap-4"
             )}
@@ -162,7 +162,7 @@ export function Sidebar({
               }
             }}
             className={cn(
-              "flex items-center h-12 px-4 rounded-xl text-white/50 hover:bg-red-500/10 hover:text-red-400 group transition-all duration-300",
+              "flex items-center h-12 px-4 rounded-xl text-white/50 hover:bg-rose-500/10 hover:text-rose-400 group transition-all duration-300",
               isCollapsed ? "justify-center px-0" : "justify-start gap-4"
             )}
             title={isCollapsed ? "Logout Session" : undefined}
@@ -175,7 +175,7 @@ export function Sidebar({
         {/* Collapse Toggle */}
         <button
           onClick={toggleCollapse}
-          className="hidden lg:flex absolute top-[24px] right-[-14px] w-7 h-7 bg-brand-red text-white rounded-full items-center justify-center shadow-lg shadow-brand-red/30 hover:scale-110 transition-all z-10"
+          className="hidden lg:flex absolute top-[24px] right-[-14px] w-7 h-7 bg-brand-gold text-brand-navy rounded-full items-center justify-center shadow-lg shadow-brand-gold/30 hover:scale-110 transition-all z-10"
         >
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>

@@ -39,8 +39,8 @@ export function BrandedLogo({
         </span>
       </div>
       <span className={cn(
-        "text-[9px] font-black tracking-[0.3em] uppercase opacity-80",
-        isDark ? "text-white/70" : "text-brand-navy/70"
+        "text-[9px] font-black tracking-[0.3em] uppercase opacity-60",
+        isDark ? "text-white/70" : "text-brand-navy"
       )}>
         Chartered Accountants
       </span>

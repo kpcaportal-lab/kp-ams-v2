@@ -421,15 +421,15 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           >
             <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-brand-navy">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-brand-red/10 flex items-center justify-center border border-brand-red/20">
-                  <LifeBuoy size={20} className="text-brand-red" />
+                <div className="w-10 h-10 rounded-2xl bg-brand-gold/10 flex items-center justify-center border border-brand-gold/20">
+                  <LifeBuoy size={20} className="text-brand-gold" />
                 </div>
                 <div>
                   <h2 className="text-lg font-black text-white font-accent tracking-tight">Support Center</h2>
                   <p className="text-[11px] text-white/60 font-medium">How can we help you today?</p>
                 </div>
               </div>
-              <button onClick={() => setIsTicketModalOpen(false)} className="p-2 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-colors">
+              <button onClick={() => setIsTicketModalOpen(false)} className="p-2 rounded-xl hover:bg-cyan-50 text-slate-400 hover:text-cyan-500 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -438,12 +438,12 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
               <div className="space-y-4">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Issue Title</label>
-                  <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Short summary..." className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red transition-all outline-none" />
+                  <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Short summary..." className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold focus:ring-4 focus:ring-brand-gold/10 focus:border-brand-gold transition-all outline-none" />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Priority</label>
-                  <select value={priority} onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')} className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-black focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red transition-all outline-none appearance-none cursor-pointer">
+                  <select value={priority} onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')} className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-black focus:ring-4 focus:ring-brand-gold/10 focus:border-brand-gold transition-all outline-none appearance-none cursor-pointer">
                     <option value="low">Low Priority</option>
                     <option value="medium">Medium Priority</option>
                     <option value="high">High Priority</option>
@@ -452,14 +452,14 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Describe the problem</label>
-                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} required rows={3} placeholder="Provide details..." className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:ring-4 focus:ring-brand-red/10 focus:border-brand-red transition-all outline-none resize-none" />
+                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} required rows={3} placeholder="Provide details..." className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:ring-4 focus:ring-brand-gold/10 focus:border-brand-gold transition-all outline-none resize-none" />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Visual Proof (Optional)</label>
                   <div className="flex items-center gap-4">
                     <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="header-ticket-file" />
-                    <label htmlFor="header-ticket-file" className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 text-xs font-black text-slate-500 cursor-pointer hover:bg-white hover:border-brand-red/50 transition-all">
+                    <label htmlFor="header-ticket-file" className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 text-xs font-black text-slate-500 cursor-pointer hover:bg-white hover:border-brand-gold/50 transition-all">
                       <Plus size={16} /> {attachment ? 'Image Selected' : 'Upload Screenshot'}
                     </label>
                     {attachment && <div className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 shadow-sm"><img src={attachment} className="w-full h-full object-cover" /></div>}
@@ -469,7 +469,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
 
               <div className="flex gap-3 pt-4">
                 <button type="button" onClick={() => setIsTicketModalOpen(false)} className="flex-1 py-3.5 rounded-2xl border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
-                <button type="submit" disabled={creating} className="flex-1 py-3.5 rounded-2xl bg-brand-red text-white text-sm font-black shadow-xl shadow-brand-red/10 hover:shadow-brand-red/20 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50">
+                <button type="submit" disabled={creating} className="flex-1 py-3.5 rounded-2xl bg-brand-gold text-brand-navy text-sm font-black shadow-xl shadow-brand-gold/10 hover:shadow-brand-gold/20 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50">
                   {creating ? 'Sending...' : 'Submit Issue'}
                 </button>
               </div>

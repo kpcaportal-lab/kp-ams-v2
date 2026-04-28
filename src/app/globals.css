@@ -7,8 +7,8 @@
 
 /* ── Tailwind v4 Theme Tokens ─────────────────────────────────── */
 @theme inline {
-  --color-background: #FFFFFF;
-  --color-foreground: #122830;
+  --color-background: #F8FAFC;
+  --color-foreground: #0F172A;
   --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-accent: "Manrope", sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
@@ -17,8 +17,8 @@
   
   /* Official Brand Identity Tokens */
   --color-brand-navy: #054C7D;
+  --color-brand-gold: #00D4FF; /* Electric Teal */
   --color-brand-red: #C0272D;
-  --color-brand-gold: #CDE2E7; /* Subdued Teal-Grey */
   
   /* Brand Navy Palette */
   --color-blue-50: #E1F0F7;
@@ -30,16 +30,14 @@
   --color-blue-700: #032F4D;
   --color-blue-900: #021A2B;
 
-  /* Brand Accent Palette (Red) */
-  --color-red-50: #FDF2F2;
-  --color-red-100: #FDE2E2;
-  --color-red-500: #C0272D;
-  --color-red-600: #A51D24;
-
-  /* Subtle Secondary Palette (Teal) */
-  --color-gold-50: #F0F7F8;
-  --color-gold-100: #E0F1F4;
-  --color-gold-500: #CDE2E7;
+  /* Executive Teal Palette (Accents) */
+  --color-gold-50: #ECFEFF;
+  --color-gold-100: #CFFAFE;
+  --color-gold-200: #A5F3FC;
+  --color-gold-400: #22D3EE;
+  --color-gold-500: #00D4FF;
+  --color-gold-600: #0891B2;
+  --color-gold-700: #0E7490;
 }
 
 /* ── CSS Custom Properties ────────────────────────────────────── */
@@ -47,7 +45,7 @@
   /* ── KPCA OFFICIAL BRAND COLORS ────────────────────────────── */
   --brand-navy: #054C7D;
   --brand-red: #C0272D;
-  --brand-gold: #CDE2E7; /* Replaced Orange with subtle Teal-Grey */
+  --brand-gold: #00D4FF; /* New Executive Teal Accent */
   --brand-paper: #FFFFFF;
   
   /* Brand Navy Tints */
@@ -60,46 +58,41 @@
   --navy-100: #B3D6E9;
   --navy-50: #E1F0F7;
 
-  /* Official Accent Palette (Red & Teal) */
-  --color-red: #C0272D;
-  --red-50: #FDF2F2;
-  --red-100: #FDE2E2;
-  --red-500: #C0272D;
-  --red-600: #A51D24;
+  /* Executive Teal Palette */
+  --color-teal: #00D4FF;
+  --teal-50: #ECFEFF;
+  --teal-100: #CFFAFE;
+  --teal-500: #00D4FF;
+  --teal-600: #0891B2;
   
-  --color-teal: #CDE2E7;
-  --teal-50: #F0F7F8;
-  --teal-100: #E0F1F4;
-  --teal-500: #CDE2E7;
-
   /* Base background & text colors */
-  --bg-main: #FFFFFF;
+  --bg-main: #F8FAFC;
   --bg-card: #ffffff;
-  --bg-card-hover: #F8FAFC; 
+  --bg-card-hover: #ffffff; 
   --bg-surface: #ffffff;
   --bg-muted: #F1F5F9;
   
-  --text-primary: #122830;
+  --text-primary: #0F172A;
   --text-main: var(--text-primary);
-  --text-secondary: #3D565F;
-  --text-muted: #6A838C;
-  --text-light: #8EA4AC;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
   --text-inverted: #FFFFFF;
-  --text-placeholder: #8EA4AC;
+  --text-placeholder: #94A3B8;
   
   /* Primary colors - Overridden with K&P Official Navy */
   --color-primary: var(--brand-navy);
   --color-primary-dark: var(--navy-700);
   --color-primary-hover: var(--navy-400);
   --color-primary-active: var(--navy-900);
-  --color-primary-ring: rgba(5, 76, 125, 0.2);
-  --color-primary-glow: rgba(5, 76, 125, 0.12);
+  --color-primary-ring: rgba(0, 212, 255, 0.2);
+  --color-primary-glow: rgba(0, 212, 255, 0.12);
   --bg-primary-light: var(--navy-50);
   
-  /* Action colors - Moved to RED instead of Orange */
-  --color-accent: var(--brand-red);
-  --color-accent-hover: var(--red-600);
-  --color-accent-light: var(--red-100);
+  /* Action colors - Moved to TEAL */
+  --color-accent: var(--brand-gold);
+  --color-accent-hover: var(--teal-600);
+  --color-accent-light: var(--teal-100);
   
   /* Success & Danger */
   --color-success: #10b981;
