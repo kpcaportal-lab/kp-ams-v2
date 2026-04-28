@@ -55,8 +55,15 @@ export default function LoginPage() {
         <div style={{ maxWidth: 480, position: 'relative', zIndex: 1 }}>
           <div style={{ marginBottom: '3.5rem' }}>
             {/* Using official KPCA logo */}
-            <div className="w-56 bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10 shadow-xl inline-block">
-               <img src="/KPCA-logo.png" alt="Kirtane & Pandit Logo" className="w-full h-auto object-contain drop-shadow-md brightness-0 invert opacity-90" />
+            <div className="bg-white/5 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/10 shadow-xl inline-block">
+               <div className="flex flex-col">
+                 <span className="text-2xl font-black tracking-[0.15em] text-white font-accent leading-none">
+                   KIRTANE <span className="text-brand-gold">&</span> PANDIT
+                 </span>
+                 <span className="text-[9px] font-bold text-white/50 tracking-[0.2em] mt-2 uppercase">
+                   Pune | Mumbai | Nashik | Bengaluru | Hyderabad | New Delhi | Chennai
+                 </span>
+               </div>
             </div>
           </div>
           <h1 style={{ fontSize: '3.5rem', fontWeight: 800, lineHeight: 1, marginBottom: '1.5rem', letterSpacing: '-0.03em', fontFamily: 'var(--font-accent)' }}>

@@ -275,19 +275,19 @@ export default function DashboardPage() {
           animate={{ opacity: 1, x: 0 }}
           className="lg:col-span-8 bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col"
         >
-          <div className="flex flex-col md:flex-row md:items-center justify-between px-8 py-8 border-b border-slate-100 bg-slate-50/30">
+          <div className="flex flex-col md:flex-row md:items-center justify-between px-10 py-10 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 to-white/40 backdrop-blur-md">
             <div>
-              <h2 className="text-xl font-black text-slate-900 tracking-tight font-accent">Financial Performance</h2>
-              <p className="text-sm font-medium text-slate-400 mt-1">Real-time revenue tracking & billing</p>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight font-accent">Financial Performance</h2>
+              <p className="text-sm font-semibold text-slate-400 mt-1">Real-time revenue tracking & billing</p>
             </div>
-            <div className="flex p-1.5 bg-slate-200/50 rounded-2xl mt-4 md:mt-0">
+            <div className="flex p-1.5 bg-slate-200/40 rounded-2xl mt-4 md:mt-0 backdrop-blur-xl border border-slate-200/50 shadow-inner">
               <button 
                 onClick={() => setDashboardTab('revenue')}
                 className={cn(
-                  "px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300",
+                  "px-6 py-2.5 rounded-xl text-xs font-black transition-all duration-500 tracking-wider uppercase",
                   dashboardTab === 'revenue' 
-                    ? "bg-white text-brand-navy shadow-xl" 
-                    : "text-slate-500 hover:text-slate-700 font-black"
+                    ? "bg-white text-brand-navy shadow-[0_10px_25px_rgba(0,0,0,0.05)] scale-100" 
+                    : "text-slate-500 hover:text-slate-800 opacity-60 hover:opacity-100"
                 )}
               >
                 Revenue
@@ -295,10 +295,10 @@ export default function DashboardPage() {
               <button 
                 onClick={() => setDashboardTab('billing')}
                 className={cn(
-                  "px-5 py-2 rounded-xl text-xs font-bold transition-all duration-300",
+                  "px-6 py-2.5 rounded-xl text-xs font-black transition-all duration-500 tracking-wider uppercase",
                   dashboardTab === 'billing' 
-                    ? "bg-white text-brand-navy shadow-xl" 
-                    : "text-slate-500 hover:text-slate-700 font-black"
+                    ? "bg-white text-brand-navy shadow-[0_10px_25px_rgba(0,0,0,0.05)] scale-100" 
+                    : "text-slate-500 hover:text-slate-800 opacity-60 hover:opacity-100"
                 )}
               >
                 Billing
@@ -317,35 +317,35 @@ export default function DashboardPage() {
                   className="flex flex-col md:flex-row items-center gap-12"
                 >
                   <div className="flex-1">
-                    <span className="text-xs font-black text-brand-navy uppercase tracking-[0.2em] mb-3 block">Estimated Gross Value</span>
-                    <div className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter mb-6">
+                    <span className="text-[10px] font-black text-brand-navy uppercase tracking-[0.3em] mb-4 block opacity-60">Estimated Gross Value</span>
+                    <div className="text-6xl md:text-7xl font-black text-slate-900 tracking-[-0.05em] mb-8 drop-shadow-sm">
                       {formatIndianCurrency(stats.totalFees, true, true)}
                     </div>
-                    <div className="flex items-center gap-4 text-sm font-black text-slate-500 mb-8">
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-100">
-                        <CheckCircle size={16} className="text-emerald-600" /> Professional Fees
+                    <div className="flex items-center gap-4 text-xs font-black text-slate-600 mb-10">
+                      <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200/50 shadow-sm hover:border-brand-gold/30 transition-colors">
+                        <CheckCircle size={14} className="text-emerald-500" /> Professional Fees
                       </div>
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-100">
-                        <TrendingUp size={16} className="text-brand-navy" /> Active Missions
+                      <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200/50 shadow-sm hover:border-brand-navy/30 transition-colors">
+                        <TrendingUp size={14} className="text-brand-navy" /> Active Missions
                       </div>
                     </div>
-                    <p className="text-slate-400 font-medium max-w-lg leading-relaxed text-base italic">
+                    <p className="text-slate-400 font-medium max-w-lg leading-relaxed text-base italic border-l-2 border-slate-100 pl-6 py-1">
                       Total projected revenue from across all practice areas. Includes current active assignments and recently completed missions awaiting final closure.
                     </p>
                   </div>
-                  <div className="w-full md:w-80 p-8 rounded-[2rem] bg-brand-navy text-white shadow-2xl relative overflow-hidden group border border-slate-800">
-                    <div className="absolute inset-0 bg-brand-gold/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="w-full md:w-80 p-10 rounded-[2.5rem] bg-brand-navy text-white shadow-[0_30px_60px_-15px_rgba(30,58,95,0.4)] relative overflow-hidden group border border-slate-800 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_80px_-15px_rgba(30,58,95,0.6)]">
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand-gold/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                     <div className="relative z-10">
-                      <div className="flex items-center gap-2 text-brand-gold/80 text-[10px] font-black uppercase tracking-widest mb-6">
-                        <div className="w-2 h-2 rounded-full bg-brand-gold animate-pulse" /> Finalized Billing
+                      <div className="flex items-center gap-2 text-brand-gold text-[10px] font-black uppercase tracking-[0.2em] mb-8">
+                        <div className="w-2 h-2 rounded-full bg-brand-gold animate-pulse shadow-[0_0_10px_rgba(212,175,55,0.8)]" /> Finalized Billing
                       </div>
-                      <div className="text-3xl font-black mb-2">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
-                      <div className="text-xs font-bold text-white/60 mb-8">Net billing achievement</div>
-                      <Link href="/billing" className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-xs font-black transition-all">
-                        Financial Audit <ArrowUpRight size={14} />
+                      <div className="text-4xl font-black mb-3 tracking-tighter">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
+                      <div className="text-xs font-bold text-slate-400 mb-10 tracking-wide">Net billing achievement</div>
+                      <Link href="/billing" className="inline-flex items-center gap-2.5 px-6 py-3 bg-white/10 hover:bg-white text-white hover:text-brand-navy border border-white/10 rounded-2xl text-xs font-black transition-all duration-300 shadow-xl group/btn">
+                        Financial Audit <ArrowUpRight size={16} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                       </Link>
                     </div>
-                    <TrendingUp size={120} className="absolute -bottom-6 -right-6 text-white/5 group-hover:scale-125 transition-transform duration-700" />
+                    <TrendingUp size={160} className="absolute -bottom-10 -right-10 text-white/[0.03] group-hover:text-white/[0.07] group-hover:scale-110 transition-all duration-1000" />
                   </div>
                 </motion.div>
               ) : (

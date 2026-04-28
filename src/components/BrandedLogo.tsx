@@ -17,13 +17,13 @@ export function BrandedLogo({
   if (variant === 'monogram') {
     return (
       <div className={cn(
-        "flex items-center justify-center rounded-xl font-bold shadow-sm transition-all duration-300",
-        isDark ? "bg-white/5 border border-white/10 text-white" : "bg-brand-navy text-white",
+        "flex items-center justify-center rounded-[1rem] font-black shadow-lg transition-all duration-500 group-hover:scale-110 border",
+        isDark ? "bg-white/10 border-white/10 text-white" : "bg-brand-navy border-brand-navy/10 text-white",
         className
-      )} style={{ width: '40px', height: '40px', fontSize: '18px' }}>
-        <span style={{ color: 'var(--brand-gold, #D4A574)' }}>K</span>
-        <span style={{ color: '#fff' }}>&</span>
-        <span style={{ color: 'var(--brand-gold, #D4A574)' }}>P</span>
+      )} style={{ width: '48px', height: '48px', fontSize: '20px', letterSpacing: '-0.05em' }}>
+        <span className="text-brand-gold">K</span>
+        <span className="mx-0.5 text-white/40">&</span>
+        <span className="text-brand-gold">P</span>
       </div>
     );
   }

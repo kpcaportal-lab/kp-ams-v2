@@ -56,36 +56,50 @@ export function KPIStrip({ data, isLoading }: KPIStripProps) {
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {stats.map((stat, idx) => (
                 <motion.div
                     key={stat.label}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className={`bg-white p-7 rounded-[2.5rem] border ${stat.border} shadow-[0_2px_8px_rgba(15,23,42,0.02)] hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)] transition-all duration-500 relative overflow-hidden group hover:-translate-y-1`}
+                    transition={{ 
+                        delay: idx * 0.1, 
+                        duration: 0.8, 
+                        ease: [0.215, 0.61, 0.355, 1] 
+                    }}
+                    className={`bg-white p-8 rounded-[3rem] border border-slate-100 shadow-[0_4px_20px_rgba(15,23,42,0.02)] hover:shadow-[0_40px_80px_rgba(15,23,42,0.12)] transition-all duration-700 relative overflow-hidden group hover:-translate-y-3 cursor-default`}
                 >
-                    <div className={`absolute -right-4 -top-4 w-24 h-24 ${stat.bg} rounded-full opacity-40 group-hover:scale-125 transition-transform duration-700`} />
-                    
-                    <div className="flex flex-col gap-4 relative z-10">
-                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner-sm ${stat.bg} ${stat.text}`}>
-                            <stat.icon size={28} strokeWidth={2.5} />
+                    {/* Dynamic Background Pattern */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-brand-gold/10 to-transparent rounded-full -mr-10 -mt-10 blur-3xl" />
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-brand-navy/5 to-transparent rounded-full -ml-10 -mb-10 blur-2xl" />
+                    </div>
+
+                    <div className="flex flex-col gap-6 relative z-10">
+                        <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-50 ${stat.bg} ${stat.text} group-hover:scale-110 transition-transform duration-500`}>
+                            <stat.icon size={32} strokeWidth={2.5} className="group-hover:rotate-12 transition-transform duration-500" />
                         </div>
                         <div>
                             {isLoading ? (
-                                <div className="h-10 w-24 bg-slate-100 animate-pulse rounded mt-1" />
+                                <div className="h-10 w-32 bg-slate-100 animate-pulse rounded-xl mb-2" />
                             ) : (
-                                <h3 className="text-3xl font-black text-slate-900 tracking-tight">
+                                <h3 className="text-4xl font-black text-slate-900 tracking-[-0.04em] mb-1">
                                     {stat.isCurrency ? formatINR(stat.value as number) : stat.value.toLocaleString()}
                                 </h3>
                             )}
-                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1 font-accent">{stat.label}</p>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] font-accent flex items-center gap-2">
+                                {stat.label}
+                                <span className="w-1 h-1 rounded-full bg-slate-200" />
+                            </p>
                         </div>
                     </div>
 
-                    <div className="mt-5 pt-4 border-t border-slate-50 flex items-center gap-1.5 text-[11px] font-bold text-slate-400 relative z-10">
-                        <TrendingUp size={12} strokeWidth={3} className="text-emerald-500" />
-                        <span>+12% from last quarter</span>
+                    <div className="mt-8 pt-5 border-t border-slate-50 flex items-center justify-between relative z-10">
+                        <div className="flex items-center gap-2 text-[10px] font-black text-emerald-500 bg-emerald-50/50 px-2.5 py-1 rounded-full border border-emerald-100/50">
+                            <TrendingUp size={12} strokeWidth={3} />
+                            <span>+12.4%</span>
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest italic opacity-0 group-hover:opacity-100 transition-opacity duration-500">Live Metric</span>
                     </div>
                 </motion.div>
             ))}
