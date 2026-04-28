@@ -14,7 +14,7 @@ export const InvoiceTemplate = React.forwardRef<HTMLDivElement, InvoiceTemplateP
       <div
         ref={ref}
         className="p-16 bg-white text-slate-900 w-[794px] min-h-[1123px] mx-auto font-sans shadow-none border-t-[12px] border-t-brand-navy border-x border-b border-slate-100 relative overflow-hidden"
-        style={{ color: '#1e3a5f' }}
+        style={{ color: '#054C7D' }}
       >
         {/* Decorative corner element */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-brand-gold/5 rounded-bl-[5rem] -mr-16 -mt-16" />
@@ -22,7 +22,7 @@ export const InvoiceTemplate = React.forwardRef<HTMLDivElement, InvoiceTemplateP
         {/* Header Section */}
         <div className="flex justify-between items-start border-b border-slate-100 pb-12 mb-12">
           <div>
-            <div className="text-4xl font-black tracking-tightest text-brand-navy mb-2 font-accent uppercase">K&P AMS</div>
+            <div className="text-4xl font-black tracking-tightest text-brand-navy mb-2 font-accent uppercase">K<span className="text-brand-red font-serif italic mx-0.5 lowercase">&</span>P AMS</div>
             <div className="text-[11px] font-black text-brand-gold uppercase tracking-[0.3em]">Chartered Accountants & Consultants</div>
           </div>
           <div className="text-right text-slate-400 text-[11px] font-bold uppercase tracking-widest leading-relaxed max-w-[220px]">

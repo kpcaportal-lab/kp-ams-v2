@@ -22,7 +22,7 @@ export function BrandedLogo({
         className
       )} style={{ width: '48px', height: '48px', fontSize: '20px', letterSpacing: '-0.05em' }}>
         <span className="text-brand-gold">K</span>
-        <span className="mx-0.5 text-white/40">&</span>
+        <span className="mx-0.5 text-brand-red">&</span>
         <span className="text-brand-gold">P</span>
       </div>
     );
@@ -35,7 +35,7 @@ export function BrandedLogo({
           "text-2xl font-black uppercase font-sans",
           isDark ? "text-white" : "text-brand-navy"
         )}>
-          Kirtane <span className="opacity-60">&</span> Pandit
+          Kirtane <span className="text-brand-red font-serif italic mx-0.5 lowercase">&</span> Pandit
         </span>
       </div>
       <span className={cn(
@@ -47,3 +47,4 @@ export function BrandedLogo({
     </div>
   );
 }
+

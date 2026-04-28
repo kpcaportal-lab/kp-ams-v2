@@ -79,7 +79,7 @@ export default function DashboardPage() {
       icon: Briefcase,
       trend: `${assignments.length} Total`,
       trendVal: '+12%',
-      accent: 'from-brand-navy to-brand-navy/80',
+      accent: 'from-brand-navy to-navy-600',
       iconColor: 'bg-brand-navy text-brand-gold',
     },
     {
@@ -88,7 +88,7 @@ export default function DashboardPage() {
       icon: Clock,
       trend: `${stats.wonProposals} Won`,
       trendVal: '+5%',
-      accent: 'from-brand-gold to-brand-gold/80',
+      accent: 'from-brand-gold to-gold-600',
       iconColor: 'bg-brand-gold text-brand-navy',
     },
     {
@@ -97,7 +97,7 @@ export default function DashboardPage() {
       icon: Users,
       trend: `${clients.length} Active`,
       trendVal: '+8%',
-      accent: 'from-brand-navy/90 to-brand-navy',
+      accent: 'from-brand-navy to-navy-700',
       iconColor: 'bg-brand-navy text-brand-gold',
     },
     {

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 /* ═══════════════════════════════════════════════════════════════════
    KP-AMS Design System — Kirtane & Pandit LLP
@@ -7,90 +7,95 @@
 
 /* ── Tailwind v4 Theme Tokens ─────────────────────────────────── */
 @theme inline {
-  --color-background: #F8FAFC;
-  --color-foreground: #1E3A5F;
-  --font-sans: "Roboto", "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-accent: "Plus Jakarta Sans", sans-serif;
+  --color-background: #FFFFFF;
+  --color-foreground: #122830;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-accent: "Manrope", sans-serif;
   --font-mono: "DM Mono", ui-monospace, monospace;
   --font-outfit: "Outfit", sans-serif;
   --font-number: "Outfit", sans-serif;
   
-  /* Brand Identity Tokens */
-  --color-brand-navy: #1E3A5F;
-  --color-brand-gold: #D4A574;
+  /* Official Brand Identity Tokens */
+  --color-brand-navy: #054C7D;
+  --color-brand-gold: #F8982D;
+  --color-brand-red: #C0272D;
   
-  /* Override default blue with KPCA Navy */
-  --color-blue-50: #EEF2F6;
-  --color-blue-100: #C7D8E5;
-  --color-blue-200: #85ADD0;
-  --color-blue-400: #3880C0;
-  --color-blue-500: #2C5282; /* Corporate Blue */
-  --color-blue-600: #1E3A5F; /* KPCA Brand Navy */
-  --color-blue-700: #172C48;
-  --color-blue-900: #09111A;
+  /* Brand Navy Palette (K&P Official) */
+  --color-blue-50: #E1F0F7;
+  --color-blue-100: #B3D6E9;
+  --color-blue-200: #80B6D9;
+  --color-blue-400: #1D79BA;
+  --color-blue-500: #054C7D; /* Brand Primary */
+  --color-blue-600: #043D64; 
+  --color-blue-700: #032F4D;
+  --color-blue-900: #021A2B;
 
-  /* Gold Accent Palette */
-  --color-gold-50: #FBF7F2;
-  --color-gold-100: #F5EBE0;
-  --color-gold-200: #ECD7C1;
-  --color-gold-400: #DDAF82;
-  --color-gold-500: #D4A574; /* KPCA Brand Gold */
-  --color-gold-600: #B8894E;
-  --color-gold-700: #8D6A3C;
+  /* Brand Action Palette (K&P Orange) */
+  --color-gold-50: #FFF8EE;
+  --color-gold-100: #FFF0D9;
+  --color-gold-200: #FFE1B3;
+  --color-gold-400: #FBAC5A;
+  --color-gold-500: #F8982D; /* Brand Accent */
+  --color-gold-600: #DF8828;
+  --color-gold-700: #B97121;
 }
 
 /* ── CSS Custom Properties ────────────────────────────────────── */
 :root {
-  /* ── KPCA BRAND COLORS ────────────────────────────────────── */
-  --brand-navy: #1E3A5F;
-  --brand-gold: #D4A574;
-  --brand-red: #B82028; /* Kept as secondary status color */
-  --brand-paper: #FAFAFA;
+  /* ── KPCA OFFICIAL BRAND COLORS ────────────────────────────── */
+  --brand-navy: #054C7D;
+  --brand-gold: #F8982D;
+  --brand-red: #C0272D;
+  --brand-paper: #FFFFFF;
   
-  /* Navy Tints */
-  --navy-900: #09111A;
-  --navy-700: #172C48;
-  --navy-600: #1E3A5F;
-  --navy-500: #2C5282;
-  --navy-400: #4A7BA7;
-  --navy-200: #85ADD0;
-  --navy-100: #C7D8E5;
-  --navy-50: #EEF2F6;
+  /* Brand Navy Tints */
+  --navy-900: #021A2B;
+  --navy-700: #032F4D;
+  --navy-600: #043D64;
+  --navy-500: #054C7D;
+  --navy-400: #1D79BA;
+  --navy-200: #80B6D9;
+  --navy-100: #B3D6E9;
+  --navy-50: #E1F0F7;
 
-  /* Secondary Palette */
-  --color-mid-blue: #2C5282;
-  --color-slate: #4A7BA7;
-  --color-sky: #6BA3C0;
-  --color-gold: #D4A574;
+  /* Official Accent Palette (Orange/Gold) */
+  --color-gold: #F8982D;
+  --gold-50: #FFF8EE;
+  --gold-100: #FFF0D9;
+  --gold-200: #FFE1B3;
+  --gold-400: #FBAC5A;
+  --gold-500: #F8982D;
+  --gold-600: #DF8828;
+  --gold-700: #B97121;
 
   /* Base background & text colors */
-  --bg-main: #F8FAFC;
+  --bg-main: #FFFFFF;
   --bg-card: #ffffff;
-  --bg-card-hover: #F1F5F9;
+  --bg-card-hover: #E0F1F4; /* Light teal tint from website */
   --bg-surface: #ffffff;
-  --bg-muted: #E2E8F0;
+  --bg-muted: #E0F1F4;
   
-  --text-primary: #1E3A5F;
+  --text-primary: #122830;
   --text-main: var(--text-primary);
-  --text-secondary: #475569;
-  --text-muted: #64748B;
-  --text-light: #94A3B8;
+  --text-secondary: #3D565F;
+  --text-muted: #6A838C;
+  --text-light: #8EA4AC;
   --text-inverted: #FFFFFF;
-  --text-placeholder: #94A3B8;
+  --text-placeholder: #8EA4AC;
   
-  /* Primary colors - Overridden with KPCA Navy */
+  /* Primary colors - Overridden with K&P Official Navy */
   --color-primary: var(--brand-navy);
   --color-primary-dark: var(--navy-700);
-  --color-primary-hover: var(--navy-500);
+  --color-primary-hover: var(--navy-400);
   --color-primary-active: var(--navy-900);
-  --color-primary-ring: rgba(30, 58, 95, 0.2);
-  --color-primary-glow: rgba(30, 58, 95, 0.12);
-  --bg-primary-light: #F0F4F8;
+  --color-primary-ring: rgba(5, 76, 125, 0.2);
+  --color-primary-glow: rgba(5, 76, 125, 0.12);
+  --bg-primary-light: var(--navy-50);
   
-  /* Accent colors - Gold */
+  /* Action colors - Official K&P Orange */
   --color-accent: var(--brand-gold);
-  --color-accent-hover: #B8894E;
-  --color-accent-light: #F5EBE0;
+  --color-accent-hover: var(--gold-600);
+  --color-accent-light: var(--gold-100);
   
   /* Success & Danger */
   --color-success: #10b981;
@@ -102,11 +107,11 @@
   --color-bg-danger: #FEF2F2;
 
   /* Borders */
-  --border: #e2e8f0; /* slate-200 */
-  --border-default: #e2e8f0;
-  --border-light: rgba(226, 232, 240, 0.5);
+  --border: #CDE2E7; /* teal-grey from website */
+  --border-default: #CDE2E7;
+  --border-light: rgba(205, 226, 231, 0.5);
   --border-glass: rgba(255, 255, 255, 0.5);
-  --border-focus: rgba(37, 99, 235, 0.5); /* Corrected from instruction typo */
+  --border-focus: rgba(5, 76, 125, 0.5);
 
   /* Violet — Admin / Premium */
   --color-violet: #7C3AED;
@@ -133,20 +138,20 @@
   --color-orange-glow: rgba(234, 88, 12, 0.1);
 
   /* Layered Shadows — tinted for depth */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  --shadow-card-hover: 0 8px 24px rgba(15, 23, 42, 0.1), 0 2px 8px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1);
-  --shadow-dropdown: 0 8px 32px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.06);
-  --shadow-modal: 0 20px 60px rgba(15, 23, 42, 0.18), 0 4px 16px rgba(15, 23, 42, 0.08);
+  --shadow-xs: 0 1px 2px rgba(5, 76, 125, 0.04);
+  --shadow-sm: 0 2px 4px rgba(5, 76, 125, 0.05), 0 1px 2px rgba(5, 76, 125, 0.04);
+  --shadow-card: 0 1px 3px rgba(5, 76, 125, 0.06), 0 2px 8px rgba(5, 76, 125, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --shadow-card-hover: 0 8px 24px rgba(5, 76, 125, 0.1), 0 2px 8px rgba(5, 76, 125, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1);
+  --shadow-dropdown: 0 8px 32px rgba(5, 76, 125, 0.12), 0 2px 8px rgba(5, 76, 125, 0.06);
+  --shadow-modal: 0 20px 60px rgba(5, 76, 125, 0.18), 0 4px 16px rgba(5, 76, 125, 0.08);
   --shadow-focus: 0 0 0 3px var(--color-primary-ring);
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #4F46E5 100%);
+  --gradient-primary: linear-gradient(135deg, var(--brand-navy) 0%, var(--navy-600) 100%);
   --gradient-success: linear-gradient(135deg, #059669 0%, #0D9488 100%);
   --gradient-warm: linear-gradient(135deg, #EA580C 0%, #D97706 100%);
   --gradient-cool: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
-  --gradient-surface: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  --gradient-surface: linear-gradient(180deg, #FFFFFF 0%, #E0F1F4 100%);
   --gradient-mesh: radial-gradient(at 20% 20%, rgba(37, 99, 235, 0.05) 0, transparent 50%),
     radial-gradient(at 80% 80%, rgba(79, 70, 229, 0.04) 0, transparent 50%);
 

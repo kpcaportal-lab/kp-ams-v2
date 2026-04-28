@@ -49,16 +49,16 @@ export default function LoginPage() {
         overflow: 'hidden'
       }}>
         {/* Decorative background elements */}
-        <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '50%', height: '50%', background: 'radial-gradient(circle, rgba(212,165,116,0.15) 0%, transparent 70%)', borderRadius: '50%' }} />
-        <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: '60%', height: '60%', background: 'radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '50%', height: '50%', background: 'radial-gradient(circle, rgba(248,152,45,0.15) 0%, transparent 70%)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: '60%', height: '60%', background: 'radial-gradient(circle, rgba(192,39,45,0.08) 0%, transparent 70%)', borderRadius: '50%' }} />
 
         <div style={{ maxWidth: 480, position: 'relative', zIndex: 1 }}>
           <div style={{ marginBottom: '3.5rem' }}>
-            {/* Using official KPCA logo */}
+            {/* Using official KPCA logo style */}
             <div className="bg-white/5 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/10 shadow-xl inline-block">
                <div className="flex flex-col">
-                 <span className="text-2xl font-black tracking-[0.15em] text-white font-accent leading-none">
-                   KIRTANE <span className="text-brand-gold">&</span> PANDIT
+                 <span className="text-2xl font-black tracking-[0.15em] text-white font-accent leading-none uppercase">
+                   Kirtane <span className="text-brand-red font-serif italic lowercase">&</span> Pandit
                  </span>
                  <span className="text-[9px] font-bold text-white/50 tracking-[0.2em] mt-2 uppercase">
                    Pune | Mumbai | Nashik | Bengaluru | Hyderabad | New Delhi | Chennai
@@ -66,11 +66,11 @@ export default function LoginPage() {
                </div>
             </div>
           </div>
-          <h1 style={{ fontSize: '3.5rem', fontWeight: 800, lineHeight: 1, marginBottom: '1.5rem', letterSpacing: '-0.03em', fontFamily: 'var(--font-accent)' }}>
-            Assignment Management System
+          <h1 style={{ fontSize: '3.5rem', fontWeight: 800, lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.03em', fontFamily: 'var(--font-accent)' }}>
+            Assignment Management <span className="text-brand-gold">System</span>
           </h1>
-          <p style={{ fontSize: '1.25rem', color: 'rgba(255, 255, 255, 0.7)', lineHeight: 1.6, maxWidth: '90%' }}>
-            Streamlined tracking, efficient professional workflows, and centralized assignment controls for Kirtane &amp; Pandit.
+          <p style={{ fontSize: '1.25rem', color: 'rgba(255, 255, 255, 0.8)', lineHeight: 1.6, maxWidth: '90%', fontWeight: 500 }}>
+            Official professional platform for Kirtane &amp; Pandit Chartered Accountants. Streamlined tracking and centralized controls.
           </p>
         </div>
       </div>
