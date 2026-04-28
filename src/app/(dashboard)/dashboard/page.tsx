@@ -127,55 +127,59 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8 pb-10 font-sans">
-      {/* Welcome Banner */}
-      <motion.div 
+      {/* Premium Welcome Banner */}
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-[2rem] bg-brand-navy px-8 py-10 md:px-12 md:py-14 text-white shadow-2xl border border-slate-800 overflow-hidden"
+        className="relative mb-12 p-10 lg:p-16 rounded-[3rem] overflow-hidden group shadow-[0_40px_80px_-15px_rgba(0,35,102,0.3)]"
       >
-        <div className="absolute inset-0 rounded-[2rem] overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-brand-gold/10 rounded-full blur-[100px]" />
-          <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-brand-gold/5 rounded-full blur-[100px]" />
-        </div>
+        {/* Dynamic Mesh Gradient Background */}
+        <div className="absolute inset-0 bg-brand-navy" />
+        <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top_right,_var(--brand-gold)_0%,_transparent_50%),radial-gradient(circle_at_bottom_left,_#001540_0%,_transparent_50%)] animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-navy via-transparent to-black/40" />
         
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+        {/* Glass decoration elements */}
+        <div className="absolute top-[-10%] right-[-5%] w-64 h-64 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-[-20%] left-[-10%] w-96 h-96 bg-brand-gold/10 rounded-full blur-3xl" />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-12">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-brand-gold text-xs font-black uppercase tracking-[0.2em] mb-4">
-              <Sparkles size={14} className="animate-pulse" /> Intelligence Overview
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/10 backdrop-blur-md text-brand-gold text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+              <Sparkles size={14} className="animate-pulse" /> Intelligence Center
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 font-accent">
-              Welcome Back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-brand-gold">
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 text-white font-accent leading-tight">
+              Welcome Back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-brand-gold drop-shadow-sm">
                 {user?.role === 'admin' ? 'Admin' : (user?.full_name?.split(' ')[0] || 'Partner')}
               </span>
             </h1>
-            <p className="text-slate-300 text-lg font-medium leading-relaxed">
-              Your practice performance is up <span className="text-brand-gold font-black">12.4%</span> this quarter. You have <span className="text-white font-black">{stats.activeAssignments}</span> active assignments requiring attention.
+            <p className="text-white/70 text-xl font-medium leading-relaxed max-w-xl">
+              Your practice is performing <span className="text-brand-gold font-black">12.4%</span> above baseline. You have <span className="text-white font-black">{stats.activeAssignments}</span> missions active.
             </p>
           </div>
           
           <div className="relative w-full md:max-w-md">
             <div className="group relative">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" size={22} />
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-brand-gold transition-colors" size={24} />
               <input
                 type="text"
-                placeholder="Query missions, partners, or docs..."
+                placeholder="Query missions, assets, or intel..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                className="w-full pl-14 pr-6 py-5 rounded-2xl bg-white/5 border border-white/10 focus:bg-white/10 focus:border-brand-gold/50 focus:ring-4 focus:ring-brand-gold/10 outline-none transition-all font-semibold text-white placeholder:text-slate-500 text-lg backdrop-blur-md"
+                className="w-full pl-16 pr-8 py-6 rounded-[2rem] bg-white/10 border border-white/10 focus:bg-white/15 focus:border-brand-gold/50 focus:ring-8 focus:ring-brand-gold/5 outline-none transition-all font-bold text-white placeholder:text-white/30 text-xl backdrop-blur-xl"
               />
               
               <AnimatePresence>
                 {isSearchFocused && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    initial={{ opacity: 0, y: 15, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute top-full left-0 right-0 mt-3 bg-brand-navy border border-slate-800 shadow-2xl rounded-2xl overflow-hidden z-[100] backdrop-blur-xl"
+                    exit={{ opacity: 0, y: 15, scale: 0.98 }}
+                    className="absolute top-full left-0 right-0 mt-4 glass-panel-navy border border-white/10 shadow-3xl rounded-[2rem] overflow-hidden z-[100]"
                   >
-                    <div className="px-5 py-3 border-b border-white/5 bg-white/5 flex justify-between items-center">
-                      <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">Live Intel</span>
+                    <div className="px-6 py-4 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                      <span className="text-[10px] font-black uppercase text-white/40 tracking-[0.3em]">Live Intelligence</span>
                     </div>
                     <div className="max-h-80 overflow-y-auto custom-scrollbar">
                       {searchResults.length > 0 ? (
@@ -183,21 +187,21 @@ export default function DashboardPage() {
                           <Link 
                             key={a.id} 
                             href={`/assignments/${a.id}`}
-                            className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 group"
+                            className="flex items-center gap-6 p-6 hover:bg-white/10 transition-colors border-b border-white/5 last:border-0 group"
                           >
-                            <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center font-black text-brand-gold text-sm group-hover:scale-110 transition-transform border border-white/5">
+                            <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center font-black text-brand-gold text-lg group-hover:scale-110 transition-transform border border-white/10">
                               {a.proposal_number?.slice(-2) || 'AS'}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="font-bold text-white group-hover:text-brand-gold transition-colors truncate">{a.client_name}</div>
-                              <div className="text-xs text-slate-500 mt-1">{a.proposal_number || 'No Identifier'}</div>
+                              <div className="font-bold text-white text-lg group-hover:text-brand-gold transition-colors truncate">{a.client_name}</div>
+                              <div className="text-xs text-white/40 mt-1 uppercase tracking-widest">{a.proposal_number || 'Internal Node'}</div>
                             </div>
                             {getStatusBadge(a.status)}
                           </Link>
                         ))
                       ) : (
-                        <div className="p-10 text-center">
-                          <p className="text-slate-500 font-medium italic">No matches in current database.</p>
+                        <div className="p-12 text-center">
+                          <p className="text-white/30 font-medium italic">No matches in secure database.</p>
                         </div>
                       )}
                     </div>
@@ -209,26 +213,32 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* Secondary KPI Cluster */}
+      {/* Secondary KPI Cluster - Premium Glass */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-2 md:grid-cols-4 gap-6"
+        className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12"
       >
         {[
-          { label: 'Total Clients', value: stats.totalClients, color: 'text-brand-navy', icon: Users },
-          { label: 'Win Rate', value: `${((stats.wonProposals / (proposals.length || 1)) * 100).toFixed(0)}%`, color: 'text-emerald-600', icon: TrendingUp },
-          { label: 'Total Volume', value: assignments.length, color: 'text-brand-gold', icon: Briefcase },
-          { label: 'Billing Health', value: 'Excellent', color: 'text-brand-navy', icon: Sparkles },
+          { label: 'Client Assets', value: stats.totalClients, color: 'text-brand-navy', icon: Users, sub: 'Verified Entities' },
+          { label: 'Execution Rate', value: `${((stats.wonProposals / (proposals.length || 1)) * 100).toFixed(0)}%`, color: 'text-emerald-600', icon: TrendingUp, sub: 'Proposal Win-Rate' },
+          { label: 'Operational Volume', value: assignments.length, color: 'text-brand-gold', icon: Briefcase, sub: 'Active Missions' },
+          { label: 'Fiscal Health', value: 'Prime', color: 'text-brand-navy', icon: Sparkles, sub: 'Billing Accuracy' },
         ].map((item) => (
-          <div key={item.label} className="flex items-center gap-4 bg-white border border-slate-200 rounded-[1.5rem] p-5 shadow-sm group hover:border-brand-gold/30 hover:shadow-md transition-all">
-            <div className={cn("w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-white shadow-inner", item.color)}>
-              <item.icon size={20} strokeWidth={2.5} />
+          <div key={item.label} className="glass-panel group p-8 rounded-[2rem] hover:scale-[1.02] hover:-translate-y-1 transition-all duration-500 cursor-pointer relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+              <item.icon size={80} strokeWidth={1} />
             </div>
-            <div>
-              <div className="text-sm font-black text-[#333333]">{item.value}</div>
-              <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.label}</div>
+            <div className="relative z-10 flex flex-col gap-6">
+              <div className={cn("w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-white shadow-inner", item.color)}>
+                <item.icon size={28} strokeWidth={2.5} />
+              </div>
+              <div>
+                <div className="text-3xl font-black text-[#1E293B] mb-1 font-outfit tracking-tight">{item.value}</div>
+                <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{item.label}</div>
+                <div className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">{item.sub}</div>
+              </div>
             </div>
           </div>
         ))}
