@@ -17,13 +17,13 @@ export const InvoiceTemplate = React.forwardRef<HTMLDivElement, InvoiceTemplateP
         style={{ color: '#1e3a5f' }}
       >
         {/* Decorative corner element */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-gold/5 rounded-bl-[5rem] -mr-16 -mt-16" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-red/5 rounded-bl-[5rem] -mr-16 -mt-16" />
 
         {/* Header Section */}
         <div className="flex justify-between items-start border-b border-slate-100 pb-12 mb-12">
           <div>
             <div className="text-4xl font-black tracking-tightest text-brand-navy mb-2 font-accent uppercase">K&P AMS</div>
-            <div className="text-[11px] font-black text-brand-gold uppercase tracking-[0.3em]">Chartered Accountants & Consultants</div>
+            <div className="text-[11px] font-black text-brand-red uppercase tracking-[0.3em]">Chartered Accountants & Consultants</div>
           </div>
           <div className="text-right text-slate-400 text-[11px] font-bold uppercase tracking-widest leading-relaxed max-w-[220px]">
             Kirtane & Pandit LLP<br />
@@ -53,7 +53,7 @@ export const InvoiceTemplate = React.forwardRef<HTMLDivElement, InvoiceTemplateP
             </div>
           </div>
           <div className="text-right">
-            <div className="text-[10px] font-black text-brand-gold uppercase tracking-[0.2em] mb-2">Invoice Date</div>
+            <div className="text-[10px] font-black text-brand-red uppercase tracking-[0.2em] mb-2">Invoice Date</div>
             <div className="text-2xl font-black text-slate-900 tabular-nums">{formatDate(invoice.invoice_date)}</div>
           </div>
         </div>
@@ -61,7 +61,7 @@ export const InvoiceTemplate = React.forwardRef<HTMLDivElement, InvoiceTemplateP
         {/* Bill To Section */}
         <div className="grid grid-cols-2 gap-16 mb-16 px-2">
           <div>
-            <div className="text-[11px] font-black text-brand-navy uppercase tracking-[0.3em] mb-4 border-l-4 border-brand-gold pl-3">Client Information</div>
+            <div className="text-[11px] font-black text-brand-navy uppercase tracking-[0.3em] mb-4 border-l-4 border-brand-red pl-3">Client Information</div>
             <div className="text-2xl font-black text-slate-900 mb-2 font-accent">{invoice.client_name}</div>
             <div className="text-xs font-medium text-slate-500 mb-4 leading-relaxed italic">
               {invoice.address || 'Address information not registered in system'}
@@ -145,9 +145,9 @@ export const InvoiceTemplate = React.forwardRef<HTMLDivElement, InvoiceTemplateP
               <span className="font-black text-slate-400 uppercase tracking-widest text-[10px]">GST Aggregate (18%)</span>
               <span className="font-black text-slate-900 tabular-nums">{formatIndianCurrency((invoice.professional_fees + invoice.out_of_pocket) * 0.18)}</span>
             </div>
-            <div className="pt-6 border-t-4 border-brand-gold flex justify-between items-center">
+            <div className="pt-6 border-t-4 border-brand-red flex justify-between items-center">
               <span className="text-xl font-black tracking-tightest text-brand-navy uppercase">Total Net</span>
-              <span className="text-3xl font-black text-brand-gold tabular-nums drop-shadow-sm">
+              <span className="text-3xl font-black text-brand-red tabular-nums drop-shadow-sm">
                 {formatIndianCurrency(invoice.net_amount || (invoice.professional_fees + invoice.out_of_pocket) * 1.18)}
               </span>
             </div>
@@ -160,7 +160,7 @@ export const InvoiceTemplate = React.forwardRef<HTMLDivElement, InvoiceTemplateP
         {/* Notes & Signature */}
         <div className="grid grid-cols-2 gap-16 mt-auto pt-16 border-t border-slate-100 border-dashed">
           <div>
-            <div className="text-[10px] font-black text-brand-gold uppercase tracking-[0.3em] mb-4">Terms of Service</div>
+            <div className="text-[10px] font-black text-brand-red uppercase tracking-[0.3em] mb-4">Terms of Service</div>
             <ul className="text-[10px] text-slate-400 space-y-2 font-bold uppercase tracking-widest leading-loose list-none">
               <li className="flex gap-2"><span>•</span> Please quote Invoice reference in all electronic transfers.</li>
               <li className="flex gap-2"><span>•</span> Payment is due within 15 days of invoice issuance.</li>
@@ -170,7 +170,7 @@ export const InvoiceTemplate = React.forwardRef<HTMLDivElement, InvoiceTemplateP
           <div className="text-center pt-8">
             <div className="w-56 h-[2px] bg-brand-navy mx-auto mb-4 opacity-20" />
             <div className="text-sm font-black text-brand-navy uppercase tracking-[0.2em] mb-1 font-accent">Authorized Signatory</div>
-            <div className="text-[10px] text-brand-gold font-black uppercase tracking-[0.3em]">For Kirtane & Pandit LLP</div>
+            <div className="text-[10px] text-brand-red font-black uppercase tracking-[0.3em]">For Kirtane & Pandit LLP</div>
           </div>
         </div>
       </div>

@@ -74,13 +74,13 @@ export default function DashboardPage() {
 
   const kpiCards = [
     {
-      label: 'Active Missions',
+      label: 'Active Assignments',
       value: stats.activeAssignments.toString(),
       icon: Briefcase,
       trend: `${assignments.length} Total`,
       trendVal: '+12%',
       accent: 'from-brand-navy to-brand-navy/80',
-      iconColor: 'bg-brand-navy text-brand-gold',
+      iconColor: 'bg-brand-navy text-white',
     },
     {
       label: 'Opportunities',
@@ -88,8 +88,8 @@ export default function DashboardPage() {
       icon: Clock,
       trend: `${stats.wonProposals} Won`,
       trendVal: '+5%',
-      accent: 'from-brand-gold to-brand-gold/80',
-      iconColor: 'bg-brand-gold text-brand-navy',
+      accent: 'from-brand-red to-brand-red/80',
+      iconColor: 'bg-brand-red text-white',
     },
     {
       label: 'Client Network',
@@ -98,7 +98,7 @@ export default function DashboardPage() {
       trend: `${clients.length} Active`,
       trendVal: '+8%',
       accent: 'from-brand-navy/90 to-brand-navy',
-      iconColor: 'bg-brand-navy text-brand-gold',
+      iconColor: 'bg-brand-navy text-white',
     },
     {
       label: 'Financial achievement',
@@ -106,20 +106,20 @@ export default function DashboardPage() {
       icon: FileText,
       trend: 'Settled',
       trendVal: '+15%',
-      accent: 'from-brand-navy to-brand-gold',
-      iconColor: 'bg-brand-navy text-brand-gold',
+      accent: 'bg-brand-navy',
+      iconColor: 'bg-brand-navy text-white',
     },
   ];
 
   const getStatusBadge = (status: string) => {
     const configs: Record<string, string> = {
-      active: 'bg-brand-navy/5 text-brand-navy border-brand-navy/10',
-      draft: 'bg-brand-gold/5 text-brand-gold border-brand-gold/10',
-      completed: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+      active: 'bg-brand-navy/5 text-brand-navy border-brand-navy/20',
+      draft: 'bg-brand-red/5 text-brand-red border-brand-red/20',
+      completed: 'bg-slate-100 text-slate-700 border-slate-200',
     };
     const config = configs[status] || 'bg-slate-50 text-slate-600 border-slate-100';
     return (
-      <span className={cn("px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border", config)}>
+      <span className={cn("px-2.5 py-1 rounded-none text-[9px] font-black uppercase tracking-widest border", config)}>
         {status}
       </span>
     );
@@ -131,31 +131,26 @@ export default function DashboardPage() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-[2rem] bg-brand-navy px-8 py-10 md:px-12 md:py-14 text-white shadow-2xl border border-slate-800 overflow-hidden"
+        className="hero-banner relative bg-white px-8 py-10 md:px-12 md:py-14 text-brand-navy overflow-hidden"
       >
-        <div className="absolute inset-0 rounded-[2rem] overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-brand-gold/10 rounded-full blur-[100px]" />
-          <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-brand-gold/5 rounded-full blur-[100px]" />
-        </div>
-        
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-brand-gold text-xs font-black uppercase tracking-[0.2em] mb-4">
-              <Sparkles size={14} className="animate-pulse" /> Intelligence Overview
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-brand-navy text-white text-[9px] font-black uppercase tracking-[0.2em] mb-4">
+               KPCA Insight
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 font-accent">
-              Welcome Back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-brand-gold">
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+              Welcome Back, <span className="text-brand-red">
                 {user?.role === 'admin' ? 'Admin' : (user?.full_name?.split(' ')[0] || 'Partner')}
               </span>
             </h1>
-            <p className="text-slate-300 text-lg font-medium leading-relaxed">
-              Your practice performance is up <span className="text-brand-gold font-black">12.4%</span> this quarter. You have <span className="text-white font-black">{stats.activeAssignments}</span> active assignments requiring attention.
+            <p className="text-slate-500 text-lg font-medium leading-relaxed">
+              Practice performance is up <span className="text-brand-red font-black">12.4%</span>. There are <span className="text-brand-navy font-black">{stats.activeAssignments}</span> active assignments.
             </p>
           </div>
           
           <div className="relative w-full md:max-w-md">
             <div className="group relative">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" size={22} />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-navy transition-colors" size={22} />
               <input
                 type="text"
                 placeholder="Query missions, partners, or docs..."
@@ -163,18 +158,18 @@ export default function DashboardPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                className="w-full pl-14 pr-6 py-5 rounded-2xl bg-white/5 border border-white/10 focus:bg-white/10 focus:border-brand-gold/50 focus:ring-4 focus:ring-brand-gold/10 outline-none transition-all font-semibold text-white placeholder:text-slate-500 text-lg backdrop-blur-md"
+                className="w-full pl-14 pr-6 py-5 rounded-none bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-navy outline-none transition-all font-semibold text-brand-navy placeholder:text-slate-400 text-lg"
               />
               
               <AnimatePresence>
                 {isSearchFocused && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute top-full left-0 right-0 mt-3 bg-brand-navy border border-slate-800 shadow-2xl rounded-2xl overflow-hidden z-[100] backdrop-blur-xl"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full left-0 right-0 mt-3 bg-white border border-slate-200 shadow-none rounded-none overflow-hidden z-[100]"
                   >
-                    <div className="px-5 py-3 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                    <div className="px-5 py-3 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                       <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">Live Intel</span>
                     </div>
                     <div className="max-h-80 overflow-y-auto custom-scrollbar">
@@ -183,13 +178,13 @@ export default function DashboardPage() {
                           <Link 
                             key={a.id} 
                             href={`/assignments/${a.id}`}
-                            className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 group"
+                            className="flex items-center gap-4 p-5 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 group"
                           >
-                            <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center font-black text-brand-gold text-sm group-hover:scale-110 transition-transform border border-white/5">
+                            <div className="w-12 h-12 rounded-none bg-slate-100 flex items-center justify-center font-black text-brand-navy text-sm border border-slate-200">
                               {a.proposal_number?.slice(-2) || 'AS'}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="font-bold text-white group-hover:text-brand-gold transition-colors truncate">{a.client_name}</div>
+                              <div className="font-bold text-brand-navy group-hover:text-brand-red transition-colors truncate">{a.client_name}</div>
                               <div className="text-xs text-slate-500 mt-1">{a.proposal_number || 'No Identifier'}</div>
                             </div>
                             {getStatusBadge(a.status)}
@@ -219,11 +214,11 @@ export default function DashboardPage() {
         {[
           { label: 'Total Clients', value: stats.totalClients, color: 'text-brand-navy', icon: Users },
           { label: 'Win Rate', value: `${((stats.wonProposals / (proposals.length || 1)) * 100).toFixed(0)}%`, color: 'text-emerald-600', icon: TrendingUp },
-          { label: 'Total Volume', value: assignments.length, color: 'text-brand-gold', icon: Briefcase },
-          { label: 'Billing Health', value: 'Excellent', color: 'text-brand-navy', icon: Sparkles },
+          { label: 'Total Volume', value: assignments.length, color: 'text-brand-navy', icon: Briefcase },
+          { label: 'Billing Health', value: 'Excellent', color: 'text-brand-red', icon: Sparkles },
         ].map((item) => (
-          <div key={item.label} className="flex items-center gap-4 bg-white border border-slate-200 rounded-[1.5rem] p-5 shadow-sm group hover:border-brand-gold/30 hover:shadow-md transition-all">
-            <div className={cn("w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-white shadow-inner", item.color)}>
+          <div key={item.label} className="flex items-center gap-4 bg-white border border-slate-200 rounded-none p-5 group hover:border-brand-navy transition-all">
+            <div className={cn("w-10 h-10 rounded-none bg-slate-50 flex items-center justify-center transition-all group-hover:bg-brand-navy group-hover:text-white border border-slate-100", item.color)}>
               <item.icon size={20} strokeWidth={2.5} />
             </div>
             <div>
@@ -243,13 +238,10 @@ export default function DashboardPage() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="group relative bg-white rounded-[2rem] p-7 border border-slate-200 shadow-sm hover:shadow-2xl hover:border-brand-gold/20 transition-all duration-500 hover:-translate-y-2 cursor-default overflow-hidden"
+            className="group relative bg-white rounded-none p-7 border border-slate-200 hover:border-brand-navy transition-all duration-500 cursor-default overflow-hidden"
           >
-            {/* Hover Background Accent */}
-            <div className={cn("absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 transition-opacity duration-500", card.accent)} />
-            
             <div className="flex items-center justify-between mb-6">
-              <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500 border border-slate-800", card.iconColor)}>
+              <div className={cn("w-14 h-14 rounded-none flex items-center justify-center border border-slate-200 transition-all duration-500", card.iconColor)}>
                 <card.icon size={26} strokeWidth={2.5} />
               </div>
               <div className="flex flex-col items-end">
@@ -259,7 +251,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center justify-between pt-2 border-t border-slate-50">
               <span className="text-xs font-black text-slate-500">{card.trend}</span>
-              <span className="flex items-center gap-1 text-[11px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+              <span className="flex items-center gap-1 text-[10px] font-black text-brand-navy bg-slate-50 px-2 py-0.5 rounded-none border border-slate-200 uppercase tracking-widest">
                 <TrendingUp size={12} strokeWidth={3} /> {card.trendVal}
               </span>
             </div>
@@ -273,21 +265,21 @@ export default function DashboardPage() {
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="lg:col-span-8 bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col"
+          className="lg:col-span-8 bg-white rounded-none border border-slate-200 overflow-hidden flex flex-col"
         >
-          <div className="flex flex-col md:flex-row md:items-center justify-between px-10 py-10 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 to-white/40 backdrop-blur-md">
+          <div className="flex flex-col md:flex-row md:items-center justify-between px-10 py-10 border-b border-slate-100">
             <div>
               <h2 className="text-2xl font-black text-slate-900 tracking-tight font-accent">Financial Performance</h2>
               <p className="text-sm font-semibold text-slate-400 mt-1">Real-time revenue tracking & billing</p>
             </div>
-            <div className="flex p-1.5 bg-slate-200/40 rounded-2xl mt-4 md:mt-0 backdrop-blur-xl border border-slate-200/50 shadow-inner">
+            <div className="flex p-1 bg-slate-100 rounded-none mt-4 md:mt-0 border border-slate-200">
               <button 
                 onClick={() => setDashboardTab('revenue')}
                 className={cn(
-                  "px-6 py-2.5 rounded-xl text-xs font-black transition-all duration-500 tracking-wider uppercase",
+                  "px-6 py-2 rounded-none text-xs font-black transition-all duration-300 tracking-wider uppercase",
                   dashboardTab === 'revenue' 
-                    ? "bg-white text-brand-navy shadow-[0_10px_25px_rgba(0,0,0,0.05)] scale-100" 
-                    : "text-slate-500 hover:text-slate-800 opacity-60 hover:opacity-100"
+                    ? "bg-brand-navy text-white" 
+                    : "text-slate-500 hover:text-brand-navy"
                 )}
               >
                 Revenue
@@ -295,10 +287,10 @@ export default function DashboardPage() {
               <button 
                 onClick={() => setDashboardTab('billing')}
                 className={cn(
-                  "px-6 py-2.5 rounded-xl text-xs font-black transition-all duration-500 tracking-wider uppercase",
+                  "px-6 py-2 rounded-none text-xs font-black transition-all duration-300 tracking-wider uppercase",
                   dashboardTab === 'billing' 
-                    ? "bg-white text-brand-navy shadow-[0_10px_25px_rgba(0,0,0,0.05)] scale-100" 
-                    : "text-slate-500 hover:text-slate-800 opacity-60 hover:opacity-100"
+                    ? "bg-brand-navy text-white" 
+                    : "text-slate-500 hover:text-brand-navy"
                 )}
               >
                 Billing
@@ -311,21 +303,21 @@ export default function DashboardPage() {
               {dashboardTab === 'revenue' ? (
                 <motion.div 
                   key="revenue"
-                  initial={{ opacity: 0, filter: 'blur(10px)' }}
-                  animate={{ opacity: 1, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, filter: 'blur(10px)' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   className="flex flex-col md:flex-row items-center gap-12"
                 >
                   <div className="flex-1">
                     <span className="text-[10px] font-black text-brand-navy uppercase tracking-[0.3em] mb-4 block opacity-60">Estimated Gross Value</span>
-                    <div className="text-6xl md:text-7xl font-black text-slate-900 tracking-[-0.05em] mb-8 drop-shadow-sm font-number">
+                    <div className="text-6xl md:text-7xl font-black text-slate-900 tracking-[-0.05em] mb-8 font-number">
                       {formatIndianCurrency(stats.totalFees, true, true)}
                     </div>
                     <div className="flex items-center gap-4 text-xs font-black text-slate-600 mb-10">
-                      <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200/50 shadow-sm hover:border-brand-gold/30 transition-colors">
+                      <div className="flex items-center gap-2 px-4 py-2 rounded-none bg-slate-50 border border-slate-200 transition-colors">
                         <CheckCircle size={14} className="text-emerald-500" /> Professional Fees
                       </div>
-                      <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200/50 shadow-sm hover:border-brand-navy/30 transition-colors">
+                      <div className="flex items-center gap-2 px-4 py-2 rounded-none bg-slate-50 border border-slate-200 transition-colors">
                         <TrendingUp size={14} className="text-brand-navy" /> Active Missions
                       </div>
                     </div>
@@ -333,27 +325,25 @@ export default function DashboardPage() {
                       Total projected revenue from across all practice areas. Includes current active assignments and recently completed missions awaiting final closure.
                     </p>
                   </div>
-                  <div className="w-full md:w-[26rem] p-8 rounded-[2.5rem] bg-brand-navy text-white shadow-[0_30px_60px_-15px_rgba(30,58,95,0.4)] relative overflow-hidden group border border-slate-800 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_80px_-15px_rgba(30,58,95,0.6)]">
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand-gold/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  <div className="w-full md:w-[26rem] p-8 rounded-none bg-brand-navy text-white relative overflow-hidden group border border-slate-800">
                     <div className="relative z-10">
-                      <div className="flex items-center gap-2 text-brand-gold text-[10px] font-black uppercase tracking-[0.2em] mb-8">
-                        <div className="w-2 h-2 rounded-full bg-brand-gold animate-pulse shadow-[0_0_10px_rgba(212,175,55,0.8)]" /> Finalized Billing
+                      <div className="flex items-center gap-2 text-brand-red text-[10px] font-black uppercase tracking-[0.2em] mb-8">
+                        <div className="w-2 h-2 bg-brand-red" /> Finalized Billing
                       </div>
                       <div className="text-4xl font-black mb-3 tracking-tighter font-number whitespace-nowrap">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
                       <div className="text-xs font-bold text-slate-400 mb-10 tracking-wide">Net billing achievement</div>
-                      <Link href="/billing" className="inline-flex items-center gap-2.5 px-6 py-3 bg-white/10 hover:bg-white text-white hover:text-brand-navy border border-white/10 rounded-2xl text-xs font-black transition-all duration-300 shadow-xl group/btn">
-                        Financial Audit <ArrowUpRight size={16} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                      <Link href="/billing" className="inline-flex items-center gap-2.5 px-6 py-3 bg-brand-red text-white border border-brand-red hover:bg-white hover:text-brand-red transition-all duration-300 text-xs font-black uppercase">
+                        Financial Audit <ArrowUpRight size={16} />
                       </Link>
                     </div>
-                    <TrendingUp size={160} className="absolute -bottom-10 -right-10 text-white/[0.03] group-hover:text-white/[0.07] group-hover:scale-110 transition-all duration-1000" />
                   </div>
                 </motion.div>
               ) : (
                 <motion.div 
                   key="billing"
-                  initial={{ opacity: 0, filter: 'blur(10px)' }}
-                  animate={{ opacity: 1, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, filter: 'blur(10px)' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   className="space-y-10"
                 >
                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -370,30 +360,28 @@ export default function DashboardPage() {
                   </div>
                   
                   <div className="relative pt-2">
-                    <div className="w-full h-10 bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 p-1.5 shadow-inner">
+                    <div className="w-full h-8 bg-slate-100 rounded-none overflow-hidden border border-slate-200 p-1">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${stats.billingPct}%` }}
                         transition={{ duration: 1.5, ease: [0.23, 1, 0.32, 1] }}
-                        className="h-full rounded-xl bg-gradient-to-r from-brand-navy via-brand-navy to-brand-gold shadow-xl relative overflow-hidden"
-                      >
-                        <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.15)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.15)_50%,rgba(255,255,255,0.15)_75%,transparent_75%,transparent)] bg-[length:24px_24px] animate-[pulse_2s_linear_infinite]" />
-                      </motion.div>
+                        className="h-full bg-brand-navy"
+                      />
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+                    <div className="p-5 rounded-none bg-slate-50 border border-slate-100">
                       <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Scope</div>
                       <div className="text-lg font-black text-slate-800 font-number">{formatIndianCurrency(stats.totalFees, true, true)}</div>
                     </div>
-                    <div className="p-5 rounded-2xl bg-brand-navy/5 border border-brand-navy/10">
+                    <div className="p-5 rounded-none bg-brand-navy/5 border border-brand-navy/10">
                       <div className="text-[10px] font-black text-brand-navy uppercase tracking-widest mb-1">Billed Net</div>
                       <div className="text-lg font-black text-brand-navy font-number">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
                     </div>
-                    <div className="p-5 rounded-2xl bg-brand-gold/5 border border-brand-gold/10">
-                      <div className="text-[10px] font-black text-brand-gold uppercase tracking-widest mb-1">Outstanding</div>
-                      <div className="text-lg font-black text-brand-gold font-number">{formatIndianCurrency(stats.totalFees - stats.totalBilled, true, true)}</div>
+                    <div className="p-5 rounded-none bg-brand-red/5 border border-brand-red/10">
+                      <div className="text-[10px] font-black text-brand-red uppercase tracking-widest mb-1">Outstanding</div>
+                      <div className="text-lg font-black text-brand-red font-number">{formatIndianCurrency(stats.totalFees - stats.totalBilled, true, true)}</div>
                     </div>
                   </div>
                 </motion.div>
@@ -408,7 +396,7 @@ export default function DashboardPage() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-[2.5rem] border border-slate-200 p-8 shadow-sm group"
+            className="bg-white rounded-none border border-slate-200 p-8 group"
           >
             <h3 className="text-lg font-black text-slate-900 tracking-tight mb-6">Quick Tasks</h3>
             <div className="flex flex-col gap-3">
@@ -421,9 +409,9 @@ export default function DashboardPage() {
                 <Link 
                   key={item.label} 
                   href={item.href}
-                  className={cn("flex items-center gap-4 p-4 rounded-2xl border border-slate-100 transition-all duration-300 font-bold text-sm text-slate-700 hover:border-brand-navy/20 hover:shadow-lg", item.color)}
+                  className={cn("flex items-center gap-4 p-4 rounded-none border border-slate-100 transition-all duration-300 font-bold text-sm text-slate-700 hover:border-brand-navy", item.color)}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-white transition-colors shadow-sm overflow-hidden p-2 border border-slate-100">
+                  <div className="w-10 h-10 rounded-none bg-slate-50 flex items-center justify-center group-hover:bg-white transition-colors border border-slate-100">
                     <img src={item.icon} alt="" className="w-full h-full object-contain" />
                   </div>
                   {item.label}
@@ -438,24 +426,24 @@ export default function DashboardPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-[2.5rem] border border-slate-200 p-8 shadow-sm overflow-hidden relative group"
+            className="bg-white rounded-none border border-slate-200 p-8 overflow-hidden relative group"
           >
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
-              <DollarSign size={80} className="text-brand-gold" />
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
+              <DollarSign size={80} className="text-brand-navy" />
             </div>
             <div className="relative z-10">
               <h3 className="text-lg font-black text-slate-900 tracking-tight mb-6 flex items-center gap-2">
-                <AlertCircle className="text-brand-gold" size={20} strokeWidth={2.5} />
+                <AlertCircle className="text-brand-red" size={20} strokeWidth={2.5} />
                 Billing Reminders
               </h3>
               <div className="space-y-4">
                 {assignments.filter(a => Number(a.total_fees) > Number(a.billed_amount)).slice(0, 3).map((a) => (
-                  <div key={a.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-brand-gold/30 transition-colors group/item">
+                  <div key={a.id} className="p-4 rounded-none bg-slate-50 border border-slate-100 hover:border-brand-red/30 transition-colors group/item">
                     <div className="flex justify-between items-start mb-2">
                       <div className="font-bold text-sm text-slate-800 truncate pr-2 group-hover/item:text-brand-navy transition-colors" title={a.client_name}>
                         {a.client_name}
                       </div>
-                      <span className="text-[10px] font-black text-brand-gold bg-white px-2 py-0.5 rounded-full border border-brand-gold/10 shadow-sm">
+                      <span className="text-[10px] font-black text-brand-red bg-white px-2 py-0.5 rounded-none border border-brand-red/10">
                         Pending
                       </span>
                     </div>
@@ -463,7 +451,7 @@ export default function DashboardPage() {
                       <div className="text-xs text-slate-500 font-medium">
                         Unbilled: <span className="font-black text-slate-700 font-number">{formatIndianCurrency(Number(a.total_fees) - Number(a.billed_amount), true, true)}</span>
                       </div>
-                      <Link href="/billing" className="text-[10px] font-black text-brand-navy hover:text-brand-gold transition-colors flex items-center gap-0.5 uppercase tracking-wider">
+                      <Link href="/billing" className="text-[10px] font-black text-brand-navy hover:text-brand-red transition-colors flex items-center gap-0.5 uppercase tracking-wider">
                         Invoiced <ArrowUpRight size={10} />
                       </Link>
                     </div>
@@ -483,16 +471,16 @@ export default function DashboardPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-[2.5rem] border border-slate-200 p-8 shadow-sm"
+            className="bg-white rounded-none border border-slate-200 p-8"
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-black text-slate-900 tracking-tight">Active Feed</h3>
-              <Link href="/assignments" className="text-xs font-black text-brand-navy hover:text-brand-gold transition-colors uppercase tracking-widest">Full Database</Link>
+              <Link href="/assignments" className="text-xs font-black text-brand-navy hover:text-brand-red transition-colors uppercase tracking-widest">Full Database</Link>
             </div>
             <div className="space-y-6">
               {recentAssignments.map((a) => (
                 <Link key={a.id} href={`/assignments/${a.id}`} className="flex gap-4 group cursor-pointer">
-                  <div className="w-1.5 h-12 bg-slate-100 rounded-full group-hover:bg-brand-gold transition-all group-hover:w-2" />
+                  <div className="w-1.5 h-12 bg-slate-100 rounded-none group-hover:bg-brand-red transition-all group-hover:w-2" />
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-sm text-slate-800 group-hover:text-brand-navy transition-colors truncate">{a.client_name}</div>
                     <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">

@@ -17,7 +17,7 @@ export function FilterBar({
     searchQuery, setSearchQuery 
 }: FilterBarProps) {
     return (
-        <div className="bg-white border border-slate-100 p-2 rounded-[2rem] flex flex-col md:flex-row items-center gap-2 mb-10 shadow-[0_10px_30px_rgba(15,23,42,0.04)] hover:shadow-[0_20px_40px_rgba(15,23,42,0.06)] transition-all duration-500">
+        <div className="bg-white border border-slate-100 p-2 rounded-none flex flex-col md:flex-row items-center gap-2 mb-10 shadow-none hover:shadow-none transition-all duration-500">
             {/* Search Input */}
             <div className="relative flex-1 w-full group">
                 <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-navy transition-colors duration-300" />
@@ -26,7 +26,7 @@ export function FilterBar({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search by manager name or email..."
-                    className="w-full pl-12 pr-6 py-4 bg-slate-50/50 border border-transparent rounded-[1.5rem] text-sm font-semibold focus:bg-white focus:border-brand-gold/30 focus:ring-4 focus:ring-brand-gold/5 transition-all outline-none placeholder:text-slate-400"
+                    className="w-full pl-12 pr-6 py-4 bg-slate-50/50 border border-transparent rounded-none text-sm font-semibold focus:bg-white focus:border-brand-navy transition-all outline-none placeholder:text-slate-400"
                 />
             </div>
 
@@ -40,7 +40,7 @@ export function FilterBar({
                     <select
                         value={period}
                         onChange={(e) => setPeriod(e.target.value)}
-                        className="appearance-none w-full md:w-48 pl-11 pr-10 py-4 bg-slate-50/50 border border-transparent rounded-[1.5rem] text-xs font-black text-slate-600 focus:bg-white focus:border-brand-gold/30 transition-all outline-none cursor-pointer font-accent uppercase tracking-widest hover:bg-slate-100/50"
+                        className="appearance-none w-full md:w-48 pl-11 pr-10 py-4 bg-slate-50/50 border border-transparent rounded-none text-xs font-black text-slate-600 focus:bg-white focus:border-brand-navy transition-all outline-none cursor-pointer font-accent uppercase tracking-widest hover:bg-slate-100/50"
                     >
                         <option value="2025-26">FY 2025-26</option>
                         <option value="2024-25">FY 2024-25</option>
@@ -55,7 +55,7 @@ export function FilterBar({
                     <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
-                        className="appearance-none w-full md:w-48 pl-11 pr-10 py-4 bg-slate-50/50 border border-transparent rounded-[1.5rem] text-xs font-black text-slate-600 focus:bg-white focus:border-brand-gold/30 transition-all outline-none cursor-pointer font-accent uppercase tracking-widest hover:bg-slate-100/50"
+                        className="appearance-none w-full md:w-48 pl-11 pr-10 py-4 bg-slate-50/50 border border-transparent rounded-none text-xs font-black text-slate-600 focus:bg-white focus:border-brand-navy transition-all outline-none cursor-pointer font-accent uppercase tracking-widest hover:bg-slate-100/50"
                     >
                         <option value="billed">Sort by Billed</option>
                         <option value="clients">Sort by Clients</option>

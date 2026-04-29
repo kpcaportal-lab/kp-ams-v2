@@ -121,23 +121,23 @@ export default function BillingPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-brand-navy drop-shadow-sm font-accent">
-            Billing <span className="text-brand-gold">& Revenue</span>
+            Billing <span className="text-brand-red">& Revenue</span>
           </h1>
           <p className="text-slate-500 mt-1 font-medium italic">Unified financial oversight and performance tracking</p>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={handleExport}
-            className="flex items-center gap-2.5 px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-black transition-all hover:bg-slate-50 shadow-sm active:scale-95"
+            className="flex items-center gap-2.5 px-6 py-3 rounded-none bg-white border border-slate-200 text-slate-700 text-sm font-black transition-all hover:bg-slate-50 shadow-none active:scale-95"
           >
             <Download size={18} strokeWidth={3} className="text-emerald-500" />
             Export Registry
           </button>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-navy text-white text-sm font-black shadow-[0_10px_20px_rgba(30,58,95,0.15)] hover:shadow-[0_15px_30px_rgba(30,58,95,0.25)] transition-all border border-slate-800"
+            className="flex items-center gap-2 px-6 py-3 rounded-none bg-brand-navy text-white text-sm font-black shadow-none transition-all border border-slate-800"
           >
-            <Plus size={18} strokeWidth={3} className="text-brand-gold" />
+            <Plus size={18} strokeWidth={3} className="text-brand-red" />
             Generate Invoice
           </button>
         </div>
@@ -148,16 +148,15 @@ export default function BillingPage() {
           { label: 'Total Billed', value: Number(summary?.totalBilled || 0), icon: DollarSign, color: 'text-brand-navy', bg: 'bg-brand-navy/5', accent: 'from-brand-navy to-brand-navy/80' },
           { label: 'Overdue Revenue', value: Number(summary?.overdue || 0), icon: Clock, color: 'text-rose-600', bg: 'bg-rose-50', accent: 'from-rose-500 to-rose-600' },
           { label: 'Collection %', value: `${Number(summary?.billingPct || 0).toFixed(1)}%`, isRaw: true, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50', accent: 'from-emerald-500 to-emerald-600' },
-          { label: 'Active Invoices', value: Number(invoices.length || 0), isRaw: true, icon: FileText, color: 'text-brand-gold', bg: 'bg-brand-gold/5', accent: 'from-brand-gold to-brand-gold/80' },
+          { label: 'Active Invoices', value: Number(invoices.length || 0), isRaw: true, icon: FileText, color: 'text-brand-red', bg: 'bg-brand-red/5', accent: 'from-brand-red to-brand-red/80' },
         ].map((kpi, i) => (
           <motion.div
             key={kpi.label}
             variants={{ hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0, transition: { duration: 0.4 } } }}
-            className="group relative overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white p-7 shadow-[0_2px_8px_rgba(15,23,42,0.02)] hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)] transition-all duration-500 hover:-translate-y-1"
+            className="group relative overflow-hidden rounded-none border border-slate-200/60 bg-white p-7 shadow-none transition-all duration-500 hover:-translate-y-1"
           >
-            <div className={cn("absolute -right-4 -top-4 w-24 h-24 rounded-full opacity-5 group-hover:opacity-10 transition-opacity", kpi.bg)} />
             <div className="flex flex-col gap-4">
-              <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner-sm", kpi.bg)}>
+              <div className={cn("w-14 h-14 rounded-none flex items-center justify-center shadow-none", kpi.bg)}>
                  <kpi.icon size={28} className={kpi.color} strokeWidth={2.5} />
               </div>
               <div>
@@ -171,15 +170,15 @@ export default function BillingPage() {
 
       <div className="flex flex-col lg:flex-row gap-4 justify-between">
         {/* Tabs Switcher */}
-        <div className="flex gap-2 bg-white/60 backdrop-blur-md rounded-[1.5rem] p-1.5 border border-slate-200 w-fit shadow-sm">
+        <div className="flex gap-2 bg-white/60 backdrop-blur-md rounded-none p-1.5 border border-slate-200 w-fit shadow-none">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-black transition-all duration-300",
+                "flex items-center gap-2.5 px-6 py-3 rounded-none text-sm font-black transition-all duration-300",
                 activeTab === tab.id 
-                  ? "bg-white text-brand-navy shadow-sm ring-1 ring-slate-200/50" 
+                  ? "bg-brand-navy text-white shadow-none" 
                   : "text-slate-500 hover:text-slate-700 hover:bg-slate-50/50"
               )}
             >
@@ -197,7 +196,7 @@ export default function BillingPage() {
             placeholder={activeTab === 'invoices' ? "Search client, UDIN or reference..." : "Search manager or partner performance..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-14 pr-6 py-4 rounded-[1.5rem] border border-slate-200 bg-white text-sm font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-navy/5 focus:border-brand-navy/30 focus:shadow-sm transition-all shadow-thin"
+            className="w-full pl-14 pr-6 py-4 rounded-none border border-slate-200 bg-white text-sm font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-0 focus:border-brand-navy transition-all shadow-none"
           />
         </div>
       </div>
@@ -210,18 +209,18 @@ export default function BillingPage() {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
-            className="bg-white border border-slate-200 rounded-[2rem] overflow-hidden shadow-sm"
+            className="bg-white border border-slate-200 rounded-none overflow-hidden shadow-none"
           >
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Date</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Client & Particulars</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Prof. Fees</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Net Amount</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">UDIN</th>
-                    <th className="px-6 py-5 text-right text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tr-[1.5rem]">Action</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Date</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Client & Particulars</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Prof. Fees</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Net Amount</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">UDIN</th>
+                    <th className="px-6 py-5 text-right text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -229,7 +228,7 @@ export default function BillingPage() {
                     Array.from({ length: 5 }).map((_, i) => (
                       <tr key={i}>
                         <td colSpan={6} className="px-6 py-8">
-                          <div className="h-4 bg-slate-100 rounded-full w-full animate-pulse" />
+                          <div className="h-4 bg-slate-100 rounded-none w-full animate-pulse" />
                         </td>
                       </tr>
                     ))
@@ -245,13 +244,13 @@ export default function BillingPage() {
                       </td>
                       <td className="px-6 py-5 text-sm font-bold text-slate-700">{formatIndianCurrency(inv.professional_fees)}</td>
                       <td className="px-6 py-5">
-                        <div className="inline-flex items-center px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-black text-xs border border-emerald-100 shadow-sm">
+                        <div className="inline-flex items-center px-3 py-1 rounded-none bg-emerald-50 text-emerald-700 font-black text-xs border border-emerald-100 shadow-none">
                           {formatIndianCurrency(Number(inv.net_amount || 0))}
                         </div>
                       </td>
                       <td className="px-6 py-5">
                          {inv.udin ? (
-                           <span className="font-mono text-[10px] font-bold bg-slate-100 px-2 py-1 rounded text-slate-600 border border-slate-200 uppercase tracking-tighter">{inv.udin}</span>
+                           <span className="font-mono text-[10px] font-bold bg-slate-100 px-2 py-1 rounded-none text-slate-600 border border-slate-200 uppercase tracking-tighter">{inv.udin}</span>
                          ) : <span className="text-slate-300 text-xs">—</span>}
                       </td>
                       <td className="px-6 py-5 text-right">
@@ -286,22 +285,22 @@ export default function BillingPage() {
             {filteredBreakdown.map((item) => (
               <div 
                 key={item.id}
-                className="group p-6 bg-white border border-slate-200 rounded-[2rem] shadow-sm hover:shadow-[0_20px_40px_rgba(30,58,95,0.08)] transition-all flex flex-col gap-6"
+                className="group p-6 bg-white border border-slate-200 rounded-none shadow-none transition-all flex flex-col gap-6"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-brand-navy text-brand-gold flex items-center justify-center font-black text-xl shadow-inner group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 rounded-none bg-brand-navy text-brand-red flex items-center justify-center font-black text-xl shadow-none group-hover:scale-110 transition-transform">
                       {item.full_name.charAt(0)}
                     </div>
                     <div>
                       <div className="font-black text-slate-900 text-lg tracking-tight font-accent">
                         {item.full_name}
                       </div>
-                      <div className="text-[10px] font-black text-brand-gold uppercase tracking-[0.2em]">{item.role}</div>
+                      <div className="text-[10px] font-black text-brand-red uppercase tracking-[0.2em]">{item.role}</div>
                     </div>
                   </div>
                   {item.full_name === 'Hamza Momin' && (
-                    <div className="px-3 py-1 rounded-full bg-brand-gold/10 text-brand-gold font-black text-[9px] uppercase tracking-widest border border-brand-gold/20 animate-pulse">
+                    <div className="px-3 py-1 rounded-none bg-brand-red/10 text-brand-red font-black text-[9px] uppercase tracking-widest border border-brand-red/20 animate-pulse">
                       Principal
                     </div>
                   )}
@@ -318,10 +317,10 @@ export default function BillingPage() {
                     <div className="text-right">
                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Target Achievement</div>
                        <div className="flex items-center gap-2">
-                          <div className="h-1.5 w-20 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                             <div className="h-full bg-brand-gold" style={{ width: `${Math.min(item.billing_pct, 100)}%` }} />
+                          <div className="h-1.5 w-20 bg-slate-100 rounded-none overflow-hidden border border-slate-200">
+                             <div className="h-full bg-brand-red" style={{ width: `${Math.min(item.billing_pct, 100)}%` }} />
                           </div>
-                          <span className="font-black text-brand-gold text-xs italic">{Number(item.billing_pct || 0).toFixed(0)}%</span>
+                          <span className="font-black text-brand-red text-xs italic">{Number(item.billing_pct || 0).toFixed(0)}%</span>
                        </div>
                     </div>
                   )}
@@ -329,7 +328,7 @@ export default function BillingPage() {
               </div>
             ))}
             {filteredBreakdown.length === 0 && (
-              <div className="col-span-full p-20 text-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem]">
+              <div className="col-span-full p-20 text-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-none">
                  <p className="text-slate-400 font-black italic">No revenue attribution data available</p>
               </div>
             )}

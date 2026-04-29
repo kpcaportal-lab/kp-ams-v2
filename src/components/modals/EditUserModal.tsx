@@ -96,21 +96,21 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
-      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 shadow-2xl">
-        <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-[var(--brand-navy)]">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+      <div className="bg-white border border-slate-200 w-full max-w-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200 shadow-none rounded-none">
+        <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-brand-navy">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[var(--brand-gold)]/20 flex items-center justify-center border border-[var(--brand-gold)]/30">
-              <UserCheck className="w-5 h-5 text-[var(--brand-gold)]" />
+            <div className="w-10 h-10 bg-white/10 flex items-center justify-center rounded-none">
+              <UserCheck className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--brand-gold)] tracking-tight font-accent">Edit User</h2>
-              <p className="text-xs text-[var(--brand-gold)]/60 mt-0.5 font-medium">Update account and permissions</p>
+              <h2 className="text-xl font-black text-white tracking-tight">Modify Personnel Profile</h2>
+              <p className="text-[11px] text-white/60 font-bold uppercase tracking-widest">System Access Authority</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10 text-[var(--brand-gold)]/60 hover:text-[var(--brand-gold)] transition-all border border-transparent hover:border-white/10"
+            className="p-2 rounded-none hover:bg-white/10 text-white/60 hover:text-white transition-all"
           >
             <X className="w-5 h-5" />
           </button>
@@ -119,14 +119,11 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
         <form onSubmit={handleSubmit} className="p-8 space-y-5 overflow-y-auto max-h-[85vh]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
-                <UserIcon className="w-3 h-3 text-[var(--brand-gold)]" />
-                Full Name *
-              </label>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Full Legal Name</label>
               <input
                 type="text"
                 required
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all placeholder:text-slate-300 shadow-sm"
+                className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-semibold focus:border-brand-navy outline-none rounded-none transition-all placeholder:text-slate-300"
                 placeholder="John Doe"
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
@@ -134,13 +131,10 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
-                <UserIcon className="w-3 h-3 text-[var(--brand-gold)]" />
-                Display Name
-              </label>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Display Designation</label>
               <input
                 type="text"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all placeholder:text-slate-300 shadow-sm"
+                className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-semibold focus:border-brand-navy outline-none rounded-none transition-all placeholder:text-slate-300"
                 placeholder="John D."
                 value={formData.display_name}
                 onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
@@ -149,12 +143,9 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
-              <Users className="w-3 h-3 text-[var(--brand-gold)]" />
-              Reporting To (Supervisor)
-            </label>
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Direct Reporting Supervisor</label>
             <select
-              className={`w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm ${!isAdmin ? 'bg-slate-50 cursor-not-allowed opacity-75' : ''}`}
+              className={`w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none ${!isAdmin ? 'bg-slate-50 cursor-not-allowed opacity-75' : ''}`}
               value={formData.reports_to}
               onChange={(e) => setFormData({ ...formData, reports_to: e.target.value })}
               disabled={!isAdmin}
@@ -169,28 +160,21 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
           </div>
 
           <div className="space-y-3">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
-              <Shield className="w-3 h-3 text-[var(--brand-gold)]" />
-              Security Role
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Institutional Privilege Level</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {ROLES.map((role) => (
                 <button
                   key={role.value}
                   type="button"
                   onClick={() => setFormData({ ...formData, role: role.value })}
-                  className={`flex flex-col items-start p-3.5 rounded-2xl border transition-all text-left group relative overflow-hidden ${
+                  className={`flex flex-col items-start p-4 border transition-all text-left rounded-none ${
                     formData.role === role.value
-                      ? 'bg-[var(--brand-navy)] border-[var(--brand-navy)] shadow-lg shadow-blue-900/20'
-                      : 'bg-white border-slate-200 hover:border-[var(--brand-gold)]/30 hover:bg-slate-50'
+                      ? 'bg-brand-navy border-brand-navy text-white'
+                      : 'bg-white border-slate-200 hover:border-brand-navy/30 hover:bg-slate-50 text-slate-900'
                   }`}
                 >
-                  <span className={`text-[13px] font-bold relative z-10 ${
-                    formData.role === role.value ? 'text-[var(--brand-gold)]' : 'text-slate-900 group-hover:text-[var(--brand-navy)]'
-                  }`}>
-                    {role.label}
-                  </span>
-                  <span className={`text-[11px] relative z-10 mt-1 line-clamp-1 leading-tight ${
+                  <span className="text-[13px] font-black tracking-tight">{role.label}</span>
+                  <span className={`text-[10px] mt-1 line-clamp-1 leading-tight ${
                     formData.role === role.value ? 'text-white/60' : 'text-slate-500'
                   }`}>
                     {role.description}
@@ -200,40 +184,38 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
             </div>
           </div>
 
-          <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200">
-            <div className="relative flex items-center">
-              <input
-                type="checkbox"
-                id="is_active"
-                className="w-5 h-5 text-[var(--brand-navy)] border-slate-300 rounded-lg focus:ring-[var(--brand-gold)] transition-all cursor-pointer"
-                checked={formData.is_active}
-                onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-              />
-            </div>
-            <label htmlFor="is_active" className="text-sm font-bold text-slate-700 cursor-pointer select-none">
-              Account is active and can login
+          <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-200 rounded-none">
+            <input
+              type="checkbox"
+              id="is_active"
+              className="w-4 h-4 text-brand-navy border-slate-300 focus:ring-0 rounded-none cursor-pointer"
+              checked={formData.is_active}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+            />
+            <label htmlFor="is_active" className="text-[10px] font-black text-brand-navy uppercase tracking-widest cursor-pointer select-none">
+              Account Status: ACTIVE & OPERATIONAL
             </label>
           </div>
 
-          <div className="pt-4 flex gap-3">
+          <div className="pt-6 border-t border-slate-100 flex gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3.5 rounded-2xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all active:scale-95"
+              className="flex-1 px-6 py-4 border border-slate-200 text-xs font-black text-slate-500 hover:bg-slate-50 transition-all rounded-none uppercase tracking-widest"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-6 py-3.5 rounded-2xl bg-[var(--brand-navy)] text-[var(--brand-gold)] text-sm font-bold shadow-[0_8px_20px_rgba(30,58,95,0.25)] hover:shadow-[0_12px_28px_rgba(30,58,95,0.35)] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-4 bg-brand-navy text-white text-xs font-black transition-all border-b-2 border-brand-red flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed rounded-none uppercase tracking-widest hover:bg-slate-800"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-[var(--brand-gold)]/30 border-t-[var(--brand-gold)] rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-none animate-spin" />
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  <span>Update User</span>
+                  <span>Execute Record Update</span>
                 </>
               )}
             </button>

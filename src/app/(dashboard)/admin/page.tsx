@@ -63,7 +63,7 @@ const actionColors: Record<string, string> = {
 
 const roleColors: Record<string, string> = {
   admin: 'var(--brand-navy)', 
-  partner: 'var(--brand-gold)', 
+  partner: 'var(--brand-red)', 
   director: 'var(--brand-navy)', 
   manager: '#475569',
 };
@@ -170,11 +170,11 @@ export default function AdminPage() {
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-5">
           <div className="w-14 h-14 rounded-2xl bg-brand-navy flex items-center justify-center shadow-[0_8px_20px_rgba(30,58,95,0.2)] border border-slate-800">
-            <Shield size={28} className="text-brand-gold" strokeWidth={2.5} />
+            <Shield size={28} className="text-brand-red" strokeWidth={2.5} />
           </div>
           <div>
             <h1 className="text-3xl font-black text-slate-900 tracking-tight font-accent">
-              Admin <span className="text-brand-gold">Intelligence</span>
+              Admin <span className="text-brand-red">Intelligence</span>
             </h1>
             <p className="text-sm text-slate-500 mt-1 font-medium italic">Secure oversight of system monitoring, audit logs, and mission activity.</p>
           </div>
@@ -200,7 +200,7 @@ export default function AdminPage() {
             className={cn(
               "flex items-center gap-2.5 px-6 py-3 rounded-[1.25rem] text-sm font-black transition-all duration-300 uppercase tracking-widest",
               activeTab === tab.key 
-                ? "bg-brand-navy text-brand-gold shadow-[0_10px_20px_rgba(30,58,95,0.2)]" 
+                ? "bg-brand-navy text-brand-red shadow-[0_10px_20px_rgba(30,58,95,0.2)]" 
                 : "text-slate-500 hover:bg-slate-50"
             )}
           >
@@ -216,19 +216,19 @@ export default function AdminPage() {
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1 group">
-              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" />
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-red transition-colors" />
               <input
                 type="text"
                 placeholder="Search audit trail by email or entity..."
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
-                className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-black text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 transition-all shadow-sm"
+                className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-black text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/30 transition-all shadow-sm"
               />
             </div>
             <select
               value={actionFilter}
               onChange={(e) => { setActionFilter(e.target.value); setPage(1); }}
-              className="px-6 py-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-black text-slate-700 focus:outline-none focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 transition-all shadow-sm min-w-[180px] cursor-pointer appearance-none uppercase tracking-widest"
+              className="px-6 py-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-black text-slate-700 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/30 transition-all shadow-sm min-w-[180px] cursor-pointer appearance-none uppercase tracking-widest"
             >
               <option value="">All Directives</option>
               <option value="login">Login</option>
@@ -259,13 +259,13 @@ export default function AdminPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr>
-                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Timeline</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Operator</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Clearance</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Directive</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Entity</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Source IP</th>
-                    <th className="px-8 py-5 text-right font-black text-brand-gold bg-brand-navy border-b border-white/5 rounded-tr-[1.5rem]"></th>
+                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Timeline</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Operator</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Clearance</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Directive</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Entity</th>
+                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Source IP</th>
+                    <th className="px-8 py-5 text-right font-black text-white bg-brand-navy border-b border-white/5 rounded-tr-[1.5rem]"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100/60">
@@ -290,7 +290,7 @@ export default function AdminPage() {
                           <span className={cn(
                             "px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider border",
                             log.user_role === 'admin' ? "bg-brand-navy/5 text-brand-navy border-brand-navy/10" :
-                            log.user_role === 'partner' ? "bg-brand-gold/5 text-brand-gold border-brand-gold/10" :
+                            log.user_role === 'partner' ? "bg-brand-red/5 text-brand-red border-brand-red/10" :
                             "bg-slate-50 text-slate-500 border-slate-200"
                           )}>
                             {log.user_role}
@@ -386,7 +386,7 @@ export default function AdminPage() {
 
                 <div className="flex items-center gap-5 mb-8">
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-2xl bg-brand-navy flex items-center justify-center text-brand-gold text-2xl font-black shadow-[0_8px_20px_rgba(30,58,95,0.2)]">
+                    <div className="w-16 h-16 rounded-2xl bg-brand-navy flex items-center justify-center text-brand-red text-2xl font-black shadow-[0_8px_20px_rgba(30,58,95,0.2)]">
                       {(u.display_name || u.full_name).charAt(0)}
                     </div>
                     <div className={cn(
@@ -428,7 +428,7 @@ export default function AdminPage() {
                   </div>
                   <button
                     onClick={() => handleImpersonateUser(u.id)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-navy text-brand-gold text-[10px] font-black uppercase tracking-widest shadow-[0_10px_20px_rgba(30,58,95,0.2)] hover:bg-slate-800 transition-all active:scale-95 group-hover:px-6"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-navy text-brand-red text-[10px] font-black uppercase tracking-widest shadow-[0_10px_20px_rgba(30,58,95,0.2)] hover:bg-slate-800 transition-all active:scale-95 group-hover:px-6"
                   >
                     <LogIn size={14} strokeWidth={2.5} /> Impersonate
                   </button>
@@ -455,7 +455,7 @@ export default function AdminPage() {
                 <div className="w-10 h-10 rounded-xl bg-brand-navy/5 flex items-center justify-center text-brand-navy">
                   <LogIn size={18} strokeWidth={2.5} />
                 </div>
-                Login <span className="text-brand-gold">Intelligence</span>
+                Login <span className="text-brand-red">Intelligence</span>
               </h3>
               <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">Last 7 Days</div>
             </div>
@@ -471,7 +471,7 @@ export default function AdminPage() {
                         initial={{ height: 0 }}
                         animate={{ height: `${height}%` }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="w-full bg-gradient-to-t from-brand-navy to-brand-navy/80 group-hover:from-brand-gold group-hover:to-brand-gold/80 transition-colors duration-500 rounded-t-lg relative"
+                        className="w-full bg-gradient-to-t from-brand-navy to-brand-navy/80 group-hover:from-brand-red group-hover:to-brand-red/80 transition-colors duration-500 rounded-t-lg relative"
                       >
                         <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] font-black text-white opacity-0 group-hover:opacity-100 transition-opacity">
                           {day.logins}
@@ -494,7 +494,7 @@ export default function AdminPage() {
                 <div className="w-10 h-10 rounded-xl bg-brand-navy/5 flex items-center justify-center text-brand-navy">
                   <Activity size={18} strokeWidth={2.5} />
                 </div>
-                Action <span className="text-brand-gold">Frequency</span>
+                Action <span className="text-brand-red">Frequency</span>
               </h3>
               <div className="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100">Live Today</div>
             </div>
@@ -580,7 +580,7 @@ export default function AdminPage() {
             >
               <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div>
-                  <h3 className="text-xl font-black text-slate-900 font-accent tracking-tight">Audit <span className="text-brand-gold">Intelligence</span></h3>
+                  <h3 className="text-xl font-black text-slate-900 font-accent tracking-tight">Audit <span className="text-brand-red">Intelligence</span></h3>
                   <div className="text-xs font-bold text-slate-400 mt-1 italic">
                     Recorded at {formatTime(selectedLog.created_at)}
                   </div>
@@ -598,7 +598,7 @@ export default function AdminPage() {
                   <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Operator</p>
                     <p className="text-sm font-black text-slate-900">{selectedLog.user_name || selectedLog.user_email}</p>
-                    <p className="text-[11px] font-bold text-brand-gold uppercase mt-0.5 tracking-wider">{selectedLog.user_role}</p>
+                    <p className="text-[11px] font-bold text-brand-red uppercase mt-0.5 tracking-wider">{selectedLog.user_role}</p>
                   </div>
                   <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Directive</p>
@@ -668,9 +668,9 @@ function RenderLogDetails({ details, action }: { details: Record<string, any>, a
   return (
     <div className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-2xl relative group overflow-hidden">
       <div className="absolute top-0 right-0 p-4 opacity-10">
-        <Database size={100} className="text-brand-gold" />
+        <Database size={100} className="text-brand-red" />
       </div>
-      <pre className="relative z-10 text-[13px] font-mono text-brand-gold/90 leading-relaxed whitespace-pre-wrap">
+      <pre className="relative z-10 text-[13px] font-mono text-brand-red/90 leading-relaxed whitespace-pre-wrap">
         {JSON.stringify(details, null, 2)}
       </pre>
     </div>

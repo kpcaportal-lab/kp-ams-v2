@@ -1,4 +1,4 @@
-/* ============ GLOBAL STYLES ============ */
+/* ============ GLOBAL STYLES (Emerald-Blue Professional Theme) ============ */
 * {
     margin: 0;
     padding: 0;
@@ -6,15 +6,15 @@
 }
 
 :root {
-    --primary: #1E3A5F;
-    --accent: #D4A574;
-    --secondary: #2C5282;
-    --slate: #4A7BA7;
-    --sky: #6BA3C0;
-    --light: #F5F5F5;
-    --medium-gray: #E8E8E8;
-    --dark-gray: #666666;
-    --charcoal: #333333;
+    --primary: #003B7A;
+    --accent: #10B981;
+    --secondary: #2563EB;
+    --slate: #6B7280;
+    --sky: #3B82F6;
+    --light: #F3F4F6;
+    --medium-gray: #E5E7EB;
+    --dark-gray: #6B7280;
+    --charcoal: #1F2937;
     --white: #FFFFFF;
 }
 
@@ -23,7 +23,7 @@ html {
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     line-height: 1.6;
     color: var(--charcoal);
     background: var(--white);
@@ -31,7 +31,7 @@ body {
 
 /* ============ TYPOGRAPHY ============ */
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Poppins', 'Playfair Display', Georgia, serif;
     color: var(--primary);
     margin-bottom: 1rem;
     font-weight: bold;
@@ -137,8 +137,8 @@ p {
 }
 
 .topnav-links a:hover {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
+    color: #10B981;
+    border-bottom-color: #10B981;
 }
 
 @media (max-width: 768px) {
@@ -159,7 +159,7 @@ p {
 
 /* ============ HERO SECTION ============ */
 .hero {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    background: linear-gradient(135deg, #003B7A 0%, #2563EB 100%);
     color: var(--white);
     padding: 100px 40px;
     text-align: center;

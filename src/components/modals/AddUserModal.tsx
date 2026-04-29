@@ -93,37 +93,37 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm">
-      <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 shadow-2xl">
-        <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-[var(--brand-navy)]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[var(--brand-gold)]/20 flex items-center justify-center border border-[var(--brand-gold)]/30">
-              <UserPlus className="w-5 h-5 text-[var(--brand-gold)]" />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[var(--glass-navy-light)] backdrop-blur-[var(--glass-blur)]">
+      <div className="bg-white border border-[var(--brand-navy)] rounded-none w-full max-w-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200 shadow-none">
+        <div className="px-8 py-6 border-b border-white/10 flex items-center justify-between bg-brand-navy relative overflow-hidden">
+          {/* Subtle Decorative Element */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 -rotate-45 translate-x-16 -translate-y-16" />
+          
+          <div className="flex items-center gap-3 relative z-10">
+            <div className="w-10 h-10 rounded-none bg-white/10 flex items-center justify-center border border-white/20">
+              <UserPlus className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[var(--brand-gold)] font-accent tracking-tight">Invite New User</h2>
-              <p className="text-[11px] text-[var(--brand-gold)]/60 font-medium">Add a team member to the KP-AMS workspace</p>
+              <h2 className="text-xl font-black text-white tracking-tight uppercase">Invite Team Member</h2>
+              <p className="text-[10px] text-white/60 font-black uppercase tracking-[0.2em]">K&P Workforce Access Portal</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10 text-[var(--brand-gold)]/60 hover:text-[var(--brand-gold)] transition-all border border-transparent hover:border-white/10"
+            className="p-2 rounded-none hover:bg-white/10 text-white/60 hover:text-white transition-all relative z-10"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-5 overflow-y-auto max-h-[85vh]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="p-8 space-y-6 overflow-y-auto max-h-[85vh]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
-                <UserIcon className="w-3 h-3 text-[var(--brand-gold)]" />
-                Full Name *
-              </label>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Full Legal Name</label>
               <input
                 type="text"
                 required
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all placeholder:text-slate-300 shadow-sm"
+                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all placeholder:text-slate-300 uppercase"
                 placeholder="John Doe"
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
@@ -131,14 +131,11 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
-                <Mail className="w-3 h-3 text-[var(--brand-gold)]" />
-                Email Address *
-              </label>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Email Address</label>
               <input
                 type="email"
                 required
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all placeholder:text-slate-300 shadow-sm"
+                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all placeholder:text-slate-300"
                 placeholder="john@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -146,15 +143,12 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
-                <UserIcon className="w-3 h-3 text-[var(--brand-gold)]" />
-                Display Name
-              </label>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Display Designation</label>
               <input
                 type="text"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all placeholder:text-slate-300 shadow-sm"
+                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all placeholder:text-slate-300 uppercase"
                 placeholder="John D."
                 value={formData.display_name}
                 onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
@@ -162,13 +156,10 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
-                <Key className="w-3 h-3 text-[var(--brand-gold)]" />
-                Password
-              </label>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Secure Extension Pin</label>
               <input
                 type="password"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all placeholder:text-slate-300 shadow-sm"
+                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all placeholder:text-slate-300"
                 placeholder="KpAms@2025 (Default)"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -177,48 +168,43 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
-              <Users className="w-3 h-3 text-[var(--brand-gold)]" />
-              Reporting To (Supervisor)
-            </label>
-            <select
-              className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
-              value={formData.reports_to}
-              onChange={(e) => setFormData({ ...formData, reports_to: e.target.value })}
-            >
-              <option value="">No Supervisor (Direct Admin)</option>
-              {supervisors.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.full_name} ({s.role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')})
-                </option>
-              ))}
-            </select>
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Supervisor Designation</label>
+            <div className="relative">
+              <select
+                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all cursor-pointer appearance-none uppercase"
+                value={formData.reports_to}
+                onChange={(e) => setFormData({ ...formData, reports_to: e.target.value })}
+              >
+                <option value="">Direct Institutional Report</option>
+                {supervisors.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.full_name} — {s.role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                 <Users size={16} />
+              </div>
+            </div>
           </div>
 
           <div className="space-y-3">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1 flex items-center gap-2">
-              <Shield className="w-3 h-3 text-[var(--brand-gold)]" />
-              Security Role
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Security Privilege Level</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {ROLES.map((role) => (
                 <button
                   key={role.value}
                   type="button"
                   onClick={() => setFormData({ ...formData, role: role.value })}
-                  className={`flex flex-col items-start p-3.5 rounded-2xl border transition-all text-left group relative overflow-hidden ${
+                  className={`flex flex-col items-start p-4 rounded-none border transition-all text-left group ${
                     formData.role === role.value
-                      ? 'bg-[var(--brand-navy)] border-[var(--brand-navy)] shadow-lg shadow-blue-900/20'
-                      : 'bg-white border-slate-200 hover:border-[var(--brand-gold)]/30 hover:bg-slate-50'
+                      ? 'bg-brand-navy border-brand-navy text-white'
+                      : 'bg-white border-slate-200 hover:border-brand-navy/30 hover:bg-slate-50 text-slate-900'
                   }`}
                 >
-                  <span className={`text-[13px] font-bold relative z-10 ${
-                    formData.role === role.value ? 'text-[var(--brand-gold)]' : 'text-slate-900 group-hover:text-[var(--brand-navy)]'
-                  }`}>
-                    {role.label}
-                  </span>
-                  <span className={`text-[11px] relative z-10 mt-1 line-clamp-1 leading-tight ${
-                    formData.role === role.value ? 'text-white/60' : 'text-slate-500'
+                  <span className="text-[11px] font-black tracking-tight uppercase">{role.label}</span>
+                  <span className={`text-[9px] mt-1 line-clamp-1 leading-tight font-black uppercase tracking-wider ${
+                    formData.role === role.value ? 'text-white/50' : 'text-slate-400'
                   }`}>
                     {role.description}
                   </span>
@@ -227,25 +213,25 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
             </div>
           </div>
 
-          <div className="pt-4 flex gap-3">
+          <div className="pt-8 border-t border-slate-100 flex gap-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3.5 rounded-2xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all active:scale-95"
+              className="flex-1 px-6 py-4 rounded-none border border-slate-200 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-[0.98]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-6 py-3.5 rounded-2xl bg-[var(--brand-navy)] text-[var(--brand-gold)] text-sm font-bold shadow-[0_8px_20px_rgba(30,58,95,0.25)] hover:shadow-[0_12px_28px_rgba(30,58,95,0.35)] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="flex-[2] px-6 py-4 rounded-none bg-brand-navy text-white text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all border-b-2 border-brand-red flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-[var(--brand-gold)]/30 border-t-[var(--brand-gold)] rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-none animate-spin" />
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  <span>Send Invitation</span>
+                  <span>Execute Invitation</span>
                 </>
               )}
             </button>

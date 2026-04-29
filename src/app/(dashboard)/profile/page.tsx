@@ -69,8 +69,8 @@ export default function ProfilePage() {
     if (!user) return (
         <div className="flex items-center justify-center min-h-[400px]">
             <div className="relative w-16 h-16">
-                <div className="absolute inset-0 border-4 border-slate-200 rounded-full" />
-                <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
+                <div className="absolute inset-0 border-4 border-slate-200 rounded-none" />
+                <div className="absolute inset-0 border-4 border-[var(--brand-navy)] rounded-none border-t-transparent animate-spin" />
             </div>
         </div>
     );
@@ -81,22 +81,19 @@ export default function ProfilePage() {
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative overflow-hidden rounded-[2.5rem] bg-[var(--brand-navy)] px-8 py-10 md:px-12 md:py-14 text-white shadow-[0_20px_40px_rgba(30,58,95,0.25)]"
+                className="relative overflow-hidden rounded-none bg-[var(--brand-navy)] px-8 py-10 md:px-12 md:py-14 text-white shadow-none border-b-4 border-brand-red"
             >
-                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-[var(--brand-gold)]/15 rounded-full blur-[100px]" />
-                <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-white/5 rounded-full blur-[100px]" />
-                
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-6">
-                        <div className="w-20 h-20 rounded-[1.5rem] bg-[var(--brand-gold)] flex items-center justify-center text-[var(--brand-navy)] text-4xl font-black shadow-xl shadow-brand-gold/20">
-                            {user.full_name?.charAt(0)}
+                        <div className="w-20 h-20 rounded-none bg-white text-[var(--brand-navy)] flex items-center justify-center text-4xl font-black border-2 border-white shadow-none">
+                            {user?.full_name?.charAt(0)}
                         </div>
                         <div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--brand-gold)]/10 border border-[var(--brand-gold)]/20 text-[var(--brand-gold)] text-[10px] font-black uppercase tracking-[0.2em] mb-2">
-                                <Sparkles size={14} /> Account Settings
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase tracking-[0.2em] mb-2">
+                                <Sparkles size={14} className="text-brand-red" /> Institutional Account Profile
                             </div>
-                            <h1 className="text-3xl md:text-5xl font-black tracking-tight font-accent">{user.full_name}</h1>
-                            <p className="text-white/60 text-sm font-medium mt-1 tracking-wide">{user.email}</p>
+                            <h1 className="text-3xl md:text-5xl font-black tracking-tight uppercase !text-white">{user?.full_name}</h1>
+                            <p className="text-white/60 text-[10px] font-black uppercase mt-1 tracking-widest">{user?.email}</p>
                         </div>
                     </div>
 
@@ -104,14 +101,14 @@ export default function ProfilePage() {
                         {!isEditing && (
                             <button 
                                 onClick={() => setIsEditing(true)}
-                                className="flex items-center gap-2 px-5 py-3 rounded-[1.5rem] bg-white/10 hover:bg-white/20 border border-white/10 text-sm font-bold transition-all hover:-translate-y-1 active:scale-95"
+                                className="flex items-center gap-2 px-6 py-4 rounded-none bg-white/10 hover:bg-white/20 border border-white/10 text-[10px] font-black transition-all active:scale-95 uppercase tracking-widest"
                             >
                                 <Edit2 size={16} /> Edit Profile
                             </button>
                         )}
                         <button 
                             onClick={handleLogout}
-                            className="flex items-center gap-2 px-5 py-3 rounded-[1.5rem] bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-300 text-sm font-bold transition-all hover:-translate-y-1 active:scale-95"
+                            className="flex items-center gap-2 px-6 py-4 rounded-none bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-black transition-all active:scale-95 uppercase tracking-widest"
                         >
                             <LogOut size={16} /> Logout
                         </button>
@@ -125,51 +122,51 @@ export default function ProfilePage() {
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden"
+                    className="bg-white rounded-none border border-slate-200 shadow-none overflow-hidden"
                 >
-                    <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/30">
-                        <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2 font-accent">
-                            <UserCircle size={20} className="text-[var(--brand-navy)]" /> Overview
+                    <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/50">
+                        <h3 className="text-[10px] font-black text-slate-900 tracking-widest flex items-center gap-2 uppercase">
+                            <UserCircle size={18} className="text-[var(--brand-navy)]" /> Profile Overview
                         </h3>
                     </div>
                     <div className="p-8 flex flex-col items-center text-center">
                         <div className="relative mb-6">
-                            <div className="w-24 h-24 rounded-[1.5rem] bg-[var(--brand-navy)] flex items-center justify-center text-[var(--brand-gold)] text-3xl font-black shadow-xl shadow-brand-navy/10">
-                                {user.full_name?.charAt(0)}
+                            <div className="w-24 h-24 rounded-none bg-[var(--brand-navy)] flex items-center justify-center text-white text-3xl font-black shadow-none border-4 border-brand-navy">
+                                {user?.full_name?.charAt(0)}
                             </div>
-                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-[3px] border-white rounded-full" />
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-600 border-[3px] border-white rounded-none" />
                         </div>
-                        <h2 className="text-xl font-black text-slate-900 mb-1">{user.full_name}</h2>
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--brand-navy)]/5 text-[var(--brand-navy)] text-[10px] font-black uppercase tracking-[0.15em] border border-[var(--brand-navy)]/10 mb-6">
-                            <Shield size={10} /> {user.role}
+                        <h2 className="text-xl font-black text-slate-900 mb-1 uppercase tracking-tight">{user?.full_name}</h2>
+                        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-none bg-brand-navy text-white text-[10px] font-black uppercase tracking-[0.2em] border border-brand-navy mb-8">
+                            <Shield size={10} /> {user?.role?.replace('_', ' ')}
                         </span>
 
-                        <div className="w-full space-y-4 pt-4 border-t border-slate-100">
-                            <div className="flex items-center gap-3 text-left">
-                                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
-                                    <Mail size={16} />
+                        <div className="w-full space-y-4 pt-6 border-t border-slate-100">
+                            <div className="flex items-center gap-4 text-left">
+                                <div className="w-10 h-10 rounded-none bg-slate-50 flex items-center justify-center text-brand-navy border border-slate-200">
+                                    <Mail size={16} strokeWidth={2.5} />
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email</div>
-                                    <div className="text-sm font-bold text-slate-700 truncate">{user.email}</div>
+                                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Authorized Email</div>
+                                    <div className="text-sm font-black text-slate-800 truncate">{user?.email}</div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 text-left">
-                                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
-                                    <Phone size={16} />
+                            <div className="flex items-center gap-4 text-left">
+                                <div className="w-10 h-10 rounded-none bg-slate-50 flex items-center justify-center text-brand-navy border border-slate-200">
+                                    <Phone size={16} strokeWidth={2.5} />
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Phone</div>
-                                    <div className="text-sm font-bold text-slate-700">{user.phone_number || '—'}</div>
+                                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Contact Extension</div>
+                                    <div className="text-sm font-black text-slate-800">{user?.phone_number || '—'}</div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 text-left">
-                                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
-                                    <Shield size={16} />
+                            <div className="flex items-center gap-4 text-left">
+                                <div className="w-10 h-10 rounded-none bg-slate-50 flex items-center justify-center text-brand-navy border border-slate-200">
+                                    <Shield size={16} strokeWidth={2.5} />
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Role</div>
-                                    <div className="text-sm font-bold text-slate-700 capitalize">{user.role.replace('_', ' ')}</div>
+                                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Privilege Designation</div>
+                                    <div className="text-sm font-black text-slate-800 uppercase">{user?.role?.replace('_', ' ')}</div>
                                 </div>
                             </div>
                         </div>
@@ -180,14 +177,14 @@ export default function ProfilePage() {
                 <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="lg:col-span-2 bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden flex flex-col"
+                    className="lg:col-span-2 bg-white rounded-none border border-slate-200 shadow-none overflow-hidden flex flex-col"
                 >
-                    <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/30 flex items-center justify-between">
-                        <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2 font-accent">
-                            <User size={20} className="text-[var(--brand-navy)]" /> Personal Information
+                    <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                        <h3 className="text-[10px] font-black text-slate-900 tracking-widest flex items-center gap-2 uppercase">
+                            <User size={18} className="text-[var(--brand-navy)]" /> Identity Management
                         </h3>
                         {isEditing && (
-                            <span className="text-[10px] font-black text-[var(--brand-gold)] uppercase tracking-[0.2em] bg-[var(--brand-gold)]/10 px-3 py-1 rounded-full border border-[var(--brand-gold)]/20">Editing</span>
+                            <span className="text-[9px] font-black text-white uppercase tracking-[0.2em] bg-brand-navy px-3 py-1 rounded-none border border-brand-navy">Authorized Modification Mode</span>
                         )}
                     </div>
                     
@@ -196,30 +193,30 @@ export default function ProfilePage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {/* Full Name (read-only) */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Full Name</label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Full Legal Name</label>
                                     <div className="relative">
                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                         <input 
                                             type="text" 
-                                            className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50/80 text-sm font-bold text-slate-500 cursor-not-allowed"
-                                            value={user.full_name} 
+                                            className="w-full pl-11 pr-4 py-4 rounded-none border border-slate-200 bg-slate-50 text-sm font-black text-slate-400 cursor-not-allowed uppercase"
+                                            value={user?.full_name || ''} 
                                             disabled 
                                         />
                                     </div>
-                                    <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1 px-1">
-                                        <Shield size={10} /> Managed by administration
+                                    <p className="text-[9px] text-slate-400 font-black flex items-center gap-1 px-1 uppercase tracking-widest mt-1">
+                                        <Shield size={10} /> Verified Record: Managed by Administration
                                     </p>
                                 </div>
 
                                 {/* Email (read-only) */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Email Address</label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Authorized Email</label>
                                     <div className="relative">
                                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                         <input 
                                             type="text" 
-                                            className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50/80 text-sm font-bold text-slate-500 cursor-not-allowed"
-                                            value={user.email} 
+                                            className="w-full pl-11 pr-4 py-4 rounded-none border border-slate-200 bg-slate-50 text-sm font-black text-slate-400 cursor-not-allowed"
+                                            value={user?.email || ''} 
                                             disabled 
                                         />
                                     </div>
@@ -227,17 +224,17 @@ export default function ProfilePage() {
 
                                 {/* Display Name */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Display Name</label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Display Designation</label>
                                     <input 
                                         type="text" 
                                         className={cn(
-                                            "w-full px-4 py-3.5 rounded-2xl border text-sm font-bold transition-all outline-none",
+                                            "w-full px-4 py-4 rounded-none border text-sm font-black transition-all outline-none uppercase",
                                             isEditing 
-                                                ? "border-[var(--brand-gold)] bg-white ring-4 ring-[var(--brand-gold)]/10 text-slate-900 focus:border-[var(--brand-gold)]" 
-                                                : "border-slate-200 bg-slate-50/50 text-slate-700"
+                                                ? "border-brand-navy bg-white text-slate-900 focus:border-brand-navy" 
+                                                : "border-slate-200 bg-slate-50 text-slate-600"
                                         )}
-                                        placeholder="How others see you"
-                                        value={isEditing ? displayName : (user.display_name || user.full_name)} 
+                                        placeholder="Enter display name"
+                                        value={isEditing ? displayName : (user?.display_name || user?.full_name || '')} 
                                         onChange={(e) => setDisplayName(e.target.value)}
                                         disabled={!isEditing}
                                     />
@@ -245,19 +242,19 @@ export default function ProfilePage() {
 
                                 {/* Phone Number */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Phone Number</label>
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Contact Extension</label>
                                     <div className="relative">
                                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                         <input 
                                             type="text" 
                                             className={cn(
-                                                "w-full pl-11 pr-4 py-3.5 rounded-2xl border text-sm font-bold transition-all outline-none",
+                                                "w-full pl-11 pr-4 py-4 rounded-none border text-sm font-black transition-all outline-none",
                                                 isEditing 
-                                                    ? "border-[var(--brand-gold)] bg-white ring-4 ring-[var(--brand-gold)]/10 text-slate-900 focus:border-[var(--brand-gold)]" 
-                                                    : "border-slate-200 bg-slate-50/50 text-slate-700"
+                                                    ? "border-brand-navy bg-white text-slate-900 focus:border-brand-navy" 
+                                                    : "border-slate-200 bg-slate-50 text-slate-600"
                                             )}
                                             placeholder="Enter phone number"
-                                            value={isEditing ? phoneNumber : (user.phone_number || '')} 
+                                            value={isEditing ? phoneNumber : (user?.phone_number || '')} 
                                             onChange={(e) => setPhoneNumber(e.target.value)}
                                             disabled={!isEditing}
                                         />
@@ -267,47 +264,47 @@ export default function ProfilePage() {
 
                             {/* Work File URL */}
                             <div className="space-y-1.5">
-                                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Portal Verification URL (Work File)</label>
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Credential Verification URL (External)</label>
                                 <div className="relative">
                                     <ExternalLink className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                     <input 
                                         type="url" 
                                         className={cn(
-                                            "w-full pl-11 pr-4 py-3.5 rounded-2xl border text-sm font-bold transition-all outline-none",
+                                            "w-full pl-11 pr-4 py-4 rounded-none border text-sm font-black transition-all outline-none",
                                             isEditing 
-                                                ? "border-[var(--brand-gold)] bg-white ring-4 ring-[var(--brand-gold)]/10 text-slate-900 focus:border-[var(--brand-gold)]" 
-                                                : "border-slate-200 bg-slate-50/50 text-slate-700"
+                                                ? "border-brand-navy bg-white text-slate-900 focus:border-brand-navy" 
+                                                : "border-slate-200 bg-slate-50 text-slate-600"
                                         )}
                                         placeholder="https://link-to-your-work-file.com"
-                                        value={isEditing ? workFileUrl : (user.work_file_url || '')} 
+                                        value={isEditing ? workFileUrl : (user?.work_file_url || '')} 
                                         onChange={(e) => setWorkFileUrl(e.target.value)}
                                         disabled={!isEditing}
                                     />
                                 </div>
-                                <p className="text-[10px] text-slate-400 font-medium italic px-1">
-                                    Optional: Link to your CV, certifications, or professional portfolio.
+                                <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-1">
+                                    Authorized external link to CV, certifications, or professional portfolio.
                                 </p>
                             </div>
 
                             {/* Work File Link Display */}
-                            {!isEditing && user.work_file_url && (
-                                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-[var(--brand-navy)]/20 transition-all">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-[var(--brand-navy)] shadow-sm group-hover:scale-110 transition-transform">
-                                            <ExternalLink size={22} />
+                            {!isEditing && user?.work_file_url && (
+                                <div className="p-6 rounded-none bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-brand-navy/30 transition-all">
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-12 h-12 rounded-none bg-white border border-slate-200 flex items-center justify-center text-brand-navy shadow-none transition-transform group-hover:scale-105">
+                                            <ExternalLink size={20} />
                                         </div>
                                         <div>
-                                            <p className="text-sm font-bold text-slate-900">Portal Verification URL</p>
-                                            <p className="text-xs text-slate-400 font-medium">Access your external verification files</p>
+                                            <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Verification Link</p>
+                                            <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">Secure external document portal</p>
                                         </div>
                                     </div>
                                     <a 
-                                        href={user.work_file_url} 
+                                        href={user?.work_file_url} 
                                         target="_blank" 
                                         rel="noopener noreferrer"
-                                        className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-[var(--brand-navy)] hover:bg-[var(--brand-navy)]/5 hover:border-[var(--brand-navy)]/20 transition-all"
+                                        className="px-6 py-3 rounded-none bg-white border border-slate-200 text-[10px] font-black text-brand-navy hover:bg-brand-navy hover:text-white transition-all uppercase tracking-widest"
                                     >
-                                        Open Portal
+                                        Access Record
                                     </a>
                                 </div>
                             )}
@@ -320,37 +317,38 @@ export default function ProfilePage() {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: 10 }}
-                                    className="flex items-center gap-3 justify-end mt-8 pt-6 border-t border-slate-100"
+                                    className="flex items-center gap-3 justify-end mt-10 pt-8 border-t border-slate-100"
                                 >
                                     <button 
                                         type="button" 
-                                        className="flex items-center gap-2 px-6 py-3 rounded-[1.5rem] border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all hover:-translate-y-1 active:scale-95"
+                                        className="flex items-center gap-2 px-8 py-4 rounded-none border border-slate-200 text-[10px] font-black text-slate-500 hover:bg-slate-50 transition-all active:scale-95 uppercase tracking-widest"
                                         onClick={() => {
                                             setIsEditing(false);
-                                            setDisplayName(user.display_name || '');
-                                            setPhoneNumber(user.phone_number || '');
-                                            setWorkFileUrl(user.work_file_url || '');
+                                            setDisplayName(user?.display_name || '');
+                                            setPhoneNumber(user?.phone_number || '');
+                                            setWorkFileUrl(user?.work_file_url || '');
                                         }}
                                     >
-                                        <X size={16} /> Cancel
+                                        <X size={16} /> Discard Changes
                                     </button>
                                     <button 
                                         type="submit" 
-                                        className="flex items-center gap-2 px-6 py-3 rounded-[1.5rem] bg-[var(--brand-navy)] text-[var(--brand-gold)] text-sm font-bold shadow-xl shadow-brand-navy/10 hover:shadow-[0_15px_30px_rgba(30,58,95,0.2)] hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-50"
+                                        className="flex items-center gap-2 px-8 py-4 rounded-none bg-brand-navy text-white text-[10px] font-black transition-all border-b-2 border-brand-red active:scale-95 disabled:opacity-50 uppercase tracking-widest"
                                         disabled={loading}
                                     >
                                         {loading ? (
-                                            <span className="animate-spin rounded-full h-4 w-4 border-2 border-[var(--brand-gold)] border-t-transparent" />
+                                            <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-none" />
                                         ) : (
                                             <Save size={16} />
                                         )}
-                                        Save Changes
+                                        Commit Record Update
                                     </button>
                                 </motion.div>
                             )}
                         </AnimatePresence>
                     </form>
                 </motion.div>
+
             </div>
         </div>
     );

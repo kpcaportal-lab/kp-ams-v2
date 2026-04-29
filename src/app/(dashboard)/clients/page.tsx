@@ -43,13 +43,13 @@ export default function ClientsPage() {
   const statusBadge = (status: string) => {
     if (status === 'active') {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
           <CheckCircle size={12} /> Active
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-200/80 text-slate-500 border border-slate-300/40">
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-none text-xs font-semibold bg-slate-200/80 text-slate-500 border border-slate-300/40">
         <XCircle size={12} /> Inactive
       </span>
     );
@@ -61,14 +61,14 @@ export default function ClientsPage() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight font-accent">Client <span className="text-brand-gold">Intelligence</span></h1>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight font-accent">Client <span className="text-brand-red">Intelligence</span></h1>
           <p className="text-sm text-slate-400 mt-1 font-medium italic">Manage and track your client portfolio engagements</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-navy text-white text-sm font-black shadow-[0_10px_20px_rgba(30,58,95,0.15)] hover:shadow-[0_15px_30px_rgba(30,58,95,0.25)] hover:-translate-y-0.5 transition-all duration-200"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-none bg-brand-navy text-white text-sm font-black shadow-none border-b-2 border-brand-red hover:bg-slate-800 transition-all duration-200"
         >
-          <Plus size={18} strokeWidth={3} className="text-brand-gold" /> Add New Client
+          <Plus size={18} strokeWidth={3} className="text-white" /> Add New Client
         </button>
       </motion.div>
 
@@ -80,10 +80,10 @@ export default function ClientsPage() {
           { label: 'Inactive', value: stats.inactive, icon: XCircle, color: 'text-slate-500', bg: 'bg-slate-200/80', accent: 'from-slate-400 to-slate-500' },
         ].map((card, i) => (
           <motion.div key={card.label} custom={i} variants={fadeUp} initial="hidden" animate="visible"
-            className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-4 shadow-[0_1px_3px_rgba(15,23,42,0.06)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.08)] transition-all duration-300">
+            className="relative overflow-hidden rounded-none border border-slate-200/80 bg-white p-4 shadow-none hover:border-brand-navy/30 transition-all duration-300">
             <div className={cn("absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r", card.accent)} />
             <div className="flex items-center gap-3">
-              <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center", card.bg)}>
+              <div className={cn("w-9 h-9 rounded-none flex items-center justify-center", card.bg)}>
                 <card.icon size={18} className={card.color} strokeWidth={2.5} />
               </div>
               <div>
@@ -99,19 +99,19 @@ export default function ClientsPage() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}
         className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 group">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" />
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-red transition-colors" />
           <input
             type="text"
             placeholder="Search clients, industry, or contact person..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-white/80 backdrop-blur-sm text-sm font-black text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-gold/5 focus:border-brand-gold/30 transition-all"
+            className="w-full pl-11 pr-4 py-3 rounded-none border border-slate-200 bg-white text-sm font-black text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-brand-navy transition-all"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-5 py-3 rounded-xl border border-slate-200 bg-white/80 text-sm text-slate-700 font-bold focus:outline-none focus:ring-4 focus:ring-brand-navy/5 focus:border-brand-navy/30 transition-all min-w-[160px] appearance-none cursor-pointer"
+          className="px-5 py-3 rounded-none border border-slate-200 bg-white text-sm text-slate-700 font-bold focus:outline-none focus:border-brand-navy transition-all min-w-[160px] appearance-none cursor-pointer"
         >
           <option value="all">All Engagement Status</option>
           <option value="active">Active Accounts</option>
@@ -124,10 +124,10 @@ export default function ClientsPage() {
         {filteredClients.map((client, i) => (
           <motion.div key={client.id} custom={i} variants={fadeUp} initial="hidden" animate="visible">
             <Link href={`/clients/${client.id}`}
-              className="group block rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-6 shadow-sm hover:shadow-[0_15px_30px_rgba(15,23,42,0.1)] hover:border-brand-navy/20 hover:-translate-y-1 transition-all duration-400">
+              className="group block rounded-none border border-slate-200/80 bg-white p-6 shadow-none hover:border-brand-navy/50 transition-all duration-400">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-12 h-12 rounded-xl bg-brand-navy flex items-center justify-center text-brand-gold font-black text-lg shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 rounded-none bg-brand-navy flex items-center justify-center text-white font-black text-lg shrink-0 shadow-none border border-brand-navy">
                     {client.name.charAt(0)}
                   </div>
                   <div className="min-w-0">
@@ -142,7 +142,7 @@ export default function ClientsPage() {
 
               <div className="space-y-3 mt-6 pt-5 border-t border-slate-50">
                 <div className="flex items-center gap-3 text-xs text-slate-500">
-                  <Users size={14} className="text-brand-gold shrink-0" strokeWidth={2.5} />
+                  <Users size={14} className="text-brand-navy shrink-0" strokeWidth={2.5} />
                   <span className="font-bold text-slate-700">{client.spocName || 'No SPOC assigned'}</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-slate-500">
@@ -161,7 +161,7 @@ export default function ClientsPage() {
 
       {filteredClients.length === 0 && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className="text-center py-16 rounded-2xl border border-dashed border-slate-200 bg-white/50">
+          className="text-center py-16 rounded-none border border-dashed border-slate-200 bg-white/50">
           <Building2 size={40} className="mx-auto text-slate-300 mb-3" />
           <p className="text-sm font-semibold text-slate-500">No clients found</p>
           <p className="text-xs text-slate-400 mt-1">Try adjusting your search or filters</p>

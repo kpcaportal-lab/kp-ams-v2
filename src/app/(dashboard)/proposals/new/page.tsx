@@ -157,14 +157,9 @@ export default function NewProposalPage() {
     try {
       const selectedPartner = partners.find(p => p.id === formData.responsible_partner);
 
-      // Map 'renewal' to 'revision' for backend validation if necessary
-      // Actually, let's check if the backend allows 'renewal'
-      // From validation.ts: isIn(['new', 'revision'])
-      const backendProposalType = formData.proposal_type === 'renewal' ? 'revision' : 'new';
-
       const newProposal: Partial<Proposal> = {
         client_id: formData.client_id,
-        proposal_type: backendProposalType as any,
+        proposal_type: formData.proposal_type,
         assignment_type: formData.assignment_type,
         fee_category: formData.fee_category,
         quotation_amount: Number(formData.quotation_amount),
@@ -172,7 +167,7 @@ export default function NewProposalPage() {
         prepared_by: user?.id || '',
         responsible_partner: formData.responsible_partner || undefined,
         status: 'pending',
-        revision_flag: backendProposalType === 'revision',
+        revision_flag: false,
         fiscal_year: formData.fiscal_year,
         template_id: formData.template_id || undefined,
         scope_areas: formData.scope_areas,

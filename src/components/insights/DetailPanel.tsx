@@ -34,15 +34,15 @@ export function DetailPanel({ managerId, fiscalYear }: DetailPanelProps) {
     return (
         <div className="p-4 lg:p-8">
             {/* Tab Navigation */}
-            <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200 w-fit mb-8 shadow-sm">
+            <div className="flex items-center gap-1 bg-white p-1 rounded-none border border-slate-200 w-fit mb-8 shadow-none">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={cn(
-                            "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all",
+                            "flex items-center gap-2 px-4 py-2 rounded-none text-sm font-bold transition-all",
                             activeTab === tab.id 
-                                ? "bg-[var(--brand-navy)] text-white shadow-md" 
+                                ? "bg-[var(--brand-navy)] text-white shadow-none" 
                                 : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-accent"
                         )}
                     >

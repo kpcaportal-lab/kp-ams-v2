@@ -29,7 +29,7 @@ export function NotificationCenter() {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'ticket_update': return <Ticket className="text-brand-gold" size={16} />;
+      case 'ticket_update': return <Ticket className="text-brand-red" size={16} />;
       case 'assignment_update': return <ClipboardList className="text-brand-navy" size={16} />;
       case 'system': return <Shield className="text-brand-navy" size={16} />;
       default: return <Info className="text-slate-400" size={16} />;
@@ -54,15 +54,15 @@ export function NotificationCenter() {
       <button 
         onClick={handleToggle}
         className={cn(
-          "relative w-10 h-10 flex items-center justify-center rounded-xl border transition-all active:scale-95",
+          "relative w-10 h-10 flex items-center justify-center rounded-none border transition-all active:scale-95",
           isOpen 
-            ? "bg-brand-navy border-brand-navy text-brand-gold shadow-lg shadow-brand-navy/20" 
-            : "bg-white border-brand-gold/10 text-slate-500 hover:text-brand-navy hover:border-brand-gold/30 shadow-sm"
+            ? "bg-brand-navy border-brand-navy text-white" 
+            : "bg-white border-slate-200 text-slate-500 hover:text-brand-navy hover:border-brand-navy"
         )}
       >
-        <Bell size={20} className={cn(unreadCount > 0 && "animate-none")} />
+        <Bell size={20} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-brand-gold text-brand-navy text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm ring-2 ring-brand-gold/10">
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-brand-red text-white text-[10px] font-black rounded-none flex items-center justify-center border border-white">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -71,21 +71,21 @@ export function NotificationCenter() {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full right-0 mt-3 w-[360px] max-h-[520px] bg-white border border-brand-gold/10 rounded-[1.5rem] shadow-[0_20px_50px_rgba(30,58,95,0.12)] z-50 overflow-hidden flex flex-col"
+            className="absolute top-full right-0 mt-3 w-[360px] max-h-[520px] bg-white border border-slate-200 shadow-none rounded-none z-50 overflow-hidden flex flex-col"
           >
             <div className="px-5 py-4 border-b border-white/5 flex justify-between items-center bg-brand-navy">
               <div>
-                <h3 className="text-sm font-black text-brand-gold">Notifications</h3>
-                <p className="text-[10px] text-brand-gold/60 font-bold uppercase tracking-widest">{unreadCount} UNREAD MESSAGES</p>
+                <h3 className="text-sm font-black text-white">Notifications</h3>
+                <p className="text-[10px] text-white/60 font-bold uppercase tracking-widest">{unreadCount} UNREAD MESSAGES</p>
               </div>
               {unreadCount > 0 && (
                 <button 
                   onClick={() => markAllAsRead()}
-                  className="text-[11px] font-black text-brand-gold hover:text-white flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors uppercase tracking-wider"
+                  className="text-[11px] font-black text-white/80 hover:text-white flex items-center gap-1.5 px-3 py-1.5 rounded-none hover:bg-white/10 transition-colors uppercase tracking-wider"
                 >
                   <Check size={14} strokeWidth={3} /> Mark all read
                 </button>
@@ -95,7 +95,7 @@ export function NotificationCenter() {
             <div className="overflow-y-auto flex-1 custom-scrollbar">
               {notifications.length === 0 ? (
                 <div className="py-20 flex flex-col items-center justify-center px-8 text-center">
-                  <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4 border border-slate-100 shadow-inner">
+                  <div className="w-16 h-16 bg-slate-50 rounded-none flex items-center justify-center mb-4 border border-slate-100">
                     <Bell className="text-slate-200" size={32} />
                   </div>
                   <h4 className="text-sm font-black text-slate-900">All caught up!</h4>
@@ -108,17 +108,17 @@ export function NotificationCenter() {
                       key={n.id}
                       onClick={() => handleNotificationClick(n)}
                       className={cn(
-                        "group relative px-5 py-4 flex gap-4 transition-all cursor-pointer border-l-4",
+                        "group relative px-5 py-4 flex gap-4 transition-all cursor-pointer border-l-2",
                         n.is_read 
                           ? "opacity-70 hover:opacity-100 border-transparent" 
-                          : "bg-brand-navy/[0.02] hover:bg-brand-navy/[0.04] border-brand-gold shadow-[inset_0_0_20px_rgba(0,0,0,0.01)]"
+                          : "bg-slate-50 hover:bg-slate-100 border-brand-red"
                       )}
                     >
                       <div className={cn(
-                        "w-10 h-10 rounded-xl shrink-0 flex items-center justify-center border transition-all shadow-sm",
+                        "w-10 h-10 rounded-none shrink-0 flex items-center justify-center border transition-all",
                         n.is_read 
                           ? "bg-slate-50 border-slate-100 group-hover:bg-white" 
-                          : "bg-white border-brand-gold/20 shadow-brand-gold/5 group-hover:scale-110 shadow-lg"
+                          : "bg-white border-slate-200 group-hover:border-brand-red"
                       )}>
                         {getNotificationIcon(n.type)}
                       </div>
@@ -145,12 +145,12 @@ export function NotificationCenter() {
               )}
             </div>
             
-            <div className="p-3 bg-slate-50/50 border-t border-slate-100">
+            <div className="p-3 bg-slate-50 border-t border-slate-100">
               <button 
-                onClick={() => { router.push('/dashboard'); setIsOpen(false); }}
-                className="w-full py-2.5 rounded-xl bg-white border border-brand-gold/20 text-[11px] font-black text-brand-gold uppercase tracking-widest hover:bg-brand-gold hover:text-brand-navy hover:shadow-lg transition-all active:scale-[0.98]"
+                onClick={() => { router.push('/profile'); setIsOpen(false); }}
+                className="w-full py-2.5 rounded-none bg-white border border-slate-200 text-[11px] font-black text-brand-navy uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-[0.98]"
               >
-                View Dashboard Settings
+                Settings & Preferences
               </button>
             </div>
           </motion.div>

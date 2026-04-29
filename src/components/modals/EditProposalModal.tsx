@@ -97,35 +97,35 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setOpen(false)}
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            className="absolute inset-0"
           />
           
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="relative w-full max-w-lg bg-white border border-slate-200 shadow-none overflow-hidden rounded-none"
           >
             {/* Header */}
-            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-[var(--brand-navy)]">
+            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-brand-navy">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[var(--brand-gold)]/20 flex items-center justify-center border border-[var(--brand-gold)]/30">
-                  <FileText className="text-[var(--brand-gold)]" size={20} />
+                <div className="w-10 h-10 bg-white/10 flex items-center justify-center rounded-none">
+                  <FileText className="text-white" size={20} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-[var(--brand-gold)] tracking-tight font-accent">Edit Proposal</h2>
-                  <p className="text-xs text-[var(--brand-gold)]/60 mt-0.5 font-medium">{proposal.number}</p>
+                  <h2 className="text-xl font-black text-white tracking-tight">Modify Engagement</h2>
+                  <p className="text-[11px] text-white/60 font-bold uppercase tracking-widest">Case ID: {proposal.number}</p>
                 </div>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white/10 text-[var(--brand-gold)]/60 hover:text-[var(--brand-gold)] transition-all border border-transparent hover:border-white/10"
+                className="p-2 rounded-none hover:bg-white/10 text-white/60 hover:text-white transition-all"
               >
                 <X size={20} />
               </button>
@@ -135,12 +135,12 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
               <div className="space-y-4">
                 {/* Client Selection */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Client</label>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Client Entity</label>
                   <select
                     required
                     value={form.client_id}
                     onChange={(e) => setForm({ ...form, client_id: e.target.value })}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
+                    className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                   >
                     <option value="">Select a client</option>
                     {clients.map(c => (
@@ -151,27 +151,27 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
 
                 {/* Status Selection */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Status</label>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Institutional Status</label>
                   <div className="grid grid-cols-3 gap-2">
                     {(['pending', 'won', 'lost'] as ProposalStatus[]).map((s) => (
                       <button
                         key={s}
                         type="button"
                         onClick={() => setForm({ ...form, status: s })}
-                        className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                        className={`flex items-center justify-center gap-1.5 py-3 rounded-none text-[10px] font-black border transition-all uppercase tracking-widest ${
                           form.status === s
                             ? s === 'won'
-                              ? 'bg-[var(--brand-navy)] border-[var(--brand-navy)] text-[var(--brand-gold)] shadow-lg shadow-blue-900/20'
+                              ? 'bg-brand-navy border-brand-navy text-white'
                               : s === 'lost'
-                              ? 'bg-rose-500 border-rose-500 text-white shadow-lg shadow-rose-500/25'
-                              : 'bg-[var(--brand-gold)] border-[var(--brand-gold)] text-white shadow-lg shadow-[var(--brand-gold)]/25'
+                              ? 'bg-rose-700 border-rose-700 text-white'
+                              : 'bg-slate-900 border-slate-900 text-white'
                             : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
                         }`}
                       >
                         {s === 'won' && <CheckCircle2 size={12} />}
                         {s === 'lost' && <XCircle size={12} />}
                         {s === 'pending' && <Clock size={12} />}
-                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                        {s}
                       </button>
                     ))}
                   </div>
@@ -180,11 +180,11 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                 <div className="grid grid-cols-2 gap-4">
                   {/* Proposal Type */}
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Proposal Type</label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Engagement Type</label>
                     <select
                       value={form.proposal_type}
                       onChange={(e) => setForm({ ...form, proposal_type: e.target.value as ProposalType })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
+                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                     >
                       <option value="new">New Proposal</option>
                       <option value="revision">Renewal</option>
@@ -193,11 +193,11 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
 
                   {/* Assignment Type */}
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Assignment Type</label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Service Classification</label>
                     <select
                       value={form.assignment_type}
                       onChange={(e) => setForm({ ...form, assignment_type: e.target.value as AssignmentType })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
+                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                     >
                       {Object.entries(ASSIGNMENT_TYPE_LABELS).map(([key, label]) => (
                         <option key={key} value={key}>{label}</option>
@@ -209,26 +209,26 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                 <div className="grid grid-cols-2 gap-4">
                   {/* Quotation Amount */}
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Quotation Amount (₹)</label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Fee Quotation (INR)</label>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black">₹</span>
                       <input
                         type="number"
                         required
                         value={form.quotation_amount || ''}
                         onChange={(e) => setForm({ ...form, quotation_amount: Number(e.target.value) })}
-                        className="w-full pl-8 pr-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all shadow-sm"
+                        className="w-full pl-8 pr-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Fiscal Year */}
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Fiscal Year</label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Financial Period</label>
                     <select
                       value={form.fiscal_year}
                       onChange={(e) => setForm({ ...form, fiscal_year: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
+                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                     >
                       <option value="2024-25">2024-25</option>
                       <option value="2025-26">2025-26</option>
@@ -240,12 +240,12 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                 <div className="grid grid-cols-2 gap-4">
                   {/* Responsible Partner */}
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Responsible Partner (Leader)</label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Signing Partner</label>
                     <select
                       required
                       value={form.responsible_partner}
                       onChange={(e) => setForm({ ...form, responsible_partner: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
+                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                     >
                       <option value="">Select Partner</option>
                       {partners.map(p => (
@@ -256,12 +256,12 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
 
                   {/* Manager/Lead */}
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Project Lead (Under Partner)</label>
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Case Manager</label>
                     <select
                       required
                       value={form.manager_id}
                       onChange={(e) => setForm({ ...form, manager_id: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all cursor-pointer appearance-none shadow-sm"
+                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                     >
                       <option value="">Select Lead</option>
                       {managers.map(m => (
@@ -270,15 +270,15 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                     </select>
                   </div>
                 </div>
-
-                {/* Notes */}
+                {/* Internal Notes */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-1">Internal Notes</label>
+                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Internal Reference / Notes</label>
                   <textarea
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                    rows={2}
-                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:outline-none focus:ring-4 focus:ring-[var(--brand-gold)]/10 focus:border-[var(--brand-gold)] transition-all placeholder:text-slate-300 shadow-sm resize-none"
+                    rows={3}
+                    className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all placeholder:text-slate-300 resize-none"
+                    placeholder="Enter internal engagement notes..."
                   />
                 </div>
               </div>
@@ -288,16 +288,16 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="flex-1 px-6 py-3.5 rounded-2xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all active:scale-95"
+                  className="flex-1 px-6 py-4 border border-slate-200 text-[10px] font-black text-slate-500 hover:bg-slate-50 transition-all rounded-none uppercase tracking-widest"
                 >
-                  Cancel
+                  Discard Changes
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3.5 rounded-2xl bg-[var(--brand-navy)] text-[var(--brand-gold)] text-sm font-bold shadow-[0_8px_20px_rgba(30,58,95,0.25)] hover:shadow-[0_12px_28px_rgba(30,58,95,0.35)] hover:-translate-y-0.5 transition-all active:scale-95 flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-4 bg-brand-navy text-white text-[10px] font-black transition-all flex items-center justify-center gap-2 rounded-none uppercase tracking-widest border-b-2 border-brand-red"
                 >
-                  <Save size={18} />
-                  Update Proposal
+                  <Save size={16} />
+                  Authorize Update
                 </button>
               </div>
             </form>

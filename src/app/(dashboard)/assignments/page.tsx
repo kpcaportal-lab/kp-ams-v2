@@ -90,7 +90,7 @@ export default function AssignmentsPage() {
   const kpiCards = [
     { label: 'Expected Fees', value: formatIndianCurrency(stats.totalFees, true, true), icon: IndianRupee, color: 'text-brand-navy', bg: 'bg-brand-navy/5', subValue: 'Total pipeline', accent: 'from-brand-navy to-brand-navy/80' },
     { label: 'Total Billed', value: formatIndianCurrency(stats.totalBilled, true, true), icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50', subValue: 'Invoiced to date', accent: 'from-emerald-500 to-emerald-600' },
-    { label: 'Total Receipt', value: formatIndianCurrency(stats.totalReceipt, true, true), icon: CheckCircle, color: 'text-brand-gold', bg: 'bg-brand-gold/5', subValue: 'Payments received', accent: 'from-brand-gold to-brand-gold/80' },
+    { label: 'Total Receipt', value: formatIndianCurrency(stats.totalReceipt, true, true), icon: CheckCircle, color: 'text-brand-red', bg: 'bg-brand-red/5', subValue: 'Payments received', accent: 'from-brand-red to-brand-red/80' },
     { label: 'Assignments', value: stats.total.toString(), icon: Briefcase, color: 'text-slate-600', bg: 'bg-slate-50', subValue: 'Total engagements', accent: 'from-slate-600 to-slate-700' },
   ];
 
@@ -100,8 +100,8 @@ export default function AssignmentsPage() {
     <div className="space-y-8 max-w-[1600px] mx-auto pb-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-1">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="text-4xl font-black tracking-tight text-slate-900 drop-shadow-sm font-accent">
-            Assignment <span className="text-brand-gold">Intelligence</span>
+          <h1 className="text-4xl font-black tracking-tight text-slate-900 shadow-none font-accent">
+            Assignment <span className="text-brand-red">Intelligence</span>
           </h1>
           <p className="text-slate-500 mt-1 font-medium italic">Operational oversight and strategic engagement tracking</p>
         </motion.div>
@@ -109,37 +109,35 @@ export default function AssignmentsPage() {
         <motion.div initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="flex items-center gap-3">
           <button
             onClick={handleExport}
-            className="flex items-center gap-2.5 px-5 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-600 text-sm font-black transition-all hover:bg-slate-50 hover:shadow-sm active:scale-95"
+            className="flex items-center gap-2.5 px-5 py-3.5 rounded-none bg-white border border-slate-200 text-slate-600 text-sm font-black transition-all hover:bg-slate-50 shadow-none active:scale-95"
           >
             <Download size={18} strokeWidth={3} className="text-emerald-500" />
             Export Data
           </button>
-          <div className="flex p-1.5 bg-slate-100 rounded-2xl border border-slate-200 shadow-sm">
-             <button onClick={() => setViewMode('table')} className={cn("px-4 py-2 rounded-xl transition-all", viewMode === 'table' ? "bg-white text-brand-navy shadow-sm ring-1 ring-slate-200" : "text-slate-400")}>
+          <div className="flex p-1.5 bg-slate-100 rounded-none border border-slate-200 shadow-none">
+             <button onClick={() => setViewMode('table')} className={cn("px-4 py-2 rounded-none transition-all", viewMode === 'table' ? "bg-brand-navy text-white shadow-none" : "text-slate-400")}>
                <List size={18} strokeWidth={3} />
              </button>
-             <button onClick={() => setViewMode('grid')} className={cn("px-4 py-2 rounded-xl transition-all", viewMode === 'grid' ? "bg-white text-brand-navy shadow-sm ring-1 ring-slate-200" : "text-slate-400")}>
+             <button onClick={() => setViewMode('grid')} className={cn("px-4 py-2 rounded-none transition-all", viewMode === 'grid' ? "bg-brand-navy text-white shadow-none" : "text-slate-400")}>
                <LayoutGrid size={18} strokeWidth={3} />
              </button>
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="group flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-brand-navy text-white text-sm font-black transition-all hover:shadow-[0_20px_40px_rgba(30,58,95,0.25)] hover:-translate-y-1 active:scale-95 border-b-4 border-brand-gold/30"
+            className="group flex items-center gap-2.5 px-6 py-3.5 rounded-none bg-brand-navy text-white text-sm font-black transition-all shadow-none hover:-translate-y-1 active:scale-95 border-b-4 border-brand-red/30"
           >
-            <Plus size={20} strokeWidth={3} className="text-brand-gold group-hover:scale-125 transition-transform" />
+            <Plus size={20} strokeWidth={3} className="text-brand-red group-hover:scale-125 transition-transform" />
             New Assignment
           </button>
         </motion.div>
       </div>
 
-      {/* KPI Cards */}
       <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiCards.map((card, i) => (
           <motion.div key={card.label} variants={item}
-            className="group relative overflow-hidden rounded-[2.5rem] border border-slate-200/60 bg-white p-7 shadow-[0_2px_8px_rgba(15,23,42,0.02)] hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)] transition-all duration-500 hover:-translate-y-1">
-            <div className={cn("absolute -right-4 -top-4 w-24 h-24 rounded-full opacity-5 group-hover:opacity-10 transition-opacity", card.bg)} />
+            className="group relative overflow-hidden rounded-none border border-slate-200/60 bg-white p-7 shadow-none transition-all duration-500 hover:-translate-y-1">
             <div className="flex flex-col gap-4">
-              <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner-sm", card.bg)}>
+              <div className={cn("w-14 h-14 rounded-none flex items-center justify-center shadow-none", card.bg)}>
                 <card.icon size={28} className={card.color} strokeWidth={2.5} />
               </div>
               <div>
@@ -147,7 +145,7 @@ export default function AssignmentsPage() {
                 <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">{card.label}</div>
               </div>
               <div className="pt-2 border-t border-slate-50 flex items-center gap-2">
-                <div className="w-1 h-1 rounded-full bg-slate-300" />
+                <div className="w-1 h-1 rounded-none bg-slate-300" />
                 <span className="text-[10px] font-bold text-slate-400 tracking-tight">{card.subValue}</span>
               </div>
             </div>
@@ -155,24 +153,22 @@ export default function AssignmentsPage() {
         ))}
       </motion.div>
 
-      {/* Search & Filters */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
         className="flex flex-col lg:flex-row gap-4 px-1">
         <div className="relative flex-1 group">
-          <Search size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+          <Search size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-navy transition-colors" />
           <input
             type="text"
             placeholder="Search by client, scope item, or partner..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-14 pr-6 py-4 rounded-[1.5rem] border border-slate-200 bg-white text-sm font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 focus:shadow-sm transition-all shadow-thin"
+            className="w-full pl-14 pr-6 py-4 rounded-none border border-slate-200 bg-white text-sm font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-0 focus:border-brand-navy transition-all shadow-none"
           />
         </div>
         
         <div className="flex flex-wrap gap-4">
-          
           <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}
-            className="pl-5 pr-10 py-4 rounded-[1.5rem] border border-slate-200 bg-white text-sm text-slate-700 font-bold focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 transition-all appearance-none cursor-pointer shadow-thin min-w-[180px]">
+            className="pl-5 pr-10 py-4 rounded-none border border-slate-200 bg-white text-sm text-slate-700 font-bold focus:outline-none focus:ring-0 focus:border-brand-navy transition-all appearance-none cursor-pointer shadow-none min-w-[180px]">
             <option value="all">All Categories</option>
             {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
               <option key={key} value={key}>{label}</option>
@@ -180,20 +176,19 @@ export default function AssignmentsPage() {
           </select>
           
           <button onClick={() => { setSearchTerm(''); setCategoryFilter('all'); }} 
-            className="p-4 rounded-[1.5rem] border border-slate-200 bg-white text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all shadow-thin">
+            className="p-4 rounded-none border border-slate-200 bg-white text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all shadow-none">
             <Filter size={20} />
           </button>
         </div>
       </motion.div>
 
-      {/* Main Content Area */}
       <AnimatePresence mode="wait">
         {viewMode === 'table' ? (
           <motion.div key="table" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}
-            className="relative rounded-[2.5rem] border border-slate-200/60 bg-white shadow-[0_4px_20px_rgba(15,23,42,0.03)] overflow-hidden">
+            className="relative rounded-none border border-slate-200/60 bg-white shadow-none overflow-hidden">
             {filteredAssignments.length === 0 ? (
               <div className="px-8 py-24 text-center">
-                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="w-20 h-20 bg-slate-50 rounded-none flex items-center justify-center mx-auto mb-6">
                   <Briefcase size={32} className="text-slate-300" strokeWidth={1.5} />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900">No Assignments Found</h3>
@@ -205,16 +200,16 @@ export default function AssignmentsPage() {
                 <table className="w-full text-sm border-separate border-spacing-0">
                   <thead>
                     <tr>
-                      <th className="text-left px-8 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Client & Scope</th>
-                      <th className="text-left px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Audit Type</th>
-                      <th className="text-left px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">
+                      <th className="text-left px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Client & Scope</th>
+                      <th className="text-left px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Audit Type</th>
+                      <th className="text-left px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">
                         Lead Partner
                       </th>
-                      <th className="text-right px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Fees</th>
-                      <th className="text-right px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Billed</th>
-                      <th className="text-right px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Receipt</th>
-                      <th className="text-center px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Cycle</th>
-                      <th className="text-center px-6 py-5 text-[10px] font-black text-brand-gold bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tr-[1.5rem]">Vault</th>
+                      <th className="text-right px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Fees</th>
+                      <th className="text-right px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Billed</th>
+                      <th className="text-right px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Receipt</th>
+                      <th className="text-center px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Cycle</th>
+                      <th className="text-center px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Vault</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -234,13 +229,13 @@ export default function AssignmentsPage() {
                           </div>
                         </td>
                         <td className="px-6 py-6">
-                          <div className="px-3 py-1 rounded-lg border border-slate-200 bg-white text-[10px] font-black text-slate-500 inline-block max-w-[120px] truncate">
+                          <div className="px-3 py-1 rounded-none border border-slate-200 bg-white text-[10px] font-black text-slate-500 inline-block max-w-[120px] truncate">
                              {CATEGORY_LABELS[a.category] || a.category}
                           </div>
                         </td>
                         <td className="px-6 py-6">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 border border-slate-200 shadow-sm uppercase">
+                            <div className="w-8 h-8 rounded-none bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 border border-slate-200 shadow-none uppercase">
                               {a.partner_name ? a.partner_name.charAt(0) : '?'}
                             </div>
                             <span className="font-bold text-slate-700 text-xs truncate max-w-[80px]">{a.partner_name || 'Unassigned'}</span>
@@ -256,7 +251,7 @@ export default function AssignmentsPage() {
                           <div className="font-black text-brand-navy text-sm">{formatIndianCurrency(Number(a.amount_receipt || 0), true, true)}</div>
                         </td>
                         <td className="px-6 py-6 text-center">
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter bg-slate-100 px-2 py-1 rounded-md">
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter bg-slate-100 px-2 py-1 rounded-none">
                             {(BILLING_CYCLE_LABELS[a.billing_cycle] || a.billing_cycle || '—').substring(0, 3)}
                           </span>
                         </td>
@@ -268,7 +263,7 @@ export default function AssignmentsPage() {
                               setIsVaultModalOpen(true);
                             }}
                             className={cn(
-                              "p-2 rounded-lg transition-all",
+                              "p-2 rounded-none transition-all",
                               a.file_url 
                                 ? "bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100" 
                                 : "bg-slate-50 text-slate-400 border border-slate-200 hover:bg-brand-navy/5 hover:text-brand-navy"
@@ -290,11 +285,11 @@ export default function AssignmentsPage() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredAssignments.map((a, i) => (
               <motion.div key={a.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                className="group relative rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm hover:shadow-[0_20px_40px_rgba(15,23,42,0.06)] transition-all hover:-translate-y-1 overflow-hidden"
+                className="group relative rounded-none border border-slate-200 bg-white p-7 shadow-none transition-all hover:-translate-y-1 overflow-hidden"
               >
                  <div className="flex flex-col h-full gap-5">
                    <div>
-                     <div className="text-[10px] font-black text-brand-gold uppercase tracking-[0.2em] mb-2 px-1">Engagement</div>
+                     <div className="text-[10px] font-black text-brand-red uppercase tracking-[0.2em] mb-2 px-1">Engagement</div>
                      <Link href={`/assignments/${a.id}`}>
                        <h3 className="text-xl font-black text-slate-900 group-hover:text-brand-navy transition-colors leading-tight line-clamp-1">{a.client_name}</h3>
                      </Link>
@@ -314,7 +309,7 @@ export default function AssignmentsPage() {
 
                    <div className="flex items-center justify-between pt-1">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-[9px] font-black text-slate-400 ring-4 ring-white shadow-sm border border-slate-200">
+                        <div className="w-7 h-7 rounded-none bg-slate-100 flex items-center justify-center text-[9px] font-black text-slate-400 ring-4 ring-white shadow-none border border-slate-200">
                           {a.partner_name?.charAt(0) || '?'}
                         </div>
                         <span className="text-[11px] font-black text-slate-600">{a.partner_name || 'Unassigned'}</span>
@@ -332,7 +327,7 @@ export default function AssignmentsPage() {
                             setIsVaultModalOpen(true);
                           }}
                           className={cn(
-                            "p-2 rounded-lg transition-all",
+                            "p-2 rounded-none transition-all",
                             a.file_url 
                               ? "bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100" 
                               : "bg-slate-50 text-slate-400 border border-slate-200 hover:bg-brand-navy/5 hover:text-brand-navy"

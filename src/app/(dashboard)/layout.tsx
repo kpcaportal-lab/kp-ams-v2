@@ -32,7 +32,7 @@ export default function DashboardLayout({
     return (
       <div className="h-full min-h-screen w-full flex flex-col items-center justify-center bg-white relative overflow-hidden">
         {/* Background decorative elements */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[var(--brand-gold)]/10 rounded-full blur-[120px]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[var(--brand-red)]/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[var(--brand-navy)]/5 rounded-full blur-[120px]" />
         
         <div className="relative flex flex-col items-center">
@@ -40,7 +40,7 @@ export default function DashboardLayout({
             <div className="absolute inset-0 border-4 border-slate-100 rounded-full" />
             <div className="absolute inset-0 border-4 border-[var(--brand-navy)] rounded-full border-t-transparent animate-spin" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-2 h-2 bg-[var(--brand-gold)] rounded-full animate-pulse" />
+              <div className="w-2 h-2 bg-[var(--brand-red)] rounded-full animate-pulse" />
             </div>
           </div>
           <p className="mt-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Initializing Portal</p>
@@ -50,7 +50,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-[#F8FAFC] overflow-hidden selection:bg-[var(--brand-gold)]/20 selection:text-[var(--brand-navy)]">
+    <div className="flex h-screen bg-[#F8FAFC] overflow-hidden selection:bg-[var(--brand-red)]/10 selection:text-[var(--brand-navy)]">
       <Sidebar isMobileOpen={isMobileMenuOpen} setIsMobileOpen={setIsMobileMenuOpen} />
       
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">

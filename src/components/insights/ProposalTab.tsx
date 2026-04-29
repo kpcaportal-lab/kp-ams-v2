@@ -53,11 +53,11 @@ export function ProposalTab({ managerId }: ProposalTabProps) {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search proposals..."
-                    className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[var(--brand-navy)]/10 outline-none transition-all"
+                    className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-none text-sm font-medium focus:border-[var(--brand-navy)] outline-none transition-all"
                 />
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-none border border-slate-200 overflow-hidden shadow-none">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
@@ -98,7 +98,7 @@ export function ProposalTab({ managerId }: ProposalTabProps) {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={cn(
-                                            "inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider",
+                                            "inline-flex items-center px-2.5 py-1 rounded-none text-[11px] font-bold uppercase tracking-wider",
                                             proposal.status === 'won' ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : 
                                             proposal.status === 'lost' ? "bg-rose-50 text-rose-700 border border-rose-100" :
                                             "bg-amber-50 text-amber-700 border border-amber-100"

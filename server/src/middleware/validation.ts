@@ -30,8 +30,8 @@ export const validateCreateProposal = [
         .isUUID()
         .withMessage('client_id must be a valid UUID'),
     body('proposal_type')
-        .isIn(['new', 'revision'])
-        .withMessage('proposal_type must be "new" or "revision"'),
+        .isIn(['new', 'revision', 'renewal'])
+        .withMessage('proposal_type must be "new", "revision" or "renewal"'),
     body('assignment_type')
         .isIn(['internal_audit', 'forensic', 'overseas', 'mcs', 'ifc'])
         .withMessage('invalid assignment_type'),
@@ -97,8 +97,8 @@ export const validateUpdateProposal = [
         .trim(),
     body('proposal_type')
         .optional()
-        .isIn(['new', 'revision'])
-        .withMessage('proposal_type must be "new" or "revision"'),
+        .isIn(['new', 'revision', 'renewal'])
+        .withMessage('proposal_type must be "new", "revision" or "renewal"'),
     body('assignment_type')
         .optional()
         .isIn(['internal_audit', 'forensic', 'overseas', 'mcs', 'ifc'])

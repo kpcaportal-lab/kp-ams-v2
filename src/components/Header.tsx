@@ -186,7 +186,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         <span key={part} className="flex items-center">
           <span className={cn(
             "text-sm font-medium transition-colors",
-            isLast ? "text-brand-navy font-bold" : "text-slate-400 hover:text-brand-gold"
+            isLast ? "text-brand-navy font-black" : "text-slate-400 hover:text-brand-navy"
           )}>
             {label}
           </span>
@@ -198,11 +198,11 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
 
   return (
     <>
-    <header className="sticky top-0 z-40 w-full h-[72px] flex items-center justify-between px-6 bg-white/80 backdrop-blur-xl border-b border-brand-gold/10 shadow-sm">
+    <header className="sticky top-0 z-40 w-full h-[72px] flex items-center justify-between px-6 bg-white border-b border-slate-200">
       <div className="flex items-center gap-4">
         <button 
           onClick={onMenuClick}
-          className="p-2 -ml-2 text-brand-navy hover:text-brand-gold lg:hidden transition-colors"
+          className="p-2 -ml-2 text-brand-navy hover:text-brand-red lg:hidden transition-colors"
           aria-label="Toggle Menu"
         >
           <Menu size={24} />
@@ -217,44 +217,44 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         {/* Support Ticket Button */}
         <button
           onClick={() => setIsTicketModalOpen(true)}
-          className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-gold text-brand-navy text-xs font-black transition-all shadow-lg shadow-brand-gold/20 hover:shadow-brand-gold/30 active:scale-95 border border-brand-gold/20"
+          className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-none bg-slate-50 text-brand-navy text-xs font-black transition-all border border-slate-200 hover:bg-slate-100 active:bg-slate-200"
         >
-          <LifeBuoy size={14} className="animate-pulse" />
+          <LifeBuoy size={14} className="text-brand-red" />
           Support
         </button>
 
         {/* Search - Expandable on focus with live results */}
         <div className="relative group hidden lg:block" ref={searchRef}>
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors z-10" />
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-navy transition-colors z-10" />
           <input 
             type="text" 
-            placeholder="Search documents, clients..." 
+            placeholder="Search database..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsSearchOpen(true)}
-            className="w-48 focus:w-72 h-10 pl-10 pr-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 outline-none transition-all text-sm font-semibold text-brand-navy"
+            className="w-48 focus:w-72 h-10 pl-10 pr-4 rounded-none border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-brand-navy outline-none transition-all text-sm font-bold text-brand-navy placeholder:text-slate-400"
           />
           
           <AnimatePresence>
             {isSearchOpen && searchQuery.length >= 2 && (
               <motion.div
-                initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                className="absolute top-full right-0 mt-2 w-[420px] bg-white border border-brand-gold/10 shadow-2xl rounded-2xl overflow-hidden z-[200]"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                className="absolute top-full right-0 mt-2 w-[420px] bg-white border border-slate-200 shadow-none rounded-none overflow-hidden z-[200]"
               >
                 <div className="px-4 py-2.5 border-b border-slate-100 bg-brand-navy flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase text-brand-gold tracking-[0.15em]">
+                  <span className="text-[10px] font-black uppercase text-white tracking-[0.15em]">
                     {searchLoading ? 'Searching...' : 'Search Results'}
                   </span>
-                  <button onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }} className="p-1 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors">
+                  <button onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }} className="p-1 rounded-none hover:bg-white/10 text-white/60 hover:text-white transition-colors">
                     <X size={14} />
                   </button>
                 </div>
                 <div className="max-h-80 overflow-y-auto">
                   {searchLoading ? (
                     <div className="p-8 text-center">
-                      <div className="w-6 h-6 border-2 border-brand-gold border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                      <div className="w-6 h-6 border-2 border-brand-red border-t-transparent rounded-none animate-spin mx-auto mb-2" />
                       <p className="text-xs text-slate-400 font-medium">Searching...</p>
                     </div>
                   ) : !searchResults ? (
@@ -268,8 +268,8 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                           <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-brand-navy uppercase tracking-widest border-b border-slate-100">Clients</div>
                           {searchResults.clients.map((c) => (
                             <button key={c.id} onClick={() => { router.push(`/clients/${c.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
-                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-brand-navy/5 transition-colors text-left border-b border-slate-50 last:border-0">
-                              <div className="w-8 h-8 rounded-lg bg-brand-navy text-brand-gold flex items-center justify-center text-xs font-black">{c.name?.charAt(0)}</div>
+                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left border-b border-slate-50 last:border-0">
+                              <div className="w-8 h-8 rounded-none bg-brand-navy text-white flex items-center justify-center text-xs font-black">{c.name?.charAt(0)}</div>
                               <div className="flex-1 min-w-0">
                                 <div className="text-sm font-bold text-slate-800 truncate">{c.name}</div>
                                 <div className="text-[10px] text-slate-400 font-medium">{c.gstn || 'No GSTN'}</div>
@@ -283,8 +283,8 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                           <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-brand-navy uppercase tracking-widest border-b border-slate-100">Assignments</div>
                           {searchResults.assignments.map((a) => (
                             <button key={a.id} onClick={() => { router.push(`/assignments/${a.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
-                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-emerald-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
-                              <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 text-xs font-black">{a.proposal_number?.slice(-2) || 'AS'}</div>
+                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left border-b border-slate-50 last:border-0">
+                              <div className="w-8 h-8 rounded-none bg-slate-100 flex items-center justify-center text-brand-navy text-xs font-black">{a.proposal_number?.slice(-2) || 'AS'}</div>
                               <div className="flex-1 min-w-0">
                                 <div className="text-sm font-bold text-slate-800 truncate">{a.client_name}</div>
                                 <div className="text-[10px] text-slate-400 font-medium">{a.proposal_number || 'No ID'}</div>
@@ -298,8 +298,8 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                           <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-brand-navy uppercase tracking-widest border-b border-slate-100">Proposals</div>
                           {searchResults.proposals.map((p) => (
                             <button key={p.id} onClick={() => { router.push(`/proposals/${p.id}`); setIsSearchOpen(false); setSearchQuery(''); }}
-                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-brand-gold/5 transition-colors text-left border-b border-slate-50 last:border-0">
-                              <div className="w-8 h-8 rounded-lg bg-brand-gold/10 flex items-center justify-center text-brand-gold text-xs font-black">{p.number?.slice(-2) || 'PR'}</div>
+                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left border-b border-slate-50 last:border-0">
+                              <div className="w-8 h-8 rounded-none bg-slate-100 flex items-center justify-center text-brand-navy text-xs font-black">{p.number?.slice(-2) || 'PR'}</div>
                               <div className="flex-1 min-w-0">
                                 <div className="text-sm font-bold text-slate-800 truncate">{p.client_name}</div>
                                 <div className="text-[10px] text-slate-400 font-medium">{p.number}</div>
@@ -313,8 +313,8 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                           <div className="px-4 py-2 bg-slate-50/50 text-[10px] font-black text-brand-navy uppercase tracking-widest border-b border-slate-100">Invoices</div>
                           {searchResults.invoices.map((inv) => (
                             <button key={inv.id} onClick={() => { router.push(`/assignments/${inv.assignment_id}`); setIsSearchOpen(false); setSearchQuery(''); }}
-                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-amber-50/50 transition-colors text-left border-b border-slate-50 last:border-0">
-                              <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600 text-xs font-black">#{inv.sr_no}</div>
+                              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left border-b border-slate-50 last:border-0">
+                              <div className="w-8 h-8 rounded-none bg-slate-100 flex items-center justify-center text-slate-600 text-xs font-black">#{inv.sr_no}</div>
                               <div className="flex-1 min-w-0">
                                 <div className="text-sm font-bold text-slate-800 truncate">{inv.client_name}</div>
                                 <div className="text-[10px] text-slate-400 font-medium truncate">{inv.narration?.slice(0, 50)}</div>
@@ -338,7 +338,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           <div className="relative" ref={impersonateRef}>
             <button
               onClick={() => setIsImpersonateOpen(!isImpersonateOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-brand-gold/20 hover:bg-brand-gold/5 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-none border border-slate-200 hover:bg-slate-50 transition-colors"
               title="View As"
             >
               <Users size={16} className="text-brand-navy" />
@@ -348,20 +348,20 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
             <AnimatePresence>
               {isImpersonateOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                  className="absolute top-full right-0 mt-2 w-64 bg-white border border-brand-gold/10 shadow-2xl rounded-2xl overflow-hidden z-[200]"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  className="absolute top-full right-0 mt-2 w-64 bg-white border border-slate-200 shadow-none rounded-none overflow-hidden z-[200]"
                 >
                   <div className="px-4 py-2.5 border-b border-slate-100 bg-brand-navy">
-                    <span className="text-[10px] font-black uppercase text-brand-gold tracking-[0.15em]">
+                    <span className="text-[10px] font-black uppercase text-white tracking-[0.15em]">
                       Impersonate User
                     </span>
                   </div>
                   <div className="max-h-60 overflow-y-auto p-2">
                     {impersonationLoading ? (
                       <div className="text-center py-4">
-                        <div className="w-5 h-5 border-2 border-brand-gold border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                        <div className="w-5 h-5 border-2 border-brand-red border-t-transparent rounded-none animate-spin mx-auto mb-2" />
                       </div>
                     ) : impersonationList.length === 0 ? (
                       <div className="text-center py-4 text-xs text-slate-400 font-medium italic">No users available</div>
@@ -370,7 +370,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                         <button
                           key={impUser.id}
                           onClick={() => handleImpersonate(impUser.id)}
-                          className="w-full text-left px-3 py-2 rounded-xl hover:bg-brand-navy/5 transition-colors flex flex-col"
+                          className="w-full text-left px-3 py-2 rounded-none hover:bg-slate-50 transition-colors flex flex-col"
                         >
                           <span className="text-sm font-bold text-brand-navy">{impUser.full_name}</span>
                           <span className="text-[10px] font-medium text-slate-400 uppercase">{impUser.role}</span>
@@ -387,10 +387,10 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         {/* User Profile */}
           <div 
             onClick={() => router.push('/profile')}
-            className="flex items-center gap-3 pl-4 border-l border-brand-gold/20 cursor-pointer group"
+            className="flex items-center gap-3 pl-4 border-l border-slate-200 cursor-pointer group"
           >
             <div className="text-right hidden sm:block">
-              <div className="text-sm font-black text-brand-navy transition-colors leading-tight group-hover:text-brand-gold">
+              <div className="text-sm font-black text-brand-navy transition-colors leading-tight">
                 {user?.full_name || 'Guest User'}
               </div>
               <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
@@ -399,10 +399,10 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
             </div>
             
             <div className="relative">
-              <div className="w-10 h-10 rounded-xl bg-brand-navy text-brand-gold flex items-center justify-center font-black shadow-lg shadow-brand-navy/10 group-hover:scale-105 group-hover:shadow-brand-navy/20 transition-all border border-brand-gold/10">
+              <div className="w-10 h-10 rounded-none bg-brand-navy text-white flex items-center justify-center font-black border border-brand-navy transition-all">
                 {user?.full_name ? user.full_name.charAt(0) : <UserIcon size={20} />}
               </div>
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-none"></div>
           </div>
         </div>
       </div>
@@ -416,20 +416,20 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
             onClick={() => setIsTicketModalOpen(false)}
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
           
-          <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-2xl border border-slate-200 overflow-hidden"
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
+            className="relative w-full max-w-lg bg-white rounded-none shadow-none border border-slate-200 overflow-hidden"
           >
             <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-brand-navy">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-brand-gold/20 flex items-center justify-center border border-brand-gold/30">
-                  <LifeBuoy size={20} className="text-brand-gold" />
+                <div className="w-10 h-10 rounded-none bg-white/10 flex items-center justify-center border border-white/20">
+                  <LifeBuoy size={20} className="text-brand-red" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-brand-gold font-accent tracking-tight">Support Center</h2>
-                  <p className="text-[11px] text-brand-gold/60 font-medium">How can we help you today?</p>
+                  <h2 className="text-lg font-black text-white tracking-tight">Support Center</h2>
+                  <p className="text-[11px] text-white/60 font-medium">How can we help you today?</p>
                 </div>
               </div>
-              <button onClick={() => setIsTicketModalOpen(false)} className="p-2 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-colors">
+              <button onClick={() => setIsTicketModalOpen(false)} className="p-2 rounded-none hover:bg-white/10 text-white/60 hover:text-white transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -438,12 +438,12 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
               <div className="space-y-4">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Issue Title</label>
-                  <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Short summary..." className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-semibold focus:ring-4 focus:ring-brand-gold/10 focus:border-brand-gold transition-all outline-none" />
+                  <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Short summary..." className="w-full px-4 py-3 rounded-none border border-slate-200 bg-white text-sm font-semibold focus:border-brand-navy transition-all outline-none" />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Priority</label>
-                  <select value={priority} onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')} className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-black focus:ring-4 focus:ring-brand-gold/10 focus:border-brand-gold transition-all outline-none appearance-none cursor-pointer">
+                  <select value={priority} onChange={(e) => setPriority(e.target.value as 'low' | 'medium' | 'high')} className="w-full px-4 py-3 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy transition-all outline-none appearance-none cursor-pointer">
                     <option value="low">Low Priority</option>
                     <option value="medium">Medium Priority</option>
                     <option value="high">High Priority</option>
@@ -452,24 +452,24 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Describe the problem</label>
-                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} required rows={3} placeholder="Provide details..." className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium focus:ring-4 focus:ring-brand-gold/10 focus:border-brand-gold transition-all outline-none resize-none" />
+                  <textarea value={description} onChange={(e) => setDescription(e.target.value)} required rows={3} placeholder="Provide details..." className="w-full px-4 py-3 rounded-none border border-slate-200 bg-white text-sm font-medium focus:border-brand-navy transition-all outline-none resize-none" />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Visual Proof (Optional)</label>
                   <div className="flex items-center gap-4">
                     <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="header-ticket-file" />
-                    <label htmlFor="header-ticket-file" className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 text-xs font-black text-slate-500 cursor-pointer hover:bg-white hover:border-brand-gold/50 transition-all">
+                    <label htmlFor="header-ticket-file" className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-none border-2 border-dashed border-slate-200 bg-slate-50/50 text-xs font-black text-slate-500 cursor-pointer hover:bg-white hover:border-brand-navy transition-all">
                       <Plus size={16} /> {attachment ? 'Image Selected' : 'Upload Screenshot'}
                     </label>
-                    {attachment && <div className="w-12 h-12 rounded-xl overflow-hidden border border-slate-200 shadow-sm"><img src={attachment} className="w-full h-full object-cover" /></div>}
+                    {attachment && <div className="w-12 h-12 rounded-none overflow-hidden border border-slate-200 shadow-sm"><img src={attachment} className="w-full h-full object-cover" /></div>}
                   </div>
                 </div>
               </div>
 
               <div className="flex gap-3 pt-4">
-                <button type="button" onClick={() => setIsTicketModalOpen(false)} className="flex-1 py-3.5 rounded-2xl border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
-                <button type="submit" disabled={creating} className="flex-1 py-3.5 rounded-2xl bg-brand-navy text-brand-gold text-sm font-black shadow-xl shadow-brand-navy/10 hover:shadow-brand-navy/20 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50">
+                <button type="button" onClick={() => setIsTicketModalOpen(false)} className="flex-1 py-3.5 rounded-none border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
+                <button type="submit" disabled={creating} className="flex-1 py-3.5 rounded-none bg-brand-navy text-white text-sm font-black transition-all active:scale-[0.98] disabled:opacity-50">
                   {creating ? 'Sending...' : 'Submit Issue'}
                 </button>
               </div>

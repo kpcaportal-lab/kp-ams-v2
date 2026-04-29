@@ -169,11 +169,11 @@ export default function InsightsPage() {
 
                 {loading ? (
                     Array(3).fill(0).map((_, i) => (
-                        <div key={i} className="h-24 bg-white border border-slate-100 rounded-2xl animate-pulse mb-4" />
+                        <div key={i} className="h-24 bg-white border border-slate-100 rounded-none animate-pulse mb-4" />
                     ))
                 ) : filteredManagers.length === 0 ? (
-                    <div className="bg-white border border-slate-200 rounded-3xl p-12 text-center">
-                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="bg-white border border-slate-200 rounded-none p-12 text-center">
+                        <div className="w-16 h-16 bg-slate-50 rounded-none flex items-center justify-center mx-auto mb-4">
                             <AlertCircle size={32} className="text-slate-300" />
                         </div>
                         <h3 className="text-xl font-bold text-slate-900">No managers found</h3>

@@ -128,7 +128,7 @@ export default function TicketsPage() {
             return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand-navy/5 text-brand-navy border border-brand-navy/10 uppercase tracking-tight"><AlertCircle size={12}/> Open</span>;
         }
         if (s === 'in_progress') {
-            return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand-gold/5 text-brand-gold border border-brand-gold/10 uppercase tracking-tight"><Clock size={12}/> In Progress</span>;
+            return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand-red/5 text-brand-red border border-brand-red/10 uppercase tracking-tight"><Clock size={12}/> In Progress</span>;
         }
         if (s === 'resolved') {
             return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100 uppercase tracking-tight"><CheckCircle size={12}/> Resolved</span>;
@@ -175,8 +175,8 @@ export default function TicketsPage() {
                 <motion.div custom={1} variants={fadeUp} initial="hidden" animate="visible"
                     className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-all group">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-brand-gold/5 flex items-center justify-center transition-transform group-hover:scale-110">
-                            <AlertCircle size={24} className="text-brand-gold" strokeWidth={2.5} />
+                        <div className="w-12 h-12 rounded-2xl bg-brand-red/5 flex items-center justify-center transition-transform group-hover:scale-110">
+                            <AlertCircle size={24} className="text-brand-red" strokeWidth={2.5} />
                         </div>
                         <div>
                             <div className="text-3xl font-black text-slate-900 tabular-nums">{stats.open}</div>
@@ -239,11 +239,11 @@ export default function TicketsPage() {
                         <table className="w-full text-sm border-separate border-spacing-0">
                             <thead>
                                 <tr className="bg-brand-navy">
-                                    <th className="text-left px-8 py-5 text-[10px] font-black text-brand-gold border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Issue Details</th>
-                                    <th className="text-left px-6 py-5 text-[10px] font-black text-brand-gold border-b border-white/5 uppercase tracking-[0.2em]">Priority</th>
-                                    <th className="text-left px-6 py-5 text-[10px] font-black text-brand-gold border-b border-white/5 uppercase tracking-[0.2em]">Submitted By</th>
-                                    <th className="text-left px-6 py-5 text-[10px] font-black text-brand-gold border-b border-white/5 uppercase tracking-[0.2em]">Created</th>
-                                    <th className="text-right px-8 py-5 text-[10px] font-black text-brand-gold border-b border-white/5 uppercase tracking-[0.2em] rounded-tr-[1.5rem]">Status</th>
+                                    <th className="text-left px-8 py-5 text-[10px] font-black text-white border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Issue Details</th>
+                                    <th className="text-left px-6 py-5 text-[10px] font-black text-white border-b border-white/5 uppercase tracking-[0.2em]">Priority</th>
+                                    <th className="text-left px-6 py-5 text-[10px] font-black text-white border-b border-white/5 uppercase tracking-[0.2em]">Submitted By</th>
+                                    <th className="text-left px-6 py-5 text-[10px] font-black text-white border-b border-white/5 uppercase tracking-[0.2em]">Created</th>
+                                    <th className="text-right px-8 py-5 text-[10px] font-black text-white border-b border-white/5 uppercase tracking-[0.2em] rounded-tr-[1.5rem]">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">

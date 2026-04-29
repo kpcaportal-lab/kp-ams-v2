@@ -48,7 +48,7 @@ export default function ClientDetailPage() {
   if (isLoading && !client) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-none h-8 w-8 border-b-2 border-brand-navy"></div>
       </div>
     );
   }
@@ -59,7 +59,7 @@ export default function ClientDetailPage() {
         <Building2 size={48} className="text-slate-300" />
         <p className="text-lg font-semibold text-slate-500">Client not found</p>
         <button onClick={() => router.push('/clients')}
-          className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors">
+          className="px-6 py-3 rounded-none bg-brand-navy text-white text-sm font-black border-b-2 border-brand-red transition-all">
           Back to Clients
         </button>
       </div>
@@ -72,11 +72,11 @@ export default function ClientDetailPage() {
   const spocPhone = primarySpoc?.phone || client.spocPhone || 'N/A';
 
   const statusBadge = client.status === 'active' ? (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-none text-xs font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
       <CheckCircle size={13} /> Active
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-200/80 text-slate-500 border border-slate-300/40">
+    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-none text-xs font-semibold bg-slate-200/80 text-slate-500 border border-slate-300/40">
       Inactive
     </span>
   );
@@ -91,20 +91,20 @@ export default function ClientDetailPage() {
         </button>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+            <div className="w-12 h-12 rounded-none bg-brand-navy flex items-center justify-center text-white font-black text-lg border border-brand-navy shadow-none">
               {client.name.charAt(0)}
             </div>
             <div>
               <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">{client.name}</h1>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-sm text-slate-400 font-medium">{client.industry}</span>
-                <span className="w-1 h-1 rounded-full bg-slate-300" />
+                <span className="w-1 h-1 rounded-none bg-slate-300" />
                 {statusBadge}
               </div>
             </div>
           </div>
           <button onClick={() => setIsEditModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 transition-all active:scale-95 shadow-sm">
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-none border border-slate-200 bg-white text-slate-700 text-sm font-black hover:bg-slate-50 transition-all shadow-none">
             <Edit2 size={16} /> Edit Client
           </button>
         </div>
@@ -114,12 +114,12 @@ export default function ClientDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Contact Info Card */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }}
-          className="lg:col-span-2 rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm p-6 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+          className="lg:col-span-2 rounded-none border border-slate-200/80 bg-white p-6 shadow-none">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-5">Contact Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                <div className="w-8 h-8 rounded-none bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
                   <Users size={16} />
                 </div>
                 <div>
@@ -128,7 +128,7 @@ export default function ClientDetailPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                <div className="w-8 h-8 rounded-none bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
                   <Mail size={16} />
                 </div>
                 <div>
@@ -139,7 +139,7 @@ export default function ClientDetailPage() {
             </div>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                <div className="w-8 h-8 rounded-none bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
                   <Phone size={16} />
                 </div>
                 <div>
@@ -148,7 +148,7 @@ export default function ClientDetailPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
+                <div className="w-8 h-8 rounded-none bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
                   <Calendar size={16} />
                 </div>
                 <div>
@@ -162,7 +162,7 @@ export default function ClientDetailPage() {
             <div className="mt-6 pt-5 border-t border-slate-100/60 grid grid-cols-1 md:grid-cols-2 gap-6">
               {client.gstn && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                  <div className="w-8 h-8 rounded-none bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
                     <Globe size={16} />
                   </div>
                   <div>
@@ -173,7 +173,7 @@ export default function ClientDetailPage() {
               )}
               {client.address && (
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                  <div className="w-8 h-8 rounded-none bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
                     <MapPin size={16} />
                   </div>
                   <div>
@@ -184,7 +184,7 @@ export default function ClientDetailPage() {
               )}
               {client.billing_details && (
                 <div className="flex items-start gap-3 md:col-span-2">
-                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
+                  <div className="w-8 h-8 rounded-none bg-slate-50 flex items-center justify-center text-slate-400 shrink-0">
                     <CreditCard size={16} />
                   </div>
                   <div>
@@ -200,8 +200,8 @@ export default function ClientDetailPage() {
         {/* Quick Stats */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.5 }}
           className="space-y-4">
-          <div className="p-5 rounded-2xl border border-blue-100 bg-blue-50/50 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-200">
+          <div className="p-5 rounded-none border border-blue-100 bg-blue-50/50 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-none bg-brand-navy flex items-center justify-center text-white shadow-none">
               <Briefcase size={20} />
             </div>
             <div>
@@ -209,8 +209,8 @@ export default function ClientDetailPage() {
               <div className="text-xs font-bold text-blue-600/70 uppercase tracking-wide mt-1">Assignments</div>
             </div>
           </div>
-          <div className="p-5 rounded-2xl border border-violet-100 bg-violet-50/50 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center text-white shadow-md shadow-violet-200">
+          <div className="p-5 rounded-none border border-violet-100 bg-violet-50/50 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-none bg-violet-600 flex items-center justify-center text-white shadow-none">
               <FileText size={20} />
             </div>
             <div>
@@ -223,7 +223,7 @@ export default function ClientDetailPage() {
 
       {/* Assignments Table */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5 }}
-        className="rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm shadow-[0_1px_3px_rgba(15,23,42,0.06)] overflow-hidden">
+        className="rounded-none border border-slate-200/80 bg-white shadow-none overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <Briefcase size={16} className="text-blue-600" /> Active Assignments
@@ -259,9 +259,9 @@ export default function ClientDetailPage() {
                     <td className="px-5 py-3 text-right font-bold text-slate-800">{formatIndianCurrency(a.fees ?? a.total_fees ?? 0)}</td>
                     <td className="px-5 py-3 text-center">
                       {a.status === 'active' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Active</span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[11px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Active</span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">{a.status}</span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[11px] font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">{a.status}</span>
                       )}
                     </td>
                     <td className="px-5 py-3 text-slate-500">{a.fiscal_year}</td>
@@ -275,7 +275,7 @@ export default function ClientDetailPage() {
 
       {/* Proposals Table */}
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.5 }}
-        className="rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-sm shadow-[0_1px_3px_rgba(15,23,42,0.06)] overflow-hidden">
+        className="rounded-none border border-slate-200/80 bg-white shadow-none overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
           <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <FileText size={16} className="text-violet-600" /> Proposals
@@ -311,11 +311,11 @@ export default function ClientDetailPage() {
                     <td className="px-5 py-3 text-right font-bold text-slate-800">{formatIndianCurrency(p.quotation_amount)}</td>
                     <td className="px-5 py-3 text-center">
                       {p.status === 'won' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Won</span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[11px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">Won</span>
                       ) : p.status === 'pending' ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">Pending</span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[11px] font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">Pending</span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-rose-500/10 text-rose-500 border border-rose-500/20">Lost</span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[11px] font-semibold bg-rose-500/10 text-rose-500 border border-rose-500/20">Lost</span>
                       )}
                     </td>
                     <td className="px-5 py-3 text-slate-500">{formatDate(p.proposal_date)}</td>

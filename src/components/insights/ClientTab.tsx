@@ -54,11 +54,11 @@ export function ClientTab({ managerId }: ClientTabProps) {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search clients..."
-                    className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[var(--brand-navy)]/10 outline-none transition-all"
+                    className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-none text-sm font-medium focus:border-[var(--brand-navy)] outline-none transition-all"
                 />
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-none border border-slate-200 overflow-hidden shadow-none">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
@@ -92,7 +92,7 @@ export function ClientTab({ managerId }: ClientTabProps) {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={cn(
-                                            "inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider",
+                                            "inline-flex items-center px-2.5 py-1 rounded-none text-[11px] font-bold uppercase tracking-wider",
                                             client.status === 'active' ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-slate-50 text-slate-600 border border-slate-100"
                                         )}>
                                             {client.status}
@@ -117,14 +117,14 @@ export function ClientTab({ managerId }: ClientTabProps) {
                     <button 
                         disabled={page === 1}
                         onClick={() => setPage(p => p - 1)}
-                        className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 disabled:opacity-50"
+                        className="px-4 py-2 bg-white border border-slate-200 rounded-none text-sm font-bold text-slate-600 disabled:opacity-50"
                     >
                         Previous
                     </button>
                     <button 
                         disabled={page * 10 >= total}
                         onClick={() => setPage(p => p + 1)}
-                        className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 disabled:opacity-50"
+                        className="px-4 py-2 bg-white border border-slate-200 rounded-none text-sm font-bold text-slate-600 disabled:opacity-50"
                     >
                         Next
                     </button>

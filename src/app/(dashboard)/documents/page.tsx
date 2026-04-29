@@ -65,7 +65,7 @@ export default function DocumentVaultPage() {
   if (loading) {
     return (
       <div className="p-8 flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="w-12 h-12 border-4 border-brand-navy/10 border-t-brand-gold rounded-full animate-spin shadow-[0_0_15px_rgba(212,175,55,0.2)]" />
+        <div className="w-12 h-12 border-4 border-brand-navy/10 border-t-brand-red rounded-full animate-spin shadow-[0_0_15px_rgba(220,38,38,0.2)]" />
         <p className="text-slate-500 font-black italic tracking-tight">Securing access to KP-AMS Vault...</p>
       </div>
     );
@@ -78,7 +78,7 @@ export default function DocumentVaultPage() {
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3 font-accent">
             <div className="p-2 bg-brand-navy rounded-xl shadow-lg shadow-brand-navy/20 border border-slate-800">
-              <Shield className="text-brand-gold w-6 h-6" />
+              <Shield className="text-brand-red w-6 h-6" />
             </div>
             Document <span className="text-brand-navy">Vault</span>
           </h1>
@@ -98,9 +98,9 @@ export default function DocumentVaultPage() {
           </div>
           <button 
             onClick={() => window.location.href = '/assignments'}
-            className="hidden md:flex items-center gap-2 px-6 py-3.5 rounded-[1.5rem] bg-brand-navy text-white text-sm font-black hover:bg-slate-800 transition-all hover:shadow-[0_20px_40px_rgba(30,58,95,0.25)] hover:-translate-y-1 active:scale-95 shrink-0 border-b-4 border-brand-gold/30"
+            className="hidden md:flex items-center gap-2 px-6 py-3.5 rounded-[1.5rem] bg-brand-navy text-white text-sm font-black hover:bg-slate-800 transition-all hover:shadow-[0_20px_40px_rgba(30,58,95,0.25)] hover:-translate-y-1 active:scale-95 shrink-0 border-b-4 border-brand-red/30"
           >
-            <ExternalLink size={18} className="text-brand-gold" />
+            <ExternalLink size={18} className="text-brand-red" />
             Secure New Document
           </button>
         </div>
@@ -113,11 +113,11 @@ export default function DocumentVaultPage() {
         <div className="space-y-6">
           <div className="bg-brand-navy rounded-[2rem] p-6 text-white shadow-xl border border-slate-800 relative overflow-hidden">
             {/* Decorative element */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-gold/5 rounded-full -mr-16 -mt-16 blur-3xl" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-brand-red/5 rounded-full -mr-16 -mt-16 blur-3xl" />
             
             <div className="flex items-center gap-3 mb-6 relative z-10">
               <div className="p-2 bg-slate-800/50 rounded-lg border border-slate-700/50">
-                <HardDrive className="w-5 h-5 text-brand-gold" />
+                <HardDrive className="w-5 h-5 text-brand-red" />
               </div>
               <div className="font-black tracking-tight uppercase text-xs">Vault Storage</div>
             </div>
@@ -125,10 +125,10 @@ export default function DocumentVaultPage() {
               <div>
                 <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
                   <span>Capacity Used</span>
-                  <span className="text-brand-gold">42%</span>
+                  <span className="text-brand-red">42%</span>
                 </div>
                 <div className="h-1.5 w-full bg-slate-800/50 rounded-full overflow-hidden border border-slate-700/30">
-                  <div className="h-full bg-brand-gold w-[42%] rounded-full shadow-[0_0_10px_rgba(212,175,55,0.4)]" />
+                  <div className="h-full bg-brand-red w-[42%] rounded-full shadow-[0_0_10px_rgba(220,38,38,0.4)]" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 pt-2">
@@ -149,7 +149,7 @@ export default function DocumentVaultPage() {
             <div className="space-y-1">
               {['Audit Reports', 'Signed LOEs', 'Working Papers', 'Misc'].map(filter => (
                 <button key={filter} className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-brand-navy transition-all flex items-center gap-3 group">
-                  <Folder className="w-4 h-4 text-slate-300 group-hover:text-brand-gold transition-colors" />
+                  <Folder className="w-4 h-4 text-slate-300 group-hover:text-brand-red transition-colors" />
                   {filter}
                 </button>
               ))}
@@ -175,7 +175,7 @@ export default function DocumentVaultPage() {
                   <div className="flex items-center gap-4">
                     <div className={cn(
                       "p-2.5 rounded-xl transition-all border",
-                      isExpanded ? "bg-brand-navy text-brand-gold border-slate-800 shadow-lg shadow-brand-navy/10" : "bg-slate-100 text-slate-400 border-transparent"
+                      isExpanded ? "bg-brand-navy text-brand-red border-slate-800 shadow-lg shadow-brand-navy/10" : "bg-slate-100 text-slate-400 border-transparent"
                     )}>
                       <Folder className="w-5 h-5" />
                     </div>
@@ -199,10 +199,10 @@ export default function DocumentVaultPage() {
                         {clientDocs.map((doc) => (
                           <div 
                             key={doc.id}
-                            className="group bg-white p-4 rounded-2xl border border-slate-200 hover:border-brand-gold/30 hover:shadow-md transition-all flex items-center justify-between"
+                            className="group bg-white p-4 rounded-2xl border border-slate-200 hover:border-brand-red/30 hover:shadow-md transition-all flex items-center justify-between"
                           >
                             <div className="flex items-center gap-3 overflow-hidden">
-                              <div className="p-2 bg-rose-50 text-rose-500 rounded-lg group-hover:bg-brand-navy group-hover:text-brand-gold transition-colors border border-transparent group-hover:border-slate-800">
+                              <div className="p-2 bg-rose-50 text-rose-500 rounded-lg group-hover:bg-brand-navy group-hover:text-brand-red transition-colors border border-transparent group-hover:border-slate-800">
                                 <FileText className="w-5 h-5" />
                               </div>
                               <div className="overflow-hidden">
@@ -263,9 +263,9 @@ export default function DocumentVaultPage() {
             className="relative w-full h-full bg-white rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden border border-slate-200"
           >
             <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white relative">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-navy via-brand-gold to-brand-navy" />
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-navy via-brand-red to-brand-navy" />
               <div className="flex items-center gap-4">
-                <div className="p-2 bg-brand-navy rounded-xl text-brand-gold border border-slate-800 shadow-lg">
+                <div className="p-2 bg-brand-navy rounded-xl text-brand-red border border-slate-800 shadow-lg">
                   <Shield size={20} />
                 </div>
                 <div>

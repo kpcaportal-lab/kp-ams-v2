@@ -25,8 +25,8 @@ interface ManagerCardProps {
 export function ManagerCard({ manager, isExpanded, onToggle, fiscalYear }: ManagerCardProps) {
     return (
         <div className={cn(
-            "bg-white border rounded-2xl mb-4 transition-all overflow-hidden",
-            isExpanded ? "border-[var(--navy-200)] ring-4 ring-[var(--navy-50)]" : "border-slate-200 hover:border-slate-300"
+            "bg-white border rounded-none mb-4 transition-all overflow-hidden",
+            isExpanded ? "border-brand-navy shadow-none" : "border-slate-200 hover:border-slate-300"
         )}>
             {/* Header / Summary Row */}
             <div 
@@ -35,13 +35,13 @@ export function ManagerCard({ manager, isExpanded, onToggle, fiscalYear }: Manag
             >
                 {/* Profile Section */}
                 <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0 border border-slate-200">
+                    <div className="w-12 h-12 rounded-none bg-slate-50 flex items-center justify-center text-slate-500 shrink-0 border border-slate-200">
                         <User size={24} />
                     </div>
                     <div className="min-w-0">
                         <h4 className="text-base font-bold text-slate-900 truncate">{manager.full_name}</h4>
                         <div className="flex items-center gap-2 text-[13px] text-slate-500">
-                            <span className="font-bold text-[var(--brand-navy)] uppercase text-[10px] bg-[var(--navy-50)] px-1.5 py-0.5 rounded border border-[var(--navy-100)] font-accent">
+                            <span className="font-black text-brand-navy uppercase text-[9px] bg-slate-50 px-1.5 py-0.5 rounded-none border border-slate-200 tracking-wider">
                                 {manager.role.replace('_', ' ')}
                             </span>
                             <span className="truncate flex items-center gap-1">
@@ -62,8 +62,8 @@ export function ManagerCard({ manager, isExpanded, onToggle, fiscalYear }: Manag
                 {/* Expand Toggle */}
                 <div className="flex items-center justify-center lg:justify-end lg:w-12">
                     <div className={cn(
-                        "p-2 rounded-full transition-colors",
-                        isExpanded ? "bg-[var(--brand-navy)] text-white" : "bg-slate-50 text-slate-400 group-hover:bg-slate-100"
+                        "p-2 rounded-none transition-colors",
+                        isExpanded ? "bg-brand-navy text-white" : "bg-slate-50 text-slate-400 group-hover:bg-slate-100"
                     )}>
                         {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                     </div>
@@ -104,11 +104,11 @@ function StatItem({ icon: Icon, label, value, color, isCurrency = false }: StatI
 
     return (
         <div className="flex items-center gap-3">
-            <div className={cn("p-2 rounded-lg shrink-0", colors[color])}>
+            <div className={cn("p-2 rounded-none shrink-0", colors[color])}>
                 <Icon size={16} />
             </div>
             <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-accent">{label}</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
                 <p className="text-sm font-black text-slate-900">
                     {isCurrency ? formatINR(Number(value)) : value}
                 </p>

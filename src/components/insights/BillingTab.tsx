@@ -76,13 +76,13 @@ const toNumber = (val: string | number | undefined) => parseFloat(String(val ?? 
             ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Chart Section */}
-                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="bg-white p-6 rounded-none border border-slate-200 shadow-none">
                         <div className="flex items-center justify-between mb-8">
                             <div>
                                 <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider font-accent">Revenue Trend</h4>
                                 <p className="text-xs text-slate-500 font-medium">Monthly Billed vs Collected</p>
                             </div>
-                            <div className="p-2 bg-[var(--navy-50)] text-[var(--brand-navy)] rounded-lg">
+                            <div className="p-2 bg-[var(--navy-50)] text-[var(--brand-navy)] rounded-none">
                                 <TrendingUp size={18} />
                             </div>
                         </div>
@@ -104,25 +104,25 @@ const toNumber = (val: string | number | undefined) => parseFloat(String(val ?? 
                                         tickFormatter={(val) => `₹${val >= 100000 ? val/100000 + 'L' : val/1000 + 'K'}`}
                                     />
                                     <Tooltip 
-                                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontFamily: 'Public Sans' }}
+                                        contentStyle={{ borderRadius: '0px', border: '1px solid #e2e8f0', boxShadow: 'none', fontFamily: 'Public Sans' }}
                                         formatter={(value: any) => formatINR(Number(value || 0))}
                                     />
                                     <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '11px', fontWeight: 700, fontFamily: 'Urbanist' }} />
-                                    <Bar dataKey="billed" name="Billed Amount" fill="var(--brand-navy)" radius={[4, 4, 0, 0]} barSize={20} />
-                                    <Bar dataKey="collected" name="Collected Amount" fill="var(--color-mid-blue)" radius={[4, 4, 0, 0]} barSize={20} />
+                                    <Bar dataKey="billed" name="Billed Amount" fill="var(--brand-navy)" radius={0} barSize={20} />
+                                    <Bar dataKey="collected" name="Collected Amount" fill="var(--color-mid-blue)" radius={0} barSize={20} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
                     </div>
 
                     {/* Table Section */}
-                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="bg-white p-6 rounded-none border border-slate-200 shadow-none">
                         <div className="flex items-center justify-between mb-6">
                             <div>
                                 <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider font-accent">Monthly Breakdown</h4>
                                 <p className="text-xs text-slate-500 font-medium">Detailed figures per month</p>
                             </div>
-                            <div className="p-2 bg-[var(--navy-50)] text-[var(--brand-navy)] rounded-lg">
+                            <div className="p-2 bg-[var(--navy-50)] text-[var(--brand-navy)] rounded-none">
                                 <CreditCard size={18} />
                             </div>
                         </div>

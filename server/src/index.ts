@@ -140,25 +140,9 @@ const ensureSystemUsers = async () => {
 
         const standardHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
 
-        console.log('🔄 STEP 1: Absolute purge of non-core IDs...');
-        // First get the admin ID if it exists, so we don't accidentally delete it if it's not in coreUserIds list
-        const adminRes = await pool.query("SELECT id FROM profiles WHERE email = 'admin.kpams@gmail.com'");
-        const adminIdToProtect = adminRes.rows[0]?.id || '00000000-0000-0000-0000-000000000001';
-
-        // Delete EVERYTHING that is not our 9 core ids or admin ID
-        await pool.query(`
-            DELETE FROM profiles 
-            WHERE id NOT IN (SELECT unnest($1::uuid[]))
-            AND id != $2
-        `, [coreUserIds, adminIdToProtect]);
-
-        // Also delete any dangling records that match names/emails exactly but somehow have different IDs
-        const exactEmails = realUsers.map(u => u.email.toLowerCase());
-        await pool.query(`
-            DELETE FROM profiles 
-            WHERE LOWER(TRIM(email)) = ANY($1) 
-            AND id NOT IN (SELECT unnest($2::uuid[]))
-        `, [exactEmails, coreUserIds]);
+        console.log('🔄 STEP 1: Syncing core IDs (Safe updates only)...');
+        // We DO NOT purge non-core IDs anymore to prevent data loss for users created via UI
+        // We only ensure the core users have correct names and roles
 
         console.log('🔄 STEP 2: Syncing EXACT emails...');
 
@@ -175,18 +159,23 @@ const ensureSystemUsers = async () => {
             `, [user.name, user.email, user.role, standardHash, user.id]);
         }
 
-        console.log('🔄 STEP 3: Pure duplicate removal (Hard clean)...');
+        console.log('🔄 STEP 3: Ensuring core users are active...');
         await pool.query(`
-            DELETE FROM profiles 
-            WHERE id NOT IN (SELECT unnest($1::uuid[]))
+            UPDATE profiles 
+            SET is_active = true 
+            WHERE id = ANY($1::uuid[])
         `, [coreUserIds]);
 
-        console.log('🧹 STEP 4: Forcing Hamza assignments & allocations sync...');
+        console.log('🧹 STEP 4: Checking Hamza assignments...');
         const hamzaDataId = '00000000-0000-0000-0000-000000000012';
-        await pool.query('DELETE FROM assignments WHERE manager_id = $1', [hamzaDataId]);
-
-        const milindPartner = await pool.query(`SELECT id FROM profiles WHERE role = 'partner' AND is_active = true LIMIT 1`);
-        const partnerId = milindPartner.rows[0]?.id || '00000000-0000-0000-0000-000000000002';
+        
+        // Only seed if Hamza has NO assignments (prevents duplicate bloat and accidental deletions)
+        const hamzaCheck = await pool.query('SELECT id FROM assignments WHERE manager_id = $1 LIMIT 1', [hamzaDataId]);
+        
+        if (hamzaCheck.rows.length === 0) {
+            console.log('🌱 Seeding initial Hamza Momin data...');
+            const milindPartner = await pool.query(`SELECT id FROM profiles WHERE role = 'partner' AND is_active = true LIMIT 1`);
+            const partnerId = milindPartner.rows[0]?.id || '00000000-0000-0000-0000-000000000002';
 
         const realData = [
             // Forensic Audits (Cat C)
@@ -265,10 +254,14 @@ const ensureSystemUsers = async () => {
                 }
             }
         }
+        console.log('✅ Success: Initial data seeded for Hamza Momin.');
+    } else {
+        console.log('ℹ️ Hamza Momin already has assignments, skipping seed.');
+    }
 
         // 4. CLEANUP DUPLICATES
-        // 4. DEACTIVATE REST
-        await pool.query('UPDATE profiles SET is_active = false WHERE id NOT IN (SELECT unnest($1::uuid[]))', [coreUserIds]);
+        // DEACTIVATE REST - Disabled to allow persistent test accounts
+        // await pool.query('UPDATE profiles SET is_active = false WHERE id NOT IN (SELECT unnest($1::uuid[]))', [coreUserIds]);
 
         console.log('✅ Success: Data integrity restored. Hamza Momin data synced for multiple years.');
     } catch (err) {

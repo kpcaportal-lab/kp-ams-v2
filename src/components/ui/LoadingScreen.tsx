@@ -12,8 +12,8 @@ interface LoadingScreenProps {
 
 const LoadingScreen: React.FC<LoadingScreenProps> = ({ 
   isLoading = true,
-  message = "Loading Intelligence...", 
-  submessage = "Synchronizing data with the neural core" 
+  message = "Processing Request...", 
+  submessage = "Updating firm records" 
 }) => {
   return (
     <AnimatePresence>
@@ -22,25 +22,22 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white/80 backdrop-blur-xl"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#F4F1EC]"
         >
-      {/* Background Decorative Elements */}
+      {/* Background Decorative Elements - Subtle */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-navy/5 blur-[120px] rounded-full animate-pulse"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-gold/5 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-brand-red/20"></div>
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-brand-navy/10"></div>
       </div>
 
       <div className="relative">
-        {/* Outer Glow */}
-        <div className="absolute inset-0 bg-brand-gold blur-2xl rounded-full opacity-10 scale-150 animate-pulse"></div>
-        
-        {/* Main Spinner */}
+        {/* Main Spinner - Sharp Boxed */}
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-          className="relative z-10 p-4 bg-white rounded-3xl shadow-2xl border border-slate-100"
+          transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+          className="relative z-10 p-4 bg-white border border-slate-200 rounded-none shadow-none"
         >
-          <Loader2 className="w-12 h-12 text-brand-navy" />
+          <Loader2 className="w-12 h-12 text-[var(--brand-navy)]" />
         </motion.div>
       </div>
 
@@ -50,17 +47,17 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         transition={{ delay: 0.2 }}
         className="mt-8 text-center px-6"
       >
-        <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase tracking-widest font-accent">{message}</h2>
-        <p className="mt-2 text-brand-gold font-bold animate-pulse">{submessage}</p>
+        <h2 className="text-xl font-bold text-[var(--brand-navy)] uppercase tracking-widest">{message}</h2>
+        <p className="mt-2 text-[var(--brand-red)] font-semibold uppercase text-[10px] tracking-widest">{submessage}</p>
       </motion.div>
 
-      {/* Progress Bar Placeholder for Premium Feel */}
-      <div className="mt-8 w-48 h-1 bg-slate-100 rounded-full overflow-hidden">
+      {/* Progress Bar - Minimalist */}
+      <div className="mt-8 w-48 h-0.5 bg-slate-200 rounded-none overflow-hidden">
         <motion.div
           initial={{ x: "-100%" }}
           animate={{ x: "100%" }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-full h-full bg-brand-navy rounded-full shadow-[0_0_10px_rgba(30,58,95,0.5)]"
+          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+          className="w-full h-full bg-[var(--brand-navy)]"
         />
       </div>
     </motion.div>
