@@ -56,6 +56,8 @@ export function BrandedLogo({
   theme?: 'light' | 'dark';
   className?: string;
 }) {
+  const isDark = theme === 'dark';
+
   if (variant === 'monogram') {
     return (
       <div className={cn(

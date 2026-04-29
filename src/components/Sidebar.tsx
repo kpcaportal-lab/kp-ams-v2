@@ -103,7 +103,8 @@ export function Sidebar({
                 <span className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">v2.4.0 Intel</span>
               </motion.div>
             )}
-          </div>
+          </Link>
+        </div>
 
         {/* Navigation Links */}
         <nav className="flex-1 px-4 py-8 flex flex-col gap-2 overflow-y-auto custom-scrollbar">
