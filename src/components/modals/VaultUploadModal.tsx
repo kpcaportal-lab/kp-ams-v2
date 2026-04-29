@@ -39,8 +39,8 @@ export default function VaultUploadModal({ isOpen, onClose, assignmentId, client
       }, 1500);
     } catch (err: unknown) {
       console.error('Vault upload error:', err);
-      const errorMessage = err instanceof Error && 'response' in err 
-        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error 
+      const errorMessage = err instanceof Error && 'response' in err
+        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error
         : 'Failed to upload document';
       toast.error(errorMessage || 'Failed to upload document');
     } finally {
@@ -85,7 +85,7 @@ export default function VaultUploadModal({ isOpen, onClose, assignmentId, client
                       <FileText size={18} />
                     </div>
                     <p className="text-xs font-medium text-[var(--brand-navy)] leading-relaxed">
-                      Enter the secure link to your working paper (Google Drive, SharePoint, etc.). 
+                      Enter the secure link to your working paper (Google Drive, SharePoint, etc.).
                       This document will be accessible in the firm&apos;s Document Vault.
                     </p>
                   </div>

@@ -47,23 +47,19 @@ function KPMark({ className, size = 48 }: { className?: string; size?: number })
   );
 }
 
-export function BrandedLogo({ 
-  variant = 'full', 
+export function BrandedLogo({
+  variant = 'full',
   theme = 'light',
   hideText = false,
-  className = '' 
-}: { 
-  variant?: 'full' | 'monogram'; 
+  className = ''
+}: {
+  variant?: 'full' | 'monogram';
   theme?: 'light' | 'dark';
   hideText?: boolean;
   className?: string;
 }) {
   const isDark = theme === 'dark';
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> parent of 99e063a (Merge branch 'master' of https://github.com/kpcaportal-lab/kp-ams-v2)
   if (variant === 'monogram') {
     return (
       <div className={cn(

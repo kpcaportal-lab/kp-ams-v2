@@ -93,19 +93,18 @@ export function Sidebar({
                 isCollapsed && !isMobileOpen ? "scale-90" : "scale-110"
               )}
             />
-<<<<<<< HEAD
+
             {!isCollapsed && (
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="flex flex-col"
               >
-                <span className="text-white font-black tracking-tight text-xl">KP-AMS</span>
-                <span className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">v2.4.0 Intel</span>
+                <span className="text-white font-black tracking-tight text-xl"></span>
+                <span className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]"></span>
               </motion.div>
             )}
-=======
->>>>>>> parent of 99e063a (Merge branch 'master' of https://github.com/kpcaportal-lab/kp-ams-v2)
+
           </Link>
         </div>
 

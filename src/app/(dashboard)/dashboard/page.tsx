@@ -29,7 +29,7 @@ export default function DashboardPage() {
   const { proposals, fetchProposals } = useProposalStore();
   const { clients, fetchClients } = useClientStore();
   const { invoices, fetchInvoices } = useBillingStore();
-  
+
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isSearchFocused, setIsSearchFocused] = React.useState(false);
   const [dashboardTab, setDashboardTab] = React.useState<'revenue' | 'billing'>('revenue');
@@ -54,7 +54,7 @@ export default function DashboardPage() {
 
   const searchResults = useMemo(() => {
     if (!searchTerm) return assignments.slice(0, 5);
-    return assignments.filter(a => 
+    return assignments.filter(a =>
       a.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       a.proposal_number?.toLowerCase().includes(searchTerm.toLowerCase())
     ).slice(0, 5);
@@ -128,7 +128,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 pb-10 font-sans">
       {/* Welcome Banner */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="hero-banner relative bg-white px-8 py-10 md:px-12 md:py-14 text-brand-navy overflow-hidden"
@@ -136,7 +136,7 @@ export default function DashboardPage() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-brand-navy text-white text-[9px] font-black uppercase tracking-[0.2em] mb-4">
-               KPCA Insight
+              KPCA Insight
             </div>
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
               Welcome Back, <span className="text-brand-red">
@@ -147,7 +147,7 @@ export default function DashboardPage() {
               Practice performance is up <span className="text-brand-red font-black">12.4%</span>. There are <span className="text-brand-navy font-black">{stats.activeAssignments}</span> active assignments.
             </p>
           </div>
-          
+
           <div className="relative w-full md:max-w-md">
             <div className="group relative">
               <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-navy transition-colors" size={22} />
@@ -160,10 +160,10 @@ export default function DashboardPage() {
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                 className="w-full pl-14 pr-6 py-5 rounded-none bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-navy outline-none transition-all font-semibold text-brand-navy placeholder:text-slate-400 text-lg"
               />
-              
+
               <AnimatePresence>
                 {isSearchFocused && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
@@ -175,8 +175,8 @@ export default function DashboardPage() {
                     <div className="max-h-80 overflow-y-auto custom-scrollbar">
                       {searchResults.length > 0 ? (
                         searchResults.map((a) => (
-                          <Link 
-                            key={a.id} 
+                          <Link
+                            key={a.id}
                             href={`/assignments/${a.id}`}
                             className="flex items-center gap-4 p-5 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 group"
                           >
@@ -262,7 +262,7 @@ export default function DashboardPage() {
       {/* Performance Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Main Stats Card */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="lg:col-span-8 bg-white rounded-none border border-slate-200 overflow-hidden flex flex-col"
@@ -273,23 +273,23 @@ export default function DashboardPage() {
               <p className="text-sm font-semibold text-slate-400 mt-1">Real-time revenue tracking & billing</p>
             </div>
             <div className="flex p-1 bg-slate-100 rounded-none mt-4 md:mt-0 border border-slate-200">
-              <button 
+              <button
                 onClick={() => setDashboardTab('revenue')}
                 className={cn(
                   "px-6 py-2 rounded-none text-xs font-black transition-all duration-300 tracking-wider uppercase",
-                  dashboardTab === 'revenue' 
-                    ? "bg-brand-navy text-white" 
+                  dashboardTab === 'revenue'
+                    ? "bg-brand-navy text-white"
                     : "text-slate-500 hover:text-brand-navy"
                 )}
               >
                 Revenue
               </button>
-              <button 
+              <button
                 onClick={() => setDashboardTab('billing')}
                 className={cn(
                   "px-6 py-2 rounded-none text-xs font-black transition-all duration-300 tracking-wider uppercase",
-                  dashboardTab === 'billing' 
-                    ? "bg-brand-navy text-white" 
+                  dashboardTab === 'billing'
+                    ? "bg-brand-navy text-white"
                     : "text-slate-500 hover:text-brand-navy"
                 )}
               >
@@ -297,11 +297,11 @@ export default function DashboardPage() {
               </button>
             </div>
           </div>
-          
+
           <div className="flex-1 p-8 md:p-12">
             <AnimatePresence mode="wait">
               {dashboardTab === 'revenue' ? (
-                <motion.div 
+                <motion.div
                   key="revenue"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -327,8 +327,8 @@ export default function DashboardPage() {
                   </div>
                   <div className="w-full md:w-[26rem] p-8 rounded-none bg-brand-navy text-white relative overflow-hidden group border border-slate-800">
                     <div className="relative z-10">
-                      <div className="flex items-center gap-2 text-brand-red text-[10px] font-black uppercase tracking-[0.2em] mb-8">
-                        <div className="w-2 h-2 bg-brand-red" /> Finalized Billing
+                      <div className="flex items-center gap-2 text-brand-white text-[10px] font-black uppercase tracking-[0.2em] mb-8">
+                        <div className="w-2 h-2 bg-brand-white" /> Finalized Billing
                       </div>
                       <div className="text-4xl font-black mb-3 tracking-tighter font-number whitespace-nowrap">{formatIndianCurrency(stats.totalBilled, true, true)}</div>
                       <div className="text-xs font-bold text-slate-400 mb-10 tracking-wide">Net billing achievement</div>
@@ -339,7 +339,7 @@ export default function DashboardPage() {
                   </div>
                 </motion.div>
               ) : (
-                <motion.div 
+                <motion.div
                   key="billing"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -358,10 +358,10 @@ export default function DashboardPage() {
                       <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Invoiced to date</div>
                     </div>
                   </div>
-                  
+
                   <div className="relative pt-2">
                     <div className="w-full h-8 bg-slate-100 rounded-none overflow-hidden border border-slate-200 p-1">
-                      <motion.div 
+                      <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${stats.billingPct}%` }}
                         transition={{ duration: 1.5, ease: [0.23, 1, 0.32, 1] }}
@@ -369,7 +369,7 @@ export default function DashboardPage() {
                       />
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="p-5 rounded-none bg-slate-50 border border-slate-100">
                       <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Scope</div>
@@ -406,8 +406,8 @@ export default function DashboardPage() {
                 { label: 'Execute Assignment', href: '/assignments', icon: '/files/audit.svg', color: 'hover:bg-slate-50' },
                 { label: 'Generate Invoice', href: '/billing', icon: '/files/finance.svg', color: 'hover:bg-slate-50' },
               ].map((item) => (
-                <Link 
-                  key={item.label} 
+                <Link
+                  key={item.label}
                   href={item.href}
                   className={cn("flex items-center gap-4 p-4 rounded-none border border-slate-100 transition-all duration-300 font-bold text-sm text-slate-700 hover:border-brand-navy", item.color)}
                 >
