@@ -37,7 +37,7 @@ export default function DashboardLayout({
         
         <div className="relative flex flex-col items-center">
           <div className="relative w-16 h-16">
-            <div className="absolute inset-0 border-4 border-slate-100 rounded-full" />
+            <div className="absolute inset-0 border-4 border-slate-50 rounded-full" />
             <div className="absolute inset-0 border-4 border-[var(--brand-navy)] rounded-full border-t-transparent animate-spin" />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-2 h-2 bg-[var(--brand-red)] rounded-full animate-pulse" />
@@ -50,7 +50,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-[#F8FAFC] overflow-hidden selection:bg-[var(--brand-red)]/10 selection:text-[var(--brand-navy)]">
+    <div className="flex h-screen bg-[#F8FAFC] overflow-hidden selection:bg-[var(--brand-gold)]/20 selection:text-[var(--brand-navy)]">
       <Sidebar isMobileOpen={isMobileMenuOpen} setIsMobileOpen={setIsMobileMenuOpen} />
       
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">

@@ -69,7 +69,7 @@ export function Sidebar({
     <>
       {/* Mobile overlay */}
       {isMobileOpen && (
-        <div
+        <div 
           className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setIsMobileOpen?.(false)}
         />
@@ -77,27 +77,36 @@ export function Sidebar({
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 lg:static z-50 flex flex-col bg-brand-navy text-white border-r border-white/10 transition-all duration-300 ease-in-out shadow-none lg:shadow-none",
+          "fixed inset-y-0 left-0 lg:static z-50 flex flex-col bg-brand-navy text-white border-r border-brand-gold/10 transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none",
           isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
-          isCollapsed ? "w-20" : "w-64"
+          isCollapsed ? "w-28" : "w-72"
         )}
       >
         {/* Brand logo */}
-        <div className={cn("h-[88px] flex items-center border-b border-white/5 bg-white/5 backdrop-blur-sm", isCollapsed && !isMobileOpen ? "px-0" : "px-4")}>
+        <div className="h-[88px] flex items-center px-4 border-b border-white/5 bg-white/5 backdrop-blur-sm">
           <Link href="/dashboard" className="flex items-center w-full justify-center">
-            <BrandedLogo
-              variant="monogram"
-              theme="dark"
+            <BrandedLogo 
+              variant="monogram" 
+              theme="dark" 
               className={cn(
                 "transition-all duration-500",
                 isCollapsed && !isMobileOpen ? "scale-90" : "scale-110"
-              )}
+              )} 
             />
-          </Link>
-        </div>
+            {!isCollapsed && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex flex-col"
+              >
+                <span className="text-white font-black tracking-tight text-xl">KP-AMS</span>
+                <span className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">v2.4.0 Intel</span>
+              </motion.div>
+            )}
+          </div>
 
         {/* Navigation Links */}
-        <nav className={cn("flex-1 py-8 flex flex-col gap-2 overflow-y-auto custom-scrollbar", isCollapsed && !isMobileOpen ? "px-0" : "px-4")}>
+        <nav className="flex-1 px-4 py-8 flex flex-col gap-2 overflow-y-auto custom-scrollbar">
           {filteredNav.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return (
@@ -105,28 +114,28 @@ export function Sidebar({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center group relative h-12 px-4 rounded-none transition-all duration-300 ease-in-out",
-                  isActive
-                    ? "bg-white/10 text-white font-black"
-                    : "text-white/70 hover:bg-white/5 hover:text-white",
+                  "flex items-center group relative h-12 px-4 rounded-2xl transition-all duration-300 ease-in-out",
+                  isActive 
+                    ? "bg-brand-gold text-brand-navy font-black shadow-lg shadow-brand-gold/20" 
+                    : "text-white/70 hover:bg-white/10 hover:text-white",
                   isCollapsed ? "justify-center px-0" : "justify-start gap-4"
                 )}
                 title={isCollapsed ? item.name : undefined}
                 onClick={() => setIsMobileOpen?.(false)}
               >
                 {isActive && (
-                  <motion.div
+                  <motion.div 
                     layoutId="sidebar-active"
-                    className="absolute left-0 w-1.5 h-6 bg-brand-red rounded-none"
+                    className="absolute right-2 w-1.5 h-1.5 bg-brand-navy rounded-full" 
                   />
                 )}
-                <item.icon
-                  size={20}
+                <item.icon 
+                  size={20} 
                   strokeWidth={isActive ? 3 : 2.5}
                   className={cn(
                     "shrink-0 transition-all duration-300 group-hover:scale-110",
-                    isActive ? "text-white" : "text-white/40 group-hover:text-white"
-                  )}
+                    isActive ? "text-brand-navy" : "text-brand-gold/70 group-hover:text-brand-gold"
+                  )} 
                 />
                 {(!isCollapsed || isMobileOpen) && (
                   <span className="font-black tracking-[0.2em] text-[10px] uppercase">{item.name}</span>
@@ -137,14 +146,14 @@ export function Sidebar({
         </nav>
 
         {/* Bottom Profile & Logout */}
-        <div className={cn("py-4 border-t border-white/5 bg-white/5 backdrop-blur-sm flex flex-col gap-2", isCollapsed && !isMobileOpen ? "px-0" : "px-4")}>
+        <div className="p-4 border-t border-white/5 bg-white/5 backdrop-blur-sm flex flex-col gap-2">
           <Link
             href="/profile"
             className={cn(
-              "flex items-center h-12 px-4 rounded-none transition-all duration-300",
-              pathname === '/profile'
-                ? "bg-[#1E5FA8] text-white font-black"
-                : "text-white/60 hover:bg-white/5 hover:text-white",
+              "flex items-center h-12 px-4 rounded-2xl transition-all duration-300",
+              pathname === '/profile' 
+                ? "bg-brand-gold text-brand-navy font-black shadow-lg shadow-brand-gold/20" 
+                : "text-white/60 hover:bg-white/10 hover:text-white",
               isCollapsed ? "justify-center px-0" : "justify-start gap-4"
             )}
             title={isCollapsed ? "Profile Settings" : undefined}
@@ -153,7 +162,7 @@ export function Sidebar({
             <UserCog size={20} strokeWidth={2.5} className="shrink-0" />
             {(!isCollapsed || isMobileOpen) && <span className="font-black tracking-[0.15em] text-[10px] uppercase">Security & Profile</span>}
           </Link>
-
+          
           <button
             onClick={() => {
               if (confirm('Log out from KP AMS?')) {
@@ -162,7 +171,7 @@ export function Sidebar({
               }
             }}
             className={cn(
-              "flex items-center h-12 px-4 rounded-none text-white/50 hover:bg-red-500/10 hover:text-red-400 group transition-all duration-300",
+              "flex items-center h-12 px-4 rounded-2xl text-white/50 hover:bg-red-500/10 hover:text-red-400 group transition-all duration-300",
               isCollapsed ? "justify-center px-0" : "justify-start gap-4"
             )}
             title={isCollapsed ? "Logout Session" : undefined}
@@ -175,9 +184,9 @@ export function Sidebar({
         {/* Collapse Toggle */}
         <button
           onClick={toggleCollapse}
-          className="hidden lg:flex absolute top-[24px] right-[-12px] w-6 h-6 bg-white border border-slate-200 text-[var(--brand-navy)] items-center justify-center hover:bg-[var(--brand-navy)] hover:text-white transition-all z-10 rounded-none shadow-none"
+          className="hidden lg:flex absolute top-[24px] right-[-14px] w-7 h-7 bg-brand-gold text-brand-navy rounded-full items-center justify-center shadow-lg shadow-brand-gold/30 hover:scale-110 transition-all z-10"
         >
-          {isCollapsed ? <ChevronRight size={12} strokeWidth={3} /> : <ChevronLeft size={12} strokeWidth={3} />}
+          {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
       </aside>
     </>

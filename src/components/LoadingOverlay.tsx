@@ -9,25 +9,25 @@ export function LoadingOverlay() {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/80 backdrop-blur-xl transition-all duration-500 animate-in fade-in"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#002366]/95 backdrop-blur-xl transition-all duration-500 animate-in fade-in"
     >
-      <div className="relative flex flex-col items-center p-16 bg-[#0F172A] rounded-[40px] border border-white/5 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden group">
+      <div className="relative flex flex-col items-center p-16 bg-[#002366] rounded-[40px] border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden group">
         {/* Animated background highlights */}
         <div className="absolute -inset-10 bg-gradient-to-br from-blue-600/10 via-transparent to-indigo-600/10 blur-3xl opacity-50 group-hover:opacity-80 transition-opacity duration-1000"></div>
-
+        
         <div className="relative z-10 flex flex-col items-center">
           <div className="relative w-32 h-32 mb-10 flex items-center justify-center">
             {/* Inner glow */}
-            <div className="absolute inset-0 bg-brand-red/20 blur-3xl animate-pulse" />
-
+            <div className="absolute inset-0 bg-brand-gold/20 blur-3xl animate-pulse" />
+            
             {/* Branded Circular Spinner */}
             <div className="relative w-24 h-24">
               {/* Static background ring */}
               <div className="absolute inset-0 border-[6px] border-white/5 rounded-full" />
               {/* Spinning branded ring */}
-              <div className="absolute inset-0 border-[6px] border-transparent border-t-brand-red border-r-white/20 rounded-full animate-spin shadow-[0_0_15px_rgba(255,255,255,0.1)]" />
+              <div className="absolute inset-0 border-[6px] border-transparent border-t-brand-gold border-r-brand-gold/40 rounded-full animate-spin shadow-[0_0_15px_rgba(212,165,116,0.2)]" />
               {/* Pulsing center dot */}
-              <div className="absolute inset-[38px] bg-brand-red rounded-full animate-pulse shadow-[0_0_20px_rgba(220,38,38,0.4)]" />
+              <div className="absolute inset-[38px] bg-brand-gold rounded-full animate-pulse shadow-[0_0_20px_#D4A574]" />
             </div>
           </div>
 
@@ -39,13 +39,13 @@ export function LoadingOverlay() {
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"
+                  className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" 
                   style={{ animationDelay: `${i * 0.2}s` }}
                 />
               ))}
             </div>
           </div>
-          <p className="mt-6 text-blue-200/60 text-[10px] font-black tracking-[0.2em] uppercase">
+          <p className="mt-6 text-[#007BFF]/60 text-[10px] font-black tracking-[0.2em] uppercase">
             KP Enterprise Systems Secured
           </p>
         </div>
