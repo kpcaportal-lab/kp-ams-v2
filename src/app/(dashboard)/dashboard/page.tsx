@@ -80,7 +80,7 @@ export default function DashboardPage() {
       trend: `${assignments.length} Total`,
       trendVal: '+12%',
       accent: 'from-brand-navy to-brand-navy/80',
-      iconColor: 'bg-brand-navy text-brand-gold',
+      iconColor: 'bg-brand-navy text-white',
     },
     {
       label: 'Opportunities',
@@ -88,8 +88,8 @@ export default function DashboardPage() {
       icon: Clock,
       trend: `${stats.wonProposals} Won`,
       trendVal: '+5%',
-      accent: 'from-brand-gold to-brand-gold/80',
-      iconColor: 'bg-brand-gold text-brand-navy',
+      accent: 'from-brand-red to-brand-red/80',
+      iconColor: 'bg-brand-red text-white',
     },
     {
       label: 'Client Network',
@@ -98,7 +98,7 @@ export default function DashboardPage() {
       trend: `${clients.length} Active`,
       trendVal: '+8%',
       accent: 'from-brand-navy/90 to-brand-navy',
-      iconColor: 'bg-brand-navy text-brand-gold',
+      iconColor: 'bg-brand-navy text-white',
     },
     {
       label: 'Financial achievement',
@@ -106,16 +106,16 @@ export default function DashboardPage() {
       icon: FileText,
       trend: 'Settled',
       trendVal: '+15%',
-      accent: 'from-brand-navy to-brand-gold',
-      iconColor: 'bg-brand-navy text-brand-gold',
+      accent: 'bg-brand-navy',
+      iconColor: 'bg-brand-navy text-white',
     },
   ];
 
   const getStatusBadge = (status: string) => {
     const configs: Record<string, string> = {
-      active: 'bg-brand-navy/5 text-brand-navy border-brand-navy/10',
-      draft: 'bg-brand-gold/5 text-brand-gold border-brand-gold/10',
-      completed: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+      active: 'bg-brand-navy/5 text-brand-navy border-brand-navy/20',
+      draft: 'bg-brand-red/5 text-brand-red border-brand-red/20',
+      completed: 'bg-slate-100 text-slate-700 border-slate-200',
     };
     const config = configs[status] || 'bg-slate-50 text-slate-600 border-slate-100';
     return (
@@ -127,54 +127,49 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8 pb-10 font-sans">
-      {/* Premium Welcome Banner */}
-      <motion.div
+      {/* Welcome Banner */}
+      <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-[2rem] bg-brand-navy px-8 py-10 md:px-12 md:py-14 text-white shadow-2xl border border-slate-800 overflow-hidden"
+        className="hero-banner relative bg-white px-8 py-10 md:px-12 md:py-14 text-brand-navy overflow-hidden"
       >
-        <div className="absolute inset-0 rounded-[2rem] overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-brand-gold/10 rounded-full blur-[100px]" />
-          <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-brand-gold/5 rounded-full blur-[100px]" />
-        </div>
-        
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-brand-gold text-xs font-black uppercase tracking-[0.2em] mb-4">
-              <Sparkles size={14} className="animate-pulse" /> Intelligence Overview
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-brand-navy text-white text-[9px] font-black uppercase tracking-[0.2em] mb-4">
+               KPCA Insight
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 font-accent">
-              Welcome Back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-brand-gold">
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+              Welcome Back, <span className="text-brand-red">
                 {user?.role === 'admin' ? 'Admin' : (user?.full_name?.split(' ')[0] || 'Partner')}
               </span>
             </h1>
-            <p className="text-slate-300 text-lg font-medium leading-relaxed">
-              Your practice performance is up <span className="text-brand-gold font-black">12.4%</span> this quarter. You have <span className="text-white font-black">{stats.activeAssignments}</span> active assignments requiring attention.
+            <p className="text-slate-500 text-lg font-medium leading-relaxed">
+              Practice performance is up <span className="text-brand-red font-black">12.4%</span>. There are <span className="text-brand-navy font-black">{stats.activeAssignments}</span> active assignments.
             </p>
           </div>
           
           <div className="relative w-full md:max-w-md">
             <div className="group relative">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-gold transition-colors" size={22} />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-navy transition-colors" size={22} />
               <input
                 type="text"
-                placeholder="Query missions, assets, or intel..."
+                placeholder="Query missions, partners, or docs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                className="w-full pl-14 pr-6 py-5 rounded-2xl bg-white/5 border border-white/10 focus:bg-white/10 focus:border-brand-gold/50 focus:ring-4 focus:ring-brand-gold/10 outline-none transition-all font-semibold text-white placeholder:text-slate-500 text-lg backdrop-blur-md"
+                className="w-full pl-14 pr-6 py-5 rounded-none bg-slate-50 border border-slate-200 focus:bg-white focus:border-brand-navy outline-none transition-all font-semibold text-brand-navy placeholder:text-slate-400 text-lg"
               />
               
               <AnimatePresence>
                 {isSearchFocused && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute top-full left-0 right-0 mt-3 bg-brand-navy border border-slate-800 shadow-2xl rounded-2xl overflow-hidden z-[100] backdrop-blur-xl"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full left-0 right-0 mt-3 bg-white border border-slate-200 shadow-none rounded-none overflow-hidden z-[100]"
                   >
-                    <div className="px-5 py-3 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                    <div className="px-5 py-3 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                       <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em]">Live Intel</span>
                     </div>
                     <div className="max-h-80 overflow-y-auto custom-scrollbar">
@@ -183,21 +178,21 @@ export default function DashboardPage() {
                           <Link 
                             key={a.id} 
                             href={`/assignments/${a.id}`}
-                            className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 group"
+                            className="flex items-center gap-4 p-5 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0 group"
                           >
-                            <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center font-black text-brand-gold text-sm group-hover:scale-110 transition-transform border border-white/5">
+                            <div className="w-12 h-12 rounded-none bg-slate-100 flex items-center justify-center font-black text-brand-navy text-sm border border-slate-200">
                               {a.proposal_number?.slice(-2) || 'AS'}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="font-bold text-white group-hover:text-brand-gold transition-colors truncate">{a.client_name}</div>
+                              <div className="font-bold text-brand-navy group-hover:text-brand-red transition-colors truncate">{a.client_name}</div>
                               <div className="text-xs text-slate-500 mt-1">{a.proposal_number || 'No Identifier'}</div>
                             </div>
                             {getStatusBadge(a.status)}
                           </Link>
                         ))
                       ) : (
-                        <div className="p-12 text-center">
-                          <p className="text-white/30 font-medium italic">No matches in secure database.</p>
+                        <div className="p-10 text-center">
+                          <p className="text-slate-500 font-medium italic">No matches in current database.</p>
                         </div>
                       )}
                     </div>
@@ -209,21 +204,21 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* Secondary KPI Cluster - Premium Glass */}
+      {/* Secondary KPI Cluster */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12"
+        className="grid grid-cols-2 md:grid-cols-4 gap-6"
       >
         {[
           { label: 'Total Clients', value: stats.totalClients, color: 'text-brand-navy', icon: Users },
           { label: 'Win Rate', value: `${((stats.wonProposals / (proposals.length || 1)) * 100).toFixed(0)}%`, color: 'text-emerald-600', icon: TrendingUp },
-          { label: 'Total Volume', value: assignments.length, color: 'text-brand-gold', icon: Briefcase },
-          { label: 'Billing Health', value: 'Excellent', color: 'text-brand-navy', icon: Sparkles },
+          { label: 'Total Volume', value: assignments.length, color: 'text-brand-navy', icon: Briefcase },
+          { label: 'Billing Health', value: 'Excellent', color: 'text-brand-red', icon: Sparkles },
         ].map((item) => (
-          <div key={item.label} className="flex items-center gap-4 bg-white border border-slate-200 rounded-[1.5rem] p-5 shadow-sm group hover:border-brand-gold/30 hover:shadow-md transition-all">
-            <div className={cn("w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center transition-all group-hover:scale-110 group-hover:bg-white shadow-inner", item.color)}>
+          <div key={item.label} className="flex items-center gap-4 bg-white border border-slate-200 rounded-none p-5 group hover:border-brand-navy transition-all">
+            <div className={cn("w-10 h-10 rounded-none bg-slate-50 flex items-center justify-center transition-all group-hover:bg-brand-navy group-hover:text-white border border-slate-100", item.color)}>
               <item.icon size={20} strokeWidth={2.5} />
             </div>
             <div>

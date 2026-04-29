@@ -1,100 +1,93 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:wght@300;400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&family=Urbanist:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 /* ═══════════════════════════════════════════════════════════════════
    KP-AMS Design System — Kirtane & Pandit LLP
    v4.0 — Strict KPCA Minimalist Standards (Navy & Red)
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ── Tailwind v4 Theme Tokens ─────────────────────────────────── */
-@theme inline {
-  --color-background: #F8FAFC;
-  --color-foreground: #1E3A5F;
-  --font-sans: "Roboto", "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-accent: "Plus Jakarta Sans", sans-serif;
-  --font-mono: "DM Mono", ui-monospace, monospace;
-  --font-outfit: "Outfit", sans-serif;
-  --font-number: "Outfit", sans-serif;
+/* ── Tailwind v4 Theme Tokens (Institutional Minimalist) ───────── */
+@theme {
+  --color-background: #FFFFFF;
+  --color-foreground: #004878;
   
   /* Brand Identity Tokens */
-  --color-brand-navy: #1E3A5F;
-  --color-brand-gold: #D4A574;
+  --color-brand-navy: #004878;
+  --color-brand-navy-900: #003258;
+  --color-brand-navy-700: #004878;
+  --color-brand-navy-500: #1E5FA8;
+  --color-brand-navy-400: #3880C0;
+  --color-brand-navy-200: #85ADD0;
+  --color-brand-navy-100: #C7D8E5;
+  --color-brand-navy-50: #EEF2F6;
   
-  /* Override default blue with KPCA Navy */
-  --color-blue-50: #EEF2F6;
-  --color-blue-100: #C7D8E5;
-  --color-blue-200: #85ADD0;
-  --color-blue-400: #3880C0;
-  --color-blue-500: #2C5282; /* Corporate Blue */
-  --color-blue-600: #1E3A5F; /* KPCA Brand Navy */
-  --color-blue-700: #172C48;
-  --color-blue-900: #09111A;
-
-  /* Gold Accent Palette */
-  --color-gold-50: #FBF7F2;
-  --color-gold-100: #F5EBE0;
-  --color-gold-200: #ECD7C1;
-  --color-gold-400: #DDAF82;
-  --color-gold-500: #D4A574; /* KPCA Brand Gold */
-  --color-gold-600: #B8894E;
-  --color-gold-700: #8D6A3C;
+  --color-brand-red: #B82028;
+  --color-brand-red-900: #9E1B22;
+  
+  /* Typography */
+  --font-sans: "Public Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Urbanist", sans-serif;
+  
+  /* Neutral Palette */
+  --color-gray-50: #F9FAFB;
+  --color-gray-100: #F3F4F6;
+  --color-gray-200: #E5E7EB;
+  --color-gray-900: #111827;
+  
+  /* Radii (Institutional Sharp) */
+  --radius-none: 0px;
 }
 
 :root {
-  /* ── KPCA BRAND COLORS ────────────────────────────────────── */
-  --brand-navy: #1E3A5F;
-  --brand-gold: #D4A574;
-  --brand-red: #B82028; /* Kept as secondary status color */
-  --brand-paper: #FAFAFA;
+  /* ── KPCA BRAND REFERENCE v1.0 ──────────────────────────────── */
+  --brand-navy: #004878;   /* Primary Navy */
+  --brand-navy-900: #003258;
+  --brand-navy-500: #1E5FA8;
+  --brand-red: #B82028;    /* Brand Red */
   
-  /* Navy Tints */
-  --navy-900: #09111A;
-  --navy-700: #172C48;
-  --navy-600: #1E3A5F;
-  --navy-500: #2C5282;
-  --navy-400: #4A7BA7;
-  --navy-200: #85ADD0;
-  --navy-100: #C7D8E5;
-  --navy-50: #EEF2F6;
-
-  /* Secondary Palette */
-  --color-mid-blue: #2C5282;
-  --color-slate: #4A7BA7;
-  --color-sky: #6BA3C0;
-  --color-gold: #D4A574;
-
+  --ink: #0F1B2A;
+  --line: #E4E8EE;
+  --paper: #F4F1EC;
+  --white: #FFFFFF;
+  
+  --font-primary: "Public Sans", sans-serif;
+  --font-secondary: "Urbanist", sans-serif;
+  
   /* Base background & text colors */
-  --bg-main: #F8FAFC;
-  --bg-card: #ffffff;
-  --bg-card-hover: #F1F5F9;
-  --bg-surface: #ffffff;
-  --bg-muted: #E2E8F0;
+  --bg-main: var(--paper);
+  --bg-card: var(--white);
+  --bg-surface: var(--white);
+  --bg-muted: var(--line);
   
-  --text-primary: #1E3A5F;
-  --text-main: var(--text-primary);
-  --text-secondary: #475569;
-  --text-muted: #64748B;
-  --text-light: #94A3B8;
-  --text-inverted: #FFFFFF;
-  --text-placeholder: #94A3B8;
+  --text-primary: var(--brand-navy);
+  --text-main: var(--ink);
+  --text-secondary: #5A6B7E;
+  --text-muted: #A0A0A0;
   
-  /* Primary colors - Overridden with KPCA Navy */
-  --color-primary: var(--brand-navy);
-  --color-primary-dark: var(--navy-700);
-  --color-primary-hover: var(--navy-500);
-  --color-primary-active: var(--navy-900);
-  --color-primary-ring: rgba(30, 58, 95, 0.2);
-  --color-primary-glow: rgba(30, 58, 95, 0.12);
-  --bg-primary-light: #F0F4F8;
+  /* Layout */
+  --sidebar-bg: var(--brand-navy);
+  --sidebar-text: var(--white);
+  --card-border: var(--line);
+  --card-shadow: none; /* BRAND RULE: No drop shadows */
   
-  /* Accent colors - Gold */
-  --color-accent: var(--brand-gold);
-  --color-accent-hover: #B8894E;
-  --color-accent-light: #F5EBE0;
+  /* Glass Utilities — Official KPCA Premium Glass */
+  --glass-bg: rgba(0, 72, 120, 0.04);
+  --glass-stroke: rgba(0, 72, 120, 0.1);
+  --glass-blur: 12px;
+  --glass-navy: rgba(0, 40, 70, 0.95);
+  --glass-navy-light: rgba(0, 72, 120, 0.85);
   
-  /* Success & Danger */
-  --color-success: #10b981;
-  --color-success-hover: #059669;
-  --color-bg-success: #ECFDF5;
+  /* Accent colors - Official Tints */
+  --color-accent: var(--brand-navy);
+  --color-accent-hover: var(--brand-navy-900);
+  --color-accent-light: var(--paper);
+  
+  /* Success & Danger - Brand Secondary Palette */
+  --color-success: #3880C0; /* Mid Blue */
+  --color-success-hover: #1E5FA8;
+  --color-bg-success: #EEF2F6;
+  --color-success-light: #EEF2F6;
+  --color-success-text: #004878;
+  --color-success-ring: rgba(0, 72, 120, 0.1);
   
   --color-danger: var(--brand-red);
   --color-danger-hover: #9E1B22;
@@ -111,11 +104,11 @@
   --color-warning-ring: rgba(240, 184, 60, 0.1);
 
   /* Borders */
-  --border: #e2e8f0; /* slate-200 */
-  --border-default: #e2e8f0;
-  --border-light: rgba(226, 232, 240, 0.5);
+  --border: #E5E7EB;
+  --border-default: #E5E7EB;
+  --border-light: rgba(229, 231, 235, 0.5);
   --border-glass: rgba(255, 255, 255, 0.5);
-  --border-focus: rgba(37, 99, 235, 0.5); /* Corrected from instruction typo */
+  --border-focus: rgba(37, 99, 235, 0.5);
 
   /* Violet — Admin / Premium */
   --color-violet: #7C3AED;
@@ -142,61 +135,26 @@
   --color-orange-ring: rgba(245, 158, 11, 0.2);
   --color-orange-glow: rgba(245, 158, 11, 0.1);
 
-  /* Layered Shadows — tinted for depth */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  --shadow-card-hover: 0 8px 24px rgba(15, 23, 42, 0.1), 0 2px 8px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 1);
-  --shadow-dropdown: 0 8px 32px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.06);
-  --shadow-modal: 0 20px 60px rgba(15, 23, 42, 0.18), 0 4px 16px rgba(15, 23, 42, 0.08);
-  --shadow-focus: 0 0 0 3px var(--color-primary-ring);
+  /* Layers */
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-card: none;
+  --shadow-card-hover: none;
+  --shadow-dropdown: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.1);
 
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #4F46E5 100%);
-  --gradient-success: linear-gradient(135deg, #059669 0%, #0D9488 100%);
-  --gradient-warm: linear-gradient(135deg, #EA580C 0%, #D97706 100%);
-  --gradient-cool: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
-  --gradient-surface: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
-  --gradient-mesh: radial-gradient(at 20% 20%, rgba(37, 99, 235, 0.05) 0, transparent 50%),
-    radial-gradient(at 80% 80%, rgba(79, 70, 229, 0.04) 0, transparent 50%);
-
-  /* Radius */
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-  --radius-2xl: 28px;
-  --radius-full: 9999px;
+  /* Radius (Strict Minimalist) */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-full: 0px;
 
   /* Transitions */
   --transition-fast: all 0.1s ease;
   --transition-base: all 0.2s ease;
-}
-
-/* Glassmorphism Classes */
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-premium);
-}
-
-.glass-panel-navy {
-  background: var(--glass-bg-navy);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border-navy);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-}
-
-.rim-light-top {
-  box-shadow: inset 0 1px 0 0 var(--rim-light);
-}
-
-.rim-light-blue {
-  box-shadow: inset 0 0 0 1px var(--rim-light-blue);
 }
 
 /* ── Base ─────────────────────────────────────────────────────── */

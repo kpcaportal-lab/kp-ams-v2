@@ -421,15 +421,15 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           >
             <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-brand-navy">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-brand-gold/20 flex items-center justify-center border border-brand-gold/30">
-                  <LifeBuoy size={20} className="text-brand-gold" />
+                <div className="w-10 h-10 rounded-none bg-white/10 flex items-center justify-center border border-white/20">
+                  <LifeBuoy size={20} className="text-brand-red" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-brand-gold font-accent tracking-tight">Support Center</h2>
-                  <p className="text-[11px] text-brand-gold/60 font-medium">How can we help you today?</p>
+                  <h2 className="text-lg font-black text-white tracking-tight">Support Center</h2>
+                  <p className="text-[11px] text-white/60 font-medium">How can we help you today?</p>
                 </div>
               </div>
-              <button onClick={() => setIsTicketModalOpen(false)} className="p-2 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-colors">
+              <button onClick={() => setIsTicketModalOpen(false)} className="p-2 rounded-none hover:bg-white/10 text-white/60 hover:text-white transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -468,8 +468,8 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
               </div>
 
               <div className="flex gap-3 pt-4">
-                <button type="button" onClick={() => setIsTicketModalOpen(false)} className="flex-1 py-3.5 rounded-2xl border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
-                <button type="submit" disabled={creating} className="flex-1 py-3.5 rounded-2xl bg-brand-navy text-brand-gold text-sm font-black shadow-xl shadow-brand-navy/10 hover:shadow-brand-navy/20 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50">
+                <button type="button" onClick={() => setIsTicketModalOpen(false)} className="flex-1 py-3.5 rounded-none border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-50 transition-all">Cancel</button>
+                <button type="submit" disabled={creating} className="flex-1 py-3.5 rounded-none bg-brand-navy text-white text-sm font-black transition-all active:scale-[0.98] disabled:opacity-50">
                   {creating ? 'Sending...' : 'Submit Issue'}
                 </button>
               </div>

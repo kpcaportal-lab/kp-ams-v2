@@ -50,44 +50,45 @@ function KPMark({ className, size = 48 }: { className?: string; size?: number })
 export function BrandedLogo({ 
   variant = 'full', 
   theme = 'light',
+  hideText = false,
   className = '' 
 }: { 
   variant?: 'full' | 'monogram'; 
   theme?: 'light' | 'dark';
+  hideText?: boolean;
   className?: string;
 }) {
   const isDark = theme === 'dark';
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> parent of 99e063a (Merge branch 'master' of https://github.com/kpcaportal-lab/kp-ams-v2)
   if (variant === 'monogram') {
     return (
       <div className={cn(
-        "flex items-center justify-center rounded-[1rem] font-black shadow-lg transition-all duration-500 group-hover:scale-110 border",
-        isDark ? "bg-white/10 border-white/10 text-white" : "bg-brand-navy border-brand-navy/10 text-white",
+        "flex items-center justify-center transition-all duration-500",
         className
-      )} style={{ width: '48px', height: '48px', fontSize: '20px', letterSpacing: '-0.05em' }}>
-        <span className="text-brand-gold">K</span>
-        <span className="mx-0.5 text-white/40">&</span>
-        <span className="text-brand-gold">P</span>
+      )}>
+        <KPMark size={56} />
       </div>
     );
   }
 
   return (
-    <div className={cn("flex flex-col items-start leading-none tracking-tight", className)}>
-      <div className="flex items-baseline gap-1">
-        <span className={cn(
-          "text-2xl font-black uppercase font-sans",
-          isDark ? "text-white" : "text-brand-navy"
-        )}>
-          Kirtane <span className="opacity-60">&</span> Pandit
-        </span>
-      </div>
-      <span className={cn(
-        "text-[9px] font-black tracking-[0.3em] uppercase opacity-80",
-        isDark ? "text-brand-gold/90" : "text-brand-navy/70"
-      )}>
-        Chartered Accountants
-      </span>
+    <div className={cn("flex items-center gap-3", className)}>
+      <KPMark size={52} />
+      {!hideText && (
+        <div className="flex flex-col text-left">
+          <span className={cn("font-black text-sm leading-none tracking-tight", isDark ? "text-white" : "text-brand-navy")}>
+            KIRTANE & PANDIT
+          </span>
+          <span className="text-[8px] font-black text-brand-red uppercase tracking-[0.2em] mt-0.5">
+            Management System
+          </span>
+        </div>
+      )}
     </div>
   );
 }
+
