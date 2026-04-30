@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '@/lib/api';
 import { Search, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, formatINR } from '@/lib/utils';
+import { billingPercent, billingPercentColor } from '@/utils/billingPercent';
 import { format } from 'date-fns';
 
 interface AssignmentData {
@@ -13,6 +14,8 @@ interface AssignmentData {
     work_type: string;
     due_date?: string;
     status: string;
+    budget_amount?: number;
+    billed_amount?: number;
 }
 
 interface AssignmentTabProps {
@@ -67,13 +70,16 @@ export function AssignmentTab({ managerId }: AssignmentTabProps) {
                                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Client Name</th>
                                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Work Type</th>
                                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Due Date</th>
+                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Budget</th>
+                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Billed</th>
+                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Billing %</th>
                                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Status</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-20 text-center">
+                                    <td colSpan={8} className="px-6 py-20 text-center">
                                         <div className="flex flex-col items-center gap-3">
                                             <Loader2 size={32} className="text-[var(--brand-navy)] animate-spin" />
                                             <p className="text-sm font-bold text-slate-500 uppercase tracking-widest font-accent">Loading Assignments</p>
@@ -82,7 +88,7 @@ export function AssignmentTab({ managerId }: AssignmentTabProps) {
                                 </tr>
                             ) : data.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-20 text-center text-slate-500 font-medium">
+                                    <td colSpan={8} className="px-6 py-20 text-center text-slate-500 font-medium">
                                         No active assignments.
                                     </td>
                                 </tr>
@@ -99,6 +105,22 @@ export function AssignmentTab({ managerId }: AssignmentTabProps) {
                                     </td>
                                     <td className="px-6 py-4 text-sm font-medium text-slate-600">
                                         {assignment.due_date ? format(new Date(assignment.due_date), 'dd MMM yyyy') : 'N/A'}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm font-bold text-slate-700">
+                                        {formatINR(Number(assignment.budget_amount || 0))}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm font-black text-slate-900">
+                                        {formatINR(Number(assignment.billed_amount || 0))}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {(() => {
+                                            const pct = billingPercent(Number(assignment.billed_amount || 0), Number(assignment.budget_amount || 0));
+                                            return (
+                                                <span className="text-sm font-black" style={{ color: billingPercentColor(pct) }}>
+                                                    {pct}%
+                                                </span>
+                                            );
+                                        })()}
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={cn(

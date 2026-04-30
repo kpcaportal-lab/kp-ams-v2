@@ -1,6 +1,7 @@
 'use client';
 
-import { ChevronDown, ChevronUp, User, Mail, Users, FileText, Briefcase, IndianRupee } from 'lucide-react';
+import { ChevronDown, ChevronUp, User, Mail, Users, FileText, Briefcase, IndianRupee, Wallet } from 'lucide-react';
+import { billingPercent, billingPercentColor } from '@/utils/billingPercent';
 import { formatINR, cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DetailPanel } from './DetailPanel';
@@ -16,6 +17,7 @@ interface ManagerCardProps {
         assignment_count: number;
         proposal_count: number;
         billed_amount: number;
+        total_budget: number;
     };
     isExpanded: boolean;
     onToggle: () => void;
@@ -51,12 +53,32 @@ export function ManagerCard({ manager, isExpanded, onToggle, fiscalYear }: Manag
                     </div>
                 </div>
 
-                {/* Stats Section */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 lg:gap-8 flex-[1.5]">
-                    <StatItem icon={Users} label="Clients" value={manager.client_count} color="navy" />
-                    <StatItem icon={FileText} label="Proposals" value={manager.proposal_count} color="navy" />
-                    <StatItem icon={Briefcase} label="Active" value={manager.assignment_count} color="navy" />
-                    <StatItem icon={IndianRupee} label="Billed" value={manager.billed_amount} color="navy" isCurrency />
+                {/* Stats Section — Two rows for breathing room */}
+                <div className="flex flex-col gap-3 flex-[1.5]">
+                    <div className="grid grid-cols-3 gap-4 lg:gap-8">
+                        <StatItem icon={Users} label="Clients" value={manager.client_count} color="navy" />
+                        <StatItem icon={FileText} label="Proposals" value={manager.proposal_count} color="navy" />
+                        <StatItem icon={Briefcase} label="Active" value={manager.assignment_count} color="navy" />
+                    </div>
+                    <div className="grid grid-cols-3 gap-4 lg:gap-8">
+                        <StatItem icon={Wallet} label="Budget" value={manager.total_budget} color="navy" isCurrency />
+                        <StatItem icon={IndianRupee} label="Billed" value={manager.billed_amount} color="navy" isCurrency />
+                        {/* Billing % with progress bar */}
+                        {(() => {
+                            const pct = billingPercent(Number(manager.billed_amount || 0), Number(manager.total_budget || 0));
+                            return (
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Billing %</p>
+                                    <p className="text-sm font-black" style={{ color: billingPercentColor(pct) }}>
+                                        {pct}%
+                                    </p>
+                                    <div className="w-full h-1 bg-slate-100 rounded-none overflow-hidden">
+                                        <div className="h-full rounded-none transition-all" style={{ width: `${Math.min(pct, 100)}%`, backgroundColor: billingPercentColor(pct) }} />
+                                    </div>
+                                </div>
+                            );
+                        })()}
+                    </div>
                 </div>
 
                 {/* Expand Toggle */}

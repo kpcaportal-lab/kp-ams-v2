@@ -5,6 +5,7 @@ import { InsightsHeader } from '@/components/insights/InsightsHeader';
 import { KPIStrip } from '@/components/insights/KPIStrip';
 import { FilterBar } from '@/components/insights/FilterBar';
 import { ManagerCard } from '@/components/insights/ManagerCard';
+import FirmDrillDown from '@/components/insights/FirmDrillDown';
 import { useAuthStore } from '@/store/authStore';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
@@ -13,6 +14,8 @@ import { toast } from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { formatINR } from '@/lib/utils';
+import { billingPercent, billingPercentColor } from '@/utils/billingPercent';
 
 interface ManagerData {
     id: string;
@@ -25,6 +28,7 @@ interface ManagerData {
     assignment_count: number;
     billed_amount: number;
     billing_pct: number;
+    total_budget: number;
 }
 
 interface SummaryData {
@@ -32,6 +36,19 @@ interface SummaryData {
     totalProposals: number;
     activeAssignments: number;
     totalBilled: number;
+    totalBudget: number;
+    billingPct: number;
+}
+
+interface LeaderData {
+    id: string;
+    name: string;
+    initials: string;
+    role: string;
+    totalClients: number;
+    totalBudget: number;
+    totalBilling: number;
+    billingPct: number;
 }
 
 export default function InsightsPage() {
@@ -49,6 +66,8 @@ export default function InsightsPage() {
     const [managers, setManagers] = useState<ManagerData[]>([]);
     const [loading, setLoading] = useState(true);
     const [expandedManagerId, setExpandedManagerId] = useState<string | null>(null);
+    const [leaders, setLeaders] = useState<LeaderData[]>([]);
+    const [activeDrillCard, setActiveDrillCard] = useState<string | null>(null);
 
     // Role Guard
     useEffect(() => {
@@ -64,15 +83,17 @@ export default function InsightsPage() {
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const [summaryRes, managersRes] = await Promise.all([
+            const [summaryRes, managersRes, leadersRes] = await Promise.all([
                 api.get('/api/insights/summary', { params: { fiscal_year: period } }),
-                api.get('/api/insights/managers', { params: { period, sort: sortBy } })
+                api.get('/api/insights/managers', { params: { period, sort: sortBy } }),
+                api.get('/api/insights/leaders', { params: { fiscal_year: period } })
             ]);
             setSummaryData(summaryRes.data);
             setManagers(managersRes.data.map((m: { display_name?: string; full_name: string }) => ({
                 ...m,
                 display_name: m.display_name || m.full_name
             })));
+            setLeaders(leadersRes.data);
         } catch (err) {
             console.error('Failed to fetch insights:', err);
             toast.error('Failed to load insights data');
@@ -101,7 +122,8 @@ export default function InsightsPage() {
             'Clients': m.client_count,
             'Proposals': m.proposal_count,
             'Assignments': m.assignment_count,
-            'Billed Amount': m.billed_amount
+            'Billed Amount': m.billed_amount,
+            'Total Budget': m.total_budget
         }));
 
         const ws = XLSX.utils.json_to_sheet(dataToExport);
@@ -151,7 +173,68 @@ export default function InsightsPage() {
         <div ref={pageRef} className="pb-20">
             <InsightsHeader onExportPDF={handleExportPDF} onExportExcel={handleExportExcel} />
             
-            <KPIStrip data={summaryData} isLoading={loading} />
+            <KPIStrip
+                data={summaryData}
+                isLoading={loading}
+                onCardClick={(key) => setActiveDrillCard(prev => prev === key ? null : key)}
+                activeCard={activeDrillCard}
+            />
+
+            {/* Firm Drill-Down Panel */}
+            <FirmDrillDown
+                activeCard={activeDrillCard}
+                managers={managers.filter((m: any) => m.role === 'manager' || m.role === 'assistant_manager')}
+                fiscalYear={period}
+                onClose={() => setActiveDrillCard(null)}
+            />
+
+            {/* Partner & Director Insights Section */}
+            {leaders.length > 0 && (
+                <div className="mb-12">
+                    <div className="flex items-center gap-4 mb-6">
+                        <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">Partner & Director Insights</h2>
+                        <div className="flex-1 h-[1px] bg-slate-200" />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {leaders.map((leader) => {
+                            const pct = leader.billingPct;
+                            return (
+                                <div key={leader.id} className="bg-white p-6 rounded-none border border-slate-200 overflow-hidden" style={{ borderTop: '3px solid var(--kp-navy, var(--brand-navy))' }}>
+                                    <div className="flex items-center gap-4 mb-5">
+                                        <div className="w-12 h-12 rounded-none bg-slate-50 flex items-center justify-center text-slate-500 shrink-0 border border-slate-200 text-sm font-black">
+                                            {leader.initials}
+                                        </div>
+                                        <div className="min-w-0">
+                                            <h4 className="text-base font-bold text-slate-900 truncate">{leader.name}</h4>
+                                            <span className="font-black text-brand-navy uppercase text-[9px] bg-slate-50 px-1.5 py-0.5 rounded-none border border-slate-200 tracking-wider">
+                                                {leader.role.replace('_', ' ')}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Clients</p>
+                                            <p className="text-sm font-black text-slate-900">{leader.totalClients}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Budget</p>
+                                            <p className="text-sm font-black text-slate-900">{formatINR(leader.totalBudget)}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Billing</p>
+                                            <p className="text-sm font-black text-slate-900">{formatINR(leader.totalBilling)}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Billing %</p>
+                                            <p className="text-sm font-black" style={{ color: billingPercentColor(pct) }}>{pct}%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
 
             <FilterBar 
                 period={period} setPeriod={setPeriod}

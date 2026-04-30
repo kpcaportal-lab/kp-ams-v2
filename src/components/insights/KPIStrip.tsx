@@ -1,6 +1,7 @@
 'use client';
 
-import { Users, FileText, Briefcase, IndianRupee, TrendingUp } from 'lucide-react';
+import { Users, FileText, Briefcase, IndianRupee, TrendingUp, Wallet, BarChart3 } from 'lucide-react';
+import { billingPercentColor } from '@/utils/billingPercent';
 import { formatINR, cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
@@ -10,16 +11,21 @@ interface KPIStripProps {
         totalProposals: number;
         activeAssignments: number;
         totalBilled: number;
+        totalBudget?: number;
+        billingPct?: number;
     } | null;
     isLoading: boolean;
+    onCardClick?: (drillKey: string) => void;
+    activeCard?: string | null;
 }
 
-export function KPIStrip({ data, isLoading }: KPIStripProps) {
+export function KPIStrip({ data, isLoading, onCardClick, activeCard }: KPIStripProps) {
     const stats = [
         {
             label: 'Total Clients',
             value: data?.totalClients ?? 0,
             icon: Users,
+            drillKey: 'clients',
             color: 'navy',
             bg: 'bg-[var(--navy-50)]',
             text: 'text-[var(--brand-navy)]',
@@ -29,15 +35,17 @@ export function KPIStrip({ data, isLoading }: KPIStripProps) {
             label: 'Total Proposals',
             value: data?.totalProposals ?? 0,
             icon: FileText,
+            drillKey: 'proposals',
             color: 'navy',
             bg: 'bg-[var(--navy-50)]',
             text: 'text-[var(--brand-navy)]',
             border: 'border-[var(--navy-100)]'
         },
         {
-            label: 'Assignments',
+            label: 'Active Assignments',
             value: data?.activeAssignments ?? 0,
             icon: Briefcase,
+            drillKey: 'assignments',
             color: 'navy',
             bg: 'bg-[var(--navy-50)]',
             text: 'text-[var(--brand-navy)]',
@@ -48,6 +56,29 @@ export function KPIStrip({ data, isLoading }: KPIStripProps) {
             value: data?.totalBilled ?? 0,
             isCurrency: true,
             icon: IndianRupee,
+            drillKey: 'billed',
+            color: 'navy',
+            bg: 'bg-[var(--navy-50)]',
+            text: 'text-[var(--brand-navy)]',
+            border: 'border-[var(--navy-100)]'
+        },
+        {
+            label: 'Total Budget',
+            value: data?.totalBudget ?? 0,
+            isCurrency: true,
+            icon: Wallet,
+            drillKey: 'budget',
+            color: 'navy',
+            bg: 'bg-[var(--navy-50)]',
+            text: 'text-[var(--brand-navy)]',
+            border: 'border-[var(--navy-100)]'
+        },
+        {
+            label: 'Billing %',
+            value: data?.billingPct ?? 0,
+            isPercent: true,
+            icon: BarChart3,
+            drillKey: 'billing',
             color: 'navy',
             bg: 'bg-[var(--navy-50)]',
             text: 'text-[var(--brand-navy)]',
@@ -56,14 +87,18 @@ export function KPIStrip({ data, isLoading }: KPIStripProps) {
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {stats.map((stat, idx) => (
                 <motion.div
                     key={stat.label}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="bg-white p-6 rounded-none border border-slate-200 hover:border-brand-navy transition-all relative overflow-hidden group shadow-none"
+                    onClick={() => onCardClick?.(stat.drillKey)}
+                    className={cn(
+                        "bg-white p-6 rounded-none border border-slate-200 hover:border-brand-navy transition-all relative overflow-hidden group shadow-none cursor-pointer select-none",
+                        activeCard === stat.drillKey && "border-brand-navy ring-1 ring-[var(--brand-navy)] bg-[var(--navy-50)]/30"
+                    )}
                 >
                     <div className="flex flex-col gap-5 relative z-10">
                         <div className={cn("w-12 h-12 rounded-none flex items-center justify-center border border-slate-100 transition-all group-hover:bg-brand-navy group-hover:border-brand-navy group-hover:text-white", stat.text)}>
@@ -73,13 +108,18 @@ export function KPIStrip({ data, isLoading }: KPIStripProps) {
                             {isLoading ? (
                                 <div className="h-10 w-32 bg-slate-100 animate-pulse rounded-none mb-2" />
                             ) : (
-                                <h3 className="text-3xl font-black text-brand-navy tracking-tighter mb-1 font-number">
-                                    {stat.isCurrency ? formatINR(stat.value as number) : stat.value.toLocaleString()}
+                                <h3 className="text-3xl font-black tracking-tighter mb-1 font-number" style={stat.isPercent ? { color: billingPercentColor(stat.value as number) } : undefined}>
+                                    {stat.isPercent ? `${stat.value}%` : stat.isCurrency ? formatINR(stat.value as number) : stat.value.toLocaleString()}
                                 </h3>
                             )}
                             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
                                 {stat.label}
                             </p>
+                            {stat.isPercent && !isLoading && (
+                                <div className="mt-2 w-full h-1 bg-slate-100 rounded-none overflow-hidden">
+                                    <div className="h-full rounded-none transition-all" style={{ width: `${Math.min(stat.value as number, 100)}%`, backgroundColor: billingPercentColor(stat.value as number) }} />
+                                </div>
+                            )}
                         </div>
                     </div>
 
