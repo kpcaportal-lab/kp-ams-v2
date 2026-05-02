@@ -102,8 +102,8 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
                   <Building2 className="text-white" size={20} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white uppercase tracking-tight">Edit Client</h2>
-                  <p className="text-xs text-white/60 mt-0.5 font-medium uppercase tracking-widest">Update Profile & Contacts</p>
+                  <h2 className="text-xl font-extrabold text-white uppercase tracking-tight">Edit Client</h2>
+                  <p className="text-xs !text-slate-200 mt-0.5 font-medium uppercase tracking-widest">Update Profile & Contacts</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -129,7 +129,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
               <div className="space-y-4">
                 {/* Client Name */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Institutional Client Name</label>
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Institutional Client Name</label>
                   <input
                     required
                     value={form.name}
@@ -142,7 +142,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
                 <div className="grid grid-cols-2 gap-4">
                   {/* Industry */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Industry</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Industry</label>
                     <input
                       required
                       value={form.industry}
@@ -154,7 +154,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
 
                   {/* Status */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Institutional Status</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Institutional Status</label>
                     <select
                       value={form.status}
                       onChange={(e) => setForm({ ...form, status: e.target.value as 'active' | 'inactive' })}
@@ -169,7 +169,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
                 <div className="grid grid-cols-2 gap-4">
                   {/* GSTN */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">GSTN Identification</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">GSTN Identification</label>
                     <input
                       value={form.gstn}
                       onChange={(e) => setForm({ ...form, gstn: e.target.value })}
@@ -180,7 +180,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
 
                   {/* Internal Notes */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Internal Reference</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Internal Reference</label>
                     <input
                       value={form.notes}
                       onChange={(e) => setForm({ ...form, notes: e.target.value })}
@@ -193,7 +193,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
                 <div className="grid grid-cols-2 gap-4">
                   {/* Address */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Registered Address</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Registered Address</label>
                     <textarea
                       value={form.address}
                       onChange={(e) => setForm({ ...form, address: e.target.value })}
@@ -204,7 +204,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
 
                   {/* Billing Details */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Billing Protocol</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Billing Protocol</label>
                     <textarea
                       value={form.billing_details}
                       onChange={(e) => setForm({ ...form, billing_details: e.target.value })}
@@ -215,14 +215,14 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
                 </div>
 
                 <div className="pt-2 border-t border-slate-100">
-                  <h3 className="text-[10px] font-black text-[var(--brand-navy)] uppercase tracking-widest mb-4 opacity-60">Primary Liaison</h3>
+                  <h3 className="text-[10px] font-extrabold text-[var(--brand-navy)] uppercase tracking-widest mb-4 opacity-60">Primary Liaison</h3>
                   
                   <div className="space-y-4">
                     {/* SPOC Name */}
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2 px-1">
                         <Users size={12} className="text-[var(--brand-red)]" />
-                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Liaison Officer</label>
+                        <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Liaison Officer</label>
                       </div>
                       <input
                         required
@@ -238,7 +238,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
                       <div className="space-y-1.5">
                         <div className="flex items-center gap-2 px-1">
                           <Mail size={12} className="text-[var(--brand-red)]" />
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Institutional Email</label>
+                          <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Institutional Email</label>
                         </div>
                         <input
                           type="email"
@@ -254,7 +254,7 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
                       <div className="space-y-1.5">
                         <div className="flex items-center gap-2 px-1">
                           <Phone size={12} className="text-[var(--brand-red)]" />
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Contact Protocol</label>
+                          <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Contact Protocol</label>
                         </div>
                         <input
                           required
@@ -274,13 +274,13 @@ export default function EditClientModal({ open, setOpen, client }: EditClientMod
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="flex-1 px-6 py-4 border border-slate-200 text-[10px] font-black text-slate-500 hover:bg-slate-50 transition-all rounded-none uppercase tracking-widest"
+                  className="flex-1 px-6 py-4 border border-slate-200 text-[10px] font-extrabold text-slate-500 hover:bg-slate-50 transition-all rounded-none uppercase tracking-widest"
                 >
                   Discard
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-4 bg-[var(--brand-navy)] text-white text-[10px] font-black transition-all flex items-center justify-center gap-2 rounded-none uppercase tracking-widest border-b-2 border-brand-red"
+                  className="flex-1 px-6 py-4 bg-[var(--brand-navy)] text-white text-[10px] font-extrabold transition-all flex items-center justify-center gap-2 rounded-none uppercase tracking-widest border-b-2 border-brand-red"
                 >
                   <Save size={16} />
                   Commit Profile

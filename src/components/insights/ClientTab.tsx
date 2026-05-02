@@ -63,10 +63,10 @@ export function ClientTab({ managerId }: ClientTabProps) {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-[var(--navy-50)]/50 border-b border-slate-200">
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Client Name</th>
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Status</th>
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Onboarded</th>
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider text-right font-accent">Billed Amount</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Client Name</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Status</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Onboarded</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider text-right font-accent">Billed Amount</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -101,7 +101,7 @@ export function ClientTab({ managerId }: ClientTabProps) {
                                     <td className="px-6 py-4 text-sm font-medium text-slate-600">
                                         {client.onboarded_date ? format(new Date(client.onboarded_date), 'dd MMM yyyy') : 'N/A'}
                                     </td>
-                                    <td className="px-6 py-4 text-right font-black text-slate-900">
+                                    <td className="px-6 py-4 text-right font-extrabold text-slate-900">
                                         {formatINR(client.billed_amount ?? 0)}
                                     </td>
                                 </tr>

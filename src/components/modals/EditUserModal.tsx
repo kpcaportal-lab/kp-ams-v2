@@ -104,8 +104,8 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
               <UserCheck className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-white tracking-tight">Modify Personnel Profile</h2>
-              <p className="text-[11px] text-white/60 font-bold uppercase tracking-widest">System Access Authority</p>
+              <h2 className="text-xl font-extrabold text-white tracking-tight">Modify Personnel Profile</h2>
+              <p className="text-[11px] !text-slate-200 font-bold uppercase tracking-widest">System Access Authority</p>
             </div>
           </div>
           <button
@@ -119,7 +119,7 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
         <form onSubmit={handleSubmit} className="p-8 space-y-5 overflow-y-auto max-h-[85vh]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Full Legal Name</label>
+              <label className="text-[10px] font-bold !text-slate-500 uppercase tracking-widest mt-1">Full Legal Name</label>
               <input
                 type="text"
                 required
@@ -131,7 +131,7 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Display Designation</label>
+              <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Display Designation</label>
               <input
                 type="text"
                 className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-semibold focus:border-brand-navy outline-none rounded-none transition-all placeholder:text-slate-300"
@@ -143,9 +143,9 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Direct Reporting Supervisor</label>
+            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Direct Reporting Supervisor</label>
             <select
-              className={`w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none ${!isAdmin ? 'bg-slate-50 cursor-not-allowed opacity-75' : ''}`}
+              className={`w-full px-4 py-3 border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none ${!isAdmin ? 'bg-slate-50 cursor-not-allowed opacity-75' : ''}`}
               value={formData.reports_to}
               onChange={(e) => setFormData({ ...formData, reports_to: e.target.value })}
               disabled={!isAdmin}
@@ -160,7 +160,7 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Institutional Privilege Level</label>
+            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Institutional Privilege Level</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {ROLES.map((role) => (
                 <button
@@ -173,7 +173,7 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
                       : 'bg-white border-slate-200 hover:border-brand-navy/30 hover:bg-slate-50 text-slate-900'
                   }`}
                 >
-                  <span className="text-[13px] font-black tracking-tight">{role.label}</span>
+                  <span className="text-[13px] font-extrabold tracking-tight">{role.label}</span>
                   <span className={`text-[10px] mt-1 line-clamp-1 leading-tight ${
                     formData.role === role.value ? 'text-white/60' : 'text-slate-500'
                   }`}>
@@ -192,7 +192,7 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
               checked={formData.is_active}
               onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
             />
-            <label htmlFor="is_active" className="text-[10px] font-black text-brand-navy uppercase tracking-widest cursor-pointer select-none">
+            <label htmlFor="is_active" className="text-[10px] font-extrabold text-brand-navy uppercase tracking-widest cursor-pointer select-none">
               Account Status: ACTIVE & OPERATIONAL
             </label>
           </div>
@@ -201,14 +201,14 @@ export default function EditUserModal({ isOpen, onClose, onSuccess, user }: Edit
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-4 border border-slate-200 text-xs font-black text-slate-500 hover:bg-slate-50 transition-all rounded-none uppercase tracking-widest"
+              className="flex-1 px-6 py-4 border border-slate-200 text-xs font-extrabold text-slate-500 hover:bg-slate-50 transition-all rounded-none uppercase tracking-widest"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-6 py-4 bg-brand-navy text-white text-xs font-black transition-all border-b-2 border-brand-red flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed rounded-none uppercase tracking-widest hover:bg-slate-800"
+              className="flex-1 px-6 py-4 bg-brand-navy text-white text-xs font-extrabold transition-all border-b-2 border-brand-red flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed rounded-none uppercase tracking-widest hover:bg-slate-800"
             >
               {loading ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-none animate-spin" />

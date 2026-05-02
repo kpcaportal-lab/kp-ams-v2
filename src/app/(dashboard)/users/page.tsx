@@ -134,7 +134,7 @@ export default function UsersPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-4 sm:px-0">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 drop-shadow-none uppercase">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 drop-shadow-none uppercase">
             Team <span className="text-brand-red">& Personnel</span>
           </h1>
           <p className="text-slate-500 mt-1 font-bold uppercase text-[10px] tracking-widest">Institutional Human Capital & Access Control</p>
@@ -143,7 +143,7 @@ export default function UsersPage() {
         {isAdmin && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-4 rounded-none bg-brand-navy text-white text-[10px] font-black transition-all border-b-2 border-brand-red active:scale-95 uppercase tracking-widest"
+            className="flex items-center gap-2 px-6 py-4 rounded-none bg-brand-navy text-white text-[10px] font-extrabold transition-all border-b-2 border-brand-red active:scale-95 uppercase tracking-widest"
           >
             <Plus size={16} strokeWidth={3} className="text-white" />
             Enroll New Member
@@ -171,9 +171,9 @@ export default function UsersPage() {
               <div className={cn("p-2 rounded-none transition-transform", s.bg, s.color)}>
                 <s.icon size={18} strokeWidth={2.5} />
               </div>
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.label}</span>
+              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{s.label}</span>
             </div>
-            <div className="text-3xl font-black text-slate-900 tracking-tighter">{s.val}</div>
+            <div className="text-3xl font-extrabold text-slate-900 tracking-tighter">{s.val}</div>
           </motion.div>
         ))}
       </div>
@@ -196,7 +196,7 @@ export default function UsersPage() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="bg-white border border-slate-200 rounded-none pl-10 pr-10 py-4 text-[10px] font-black text-slate-700 focus:outline-none focus:border-brand-navy transition-all outline-none appearance-none cursor-pointer shadow-none uppercase tracking-widest"
+              className="bg-white border border-slate-200 rounded-none pl-10 pr-10 py-4 text-[10px] font-extrabold text-slate-700 focus:outline-none focus:border-brand-navy transition-all outline-none appearance-none cursor-pointer shadow-none uppercase tracking-widest"
             >
               <option value="all">All Roles</option>
               {Object.keys(roleConfig).map(r => (
@@ -236,15 +236,15 @@ export default function UsersPage() {
 
                 <div className="flex items-center gap-5 mb-8">
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-none bg-brand-navy text-white flex items-center justify-center font-black text-2xl border border-brand-navy transition-transform duration-500">
+                    <div className="w-16 h-16 rounded-none bg-brand-navy text-white flex items-center justify-center font-extrabold text-2xl border border-brand-navy transition-transform duration-500">
                       {(user.full_name || 'U').charAt(0)}
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase group-hover:text-brand-navy transition-colors">
+                    <h3 className="text-xl font-extrabold text-slate-900 tracking-tight uppercase group-hover:text-brand-navy transition-colors">
                       {user.full_name}
                     </h3>
-                    <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-black uppercase tracking-widest mt-0.5">
+                    <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-extrabold uppercase tracking-widest mt-0.5">
                       <Mail size={12} strokeWidth={3} className="text-brand-navy/40" />
                       {user.email}
                     </div>
@@ -253,12 +253,12 @@ export default function UsersPage() {
 
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <div className="px-4 py-2 rounded-none bg-brand-navy text-white text-[9px] font-black uppercase tracking-[0.2em] border border-brand-navy flex items-center gap-2 shadow-none">
+                    <div className="px-4 py-2 rounded-none bg-brand-navy text-white text-[9px] font-extrabold uppercase tracking-[0.2em] border border-brand-navy flex items-center gap-2 shadow-none">
                       <config.icon size={12} strokeWidth={3} className="text-white" />
                       {user.role.replace('_', ' ')}
                     </div>
                     {!user.is_active && (
-                      <div className="px-4 py-2 rounded-none bg-rose-50 text-rose-700 border border-rose-200 text-[9px] font-black uppercase tracking-widest">
+                      <div className="px-4 py-2 rounded-none bg-rose-50 text-rose-700 border border-rose-200 text-[9px] font-extrabold uppercase tracking-widest">
                         Deactivated
                       </div>
                     )}
@@ -270,17 +270,17 @@ export default function UsersPage() {
                         <ArrowUpRight size={14} strokeWidth={3} />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Supervisory Entity</span>
-                        <span className="text-xs font-black text-slate-700 uppercase tracking-tight truncate">{user.reports_to_name}</span>
+                        <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Supervisory Entity</span>
+                        <span className="text-xs font-extrabold text-slate-700 uppercase tracking-tight truncate">{user.reports_to_name}</span>
                       </div>
                     </div>
                   )}
                 </div>
 
                 <div className="mt-10 pt-6 border-t border-slate-100 flex items-center justify-between">
-                  <div className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] leading-tight">
+                  <div className="text-[9px] font-extrabold text-slate-400 uppercase tracking-[0.2em] leading-tight">
                     Enrolled Date<br />
-                    <span className="text-brand-navy text-xs font-black tracking-normal uppercase">
+                    <span className="text-brand-navy text-xs font-extrabold tracking-normal uppercase">
                       {user.created_at ? new Date(user.created_at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : 'N/A'}
                     </span>
                   </div>
@@ -328,11 +328,11 @@ export default function UsersPage() {
           <div className="w-20 h-20 rounded-none bg-white flex items-center justify-center text-slate-200 shadow-none mb-6 border border-slate-100">
             <Search size={40} />
           </div>
-          <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2 uppercase">No personnel matching search</h3>
+          <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight mb-2 uppercase">No personnel matching search</h3>
           <p className="text-slate-500 font-bold uppercase text-[10px] tracking-widest max-w-sm">No records found matching current query parameters.</p>
           <button 
             onClick={() => { setSearch(''); setRoleFilter('all'); }}
-            className="mt-8 text-brand-navy font-black text-[10px] uppercase tracking-[0.2em] hover:underline"
+            className="mt-8 text-brand-navy font-extrabold text-[10px] uppercase tracking-[0.2em] hover:underline"
           >
              Reset Filters
           </button>

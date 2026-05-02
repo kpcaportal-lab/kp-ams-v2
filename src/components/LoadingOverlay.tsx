@@ -32,7 +32,7 @@ export function LoadingOverlay() {
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <span className="text-2xl font-black text-white tracking-[0.3em] uppercase mb-1">
+            <span className="text-2xl font-extrabold text-white tracking-[0.3em] uppercase mb-1">
               Initializing
             </span>
             <div className="flex gap-1.5">
@@ -45,7 +45,7 @@ export function LoadingOverlay() {
               ))}
             </div>
           </div>
-          <p className="mt-6 text-blue-200/60 text-[10px] font-black tracking-[0.2em] uppercase">
+          <p className="mt-6 text-blue-200/60 text-[10px] font-extrabold tracking-[0.2em] uppercase">
             KP Enterprise Systems Secured
           </p>
         </div>

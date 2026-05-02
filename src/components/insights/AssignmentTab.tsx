@@ -66,14 +66,14 @@ export function AssignmentTab({ managerId }: AssignmentTabProps) {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-[var(--navy-50)]/50 border-b border-slate-200">
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Assignment ID</th>
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Client Name</th>
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Work Type</th>
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Due Date</th>
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Budget</th>
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Billed</th>
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Billing %</th>
-                                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent">Status</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Assignment ID</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Client Name</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Work Type</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Due Date</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Budget</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Billed</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Billing %</th>
+                                <th className="px-6 py-4 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Status</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -109,14 +109,14 @@ export function AssignmentTab({ managerId }: AssignmentTabProps) {
                                     <td className="px-6 py-4 text-sm font-bold text-slate-700">
                                         {formatINR(Number(assignment.budget_amount || 0))}
                                     </td>
-                                    <td className="px-6 py-4 text-sm font-black text-slate-900">
+                                    <td className="px-6 py-4 text-sm font-extrabold text-slate-900">
                                         {formatINR(Number(assignment.billed_amount || 0))}
                                     </td>
                                     <td className="px-6 py-4">
                                         {(() => {
                                             const pct = billingPercent(Number(assignment.billed_amount || 0), Number(assignment.budget_amount || 0));
                                             return (
-                                                <span className="text-sm font-black" style={{ color: billingPercentColor(pct) }}>
+                                                <span className="text-sm font-extrabold" style={{ color: billingPercentColor(pct) }}>
                                                     {pct}%
                                                 </span>
                                             );

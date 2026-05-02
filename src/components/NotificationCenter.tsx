@@ -62,7 +62,7 @@ export function NotificationCenter() {
       >
         <Bell size={20} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-brand-red text-white text-[10px] font-black rounded-none flex items-center justify-center border border-white">
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-brand-red text-white text-[10px] font-extrabold rounded-none flex items-center justify-center border border-white">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -79,13 +79,13 @@ export function NotificationCenter() {
           >
             <div className="px-5 py-4 border-b border-white/5 flex justify-between items-center bg-brand-navy">
               <div>
-                <h3 className="text-sm font-black text-white">Notifications</h3>
-                <p className="text-[10px] text-white/60 font-bold uppercase tracking-widest">{unreadCount} UNREAD MESSAGES</p>
+                <h3 className="text-sm font-extrabold text-white">Notifications</h3>
+                <p className="text-[10px] !text-slate-200 font-bold uppercase tracking-widest">{unreadCount} UNREAD MESSAGES</p>
               </div>
               {unreadCount > 0 && (
                 <button 
                   onClick={() => markAllAsRead()}
-                  className="text-[11px] font-black text-white/80 hover:text-white flex items-center gap-1.5 px-3 py-1.5 rounded-none hover:bg-white/10 transition-colors uppercase tracking-wider"
+                  className="text-[11px] font-extrabold text-white/80 hover:text-white flex items-center gap-1.5 px-3 py-1.5 rounded-none hover:bg-white/10 transition-colors uppercase tracking-wider"
                 >
                   <Check size={14} strokeWidth={3} /> Mark all read
                 </button>
@@ -98,7 +98,7 @@ export function NotificationCenter() {
                   <div className="w-16 h-16 bg-slate-50 rounded-none flex items-center justify-center mb-4 border border-slate-100">
                     <Bell className="text-slate-200" size={32} />
                   </div>
-                  <h4 className="text-sm font-black text-slate-900">All caught up!</h4>
+                  <h4 className="text-sm font-extrabold text-slate-900">All caught up!</h4>
                   <p className="text-xs text-slate-400 mt-1 font-medium">No new notifications at the moment.</p>
                 </div>
               ) : (
@@ -148,7 +148,7 @@ export function NotificationCenter() {
             <div className="p-3 bg-slate-50 border-t border-slate-100">
               <button 
                 onClick={() => { router.push('/profile'); setIsOpen(false); }}
-                className="w-full py-2.5 rounded-none bg-white border border-slate-200 text-[11px] font-black text-brand-navy uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-[0.98]"
+                className="w-full py-2.5 rounded-none bg-white border border-slate-200 text-[11px] font-extrabold text-brand-navy uppercase tracking-widest hover:bg-slate-100 transition-all active:scale-[0.98]"
               >
                 Settings & Preferences
               </button>

@@ -55,7 +55,7 @@ export default function WorkProgressPage() {
       <div className="w-20 h-20 bg-slate-50 rounded-none flex items-center justify-center mb-4 border border-slate-100 shadow-none">
         <Target className="w-10 h-10 text-slate-200" />
       </div>
-      <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">No Data Found</h3>
+      <h3 className="text-xl font-extrabold text-slate-900 uppercase tracking-tight">No Data Found</h3>
       <p className="text-slate-500 max-w-xs mt-2 font-medium italic">We couldn&apos;t find any assignment progress associated with your account yet.</p>
     </div>
   );
@@ -112,9 +112,9 @@ export default function WorkProgressPage() {
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-brand-red/10 border border-brand-red/20 mb-3">
               <TrendingUp className="w-3.5 h-3.5 text-brand-red" />
-              <span className="text-[10px] font-black text-brand-red uppercase tracking-widest leading-none">Performance Insights</span>
+              <span className="text-[10px] font-extrabold text-brand-red uppercase tracking-widest leading-none">Performance Insights</span>
             </div>
-            <h1 className="text-5xl font-black text-slate-900 tracking-tightest leading-tight">
+            <h1 className="text-5xl font-extrabold text-slate-900 tracking-tightest leading-tight">
               My Work <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-navy to-brand-red">Progress</span>
             </h1>
             <p className="text-slate-500 text-lg font-medium max-w-2xl italic">
@@ -123,8 +123,8 @@ export default function WorkProgressPage() {
           </div>
           <div className="flex gap-3">
             <div className="px-6 py-5 bg-white border border-slate-200 rounded-none shadow-none">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Total Assignments</p>
-              <p className="text-3xl font-black text-slate-900 tabular-nums">{progress.total_proposals}</p>
+              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Total Assignments</p>
+              <p className="text-3xl font-extrabold text-slate-900 tabular-nums">{progress.total_proposals}</p>
             </div>
           </div>
         </div>
@@ -159,8 +159,8 @@ export default function WorkProgressPage() {
               </div>
               
               <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1.5">{kpi.label}</p>
-                <h3 className="text-3xl font-black text-slate-900 tracking-tight tabular-nums">{kpi.value}</h3>
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-1.5">{kpi.label}</p>
+                <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">{kpi.value}</h3>
                 <p className="text-xs font-bold text-slate-500 mt-2 italic">{kpi.description}</p>
               </div>
             </div>
@@ -197,21 +197,21 @@ function UserProgressCard({ user }: { user: UserWorkProgress }) {
               </div>
             </div>
             <div>
-              <h3 className="text-3xl font-black text-slate-900 tracking-tight font-accent uppercase">{user.user_name}</h3>
+              <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight font-accent uppercase">{user.user_name}</h3>
               <p className="text-slate-500 font-bold mt-1.5 flex items-center gap-2">
                 Senior Consultant <span className="w-1.5 h-1.5 rounded-none bg-slate-300" /> 
-                <span className="text-brand-red font-black uppercase tracking-wider">{user.total_proposals} Proposals Tracked</span>
+                <span className="text-brand-red font-extrabold uppercase tracking-wider">{user.total_proposals} Proposals Tracked</span>
               </p>
             </div>
           </div>
           
           <div className="flex items-center gap-10">
             <div className="text-right">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Efficiency Score</p>
+              <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Efficiency Score</p>
               <div className="flex items-center gap-3">
-                <span className="text-4xl font-black text-slate-900 tracking-tight tabular-nums">{user.completed_percentage}%</span>
+                <span className="text-4xl font-extrabold text-slate-900 tracking-tight tabular-nums">{user.completed_percentage}%</span>
                 <div className="w-14 h-14 rounded-none border-[4px] border-emerald-500 flex items-center justify-center shadow-none">
-                  <span className="text-xs font-black text-emerald-600">A+</span>
+                  <span className="text-xs font-extrabold text-emerald-600">A+</span>
                 </div>
               </div>
             </div>
@@ -224,14 +224,14 @@ function UserProgressCard({ user }: { user: UserWorkProgress }) {
         <div className="mb-16">
           <div className="flex justify-between items-end mb-6">
             <div>
-              <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.3em] mb-2">Success Trajectory</h4>
+              <h4 className="text-[11px] font-extrabold text-slate-900 uppercase tracking-[0.3em] mb-2">Success Trajectory</h4>
               <p className="text-sm font-medium text-slate-500 italic">Combined completion progress across all active cycles.</p>
             </div>
             <div className="flex gap-6">
-              <div className="flex items-center gap-2.5 text-[10px] font-black text-emerald-600 uppercase tracking-widest">
+              <div className="flex items-center gap-2.5 text-[10px] font-extrabold text-emerald-600 uppercase tracking-widest">
                 <div className="w-3 h-3 rounded-none bg-emerald-500 shadow-none" /> Cleared
               </div>
-              <div className="flex items-center gap-2.5 text-[10px] font-black text-slate-300 uppercase tracking-widest">
+              <div className="flex items-center gap-2.5 text-[10px] font-extrabold text-slate-300 uppercase tracking-widest">
                 <div className="w-3 h-3 rounded-none bg-slate-200" /> Pipeline
               </div>
             </div>
@@ -259,11 +259,11 @@ function UserProgressCard({ user }: { user: UserWorkProgress }) {
                   <CheckCircle className="w-6 h-6" strokeWidth={2.5} />
                 </div>
                 <div>
-                  <h4 className="text-xl font-black text-slate-900 tracking-tight uppercase">Cleared</h4>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Revenue Realized</p>
+                  <h4 className="text-xl font-extrabold text-slate-900 tracking-tight uppercase">Cleared</h4>
+                  <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em]">Revenue Realized</p>
                 </div>
               </div>
-              <span className="px-4 py-2 rounded-none bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest shadow-none">{user.completed_proposals} Items</span>
+              <span className="px-4 py-2 rounded-none bg-emerald-500 text-white text-[10px] font-extrabold uppercase tracking-widest shadow-none">{user.completed_proposals} Items</span>
             </div>
 
             <div className="space-y-4">
@@ -275,27 +275,27 @@ function UserProgressCard({ user }: { user: UserWorkProgress }) {
                     className="flex justify-between items-center p-6 bg-white border border-slate-100 rounded-none group transition-all duration-300 hover:shadow-none hover:border-emerald-100"
                   >
                     <div className="flex items-center gap-5">
-                      <div className="w-12 h-12 rounded-none bg-slate-50 border border-slate-100 flex items-center justify-center font-black text-slate-300 text-sm shadow-none group-hover:text-emerald-500 group-hover:border-emerald-100 group-hover:bg-emerald-50/30 transition-all">
+                      <div className="w-12 h-12 rounded-none bg-slate-50 border border-slate-100 flex items-center justify-center font-extrabold text-slate-300 text-sm shadow-none group-hover:text-emerald-500 group-hover:border-emerald-100 group-hover:bg-emerald-50/30 transition-all">
                         {String(index + 1).padStart(2, '0')}
                       </div>
                       <div>
-                        <span className="text-[15px] font-black text-slate-900 block leading-none">{item.client_name}</span>
-                        <span className="text-[10px] font-black text-slate-400 mt-2 uppercase tracking-widest block italic">Engagement Verified</span>
+                        <span className="text-[15px] font-extrabold text-slate-900 block leading-none">{item.client_name}</span>
+                        <span className="text-[10px] font-extrabold text-slate-400 mt-2 uppercase tracking-widest block italic">Engagement Verified</span>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-[15px] font-black text-emerald-600 block leading-none tabular-nums">{formatIndianCurrency(item.proposal_amount, true, true)}</span>
-                      <span className="text-[9px] font-black text-emerald-500/50 uppercase tracking-widest mt-2 block">Settled</span>
+                      <span className="text-[15px] font-extrabold text-emerald-600 block leading-none tabular-nums">{formatIndianCurrency(item.proposal_amount, true, true)}</span>
+                      <span className="text-[9px] font-extrabold text-emerald-500/50 uppercase tracking-widest mt-2 block">Settled</span>
                     </div>
                   </motion.div>
                 ))
               ) : (
                 <div className="p-16 text-center border-2 border-dashed border-slate-100 rounded-none bg-slate-50/50">
-                  <p className="text-slate-300 font-black uppercase tracking-widest italic">No cleared items registry</p>
+                  <p className="text-slate-300 font-extrabold uppercase tracking-widest italic">No cleared items registry</p>
                 </div>
               )}
               {user.completed_items.length > 5 && (
-                <button className="w-full py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-brand-red transition-colors border border-slate-100 rounded-none hover:bg-slate-50">
+                <button className="w-full py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hover:text-brand-red transition-colors border border-slate-100 rounded-none hover:bg-slate-50">
                   View {user.completed_items.length - 5} additional archives 
                 </button>
               )}
@@ -310,11 +310,11 @@ function UserProgressCard({ user }: { user: UserWorkProgress }) {
                   <Clock className="w-6 h-6" strokeWidth={2.5} />
                 </div>
                 <div>
-                  <h4 className="text-xl font-black text-slate-900 tracking-tight uppercase">Pipeline</h4>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Awaiting Finalization</p>
+                  <h4 className="text-xl font-extrabold text-slate-900 tracking-tight uppercase">Pipeline</h4>
+                  <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em]">Awaiting Finalization</p>
                 </div>
               </div>
-              <span className="px-4 py-2 rounded-none bg-brand-red text-white text-[10px] font-black uppercase tracking-widest shadow-none">{user.pending_proposals} Items</span>
+              <span className="px-4 py-2 rounded-none bg-brand-red text-white text-[10px] font-extrabold uppercase tracking-widest shadow-none">{user.pending_proposals} Items</span>
             </div>
 
             <div className="space-y-4">
@@ -326,32 +326,32 @@ function UserProgressCard({ user }: { user: UserWorkProgress }) {
                     className="flex justify-between items-center p-6 bg-white border border-slate-100 rounded-none group transition-all duration-300 hover:shadow-none hover:border-brand-red/30"
                   >
                     <div className="flex items-center gap-5">
-                      <div className="w-12 h-12 rounded-none bg-slate-50 border border-slate-100 flex items-center justify-center font-black text-slate-300 text-sm shadow-none group-hover:text-brand-red group-hover:border-brand-red/20 group-hover:bg-brand-red/5 transition-all">
+                      <div className="w-12 h-12 rounded-none bg-slate-50 border border-slate-100 flex items-center justify-center font-extrabold text-slate-300 text-sm shadow-none group-hover:text-brand-red group-hover:border-brand-red/20 group-hover:bg-brand-red/5 transition-all">
                         {String(index + 1).padStart(2, '0')}
                       </div>
                       <div>
-                        <span className="text-[15px] font-black text-slate-900 block leading-none">{item.client_name}</span>
-                        <span className="text-[10px] font-black text-slate-400 mt-2 uppercase tracking-widest block italic">Expected Clearance</span>
+                        <span className="text-[15px] font-extrabold text-slate-900 block leading-none">{item.client_name}</span>
+                        <span className="text-[10px] font-extrabold text-slate-400 mt-2 uppercase tracking-widest block italic">Expected Clearance</span>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="flex items-center gap-2 justify-end mb-2">
                         <Calendar className="w-3.5 h-3.5 text-brand-red" />
-                        <span className="text-[11px] font-black text-slate-600 uppercase tracking-tighter">
+                        <span className="text-[11px] font-extrabold text-slate-600 uppercase tracking-tighter">
                           {item.tentative_date ? new Date(item.tentative_date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : 'TBD'}
                         </span>
                       </div>
-                      <span className="text-[15px] font-black text-brand-navy block leading-none tabular-nums">{formatIndianCurrency(item.proposal_amount, true, true)}</span>
+                      <span className="text-[15px] font-extrabold text-brand-navy block leading-none tabular-nums">{formatIndianCurrency(item.proposal_amount, true, true)}</span>
                     </div>
                   </motion.div>
                 ))
               ) : (
                 <div className="p-16 text-center border-2 border-dashed border-slate-100 rounded-none bg-slate-50/50">
-                  <p className="text-slate-300 font-black uppercase tracking-widest italic">No pending items in queue</p>
+                  <p className="text-slate-300 font-extrabold uppercase tracking-widest italic">No pending items in queue</p>
                 </div>
               )}
               {user.pending_items.length > 5 && (
-                <button className="w-full py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-brand-navy transition-colors border border-slate-100 rounded-none hover:bg-slate-50">
+                <button className="w-full py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest hover:text-brand-navy transition-colors border border-slate-100 rounded-none hover:bg-slate-50">
                   View {user.pending_items.length - 5} additional pipeline 
                 </button>
               )}

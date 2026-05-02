@@ -13,6 +13,7 @@ import EditProposalModal from '@/components/modals/EditProposalModal';
 import { Proposal } from '@/types';
 
 import LoadingScreen from '@/components/ui/LoadingScreen';
+import BudgetAnalytics from '@/components/proposals/BudgetAnalytics';
 
 export default function ProposalListPage() {
   const { proposals, isLoading, fetchProposals } = useProposalStore();
@@ -164,7 +165,7 @@ export default function ProposalListPage() {
       
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 drop-shadow-sm font-accent">
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 drop-shadow-sm font-accent">
             Strategic <span className="text-brand-red">Proposals</span>
           </h1>
           <p className="text-slate-500 mt-1 font-medium italic">Business development and proposal lifecycle tracking</p>
@@ -172,7 +173,7 @@ export default function ProposalListPage() {
         <div className="flex items-center gap-3">
           <button 
             onClick={handleExport}
-            className="flex items-center gap-2.5 bg-white text-slate-700 px-6 py-3 rounded-none font-black border border-slate-200 hover:bg-slate-50 transition-all shadow-none active:scale-95"
+            className="flex items-center gap-2.5 bg-white text-slate-700 px-6 py-3 rounded-none font-extrabold border border-slate-200 hover:bg-slate-50 transition-all shadow-none active:scale-95"
           >
             <Download size={18} strokeWidth={3} className="text-emerald-500" /> 
             <span>Export Registry</span>
@@ -181,7 +182,7 @@ export default function ProposalListPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2 bg-brand-navy text-white px-6 py-3 rounded-none font-black shadow-none transition-all border border-slate-800"
+            className="flex items-center gap-2 bg-brand-navy text-white px-6 py-3 rounded-none font-extrabold shadow-none transition-all border border-slate-800"
           >
             <Plus size={20} strokeWidth={3} className="text-brand-red" /> 
             <span>New Proposal</span>
@@ -189,35 +190,7 @@ export default function ProposalListPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          { label: 'Total Proposals', value: stats.total, icon: FileText, color: 'text-brand-navy', bg: 'bg-brand-navy/5' },
-          { label: 'Conversion Rate', value: `${stats.winRate}%`, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { label: 'Won Portfolio', value: formatIndianCurrency(stats.wonValue, true, true), icon: DollarSign, color: 'text-brand-red', bg: 'bg-brand-red/5' },
-          { label: 'Pipeline Value', value: formatIndianCurrency(stats.pendingValue, true, true), icon: Briefcase, color: 'text-slate-600', bg: 'bg-slate-50' },
-        ].map((stat, i) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="group relative overflow-hidden p-7 rounded-none bg-white border border-slate-200/60 shadow-none transition-all duration-400"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">{stat.label}</p>
-                <p className="text-3xl font-black text-slate-900 tabular-nums tracking-tight">{stat.value}</p>
-              </div>
-              <div className={cn(
-                "w-12 h-12 rounded-none flex items-center justify-center transition-all group-hover:scale-110",
-                stat.bg, stat.color
-              )}>
-                <stat.icon size={24} strokeWidth={2.5} />
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+      <BudgetAnalytics />
 
       <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
         <div className="relative flex-1 w-full lg:max-w-md group">
@@ -235,7 +208,7 @@ export default function ProposalListPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="flex-1 lg:flex-none px-6 py-4 rounded-none bg-white border border-slate-200 focus:border-brand-navy outline-none transition-all font-black text-slate-600 shadow-none min-w-[200px] appearance-none cursor-pointer"
+            className="flex-1 lg:flex-none px-6 py-4 rounded-none bg-white border border-slate-200 focus:border-brand-navy outline-none transition-all font-extrabold text-slate-600 shadow-none min-w-[200px] appearance-none cursor-pointer"
           >
             <option value="all">All Engagement Stages</option>
             <option value="pending">🟡 Pipeline Review</option>
@@ -246,7 +219,7 @@ export default function ProposalListPage() {
           <button 
             onClick={() => setShowAdvanced(!showAdvanced)}
             className={cn(
-              "flex items-center justify-center gap-2 px-8 py-4 rounded-none border transition-all shadow-none active:scale-95 text-sm font-black",
+              "flex items-center justify-center gap-2 px-8 py-4 rounded-none border transition-all shadow-none active:scale-95 text-sm font-extrabold",
               showAdvanced ? "bg-brand-navy text-white border-brand-navy" : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
             )}
           >
@@ -263,7 +236,7 @@ export default function ProposalListPage() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6 rounded-none bg-slate-900 text-white shadow-none"
         >
           <div className="space-y-2 text-slate-400">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em]">Strategy Matrix (Partner & Client)</label>
+            <label className="text-[10px] font-extrabold uppercase tracking-[0.2em]">Strategy Matrix (Partner & Client)</label>
             <div className="flex gap-2">
               <select 
                 value={partnerFilter} 
@@ -285,7 +258,7 @@ export default function ProposalListPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Date Range</label>
+            <label className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Date Range</label>
             <div className="flex gap-2">
               <input 
                 type="date" 
@@ -302,7 +275,7 @@ export default function ProposalListPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Amount Range (₹)</label>
+            <label className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Amount Range (₹)</label>
             <div className="flex gap-2">
               <input 
                 type="number" 
@@ -321,7 +294,7 @@ export default function ProposalListPage() {
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Sort Matrix</label>
+            <label className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Sort Matrix</label>
             <div className="flex gap-2">
               <select 
                 value={sortBy} 
@@ -368,12 +341,12 @@ export default function ProposalListPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr>
-                <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Sequence & Date</th>
-                <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Client Portfolio</th>
-                <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Quotation Details</th>
-                <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Engagement Team</th>
-                <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Status</th>
-                <th className="px-8 py-5 text-right font-black text-white bg-brand-navy border-b border-white/5"></th>
+                <th className="px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Sequence & Date</th>
+                <th className="px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Client Portfolio</th>
+                <th className="px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Quotation Details</th>
+                <th className="px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Engagement Team</th>
+                <th className="px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Status</th>
+                <th className="px-8 py-5 text-right font-extrabold text-white bg-brand-navy border-b border-white/5"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100/60">
@@ -396,11 +369,11 @@ export default function ProposalListPage() {
                         <div className="p-2 rounded-none bg-slate-100 text-slate-500 group-hover:bg-brand-red/10 group-hover:text-brand-red transition-colors">
                           <FileText size={18} strokeWidth={2.5} />
                         </div>
-                        <span className="font-black text-slate-900 group-hover:text-brand-navy transition-colors">
+                        <span className="font-extrabold text-slate-900 group-hover:text-brand-navy transition-colors">
                           {proposal.number}
                         </span>
                         {proposal.revision_flag && (
-                          <span className="text-[10px] font-black bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-none border border-amber-200 uppercase">Rev v{proposal.version_number}</span>
+                          <span className="text-[10px] font-extrabold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-none border border-amber-200 uppercase">Rev v{proposal.version_number}</span>
                         )}
                       </div>
                       <div className="text-[10px] text-slate-400 flex items-center gap-1.5 ml-11 font-bold">
@@ -415,19 +388,19 @@ export default function ProposalListPage() {
                           {ASSIGNMENT_TYPE_LABELS[proposal.assignment_type]}
                         </span>
                         <span className="w-1 h-1 rounded-none bg-slate-200" />
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">
+                        <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-tighter">
                           {proposal.proposal_type}
                         </span>
                       </div>
                     </td>
 
                     <td className="px-8 py-6">
-                      <div className="text-lg font-black text-slate-900 mb-0.5 tabular-nums">
+                      <div className="text-lg font-extrabold text-slate-900 mb-0.5 tabular-nums">
                         {formatIndianCurrency(proposal.quotation_amount)}
                       </div>
                       <div className="flex items-center gap-1.5">
                         <span className={cn(
-                          "text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-none text-white font-mono",
+                          "text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-none text-white font-mono",
                           proposal.fee_category === 'new' ? "bg-indigo-500" : "bg-teal-500"
                         )}>
                           {proposal.fee_category || 'N/A'}
@@ -479,7 +452,7 @@ export default function ProposalListPage() {
                         <Search size={40} className="stroke-[1.5]" />
                       </div>
                       <div>
-                        <p className="text-slate-900 font-black text-lg">No proposals found</p>
+                        <p className="text-slate-900 font-extrabold text-lg">No proposals found</p>
                         <p className="text-slate-400 text-sm italic">Adjust your filters or start a new strategic proposal</p>
                       </div>
                     </div>

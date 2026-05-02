@@ -27,11 +27,22 @@
   --font-sans: "Public Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Urbanist", sans-serif;
   
-  /* Neutral Palette */
-  --color-gray-50: #F9FAFB;
-  --color-gray-100: #F3F4F6;
-  --color-gray-200: #E5E7EB;
-  --color-gray-900: #111827;
+  /* Neutral Palette (Slate) */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-brand-white: #ffffff;
   
   /* Radii (Institutional Sharp) */
   --radius-none: 0px;

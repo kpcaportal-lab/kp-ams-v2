@@ -144,7 +144,7 @@ export default function TicketsPage() {
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
                 className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2 font-accent">
+                    <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2 font-accent">
                         <LifeBuoy className="text-brand-navy" size={28} strokeWidth={2.5} />
                         Support Desk
                     </h1>
@@ -152,7 +152,7 @@ export default function TicketsPage() {
                 </div>
                 <button
                     onClick={() => setCreateModalOpen(true)}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-brand-navy hover:bg-slate-900 text-white text-sm font-black shadow-[0_8px_16px_rgba(30,58,95,0.15)] hover:shadow-[0_12px_20px_rgba(30,58,95,0.25)] hover:-translate-y-0.5 transition-all duration-300 uppercase tracking-widest"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-brand-navy hover:bg-slate-900 text-white text-sm font-extrabold shadow-[0_8px_16px_rgba(30,58,95,0.15)] hover:shadow-[0_12px_20px_rgba(30,58,95,0.25)] hover:-translate-y-0.5 transition-all duration-300 uppercase tracking-widest"
                 >
                     <Plus size={18} strokeWidth={3} /> New Ticket
                 </button>
@@ -167,7 +167,7 @@ export default function TicketsPage() {
                             <LifeBuoy size={24} className="text-brand-navy" strokeWidth={2.5} />
                         </div>
                         <div>
-                            <div className="text-3xl font-black text-slate-900 tabular-nums">{stats.total}</div>
+                            <div className="text-3xl font-extrabold text-slate-900 tabular-nums">{stats.total}</div>
                             <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">Total Tickets</div>
                         </div>
                     </div>
@@ -179,7 +179,7 @@ export default function TicketsPage() {
                             <AlertCircle size={24} className="text-brand-red" strokeWidth={2.5} />
                         </div>
                         <div>
-                            <div className="text-3xl font-black text-slate-900 tabular-nums">{stats.open}</div>
+                            <div className="text-3xl font-extrabold text-slate-900 tabular-nums">{stats.open}</div>
                             <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">Open & Working</div>
                         </div>
                     </div>
@@ -191,7 +191,7 @@ export default function TicketsPage() {
                             <CheckCircle size={24} className="text-emerald-600" strokeWidth={2.5} />
                         </div>
                         <div>
-                            <div className="text-3xl font-black text-slate-900 tabular-nums">{stats.resolved}</div>
+                            <div className="text-3xl font-extrabold text-slate-900 tabular-nums">{stats.resolved}</div>
                             <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">Resolved</div>
                         </div>
                     </div>
@@ -231,7 +231,7 @@ export default function TicketsPage() {
                         <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-100 shadow-inner">
                             <LifeBuoy size={28} className="text-slate-300" />
                         </div>
-                        <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">No Tickets Found</h3>
+                        <h3 className="text-lg font-extrabold text-slate-900 uppercase tracking-tight">No Tickets Found</h3>
                         <p className="text-sm text-slate-500 mt-1 font-medium italic">There are no tickets matching your current search parameters.</p>
                     </div>
                 ) : (
@@ -239,11 +239,11 @@ export default function TicketsPage() {
                         <table className="w-full text-sm border-separate border-spacing-0">
                             <thead>
                                 <tr className="bg-brand-navy">
-                                    <th className="text-left px-8 py-5 text-[10px] font-black text-white border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Issue Details</th>
-                                    <th className="text-left px-6 py-5 text-[10px] font-black text-white border-b border-white/5 uppercase tracking-[0.2em]">Priority</th>
-                                    <th className="text-left px-6 py-5 text-[10px] font-black text-white border-b border-white/5 uppercase tracking-[0.2em]">Submitted By</th>
-                                    <th className="text-left px-6 py-5 text-[10px] font-black text-white border-b border-white/5 uppercase tracking-[0.2em]">Created</th>
-                                    <th className="text-right px-8 py-5 text-[10px] font-black text-white border-b border-white/5 uppercase tracking-[0.2em] rounded-tr-[1.5rem]">Status</th>
+                                    <th className="text-left px-8 py-5 text-[10px] font-extrabold text-white border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Issue Details</th>
+                                    <th className="text-left px-6 py-5 text-[10px] font-extrabold text-white border-b border-white/5 uppercase tracking-[0.2em]">Priority</th>
+                                    <th className="text-left px-6 py-5 text-[10px] font-extrabold text-white border-b border-white/5 uppercase tracking-[0.2em]">Submitted By</th>
+                                    <th className="text-left px-6 py-5 text-[10px] font-extrabold text-white border-b border-white/5 uppercase tracking-[0.2em]">Created</th>
+                                    <th className="text-right px-8 py-5 text-[10px] font-extrabold text-white border-b border-white/5 uppercase tracking-[0.2em] rounded-tr-[1.5rem]">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
@@ -302,7 +302,7 @@ export default function TicketsPage() {
                         >
                             <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                                 <div>
-                                    <h2 className="text-xl font-black text-slate-900 tracking-tight font-accent uppercase">Create Ticket</h2>
+                                    <h2 className="text-xl font-extrabold text-slate-900 tracking-tight font-accent uppercase">Create Ticket</h2>
                                     <p className="text-xs text-slate-500 mt-0.5 font-medium italic">Report an issue to our firm&apos;s tech team</p>
                                 </div>
                                 <button
@@ -316,7 +316,7 @@ export default function TicketsPage() {
                             <form onSubmit={handleSubmit} className="p-8 space-y-5">
                                 <div className="space-y-4">
                                     <div className="space-y-1.5">
-                                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Issue Title</label>
+                                        <label className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Issue Title</label>
                                         <input 
                                             type="text" 
                                             value={title}
@@ -329,11 +329,11 @@ export default function TicketsPage() {
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Priority</label>
+                                        <label className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Priority</label>
                                         <select 
                                             value={priority}
                                             onChange={(e) => setPriority(e.target.value as TicketPriority)}
-                                            className="w-full px-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-black focus:outline-none focus:ring-4 focus:ring-brand-navy/10 focus:border-brand-navy focus:bg-white transition-all cursor-pointer appearance-none uppercase tracking-wider"
+                                            className="w-full px-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 text-sm font-extrabold focus:outline-none focus:ring-4 focus:ring-brand-navy/10 focus:border-brand-navy focus:bg-white transition-all cursor-pointer appearance-none uppercase tracking-wider"
                                         >
                                             <option value="low">Low - General query</option>
                                             <option value="medium">Medium - core functionality</option>
@@ -342,7 +342,7 @@ export default function TicketsPage() {
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Detailed Description</label>
+                                        <label className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Detailed Description</label>
                                         <textarea 
                                             value={description}
                                             onChange={(e) => setDescription(e.target.value)}
@@ -354,7 +354,7 @@ export default function TicketsPage() {
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Attachment (Image)</label>
+                                        <label className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Attachment (Image)</label>
                                         <div className="flex items-center gap-4">
                                             <input 
                                                 type="file" 
@@ -365,7 +365,7 @@ export default function TicketsPage() {
                                             />
                                             <label 
                                                 htmlFor="ticket-file"
-                                                className="px-4 py-2.5 bg-white hover:bg-slate-50 rounded-xl text-xs font-black text-brand-navy cursor-pointer transition-all border border-slate-200 border-dashed hover:border-brand-navy uppercase tracking-widest"
+                                                className="px-4 py-2.5 bg-white hover:bg-slate-50 rounded-xl text-xs font-extrabold text-brand-navy cursor-pointer transition-all border border-slate-200 border-dashed hover:border-brand-navy uppercase tracking-widest"
                                             >
                                                 {attachment ? 'Change Image' : 'Select Evidence'}
                                             </label>
@@ -389,14 +389,14 @@ export default function TicketsPage() {
                                     <button
                                         type="button"
                                         onClick={() => setCreateModalOpen(false)}
-                                        className="flex-1 px-6 py-4 rounded-2xl border border-slate-200 text-sm font-black text-slate-500 hover:bg-slate-50 transition-all active:scale-95 uppercase tracking-widest"
+                                        className="flex-1 px-6 py-4 rounded-2xl border border-slate-200 text-sm font-extrabold text-slate-500 hover:bg-slate-50 transition-all active:scale-95 uppercase tracking-widest"
                                     >
                                         Discard
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={creating}
-                                        className="flex-1 px-6 py-4 rounded-2xl bg-brand-navy text-white text-sm font-black shadow-[0_8px_20px_rgba(30,58,95,0.25)] hover:shadow-[0_12px_28px_rgba(30,58,95,0.35)] hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed uppercase tracking-widest"
+                                        className="flex-1 px-6 py-4 rounded-2xl bg-brand-navy text-white text-sm font-extrabold shadow-[0_8px_20px_rgba(30,58,95,0.25)] hover:shadow-[0_12px_28px_rgba(30,58,95,0.35)] hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed uppercase tracking-widest"
                                     >
                                         {creating ? 'Submitting...' : 'Submit Issue'}
                                     </button>
@@ -431,8 +431,8 @@ export default function TicketsPage() {
                                         <LifeBuoy size={24} className="text-white" strokeWidth={2.5} />
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-black text-slate-900 tracking-tight font-accent uppercase">Issue Review</h2>
-                                        <p className="text-[10px] text-slate-400 mt-0.5 font-black uppercase tracking-[0.2em]">IDENTIFIER: #{selectedTicket.id.slice(0, 8)}</p>
+                                        <h2 className="text-xl font-extrabold text-slate-900 tracking-tight font-accent uppercase">Issue Review</h2>
+                                        <p className="text-[10px] text-slate-400 mt-0.5 font-extrabold uppercase tracking-[0.2em]">IDENTIFIER: #{selectedTicket.id.slice(0, 8)}</p>
                                     </div>
                                 </div>
                                 <button
@@ -446,7 +446,7 @@ export default function TicketsPage() {
                             <div className="p-8 overflow-y-auto max-h-[70vh] custom-scrollbar">
                                 <div className="space-y-8">
                                     <div className="space-y-4">
-                                        <div className="text-3xl font-black text-slate-900 leading-tight tracking-tight">{selectedTicket.title}</div>
+                                        <div className="text-3xl font-extrabold text-slate-900 leading-tight tracking-tight">{selectedTicket.title}</div>
                                         <div className="flex items-center gap-3">
                                             {getStatusBadge(selectedTicket.status)}
                                             {getPriorityBadge(selectedTicket.priority)}
@@ -455,17 +455,17 @@ export default function TicketsPage() {
 
                                     <div className="grid grid-cols-2 gap-8 py-8 border-y border-slate-100 bg-slate-50/20 px-4 rounded-3xl">
                                         <div>
-                                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Lead Correspondent</div>
-                                            <div className="text-sm font-black text-brand-navy uppercase tracking-wider">{selectedTicket.submitted_by_name || 'System Generated'}</div>
+                                            <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.3em] mb-2">Lead Correspondent</div>
+                                            <div className="text-sm font-extrabold text-brand-navy uppercase tracking-wider">{selectedTicket.submitted_by_name || 'System Generated'}</div>
                                         </div>
                                         <div>
-                                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Registry Date</div>
-                                            <div className="text-sm font-black text-slate-800">{new Date(selectedTicket.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</div>
+                                            <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.3em] mb-2">Registry Date</div>
+                                            <div className="text-sm font-extrabold text-slate-800">{new Date(selectedTicket.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</div>
                                         </div>
                                     </div>
 
                                     <div className="space-y-3">
-                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Issue Narrative</div>
+                                        <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.3em]">Issue Narrative</div>
                                         <div className="text-base font-medium text-slate-600 leading-relaxed bg-white p-6 rounded-2xl border border-slate-100 shadow-inner italic">
                                             {selectedTicket.description}
                                         </div>
@@ -473,7 +473,7 @@ export default function TicketsPage() {
 
                                     {selectedTicket.attachment_url && (
                                         <div className="space-y-3">
-                                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Evidence Artifact</div>
+                                            <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.3em]">Evidence Artifact</div>
                                             <div className="rounded-[2rem] overflow-hidden border border-slate-200 shadow-xl bg-slate-100 p-2">
                                                 <img src={selectedTicket.attachment_url} alt="Attachment" className="w-full h-auto max-h-[400px] object-contain rounded-[1.5rem]" />
                                             </div>
@@ -483,14 +483,14 @@ export default function TicketsPage() {
                                     {/* Admin Actions */}
                                     {(useAuthStore.getState().user?.role === 'admin' || useAuthStore.getState().user?.role === 'partner' || useAuthStore.getState().user?.role === 'director') && (
                                         <div className="pt-8 border-t border-slate-100 space-y-4">
-                                            <div className="text-[10px] font-black text-brand-navy uppercase tracking-[0.3em]">Administrative Directives</div>
+                                            <div className="text-[10px] font-extrabold text-brand-navy uppercase tracking-[0.3em]">Administrative Directives</div>
                                             <div className="flex flex-wrap gap-2">
                                                 {['open', 'in_progress', 'resolved', 'closed'].map((status) => (
                                                     <button
                                                         key={status}
                                                         onClick={() => handleUpdateStatus(selectedTicket.id, status)}
                                                         className={cn(
-                                                            "px-5 py-2.5 rounded-xl text-[11px] font-black transition-all border uppercase tracking-wider",
+                                                            "px-5 py-2.5 rounded-xl text-[11px] font-extrabold transition-all border uppercase tracking-wider",
                                                             selectedTicket.status === status
                                                                 ? "bg-brand-navy text-white border-brand-navy shadow-lg"
                                                                 : "bg-white text-slate-500 border-slate-200 hover:border-brand-navy/30 hover:text-brand-navy"
@@ -508,7 +508,7 @@ export default function TicketsPage() {
                             <div className="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex justify-end">
                                 <button
                                     onClick={() => setSelectedTicket(null)}
-                                    className="px-8 py-3 rounded-2xl bg-white border border-slate-200 text-xs font-black text-slate-500 hover:text-slate-900 hover:shadow-md transition-all uppercase tracking-[0.2em]"
+                                    className="px-8 py-3 rounded-2xl bg-white border border-slate-200 text-xs font-extrabold text-slate-500 hover:text-slate-900 hover:shadow-md transition-all uppercase tracking-[0.2em]"
                                 >
                                     Dismiss
                                 </button>

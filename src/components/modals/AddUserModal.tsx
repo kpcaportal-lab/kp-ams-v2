@@ -83,8 +83,8 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
       });
     } catch (err) {
       console.error('Error adding user:', err);
-      const errorMessage = err instanceof Error && 'response' in err 
-        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error 
+      const errorMessage = err instanceof Error && 'response' in err
+        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error
         : 'Failed to invite user';
       toast.error(errorMessage || 'Failed to invite user');
     } finally {
@@ -98,14 +98,14 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
         <div className="px-8 py-6 border-b border-white/10 flex items-center justify-between bg-brand-navy relative overflow-hidden">
           {/* Subtle Decorative Element */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 -rotate-45 translate-x-16 -translate-y-16" />
-          
+
           <div className="flex items-center gap-3 relative z-10">
             <div className="w-10 h-10 rounded-none bg-white/10 flex items-center justify-center border border-white/20">
               <UserPlus className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-white tracking-tight uppercase">Invite Team Member</h2>
-              <p className="text-[10px] text-white/60 font-black uppercase tracking-[0.2em]">K&P Workforce Access Portal</p>
+              <h2 className="text-xl font-extrabold !text-white tracking-tight uppercase">Invite Team Member</h2>
+              <p className="text-[10px] !text-slate-200 font-extrabold uppercase tracking-[0.2em]">K&P Workforce Access Portal</p>
             </div>
           </div>
           <button
@@ -119,11 +119,11 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
         <form onSubmit={handleSubmit} className="p-8 space-y-6 overflow-y-auto max-h-[85vh]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Full Legal Name</label>
+              <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Full Legal Name</label>
               <input
                 type="text"
                 required
-                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all placeholder:text-slate-300 uppercase"
+                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none transition-all placeholder:text-slate-300 uppercase"
                 placeholder="John Doe"
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
@@ -131,11 +131,11 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Email Address</label>
+              <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Email Address</label>
               <input
                 type="email"
                 required
-                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all placeholder:text-slate-300"
+                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none transition-all placeholder:text-slate-300"
                 placeholder="john@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -145,10 +145,10 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Display Designation</label>
+              <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Display Designation</label>
               <input
                 type="text"
-                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all placeholder:text-slate-300 uppercase"
+                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none transition-all placeholder:text-slate-300 uppercase"
                 placeholder="John D."
                 value={formData.display_name}
                 onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
@@ -156,10 +156,10 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Secure Extension Pin</label>
+              <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Secure Extension Pin</label>
               <input
                 type="password"
-                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all placeholder:text-slate-300"
+                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none transition-all placeholder:text-slate-300"
                 placeholder="KpAms@2025 (Default)"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -168,10 +168,10 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Supervisor Designation</label>
+            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Supervisor Designation</label>
             <div className="relative">
               <select
-                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all cursor-pointer appearance-none uppercase"
+                className="w-full px-4 py-3.5 rounded-none border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none transition-all cursor-pointer appearance-none uppercase"
                 value={formData.reports_to}
                 onChange={(e) => setFormData({ ...formData, reports_to: e.target.value })}
               >
@@ -183,29 +183,27 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
                 ))}
               </select>
               <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                 <Users size={16} />
+                <Users size={16} />
               </div>
             </div>
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Security Privilege Level</label>
+            <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Security Privilege Level</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {ROLES.map((role) => (
                 <button
                   key={role.value}
                   type="button"
                   onClick={() => setFormData({ ...formData, role: role.value })}
-                  className={`flex flex-col items-start p-4 rounded-none border transition-all text-left group ${
-                    formData.role === role.value
+                  className={`flex flex-col items-start p-4 rounded-none border transition-all text-left group ${formData.role === role.value
                       ? 'bg-brand-navy border-brand-navy text-white'
                       : 'bg-white border-slate-200 hover:border-brand-navy/30 hover:bg-slate-50 text-slate-900'
-                  }`}
+                    }`}
                 >
-                  <span className="text-[11px] font-black tracking-tight uppercase">{role.label}</span>
-                  <span className={`text-[9px] mt-1 line-clamp-1 leading-tight font-black uppercase tracking-wider ${
-                    formData.role === role.value ? 'text-white/50' : 'text-slate-400'
-                  }`}>
+                  <span className="text-[11px] font-extrabold tracking-tight uppercase">{role.label}</span>
+                  <span className={`text-[9px] mt-1 line-clamp-1 leading-tight font-extrabold uppercase tracking-wider ${formData.role === role.value ? 'text-white/50' : 'text-slate-400'
+                    }`}>
                     {role.description}
                   </span>
                 </button>
@@ -217,14 +215,14 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-4 rounded-none border border-slate-200 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-[0.98]"
+              className="flex-1 px-6 py-4 rounded-none border border-slate-200 text-[10px] font-extrabold text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-[0.98]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-[2] px-6 py-4 rounded-none bg-brand-navy text-white text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all border-b-2 border-brand-red flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
+              className="flex-[2] px-6 py-4 rounded-none bg-brand-navy text-white text-[10px] font-extrabold uppercase tracking-widest hover:bg-slate-800 transition-all border-b-2 border-brand-red flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-none animate-spin" />

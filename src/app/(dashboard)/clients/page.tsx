@@ -18,10 +18,14 @@ const fadeUp = {
 };
 
 export default function ClientsPage() {
-  const { clients } = useClientStore();
+  const { clients, fetchClients } = useClientStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
+
+  React.useEffect(() => {
+    fetchClients();
+  }, [fetchClients]);
 
   const filteredClients = useMemo(() => {
     return clients.filter((c) => {
@@ -61,12 +65,12 @@ export default function ClientsPage() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight font-accent">Client <span className="text-brand-red">Intelligence</span></h1>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight font-accent">Client <span className="text-brand-red">Intelligence</span></h1>
           <p className="text-sm text-slate-400 mt-1 font-medium italic">Manage and track your client portfolio engagements</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-none bg-brand-navy text-white text-sm font-black shadow-none border-b-2 border-brand-red hover:bg-slate-800 transition-all duration-200"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-none bg-brand-navy text-white text-sm font-extrabold shadow-none border-b-2 border-brand-red hover:bg-slate-800 transition-all duration-200"
         >
           <Plus size={18} strokeWidth={3} className="text-white" /> Add New Client
         </button>
@@ -87,7 +91,7 @@ export default function ClientsPage() {
                 <card.icon size={18} className={card.color} strokeWidth={2.5} />
               </div>
               <div>
-                <div className="text-xl font-black text-slate-900 tracking-tight">{card.value}</div>
+                <div className="text-xl font-extrabold text-slate-900 tracking-tight">{card.value}</div>
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{card.label}</div>
               </div>
             </div>
@@ -105,7 +109,7 @@ export default function ClientsPage() {
             placeholder="Search clients, industry, or contact person..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 rounded-none border border-slate-200 bg-white text-sm font-black text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-brand-navy transition-all"
+            className="w-full pl-11 pr-4 py-3 rounded-none border border-slate-200 bg-white text-sm font-extrabold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-brand-navy transition-all"
           />
         </div>
         <select
@@ -127,14 +131,14 @@ export default function ClientsPage() {
               className="group block rounded-none border border-slate-200/80 bg-white p-6 shadow-none hover:border-brand-navy/50 transition-all duration-400">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-12 h-12 rounded-none bg-brand-navy flex items-center justify-center text-white font-black text-lg shrink-0 shadow-none border border-brand-navy">
+                  <div className="w-12 h-12 rounded-none bg-brand-navy flex items-center justify-center text-white font-extrabold text-lg shrink-0 shadow-none border border-brand-navy">
                     {client.name.charAt(0)}
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-base font-black text-slate-900 truncate group-hover:text-brand-navy transition-colors">
+                    <h3 className="text-base font-extrabold text-slate-900 truncate group-hover:text-brand-navy transition-colors">
                       {client.name}
                     </h3>
-                    <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">{client.industry || 'Industry not specified'}</span>
+                    <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest">{client.industry || 'Industry not specified'}</span>
                   </div>
                 </div>
                 {statusBadge(client.status)}

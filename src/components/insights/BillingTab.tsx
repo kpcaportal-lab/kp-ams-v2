@@ -79,7 +79,7 @@ const toNumber = (val: string | number | undefined) => parseFloat(String(val ?? 
                     <div className="bg-white p-6 rounded-none border border-slate-200 shadow-none">
                         <div className="flex items-center justify-between mb-8">
                             <div>
-                                <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider font-accent">Revenue Trend</h4>
+                                <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider font-accent">Revenue Trend</h4>
                                 <p className="text-xs text-slate-500 font-medium">Monthly Billed vs Collected</p>
                             </div>
                             <div className="p-2 bg-[var(--navy-50)] text-[var(--brand-navy)] rounded-none">
@@ -119,7 +119,7 @@ const toNumber = (val: string | number | undefined) => parseFloat(String(val ?? 
                     <div className="bg-white p-6 rounded-none border border-slate-200 shadow-none">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider font-accent">Monthly Breakdown</h4>
+                                <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider font-accent">Monthly Breakdown</h4>
                                 <p className="text-xs text-slate-500 font-medium">Detailed figures per month</p>
                             </div>
                             <div className="p-2 bg-[var(--navy-50)] text-[var(--brand-navy)] rounded-none">
@@ -131,16 +131,16 @@ const toNumber = (val: string | number | undefined) => parseFloat(String(val ?? 
                             <table className="w-full text-left">
                                 <thead>
                                     <tr className="border-b border-slate-100">
-                                        <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider font-accent">Month</th>
-                                        <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right font-accent">Billed</th>
-                                        <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right font-accent">Collected</th>
+                                        <th className="pb-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-accent">Month</th>
+                                        <th className="pb-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider text-right font-accent">Billed</th>
+                                        <th className="pb-3 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider text-right font-accent">Collected</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-50">
                                     {tableData.map((row, idx) => (
                                         <tr key={idx} className="group">
                                             <td className="py-3.5 text-sm font-bold text-slate-700">{row.month_name}</td>
-                                            <td className="py-3.5 text-sm font-black text-slate-900 text-right">{formatINR(toNumber(row.amount_billed))}</td>
+                                            <td className="py-3.5 text-sm font-extrabold text-slate-900 text-right">{formatINR(toNumber(row.amount_billed))}</td>
                                             <td className="py-3.5 text-sm font-bold text-[var(--brand-navy)] text-right">{formatINR(toNumber(row.amount_collected))}</td>
                                         </tr>
                                     ))}

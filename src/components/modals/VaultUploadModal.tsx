@@ -61,8 +61,8 @@ export default function VaultUploadModal({ isOpen, onClose, assignmentId, client
             {/* Header */}
             <div className="bg-[var(--brand-navy)] px-8 py-6 flex items-center justify-between border-b border-brand-red/30">
               <div>
-                <h3 className="text-xl font-bold text-white uppercase tracking-tight">Upload Working Paper</h3>
-                <p className="text-[10px] font-bold text-white/60 uppercase tracking-widest mt-1">{clientName}</p>
+                <h3 className="text-xl font-extrabold text-white uppercase tracking-tight">Upload Working Paper</h3>
+                <p className="text-[10px] font-bold !text-slate-200 uppercase tracking-widest mt-1">{clientName}</p>
               </div>
               <button onClick={onClose} className="p-2 hover:bg-white/10 text-white/60 hover:text-white transition-colors rounded-none">
                 <X size={20} strokeWidth={2} />

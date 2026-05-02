@@ -150,12 +150,48 @@ router.get('/summary', async (req: Request, res: Response) => {
             }
         } catch (e) {}
 
+        // ── Total Received ──
+        let totalReceivedVal = 0;
+        try {
+            let totalReceivedQuery = `
+                SELECT COALESCE(SUM(amount_receipt), 0) as total
+                FROM assignments
+                WHERE fiscal_year=$1`;
+            const totalReceivedParams: unknown[] = [fiscal_year];
+
+            if (visibleIds !== null) {
+                totalReceivedParams.push(visibleIds);
+                totalReceivedQuery += ` AND (manager_id = ANY($${totalReceivedParams.length}) OR partner_id = ANY($${totalReceivedParams.length}))`;
+            }
+            const resReceived = await pool.query(totalReceivedQuery, totalReceivedParams);
+            totalReceivedVal = Number(resReceived.rows[0]?.total || 0);
+        } catch (e) {
+            console.warn('⚠️ Total received query failed');
+        }
+
+        // ── Self Received ──
+        let selfReceivedVal = 0;
+        try {
+            const resSelfRec = await pool.query(
+                `SELECT COALESCE(SUM(amount_receipt), 0) as total
+                 FROM assignments
+                 WHERE fiscal_year=$1 AND (manager_id=$2 OR partner_id=$2)`,
+                [fiscal_year, userId]
+            );
+            selfReceivedVal = Number(resSelfRec.rows[0]?.total || 0);
+        } catch (e) {}
+
+        const billingPct = totalBilledVal > 0 ? Math.round((totalReceivedVal / totalBilledVal) * 100) : 0;
+        const selfBillingPct = selfBilledVal > 0 ? Math.round((selfReceivedVal / selfBilledVal) * 100) : 0;
+
         res.json({
             totalBilled: Number(totalBilledVal),
+            totalReceived: Number(totalReceivedVal),
             selfBilled: Number(selfBilledVal),
+            selfReceived: Number(selfReceivedVal),
             overdue: Number(overdueVal),
-            billingPct: 0,
-            selfBillingPct: 0,
+            billingPct,
+            selfBillingPct,
             partnerBreakdown,
             managerBreakdown,
             categoryBreakdown,

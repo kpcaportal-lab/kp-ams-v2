@@ -100,7 +100,7 @@ export default function AssignmentsPage() {
     <div className="space-y-8 max-w-[1600px] mx-auto pb-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 px-1">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="text-4xl font-black tracking-tight text-slate-900 shadow-none font-accent">
+          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 shadow-none font-accent">
             Assignment <span className="text-brand-red">Intelligence</span>
           </h1>
           <p className="text-slate-500 mt-1 font-medium italic">Operational oversight and strategic engagement tracking</p>
@@ -109,7 +109,7 @@ export default function AssignmentsPage() {
         <motion.div initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="flex items-center gap-3">
           <button
             onClick={handleExport}
-            className="flex items-center gap-2.5 px-5 py-3.5 rounded-none bg-white border border-slate-200 text-slate-600 text-sm font-black transition-all hover:bg-slate-50 shadow-none active:scale-95"
+            className="flex items-center gap-2.5 px-5 py-3.5 rounded-none bg-white border border-slate-200 text-slate-600 text-sm font-extrabold transition-all hover:bg-slate-50 shadow-none active:scale-95"
           >
             <Download size={18} strokeWidth={3} className="text-emerald-500" />
             Export Data
@@ -124,7 +124,7 @@ export default function AssignmentsPage() {
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="group flex items-center gap-2.5 px-6 py-3.5 rounded-none bg-brand-navy text-white text-sm font-black transition-all shadow-none hover:-translate-y-1 active:scale-95 border-b-4 border-brand-red/30"
+            className="group flex items-center gap-2.5 px-6 py-3.5 rounded-none bg-brand-navy text-white text-sm font-extrabold transition-all shadow-none hover:-translate-y-1 active:scale-95 border-b-4 border-brand-red/30"
           >
             <Plus size={20} strokeWidth={3} className="text-brand-red group-hover:scale-125 transition-transform" />
             New Assignment
@@ -141,7 +141,7 @@ export default function AssignmentsPage() {
                 <card.icon size={28} className={card.color} strokeWidth={2.5} />
               </div>
               <div>
-                <div className="text-3xl font-black text-slate-900 tracking-tight">{card.value}</div>
+                <div className="text-3xl font-extrabold text-slate-900 tracking-tight">{card.value}</div>
                 <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">{card.label}</div>
               </div>
               <div className="pt-2 border-t border-slate-50 flex items-center gap-2">
@@ -200,16 +200,16 @@ export default function AssignmentsPage() {
                 <table className="w-full text-sm border-separate border-spacing-0">
                   <thead>
                     <tr>
-                      <th className="text-left px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Client & Scope</th>
-                      <th className="text-left px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Audit Type</th>
-                      <th className="text-left px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">
+                      <th className="text-left px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Client & Scope</th>
+                      <th className="text-left px-6 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Audit Type</th>
+                      <th className="text-left px-6 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">
                         Lead Partner
                       </th>
-                      <th className="text-right px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Fees</th>
-                      <th className="text-right px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Billed</th>
-                      <th className="text-right px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Receipt</th>
-                      <th className="text-center px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Cycle</th>
-                      <th className="text-center px-6 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Vault</th>
+                      <th className="text-right px-6 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Fees</th>
+                      <th className="text-right px-6 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Billed</th>
+                      <th className="text-right px-6 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Receipt</th>
+                      <th className="text-center px-6 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Cycle</th>
+                      <th className="text-center px-6 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Vault</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -224,34 +224,34 @@ export default function AssignmentsPage() {
                       >
                         <td className="px-8 py-6">
                           <div className="block">
-                            <div className="font-black text-slate-900 group-hover:text-brand-navy transition-colors text-base">{a.client_name}</div>
+                            <div className="font-extrabold text-slate-900 group-hover:text-brand-navy transition-colors text-base">{a.client_name}</div>
                             <div className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-tight line-clamp-1">{a.scope_item || SUBCATEGORY_LABELS[a.subcategory] || a.subcategory || '—'}</div>
                           </div>
                         </td>
                         <td className="px-6 py-6">
-                          <div className="px-3 py-1 rounded-none border border-slate-200 bg-white text-[10px] font-black text-slate-500 inline-block max-w-[120px] truncate">
+                          <div className="px-3 py-1 rounded-none border border-slate-200 bg-white text-[10px] font-extrabold text-slate-500 inline-block max-w-[120px] truncate">
                              {CATEGORY_LABELS[a.category] || a.category}
                           </div>
                         </td>
                         <td className="px-6 py-6">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-none bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 border border-slate-200 shadow-none uppercase">
+                            <div className="w-8 h-8 rounded-none bg-slate-100 flex items-center justify-center text-[10px] font-extrabold text-slate-400 border border-slate-200 shadow-none uppercase">
                               {a.partner_name ? a.partner_name.charAt(0) : '?'}
                             </div>
                             <span className="font-bold text-slate-700 text-xs truncate max-w-[80px]">{a.partner_name || 'Unassigned'}</span>
                           </div>
                         </td>
                         <td className="px-6 py-6 text-right">
-                          <div className="font-black text-slate-900 text-sm">{formatIndianCurrency(Number(a.fees ?? a.total_fees ?? 0), true, true)}</div>
+                          <div className="font-extrabold text-slate-900 text-sm">{formatIndianCurrency(Number(a.fees ?? a.total_fees ?? 0), true, true)}</div>
                         </td>
                         <td className="px-6 py-6 text-right">
-                          <div className="font-black text-emerald-600 text-sm">{formatIndianCurrency(Number(a.billed_amount || 0), true, true)}</div>
+                          <div className="font-extrabold text-emerald-600 text-sm">{formatIndianCurrency(Number(a.billed_amount || 0), true, true)}</div>
                         </td>
                         <td className="px-6 py-6 text-right">
-                          <div className="font-black text-brand-navy text-sm">{formatIndianCurrency(Number(a.amount_receipt || 0), true, true)}</div>
+                          <div className="font-extrabold text-brand-navy text-sm">{formatIndianCurrency(Number(a.amount_receipt || 0), true, true)}</div>
                         </td>
                         <td className="px-6 py-6 text-center">
-                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter bg-slate-100 px-2 py-1 rounded-none">
+                          <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-tighter bg-slate-100 px-2 py-1 rounded-none">
                             {(BILLING_CYCLE_LABELS[a.billing_cycle] || a.billing_cycle || '—').substring(0, 3)}
                           </span>
                         </td>
@@ -289,9 +289,9 @@ export default function AssignmentsPage() {
               >
                  <div className="flex flex-col h-full gap-5">
                    <div>
-                     <div className="text-[10px] font-black text-brand-red uppercase tracking-[0.2em] mb-2 px-1">Engagement</div>
+                     <div className="text-[10px] font-extrabold text-brand-red uppercase tracking-[0.2em] mb-2 px-1">Engagement</div>
                      <Link href={`/assignments/${a.id}`}>
-                       <h3 className="text-xl font-black text-slate-900 group-hover:text-brand-navy transition-colors leading-tight line-clamp-1">{a.client_name}</h3>
+                       <h3 className="text-xl font-extrabold text-slate-900 group-hover:text-brand-navy transition-colors leading-tight line-clamp-1">{a.client_name}</h3>
                      </Link>
                      <p className="text-sm font-bold text-slate-400 mt-2 leading-relaxed h-10 overflow-hidden text-ellipsis line-clamp-2">{a.scope_item || SUBCATEGORY_LABELS[a.subcategory] || a.subcategory || '—'}</p>
                    </div>
@@ -299,20 +299,20 @@ export default function AssignmentsPage() {
                    <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-50">
                       <div>
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Proposed Fee</div>
-                        <div className="font-black text-slate-900 text-lg">{formatIndianCurrency(Number(a.fees ?? a.total_fees ?? 0), true, true)}</div>
+                        <div className="font-extrabold text-slate-900 text-lg">{formatIndianCurrency(Number(a.fees ?? a.total_fees ?? 0), true, true)}</div>
                       </div>
                       <div className="text-right">
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Billing</div>
-                        <div className="font-black text-slate-800 text-sm mt-1 uppercase">{BILLING_CYCLE_LABELS[a.billing_cycle] || a.billing_cycle || '—'}</div>
+                        <div className="font-extrabold text-slate-800 text-sm mt-1 uppercase">{BILLING_CYCLE_LABELS[a.billing_cycle] || a.billing_cycle || '—'}</div>
                       </div>
                    </div>
 
                    <div className="flex items-center justify-between pt-1">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-none bg-slate-100 flex items-center justify-center text-[9px] font-black text-slate-400 ring-4 ring-white shadow-none border border-slate-200">
+                        <div className="w-7 h-7 rounded-none bg-slate-100 flex items-center justify-center text-[9px] font-extrabold text-slate-400 ring-4 ring-white shadow-none border border-slate-200">
                           {a.partner_name?.charAt(0) || '?'}
                         </div>
-                        <span className="text-[11px] font-black text-slate-600">{a.partner_name || 'Unassigned'}</span>
+                        <span className="text-[11px] font-extrabold text-slate-600">{a.partner_name || 'Unassigned'}</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1.5 text-slate-400 font-bold text-[10px]">

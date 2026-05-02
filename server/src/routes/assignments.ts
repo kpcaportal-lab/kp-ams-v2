@@ -222,17 +222,34 @@ router.put('/:id', ...validateUpdateAssignment, async (req: Request, res: Respon
                 `UPDATE assignments SET ${updates.join(', ')}, updated_at=NOW() WHERE id=$${params.length}`,
                 params
             );
-            for (const ch of changedFields) {
-                await pool.query(
-                    'INSERT INTO change_history (entity_type,entity_id,field_name,old_value,new_value,changed_by,reason) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-                    ['assignment', req.params.id, ch.field, String(ch.old), String(ch.new), req.user!.id, req.body.reason || null]
-                );
+            try {
+                for (const ch of changedFields) {
+                    await pool.query(
+                        'INSERT INTO change_history (entity_type,entity_id,field_name,old_value,new_value,changed_by,reason) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+                        ['assignment', req.params.id, ch.field, String(ch.old), String(ch.new), req.user!.id, req.body.reason || null]
+                    );
+                }
+            } catch (historyErr) {
+                console.warn('⚠️ Failed to write change history:', historyErr);
             }
             // Audit log
             await logAuditEvent(req.user!, 'update', 'assignment', req.params.id, { changedFields }, req);
         }
 
-        const updated = await pool.query('SELECT * FROM assignments WHERE id=$1', [req.params.id]);
+        const updated = await pool.query(`
+            SELECT 
+                a.*,
+                c.name as client_name,
+                pm.full_name as manager_name,
+                pp.full_name as partner_name,
+                p.number as proposal_number
+            FROM assignments a
+            JOIN clients c ON c.id = a.client_id
+            LEFT JOIN profiles pm ON pm.id = a.manager_id
+            LEFT JOIN profiles pp ON pp.id = a.partner_id
+            LEFT JOIN proposals p ON p.id = a.proposal_id
+            WHERE a.id=$1
+        `, [req.params.id]);
         res.json(updated.rows[0]);
     } catch (err: unknown) { console.error(err); res.status(500).json({ error: 'Server error' }); }
 });

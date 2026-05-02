@@ -23,6 +23,7 @@ import pool from './db/pool.js';
 import profileRoutes from './routes/profile.js';
 import searchRoutes from './routes/search.js';
 import insightRoutes from './routes/insights.js';
+import budgetRoutes from './routes/budget.js';
 
 import { generalLimiter } from './middleware/rateLimiter.js';
 
@@ -43,6 +44,7 @@ const registerRoutes = (app: express.Express) => {
     app.use('/api/search', searchRoutes);
     app.use('/api/insights', insightRoutes);
     app.use('/api/managers', insightRoutes);
+    app.use('/api/budget', budgetRoutes);
     console.log('✅ All routes loaded successfully');
 };
 
@@ -94,69 +96,60 @@ const ensureSystemUsers = async () => {
     try {
         console.log('🔄 Syncing system users and real names...');
 
-        // 1. Ensure Admin exists (Matching user request: admin.kpams@gmail.com)
-        const adminEmail = 'admin.kpams@gmail.com';
-        const adminPasswordHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
-        const adminId = '00000000-0000-0000-0000-000000000001';
+        const standardHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
+        
+        const upsertSystemUser = async (id: string, email: string, name: string, role: string) => {
+            // Check if user exists with this email (case-insensitive)
+            const existing = await pool.query('SELECT id FROM profiles WHERE LOWER(email) = LOWER($1)', [email]);
+            
+            if (existing.rows.length > 0) {
+                const existingId = existing.rows[0].id;
+                // Update the existing record, but KEEP the existing ID to avoid FK violations
+                await pool.query('UPDATE profiles SET full_name = $1, display_name = $2, role = $3, is_active = true WHERE id = $4', [name, name.split(' ')[0], role, existingId]);
+                return existingId;
+            } else {
+                // No user with this email, safe to insert with system ID
+                await pool.query(`
+                    INSERT INTO profiles (id, full_name, display_name, email, role, password_hash, is_active)
+                    VALUES ($1, $2, $3, $4, $5, $6, true)
+                    ON CONFLICT (id) DO UPDATE SET
+                        full_name = EXCLUDED.full_name,
+                        display_name = EXCLUDED.display_name,
+                        email = EXCLUDED.email,
+                        role = EXCLUDED.role,
+                        is_active = true
+                `, [id, name, name.split(' ')[0], email.toLowerCase(), role, standardHash]);
+                return id;
+            }
+        };
 
-        await pool.query(`
-            INSERT INTO profiles (id, email, password_hash, role, full_name, display_name, is_active)
-            VALUES ($1, $2, $3, 'admin', 'System Administrator', 'Admin', true)
-            ON CONFLICT (id) DO UPDATE SET 
-                email = EXCLUDED.email, 
-                password_hash = EXCLUDED.password_hash, 
-                role = 'admin', 
-                is_active = true
-        `, [adminId, adminEmail, adminPasswordHash]);
+        // 1. Ensure Admin exists
+        const adminEmail = 'admin.kpams@gmail.com';
+        const systemAdminId = '00000000-0000-0000-0000-000000000001';
+        const actualAdminId = await upsertSystemUser(systemAdminId, adminEmail, 'System Administrator', 'admin');
 
         // 2. Sync Real Names from Placeholder IDs
-        const coreUserIds = [
-            adminId,
-            '00000000-0000-0000-0000-000000000002', // Milind
-            '00000000-0000-0000-0000-000000000003', // Tanmay
-            '00000000-0000-0000-0000-000000000005', // Rishabh
-            '00000000-0000-0000-0000-000000000011', // Vibhuti
-            '00000000-0000-0000-0000-000000000012', // Hamza
-            '00000000-0000-0000-0000-000000000015', // Dhanashree
-            '00000000-0000-0000-0000-000000000016', // Mohit
-            '00000000-0000-0000-0000-000000000017', // Bhushan
-            '00000000-0000-0000-0000-000000000018'  // Sanjeev
-        ];
-
         const realUsers = [
-            { id: coreUserIds[1], name: 'Milind Limaye', email: 'MILIND.LIMAYE@GMAIL.COM', role: 'partner' },
-            { id: coreUserIds[2], name: 'Tanmay Bodhe', email: 'TANMAY.BODHE@GMAIL.COM', role: 'partner' },
-            { id: coreUserIds[3], name: 'Rishabh Thakkar', email: 'RISHABH.THAKKAR@GMAIL.COM', role: 'director' },
-            { id: coreUserIds[4], name: 'Vibhuti Narang', email: 'VIBHUTI.NARANG@GMAIL.COM', role: 'manager' },
-            { id: coreUserIds[5], name: 'Hamza Momin', email: 'HAMZA.MOMIN@GMAIL.COM', role: 'manager' },
-            { id: coreUserIds[6], name: 'Dhanashree Dekhane', email: 'DHANASHREE.DEKHANE@GMAIL.COM', role: 'manager' },
-            { id: coreUserIds[7], name: 'Mohit Joshi', email: 'MOHIT.JOSHI@GMAIL.COM', role: 'manager' },
-            { id: coreUserIds[8], name: 'Bhushan Patil', email: 'BHUSHAN.PATIL@GMAIL.COM', role: 'manager' },
-            { id: coreUserIds[9], name: 'Sanjeev Deshpande', email: 'SANJEEV.DESHPANDE@GMAIL.COM', role: 'manager' }
+            { id: '00000000-0000-0000-0000-000000000002', email: 'milind.limaye@gmail.com', name: 'Milind Limaye', role: 'partner' },
+            { id: '00000000-0000-0000-0000-000000000003', email: 'tanmay.bodhe@gmail.com', name: 'Tanmay Bodhe', role: 'partner' },
+            { id: '00000000-0000-0000-0000-000000000005', email: 'rishabh.thakkar@gmail.com', name: 'Rishabh Thakkar', role: 'director' },
+            { id: '00000000-0000-0000-0000-000000000011', email: 'vibhuti.narang@gmail.com', name: 'Vibhuti Narang', role: 'manager' },
+            { id: '00000000-0000-0000-0000-000000000012', email: 'hamza.momin@gmail.com', name: 'Hamza Momin', role: 'manager' },
+            { id: '00000000-0000-0000-0000-000000000015', email: 'dhanashree.dekhane@gmail.com', name: 'Dhanashree Dekhane', role: 'manager' },
+            { id: '00000000-0000-0000-0000-000000000016', email: 'mohit.joshi@gmail.com', name: 'Mohit Joshi', role: 'manager' },
+            { id: '00000000-0000-0000-0000-000000000017', email: 'bhushan.patil@gmail.com', name: 'Bhushan Patil', role: 'manager' },
+            { id: '00000000-0000-0000-0000-000000000018', email: 'sanjeev.deshpande@gmail.com', name: 'Sanjeev Deshpande', role: 'manager' }
         ];
 
-        console.log('--- EXACT DOMAIN MAPPING ---');
-        realUsers.forEach(u => console.log(u.email));
-
-        const standardHash = '$2a$10$uHfwPRTiaT4etSL/jjrsxupiFUWo/k2Pw0g5YgA3962OqD5kOCkvS'; // KpAms@2025
-
-        console.log('🔄 STEP 1: Syncing core IDs (Safe updates only)...');
-        // We DO NOT purge non-core IDs anymore to prevent data loss for users created via UI
-        // We only ensure the core users have correct names and roles
-
-        console.log('🔄 STEP 2: Syncing EXACT emails...');
+        let hamzaDataId = '00000000-0000-0000-0000-000000000012';
+        let milindPartnerId = '00000000-0000-0000-0000-000000000002';
+        const allActiveIds: string[] = [actualAdminId];
 
         for (const user of realUsers) {
-            await pool.query(`
-                INSERT INTO profiles (id, full_name, display_name, email, role, password_hash, is_active)
-                VALUES ($5, $1, $1, $2, $3, $4, true)
-                ON CONFLICT (id) DO UPDATE SET
-                    full_name = EXCLUDED.full_name,
-                    display_name = EXCLUDED.display_name,
-                    email = EXCLUDED.email,
-                    role = EXCLUDED.role,
-                    is_active = true
-            `, [user.name, user.email, user.role, standardHash, user.id]);
+            const finalId = await upsertSystemUser(user.id, user.email, user.name, user.role);
+            allActiveIds.push(finalId);
+            if (user.email === 'HAMZA.MOMIN@GMAIL.COM') hamzaDataId = finalId;
+            if (user.email === 'MILIND.LIMAYE@GMAIL.COM') milindPartnerId = finalId;
         }
 
         console.log('🔄 STEP 3: Ensuring core users are active...');
@@ -164,18 +157,16 @@ const ensureSystemUsers = async () => {
             UPDATE profiles 
             SET is_active = true 
             WHERE id = ANY($1::uuid[])
-        `, [coreUserIds]);
+        `, [allActiveIds]);
 
         console.log('🧹 STEP 4: Checking Hamza assignments...');
-        const hamzaDataId = '00000000-0000-0000-0000-000000000012';
         
         // Only seed if Hamza has NO assignments (prevents duplicate bloat and accidental deletions)
         const hamzaCheck = await pool.query('SELECT id FROM assignments WHERE manager_id = $1 LIMIT 1', [hamzaDataId]);
         
         if (hamzaCheck.rows.length === 0) {
             console.log('🌱 Seeding initial Hamza Momin data...');
-            const milindPartner = await pool.query(`SELECT id FROM profiles WHERE role = 'partner' AND is_active = true LIMIT 1`);
-            const partnerId = milindPartner.rows[0]?.id || '00000000-0000-0000-0000-000000000002';
+            const partnerId = milindPartnerId;
 
         const realData = [
             // Forensic Audits (Cat C)
@@ -222,15 +213,21 @@ const ensureSystemUsers = async () => {
         const years = ['2024-25', '2025-26', '2026-27'];
         for (const fy of years) {
             for (const data of realData) {
-                const clientRes = await pool.query(
-                    'INSERT INTO clients (name, status) VALUES ($1, \'active\') ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING id',
-                    [data.client]
-                );
-                const clientDbId = clientRes.rows[0].id;
+                let clientDbId;
+                const existingClient = await pool.query('SELECT id FROM clients WHERE name = $1 LIMIT 1', [data.client]);
+                if (existingClient.rows.length > 0) {
+                    clientDbId = existingClient.rows[0].id;
+                } else {
+                    const clientRes = await pool.query(
+                        'INSERT INTO clients (name, status) VALUES ($1, \'active\') RETURNING id',
+                        [data.client]
+                    );
+                    clientDbId = clientRes.rows[0].id;
+                }
 
                 const assignRes = await pool.query(
                     `INSERT INTO assignments (client_id, gstn, category, subcategory, scope_areas, total_fees, billed_amount, amount_receipt, billing_cycle, partner_id, manager_id, status, fiscal_year)
-                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'Monthly', $9, $10, 'active', $11) RETURNING id`,
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'monthly', $9, $10, 'active', $11) RETURNING id`,
                     [clientDbId, data.gstn, data.cat, data.sub, data.scope, data.fee, data.billed, data.rec || 0, partnerId, hamzaDataId, fy]
                 );
                 const assignId = assignRes.rows[0].id;

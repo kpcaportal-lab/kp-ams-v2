@@ -40,7 +40,7 @@ export function FilterBar({
                     <select
                         value={period}
                         onChange={(e) => setPeriod(e.target.value)}
-                        className="appearance-none w-full md:w-48 pl-11 pr-10 py-4 bg-slate-50/50 border border-transparent rounded-none text-xs font-black text-slate-600 focus:bg-white focus:border-brand-navy transition-all outline-none cursor-pointer font-accent uppercase tracking-widest hover:bg-slate-100/50"
+                        className="appearance-none w-full md:w-48 pl-11 pr-10 py-4 bg-slate-50/50 border border-transparent rounded-none text-xs font-extrabold text-slate-600 focus:bg-white focus:border-brand-navy transition-all outline-none cursor-pointer font-accent uppercase tracking-widest hover:bg-slate-100/50"
                     >
                         <option value="2025-26">FY 2025-26</option>
                         <option value="2024-25">FY 2024-25</option>
@@ -55,7 +55,7 @@ export function FilterBar({
                     <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value)}
-                        className="appearance-none w-full md:w-48 pl-11 pr-10 py-4 bg-slate-50/50 border border-transparent rounded-none text-xs font-black text-slate-600 focus:bg-white focus:border-brand-navy transition-all outline-none cursor-pointer font-accent uppercase tracking-widest hover:bg-slate-100/50"
+                        className="appearance-none w-full md:w-48 pl-11 pr-10 py-4 bg-slate-50/50 border border-transparent rounded-none text-xs font-extrabold text-slate-600 focus:bg-white focus:border-brand-navy transition-all outline-none cursor-pointer font-accent uppercase tracking-widest hover:bg-slate-100/50"
                     >
                         <option value="billed">Sort by Billed</option>
                         <option value="clients">Sort by Clients</option>

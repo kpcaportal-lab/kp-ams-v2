@@ -565,7 +565,7 @@ export default function NewProposalPage() {
                       <UserPlus size={24} />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-black text-gray-900 tracking-tight">Rapid Onboarding</h2>
+                      <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">Rapid Onboarding</h2>
                       <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Add new client to ecosystem</p>
                     </div>
                   </div>
@@ -611,12 +611,12 @@ export default function NewProposalPage() {
                   <div className="p-8 bg-gray-50/50 rounded-[2rem] border border-gray-100 space-y-6">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-2 h-2 rounded-full bg-blue-500" />
-                      <h3 className="text-xs font-black text-gray-900 uppercase tracking-[0.2em]">SPOC Details (Primary Contact)</h3>
+                      <h3 className="text-xs font-extrabold text-gray-900 uppercase tracking-[0.2em]">SPOC Details (Primary Contact)</h3>
                     </div>
                     
                     <div className="space-y-4">
                       <div className="space-y-3">
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                        <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
                         <input 
                           type="text"
                           className="w-full px-5 py-3.5 bg-white border border-gray-100 rounded-xl focus:border-blue-400 outline-none font-medium text-gray-900 shadow-sm"
@@ -628,7 +628,7 @@ export default function NewProposalPage() {
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-3">
-                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
+                          <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest ml-1">Email Address</label>
                           <input 
                             type="email"
                             className="w-full px-5 py-3.5 bg-white border border-gray-100 rounded-xl focus:border-blue-400 outline-none font-medium text-gray-900 shadow-sm"
@@ -638,7 +638,7 @@ export default function NewProposalPage() {
                           />
                         </div>
                         <div className="space-y-3">
-                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
+                          <label className="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest ml-1">Phone Number</label>
                           <input 
                             type="text"
                             className="w-full px-5 py-3.5 bg-white border border-gray-100 rounded-xl focus:border-blue-400 outline-none font-medium text-gray-900 shadow-sm"
@@ -654,14 +654,14 @@ export default function NewProposalPage() {
                   <div className="flex gap-4 pt-4">
                     <button 
                       type="submit"
-                      className="flex-1 py-5 bg-gray-900 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-gray-200 hover:bg-blue-600 hover:shadow-blue-200 transition-all hover:-translate-y-1 active:translate-y-0"
+                      className="flex-1 py-5 bg-gray-900 text-white rounded-2xl font-extrabold text-sm uppercase tracking-widest shadow-xl shadow-gray-200 hover:bg-blue-600 hover:shadow-blue-200 transition-all hover:-translate-y-1 active:translate-y-0"
                     >
                       Authenticate and Add Client
                     </button>
                     <button 
                       type="button"
                       onClick={() => setIsAddingClient(false)}
-                      className="px-8 py-5 border border-gray-100 text-gray-400 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-gray-50 transition-all"
+                      className="px-8 py-5 border border-gray-100 text-gray-400 rounded-2xl font-extrabold text-sm uppercase tracking-widest hover:bg-gray-50 transition-all"
                     >
                       Dismiss
                     </button>

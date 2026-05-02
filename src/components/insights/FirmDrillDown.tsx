@@ -112,7 +112,7 @@ export default function FirmDrillDown({ activeCard, managers, fiscalYear, onClos
                     <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-4 flex-wrap">
                         <div className="flex items-center gap-3">
                             <config.icon size={18} className="text-[var(--brand-navy)]" />
-                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider">{config.label}</h3>
+                            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">{config.label}</h3>
                             {!isManagerView && (
                                 <span className="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-0.5 border border-slate-200">
                                     {total} record{total !== 1 ? 's' : ''}
@@ -176,7 +176,7 @@ export default function FirmDrillDown({ activeCard, managers, fiscalYear, onClos
                                 >
                                     <ChevronLeft size={14} /> Previous
                                 </button>
-                                <span className="text-xs font-black text-slate-500 px-2">
+                                <span className="text-xs font-extrabold text-slate-500 px-2">
                                     {page} / {totalPages}
                                 </span>
                                 <button
@@ -218,7 +218,7 @@ function EmptyRow({ cols, text }: { cols: number; text: string }) {
     );
 }
 
-const thClass = "px-6 py-3 text-[11px] font-black text-slate-400 uppercase tracking-wider font-accent";
+const thClass = "px-6 py-3 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider font-accent";
 const tdClass = "px-6 py-3.5 text-sm";
 
 function ClientsTable({ data, loading }: { data: any[]; loading: boolean }) {
@@ -244,7 +244,7 @@ function ClientsTable({ data, loading }: { data: any[]; loading: boolean }) {
                             )}>{c.status}</span>
                         </td>
                         <td className={cn(tdClass, 'font-medium text-slate-600')}>{c.onboarded_date ? format(new Date(c.onboarded_date), 'dd MMM yyyy') : 'N/A'}</td>
-                        <td className={cn(tdClass, 'text-right font-black text-slate-900')}>{formatINR(Number(c.billed_amount || 0))}</td>
+                        <td className={cn(tdClass, 'text-right font-extrabold text-slate-900')}>{formatINR(Number(c.billed_amount || 0))}</td>
                     </tr>
                 ))}
             </tbody>
@@ -279,7 +279,7 @@ function ProposalsTable({ data, loading }: { data: any[]; loading: boolean }) {
                                 "bg-amber-50 text-amber-700 border-amber-100"
                             )}>{p.status}</span>
                         </td>
-                        <td className={cn(tdClass, 'text-right font-black text-slate-900')}>{formatINR(Number(p.amount || 0))}</td>
+                        <td className={cn(tdClass, 'text-right font-extrabold text-slate-900')}>{formatINR(Number(p.amount || 0))}</td>
                     </tr>
                 ))}
             </tbody>
@@ -309,7 +309,7 @@ function AssignmentsTable({ data, loading }: { data: any[]; loading: boolean }) 
                         <td className={cn(tdClass, 'font-medium text-slate-700')}>{a.work_type || 'N/A'}</td>
                         <td className={cn(tdClass, 'font-medium text-slate-600')}>{a.due_date ? format(new Date(a.due_date), 'dd MMM yyyy') : 'N/A'}</td>
                         <td className={cn(tdClass, 'font-bold text-slate-700')}>{formatINR(Number(a.budget_amount || 0))}</td>
-                        <td className={cn(tdClass, 'font-black text-slate-900')}>{formatINR(Number(a.billed_amount || 0))}</td>
+                        <td className={cn(tdClass, 'font-extrabold text-slate-900')}>{formatINR(Number(a.billed_amount || 0))}</td>
                         <td className={tdClass}>
                             <span className={cn("inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border",
                                 a.status === 'active' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
@@ -356,10 +356,10 @@ function ManagerBreakdownTable({ data, sortKey }: { data: any[]; sortKey: string
                             <td className={cn(tdClass, 'font-medium text-slate-700')}>{m.client_count}</td>
                             <td className={cn(tdClass, 'font-medium text-slate-700')}>{m.assignment_count}</td>
                             <td className={cn(tdClass, 'font-bold text-slate-700')}>{formatINR(Number(m.total_budget || 0))}</td>
-                            <td className={cn(tdClass, 'font-black text-slate-900')}>{formatINR(Number(m.billed_amount || 0))}</td>
+                            <td className={cn(tdClass, 'font-extrabold text-slate-900')}>{formatINR(Number(m.billed_amount || 0))}</td>
                             <td className={tdClass}>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-sm font-black" style={{ color: billingPercentColor(pct) }}>{pct}%</span>
+                                    <span className="text-sm font-extrabold" style={{ color: billingPercentColor(pct) }}>{pct}%</span>
                                     <div className="w-16 h-1 bg-slate-100 rounded-none overflow-hidden">
                                         <div className="h-full rounded-none" style={{ width: `${Math.min(pct, 100)}%`, backgroundColor: billingPercentColor(pct) }} />
                                     </div>

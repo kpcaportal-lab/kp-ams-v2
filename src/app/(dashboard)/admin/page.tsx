@@ -62,25 +62,25 @@ const actionColors: Record<string, string> = {
 /* Removed unused actionTooltips */
 
 const roleColors: Record<string, string> = {
-  admin: 'var(--brand-navy)', 
-  partner: 'var(--brand-red)', 
-  director: 'var(--brand-navy)', 
+  admin: 'var(--brand-navy)',
+  partner: 'var(--brand-red)',
+  director: 'var(--brand-navy)',
   manager: '#475569',
 };
 
 export default function AdminPage() {
-    const { user, loginAs } = useAuthStore();
-    const router = useRouter();
+  const { user, loginAs } = useAuthStore();
+  const router = useRouter();
 
-    const handleImpersonateUser = async (userId: string) => {
-      try {
-        await loginAs(userId);
-        router.push('/dashboard');
-      } catch (err) {
-        console.error('Impersonation failed:', err);
-        alert('Failed to impersonate user');
-      }
-    };
+  const handleImpersonateUser = async (userId: string) => {
+    try {
+      await loginAs(userId);
+      router.push('/dashboard');
+    } catch (err) {
+      console.error('Impersonation failed:', err);
+      alert('Failed to impersonate user');
+    }
+  };
   const [activeTab, setActiveTab] = useState<'logs' | 'users' | 'stats'>('logs');
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [activeUsers, setActiveUsers] = useState<ActiveUser[]>([]);
@@ -173,7 +173,7 @@ export default function AdminPage() {
             <Shield size={28} className="text-brand-red" strokeWidth={2.5} />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight font-accent">
+            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight font-accent">
               Admin <span className="text-brand-red">Intelligence</span>
             </h1>
             <p className="text-sm text-slate-500 mt-1 font-medium italic">Secure oversight of system monitoring, audit logs, and mission activity.</p>
@@ -182,7 +182,7 @@ export default function AdminPage() {
         <div className="flex items-center gap-3">
           <div className="px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Systems Nominal</span>
+            <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-widest">Systems Nominal</span>
           </div>
         </div>
       </motion.div>
@@ -198,9 +198,9 @@ export default function AdminPage() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={cn(
-              "flex items-center gap-2.5 px-6 py-3 rounded-[1.25rem] text-sm font-black transition-all duration-300 uppercase tracking-widest",
-              activeTab === tab.key 
-                ? "bg-brand-navy text-brand-red shadow-[0_10px_20px_rgba(30,58,95,0.2)]" 
+              "flex items-center gap-2.5 px-6 py-3 rounded-[1.25rem] text-sm font-extrabold transition-all duration-300 uppercase tracking-widest",
+              activeTab === tab.key
+                ? "bg-brand-navy text-brand-white shadow-[0_10px_20px_rgba(30,58,95,0.2)]"
                 : "text-slate-500 hover:bg-slate-50"
             )}
           >
@@ -222,13 +222,13 @@ export default function AdminPage() {
                 placeholder="Search audit trail by email or entity..."
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
-                className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-black text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/30 transition-all shadow-sm"
+                className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-extrabold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/30 transition-all shadow-sm"
               />
             </div>
             <select
               value={actionFilter}
               onChange={(e) => { setActionFilter(e.target.value); setPage(1); }}
-              className="px-6 py-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-black text-slate-700 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/30 transition-all shadow-sm min-w-[180px] cursor-pointer appearance-none uppercase tracking-widest"
+              className="px-6 py-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-extrabold text-slate-700 focus:outline-none focus:ring-4 focus:ring-brand-red/5 focus:border-brand-red/30 transition-all shadow-sm min-w-[180px] cursor-pointer appearance-none uppercase tracking-widest"
             >
               <option value="">All Directives</option>
               <option value="login">Login</option>
@@ -239,7 +239,7 @@ export default function AdminPage() {
             </select>
             <button
               onClick={() => fetchLogs()}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white border border-slate-200 text-sm font-black text-slate-600 hover:bg-slate-50 transition-all active:scale-95 shadow-sm uppercase tracking-widest"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white border border-slate-200 text-sm font-extrabold text-slate-600 hover:bg-slate-50 transition-all active:scale-95 shadow-sm uppercase tracking-widest"
             >
               <RefreshCw size={16} />
               Re-Sync
@@ -259,13 +259,13 @@ export default function AdminPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr>
-                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Timeline</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Operator</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Clearance</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Directive</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Entity</th>
-                    <th className="px-8 py-5 text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Source IP</th>
-                    <th className="px-8 py-5 text-right font-black text-white bg-brand-navy border-b border-white/5 rounded-tr-[1.5rem]"></th>
+                    <th className="px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em] rounded-tl-[1.5rem]">Timeline</th>
+                    <th className="px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Operator</th>
+                    <th className="px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Clearance</th>
+                    <th className="px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Directive</th>
+                    <th className="px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Entity</th>
+                    <th className="px-8 py-5 text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Source IP</th>
+                    <th className="px-8 py-5 text-right font-extrabold text-white bg-brand-navy border-b border-white/5 rounded-tr-[1.5rem]"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100/60">
@@ -288,16 +288,16 @@ export default function AdminPage() {
                         </td>
                         <td className="px-8 py-4">
                           <span className={cn(
-                            "px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider border",
+                            "px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wider border",
                             log.user_role === 'admin' ? "bg-brand-navy/5 text-brand-navy border-brand-navy/10" :
-                            log.user_role === 'partner' ? "bg-brand-red/5 text-brand-red border-brand-red/10" :
-                            "bg-slate-50 text-slate-500 border-slate-200"
+                              log.user_role === 'partner' ? "bg-brand-red/5 text-brand-red border-brand-red/10" :
+                                "bg-slate-50 text-slate-500 border-slate-200"
                           )}>
                             {log.user_role}
                           </span>
                         </td>
                         <td className="px-8 py-4">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-tight"
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-tight"
                             style={{ background: `${color}10`, color }}>
                             <IconComp size={12} strokeWidth={2.5} />
                             {log.action}
@@ -312,7 +312,7 @@ export default function AdminPage() {
                         <td className="px-8 py-4 text-right">
                           <button
                             onClick={() => setSelectedLog(log)}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-[11px] font-black text-slate-600 hover:bg-white hover:border-brand-navy/30 hover:text-brand-navy transition-all active:scale-95 uppercase tracking-widest"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-[11px] font-extrabold text-slate-600 hover:bg-white hover:border-brand-navy/30 hover:text-brand-navy transition-all active:scale-95 uppercase tracking-widest"
                           >
                             <Eye size={14} /> Details
                           </button>
@@ -378,7 +378,7 @@ export default function AdminPage() {
                 className="group relative bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl hover:shadow-brand-navy/5 hover:border-brand-navy/10 transition-all duration-300 overflow-hidden"
               >
                 {isOnlineRecently && (
-                  <div className="absolute top-0 right-0 px-5 py-2 bg-emerald-50 text-emerald-600 text-[9px] font-black uppercase tracking-[0.2em] rounded-bl-2xl border-l border-b border-emerald-100 flex items-center gap-1.5">
+                  <div className="absolute top-0 right-0 px-5 py-2 bg-emerald-50 text-emerald-600 text-[9px] font-extrabold uppercase tracking-[0.2em] rounded-bl-2xl border-l border-b border-emerald-100 flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     Live Signal
                   </div>
@@ -386,7 +386,7 @@ export default function AdminPage() {
 
                 <div className="flex items-center gap-5 mb-8">
                   <div className="relative">
-                    <div className="w-16 h-16 rounded-2xl bg-brand-navy flex items-center justify-center text-brand-red text-2xl font-black shadow-[0_8px_20px_rgba(30,58,95,0.2)]">
+                    <div className="w-16 h-16 rounded-2xl bg-brand-navy flex items-center justify-center text-brand-red text-2xl font-extrabold shadow-[0_8px_20px_rgba(30,58,95,0.2)]">
                       {(u.display_name || u.full_name).charAt(0)}
                     </div>
                     <div className={cn(
@@ -395,7 +395,7 @@ export default function AdminPage() {
                     )} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-black text-slate-900 font-accent truncate leading-tight">
+                    <h3 className="text-lg font-extrabold text-slate-900 font-accent truncate leading-tight">
                       {u.display_name || u.full_name}
                     </h3>
                     <p className="text-xs font-bold text-slate-400 truncate">{u.email}</p>
@@ -404,8 +404,8 @@ export default function AdminPage() {
 
                 <div className="grid grid-cols-2 gap-3 mb-8 p-4 bg-slate-50/50 rounded-2xl border border-slate-100/50">
                   <div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Last Intel</p>
-                    <p className="text-xs font-black text-brand-navy truncate">
+                    <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Last Intel</p>
+                    <p className="text-xs font-extrabold text-brand-navy truncate">
                       {u.last_action ? (
                         <span className="flex items-center gap-1">
                           {u.last_action}
@@ -414,8 +414,8 @@ export default function AdminPage() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Daily Cycles</p>
-                    <p className="text-xs font-black text-slate-700">
+                    <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Daily Cycles</p>
+                    <p className="text-xs font-extrabold text-slate-700">
                       {u.total_actions_today} <span className="text-[10px] text-slate-400 font-medium lowercase">actions</span>
                     </p>
                   </div>
@@ -428,7 +428,7 @@ export default function AdminPage() {
                   </div>
                   <button
                     onClick={() => handleImpersonateUser(u.id)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-navy text-brand-red text-[10px] font-black uppercase tracking-widest shadow-[0_10px_20px_rgba(30,58,95,0.2)] hover:bg-slate-800 transition-all active:scale-95 group-hover:px-6"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-navy text-brand-red text-[10px] font-extrabold uppercase tracking-widest shadow-[0_10px_20px_rgba(30,58,95,0.2)] hover:bg-slate-800 transition-all active:scale-95 group-hover:px-6"
                   >
                     <LogIn size={14} strokeWidth={2.5} /> Impersonate
                   </button>
@@ -451,15 +451,15 @@ export default function AdminPage() {
           {/* Login Intelligence */}
           <div className="bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-sm overflow-hidden">
             <div className="flex items-center justify-between mb-10">
-              <h3 className="text-lg font-black text-slate-900 font-accent flex items-center gap-3">
+              <h3 className="text-lg font-extrabold text-slate-900 font-accent flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-brand-navy/5 flex items-center justify-center text-brand-navy">
                   <LogIn size={18} strokeWidth={2.5} />
                 </div>
                 Login <span className="text-brand-red">Intelligence</span>
               </h3>
-              <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">Last 7 Days</div>
+              <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">Last 7 Days</div>
             </div>
-            
+
             <div className="flex items-end gap-3 h-48 mb-6">
               {stats.loginsByDay.map(day => {
                 const maxLogins = Math.max(...stats.loginsByDay.map(d => Number(d.logins)), 1);
@@ -467,18 +467,18 @@ export default function AdminPage() {
                 return (
                   <div key={day.date} className="flex-1 flex flex-col items-center group">
                     <div className="w-full bg-slate-50 rounded-t-xl relative overflow-hidden flex flex-col justify-end h-full">
-                      <motion.div 
+                      <motion.div
                         initial={{ height: 0 }}
                         animate={{ height: `${height}%` }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="w-full bg-gradient-to-t from-brand-navy to-brand-navy/80 group-hover:from-brand-red group-hover:to-brand-red/80 transition-colors duration-500 rounded-t-lg relative"
                       >
-                        <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] font-black text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[10px] font-extrabold text-white opacity-0 group-hover:opacity-100 transition-opacity">
                           {day.logins}
                         </div>
                       </motion.div>
                     </div>
-                    <div className="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                    <div className="mt-4 text-[10px] font-extrabold text-slate-400 uppercase tracking-tighter">
                       {new Date(day.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
                     </div>
                   </div>
@@ -490,13 +490,13 @@ export default function AdminPage() {
           {/* Action Frequency */}
           <div className="bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-sm overflow-hidden">
             <div className="flex items-center justify-between mb-10">
-              <h3 className="text-lg font-black text-slate-900 font-accent flex items-center gap-3">
+              <h3 className="text-lg font-extrabold text-slate-900 font-accent flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-brand-navy/5 flex items-center justify-center text-brand-navy">
                   <Activity size={18} strokeWidth={2.5} />
                 </div>
                 Action <span className="text-brand-red">Frequency</span>
               </h3>
-              <div className="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100">Live Today</div>
+              <div className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100">Live Today</div>
             </div>
 
             <div className="space-y-6">
@@ -507,8 +507,8 @@ export default function AdminPage() {
                 return (
                   <div key={ab.action} className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-black uppercase tracking-wider text-slate-700" style={{ color }}>{ab.action}</span>
-                      <span className="text-[11px] font-black text-slate-900">{ab.count}</span>
+                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-700" style={{ color }}>{ab.action}</span>
+                      <span className="text-[11px] font-extrabold text-slate-900">{ab.count}</span>
                     </div>
                     <div className="h-2.5 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100">
                       <motion.div
@@ -527,7 +527,7 @@ export default function AdminPage() {
               )}
             </div>
           </div>
-          
+
           <div style={{ background: '#fff', borderRadius: 16, padding: 24, border: '1px solid var(--border)' }}>
             <h3 style={{ margin: '0 0 20px', fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
               <Users size={16} style={{ marginRight: 8, verticalAlign: 'middle' }} />
@@ -580,44 +580,44 @@ export default function AdminPage() {
             >
               <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div>
-                  <h3 className="text-xl font-black text-slate-900 font-accent tracking-tight">Audit <span className="text-brand-red">Intelligence</span></h3>
+                  <h3 className="text-xl font-extrabold text-slate-900 font-accent tracking-tight">Audit <span className="text-brand-red">Intelligence</span></h3>
                   <div className="text-xs font-bold text-slate-400 mt-1 italic">
                     Recorded at {formatTime(selectedLog.created_at)}
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => setSelectedLog(null)}
                   className="p-2.5 rounded-full hover:bg-slate-200 transition-colors text-slate-400"
                 >
                   <X size={24} strokeWidth={2.5} />
                 </button>
               </div>
-              
+
               <div className="p-10 overflow-y-auto custom-scrollbar">
                 <div className="grid grid-cols-2 gap-8 mb-10">
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Operator</p>
-                    <p className="text-sm font-black text-slate-900">{selectedLog.user_name || selectedLog.user_email}</p>
+                    <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Operator</p>
+                    <p className="text-sm font-extrabold text-slate-900">{selectedLog.user_name || selectedLog.user_email}</p>
                     <p className="text-[11px] font-bold text-brand-red uppercase mt-0.5 tracking-wider">{selectedLog.user_role}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Directive</p>
-                    <p className="text-sm font-black uppercase tracking-tight" style={{ color: actionColors[selectedLog.action] || '#1e3a5f' }}>
+                    <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Directive</p>
+                    <p className="text-sm font-extrabold uppercase tracking-tight" style={{ color: actionColors[selectedLog.action] || '#1e3a5f' }}>
                       {selectedLog.action}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Intel Entity</p>
-                    <p className="text-sm font-black text-slate-800">{selectedLog.entity_type} {selectedLog.entity_id ? `(#${selectedLog.entity_id.substring(0,8)})` : ''}</p>
+                    <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Intel Entity</p>
+                    <p className="text-sm font-extrabold text-slate-800">{selectedLog.entity_type} {selectedLog.entity_id ? `(#${selectedLog.entity_id.substring(0, 8)})` : ''}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Digital Signature</p>
+                    <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Digital Signature</p>
                     <p className="text-sm font-mono text-slate-500 font-bold">{selectedLog.ip_address}</p>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">
+                  <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-4">
                     {selectedLog.action === 'update' ? 'Comparative Analysis' : 'Intel Payload'}
                   </p>
                   <RenderLogDetails details={selectedLog.details} action={selectedLog.action} />
@@ -639,9 +639,9 @@ function RenderLogDetails({ details, action }: { details: Record<string, any>, a
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-100">
-              <th className="px-6 py-4 font-black text-slate-400 uppercase tracking-widest w-1/3">Field</th>
-              <th className="px-6 py-4 font-black text-slate-400 uppercase tracking-widest">Previous</th>
-              <th className="px-6 py-4 font-black text-slate-400 uppercase tracking-widest">Terminal</th>
+              <th className="px-6 py-4 font-extrabold text-slate-400 uppercase tracking-widest w-1/3">Field</th>
+              <th className="px-6 py-4 font-extrabold text-slate-400 uppercase tracking-widest">Previous</th>
+              <th className="px-6 py-4 font-extrabold text-slate-400 uppercase tracking-widest">Terminal</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
@@ -649,7 +649,7 @@ function RenderLogDetails({ details, action }: { details: Record<string, any>, a
               const diff = details.changedFields[field];
               return (
                 <tr key={field} className="group hover:bg-slate-50/30 transition-colors">
-                  <td className="px-6 py-4 font-black text-slate-700">{field}</td>
+                  <td className="px-6 py-4 font-extrabold text-slate-700">{field}</td>
                   <td className="px-6 py-4 text-rose-500 font-medium line-through decoration-rose-500/30">
                     {String(diff.old ?? '—')}
                   </td>

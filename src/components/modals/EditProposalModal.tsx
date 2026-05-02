@@ -119,8 +119,8 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                   <FileText className="text-white" size={20} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-white tracking-tight">Modify Engagement</h2>
-                  <p className="text-[11px] text-white/60 font-bold uppercase tracking-widest">Case ID: {proposal.number}</p>
+                  <h2 className="text-xl font-extrabold text-white tracking-tight">Modify Engagement</h2>
+                  <p className="text-[11px] !text-slate-200 font-bold uppercase tracking-widest">Case ID: {proposal.number}</p>
                 </div>
               </div>
               <button
@@ -135,12 +135,12 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
               <div className="space-y-4">
                 {/* Client Selection */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Client Entity</label>
+                  <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Client Entity</label>
                   <select
                     required
                     value={form.client_id}
                     onChange={(e) => setForm({ ...form, client_id: e.target.value })}
-                    className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
+                    className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                   >
                     <option value="">Select a client</option>
                     {clients.map(c => (
@@ -151,14 +151,14 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
 
                 {/* Status Selection */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Institutional Status</label>
+                  <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Institutional Status</label>
                   <div className="grid grid-cols-3 gap-2">
                     {(['pending', 'won', 'lost'] as ProposalStatus[]).map((s) => (
                       <button
                         key={s}
                         type="button"
                         onClick={() => setForm({ ...form, status: s })}
-                        className={`flex items-center justify-center gap-1.5 py-3 rounded-none text-[10px] font-black border transition-all uppercase tracking-widest ${
+                        className={`flex items-center justify-center gap-1.5 py-3 rounded-none text-[10px] font-extrabold border transition-all uppercase tracking-widest ${
                           form.status === s
                             ? s === 'won'
                               ? 'bg-brand-navy border-brand-navy text-white'
@@ -180,11 +180,11 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                 <div className="grid grid-cols-2 gap-4">
                   {/* Proposal Type */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Engagement Type</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Engagement Type</label>
                     <select
                       value={form.proposal_type}
                       onChange={(e) => setForm({ ...form, proposal_type: e.target.value as ProposalType })}
-                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                     >
                       <option value="new">New Proposal</option>
                       <option value="revision">Renewal</option>
@@ -193,11 +193,11 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
 
                   {/* Assignment Type */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Service Classification</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Service Classification</label>
                     <select
                       value={form.assignment_type}
                       onChange={(e) => setForm({ ...form, assignment_type: e.target.value as AssignmentType })}
-                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                     >
                       {Object.entries(ASSIGNMENT_TYPE_LABELS).map(([key, label]) => (
                         <option key={key} value={key}>{label}</option>
@@ -209,26 +209,26 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                 <div className="grid grid-cols-2 gap-4">
                   {/* Quotation Amount */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Fee Quotation (INR)</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Fee Quotation (INR)</label>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black">₹</span>
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-extrabold">₹</span>
                       <input
                         type="number"
                         required
                         value={form.quotation_amount || ''}
                         onChange={(e) => setForm({ ...form, quotation_amount: Number(e.target.value) })}
-                        className="w-full pl-8 pr-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all"
+                        className="w-full pl-8 pr-4 py-3 border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none rounded-none transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Fiscal Year */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Financial Period</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Financial Period</label>
                     <select
                       value={form.fiscal_year}
                       onChange={(e) => setForm({ ...form, fiscal_year: e.target.value })}
-                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                     >
                       <option value="2024-25">2024-25</option>
                       <option value="2025-26">2025-26</option>
@@ -240,12 +240,12 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                 <div className="grid grid-cols-2 gap-4">
                   {/* Responsible Partner */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Signing Partner</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Signing Partner</label>
                     <select
                       required
                       value={form.responsible_partner}
                       onChange={(e) => setForm({ ...form, responsible_partner: e.target.value })}
-                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                     >
                       <option value="">Select Partner</option>
                       {partners.map(p => (
@@ -256,12 +256,12 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
 
                   {/* Manager/Lead */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Case Manager</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Case Manager</label>
                     <select
                       required
                       value={form.manager_id}
                       onChange={(e) => setForm({ ...form, manager_id: e.target.value })}
-                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none rounded-none transition-all cursor-pointer appearance-none"
                     >
                       <option value="">Select Lead</option>
                       {managers.map(m => (
@@ -272,12 +272,12 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                 </div>
                 {/* Internal Notes */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Internal Reference / Notes</label>
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Internal Reference / Notes</label>
                   <textarea
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
                     rows={3}
-                    className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none rounded-none transition-all placeholder:text-slate-300 resize-none"
+                    className="w-full px-4 py-3 border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none rounded-none transition-all placeholder:text-slate-300 resize-none"
                     placeholder="Enter internal engagement notes..."
                   />
                 </div>
@@ -288,13 +288,13 @@ export default function EditProposalModal({ open, setOpen, proposal }: EditPropo
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="flex-1 px-6 py-4 border border-slate-200 text-[10px] font-black text-slate-500 hover:bg-slate-50 transition-all rounded-none uppercase tracking-widest"
+                  className="flex-1 px-6 py-4 border border-slate-200 text-[10px] font-extrabold text-slate-500 hover:bg-slate-50 transition-all rounded-none uppercase tracking-widest"
                 >
                   Discard Changes
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-4 bg-brand-navy text-white text-[10px] font-black transition-all flex items-center justify-center gap-2 rounded-none uppercase tracking-widest border-b-2 border-brand-red"
+                  className="flex-1 px-6 py-4 bg-brand-navy text-white text-[10px] font-extrabold transition-all flex items-center justify-center gap-2 rounded-none uppercase tracking-widest border-b-2 border-brand-red"
                 >
                   <Save size={16} />
                   Authorize Update

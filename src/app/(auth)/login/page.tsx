@@ -57,10 +57,10 @@ export default function LoginPage() {
             {/* Using official KPCA logo */}
             <div className="bg-white px-8 py-6 rounded-none border-l-8 border-brand-red shadow-none inline-block">
               <div className="flex flex-col">
-                <span className="text-2xl font-black tracking-[0.15em] text-[var(--brand-navy)] leading-none">
+                <span className="text-2xl font-extrabold tracking-[0.15em] text-[var(--brand-navy)] leading-none">
                   KIRTANE <span className="text-brand-red">&</span> PANDIT
                 </span>
-                <span className="text-[9px] font-black text-slate-500 tracking-[0.2em] mt-2 uppercase">
+                <span className="text-[9px] font-extrabold text-slate-500 tracking-[0.2em] mt-2 uppercase">
                   Chartered Accountants
                 </span>
               </div>

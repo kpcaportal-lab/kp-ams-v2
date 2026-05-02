@@ -125,8 +125,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
             {/* Header */}
             <div className="px-8 py-6 border-b border-brand-red/30 flex items-center justify-between bg-[var(--brand-navy)]">
               <div>
-                <h2 className="text-xl font-bold text-white uppercase tracking-tight">Edit Assignment</h2>
-                <p className="text-xs text-white/60 mt-0.5 font-medium uppercase tracking-widest">Institutional Project Management</p>
+                <h2 className="text-xl font-extrabold text-white uppercase tracking-tight">Edit Assignment</h2>
+                <p className="text-xs !text-slate-200 mt-0.5 font-medium uppercase tracking-widest">Institutional Project Management</p>
               </div>
               <button
                 onClick={() => setOpen(false)}
@@ -142,7 +142,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
               <div className="space-y-4">
                 {/* Client Name (read-only) */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Institutional Client</label>
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Institutional Client</label>
                   <div className="w-full px-4 py-3 border border-slate-100 bg-slate-50 text-sm font-bold text-slate-600 rounded-none uppercase">
                     {assignment.client_name || 'N/A'}
                   </div>
@@ -150,7 +150,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
 
                 {/* GSTN */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">GSTN Identification</label>
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">GSTN Identification</label>
                   <input
                     required
                     value={form.gstn}
@@ -162,7 +162,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
 
                 {/* Scope Item */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Project Scope</label>
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Project Scope</label>
                   <input
                     value={form.scope_item}
                     onChange={(e) => setForm({ ...form, scope_item: e.target.value })}
@@ -173,7 +173,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
 
                 {/* Detailed Scope Areas */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Institutional Deliverables</label>
+                  <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Institutional Deliverables</label>
                   <textarea
                     required
                     value={form.scope_areas}
@@ -186,7 +186,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                 <div className="grid grid-cols-2 gap-4">
                   {/* Category */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Category</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Category</label>
                     <select
                       value={form.category}
                       onChange={(e) => setForm({ ...form, category: e.target.value as AssignmentCategory })}
@@ -200,7 +200,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
 
                   {/* Subcategory */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Service Subcategory</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Service Subcategory</label>
                     <select
                       value={form.subcategory}
                       onChange={(e) => setForm({ ...form, subcategory: e.target.value as AssignmentSubcategory })}
@@ -216,7 +216,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                 <div className="grid grid-cols-2 gap-4">
                   {/* Total Fees */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Professional Fees (₹)</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Professional Fees (₹)</label>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                       <input
@@ -232,7 +232,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
 
                   {/* Billing Cycle */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Billing Protocol</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Billing Protocol</label>
                     <select
                       value={form.billing_cycle}
                       onChange={(e) => setForm({ ...form, billing_cycle: e.target.value as BillingCycle })}
@@ -250,7 +250,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                 <div className="grid grid-cols-2 gap-4">
                   {/* Billed Amount */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Billed (₹)</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Billed (₹)</label>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                       <input
@@ -265,7 +265,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
 
                   {/* Out of Pocket */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Out of Pocket (₹)</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Out of Pocket (₹)</label>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                       <input
@@ -282,7 +282,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                 <div className="grid grid-cols-2 gap-4">
                   {/* Received Amount */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Received (₹)</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Received (₹)</label>
                     <div className="relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                       <input
@@ -300,8 +300,8 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                 {form.total_fees > 0 && (
                   <div className="p-4 border border-slate-100 bg-slate-50 rounded-none">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Financial Performance</span>
-                      <span className="text-sm font-black text-[var(--brand-navy)]">{billingPct.toFixed(1)}%</span>
+                      <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Financial Performance</span>
+                      <span className="text-sm font-extrabold text-[var(--brand-navy)]">{billingPct.toFixed(1)}%</span>
                     </div>
                     <div className="h-1.5 bg-slate-200 rounded-none overflow-hidden">
                       <div 
@@ -315,7 +315,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                 <div className="grid grid-cols-2 gap-4">
                   {/* Partner Selection */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Engagement Partner</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Engagement Partner</label>
                     <select
                       value={form.partner_id}
                       onChange={(e) => setForm({ ...form, partner_id: e.target.value })}
@@ -330,7 +330,7 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
 
                   {/* Manager Selection */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Project Manager</label>
+                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Project Manager</label>
                     <select
                       value={form.manager_id}
                       onChange={(e) => setForm({ ...form, manager_id: e.target.value })}
@@ -350,13 +350,13 @@ export default function EditAssignmentModal({ open, setOpen, assignment }: EditA
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="flex-1 px-6 py-4 border border-slate-200 text-[10px] font-black text-slate-500 hover:bg-slate-50 transition-all rounded-none uppercase tracking-widest"
+                  className="flex-1 px-6 py-4 border border-slate-200 text-[10px] font-extrabold text-slate-500 hover:bg-slate-50 transition-all rounded-none uppercase tracking-widest"
                 >
                   Discard Changes
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-4 bg-[var(--brand-navy)] text-white text-[10px] font-black transition-all flex items-center justify-center gap-2 rounded-none uppercase tracking-widest border-b-2 border-brand-red"
+                  className="flex-1 px-6 py-4 bg-[var(--brand-navy)] text-white text-[10px] font-extrabold transition-all flex items-center justify-center gap-2 rounded-none uppercase tracking-widest border-b-2 border-brand-red"
                 >
                   <Save size={16} />
                   Authorize Update

@@ -59,7 +59,7 @@ export default function ClientDetailPage() {
         <Building2 size={48} className="text-slate-300" />
         <p className="text-lg font-semibold text-slate-500">Client not found</p>
         <button onClick={() => router.push('/clients')}
-          className="px-6 py-3 rounded-none bg-brand-navy text-white text-sm font-black border-b-2 border-brand-red transition-all">
+          className="px-6 py-3 rounded-none bg-brand-navy text-white text-sm font-extrabold border-b-2 border-brand-red transition-all">
           Back to Clients
         </button>
       </div>
@@ -91,7 +91,7 @@ export default function ClientDetailPage() {
         </button>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-none bg-brand-navy flex items-center justify-center text-white font-black text-lg border border-brand-navy shadow-none">
+            <div className="w-12 h-12 rounded-none bg-brand-navy flex items-center justify-center text-white font-extrabold text-lg border border-brand-navy shadow-none">
               {client.name.charAt(0)}
             </div>
             <div>
@@ -104,7 +104,7 @@ export default function ClientDetailPage() {
             </div>
           </div>
           <button onClick={() => setIsEditModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-none border border-slate-200 bg-white text-slate-700 text-sm font-black hover:bg-slate-50 transition-all shadow-none">
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-none border border-slate-200 bg-white text-slate-700 text-sm font-extrabold hover:bg-slate-50 transition-all shadow-none">
             <Edit2 size={16} /> Edit Client
           </button>
         </div>
@@ -205,7 +205,7 @@ export default function ClientDetailPage() {
               <Briefcase size={20} />
             </div>
             <div>
-              <div className="text-2xl font-black text-slate-900 leading-none">{clientAssignments.length}</div>
+              <div className="text-2xl font-extrabold text-slate-900 leading-none">{clientAssignments.length}</div>
               <div className="text-xs font-bold text-blue-600/70 uppercase tracking-wide mt-1">Assignments</div>
             </div>
           </div>
@@ -214,7 +214,7 @@ export default function ClientDetailPage() {
               <FileText size={20} />
             </div>
             <div>
-              <div className="text-2xl font-black text-slate-900 leading-none">{clientProposals.length}</div>
+              <div className="text-2xl font-extrabold text-slate-900 leading-none">{clientProposals.length}</div>
               <div className="text-xs font-bold text-violet-600/70 uppercase tracking-wide mt-1">Proposals</div>
             </div>
           </div>

@@ -2,7 +2,7 @@ import pkg from 'pg';
 const { Client } = pkg;
 
 // Use the CORRECT eu-west-1 pooler host as established
-const connectionString = "postgresql://postgres.dtwdrlxfqozoqmenhpih:thedeveloper%40321@aws-1-eu-west-1.pooler.supabase.com:6543/postgres?sslmode=require";
+const connectionString = "postgresql://postgres.dtwdrlxfqozoqmenhpih:thedeveloper%40321@aws-1-eu-west-1.pooler.supabase.com:6543/postgres";
 
 const client = new Client({
   connectionString,
@@ -33,15 +33,15 @@ const spreadsheetData = [
   { type: 'Mnmg Consulting', client: 'Cooper Corporation Pvt Ltd', scopeItem: 'Cooper', scopeAreas: 'Costing Verification', billingAmount: 250000, billedAmount: 250000, amountReceipt: 250000 },
   { type: 'Mnmg Consulting', client: 'Cooper Corporation Pvt Ltd', scopeItem: 'Cooper', scopeAreas: 'Production Review', billingAmount: 300000, billedAmount: 300000, amountReceipt: 200000 },
   { type: 'Internal Audit', client: 'John Deere India Pvt Ltd', scopeItem: 'JD', scopeAreas: 'Stock Take', billingAmount: 190400, billedAmount: 190400, amountReceipt: 49600 },
-  { type: 'Internal Audit', client: 'Mahindra and Mahindra Lt', subsidiary: 'Mah Logistics Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mah Logistics Ltd', billingAmount: 450000, billedAmount: 450000, amountReceipt: 0 },
-  { type: 'Internal Audit', client: 'Mahindra and Mahindra Lt', subsidiary: 'Mah Accelo Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mah Accelo Ltd', billingAmount: 425000, billedAmount: 425000, amountReceipt: 0 },
-  { type: 'Internal Audit', client: 'Mahindra and Mahindra Lt', subsidiary: 'Bristlecone India Ltd', scopeItem: 'Mahindra', scopeAreas: 'Bristlecone India Ltd', billingAmount: 250000, billedAmount: 250000, amountReceipt: 0 },
-  { type: 'Internal Audit', client: 'Mahindra and Mahindra Lt', subsidiary: 'Mah Auto Steel Pvt Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mah Auto Steel Pvt Ltd', billingAmount: 250000, billedAmount: 250000, amountReceipt: 0 },
-  { type: 'Internal Audit', client: 'Mahindra and Mahindra Lt', subsidiary: 'Mah Steel Service Center Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mah Steel Service Center Ltd', billingAmount: 150000, billedAmount: 150000, amountReceipt: 0 },
-  { type: 'Internal Audit', client: 'Mahindra and Mahindra Lt', subsidiary: 'Mahindra MSTC Recycling Pvt. Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mahindra MSTC Recycling Pvt. Ltd', billingAmount: 50000, billedAmount: 50000, amountReceipt: 0 },
-  { type: 'Internal Audit', client: 'Mahindra and Mahindra Lt', subsidiary: 'LORDS Freight (India) Private Limited', scopeItem: 'Mahindra', scopeAreas: 'LORDS Freight (India) Private Limited', billingAmount: 50000, billedAmount: 50000, amountReceipt: 0 },
-  { type: 'Internal Audit', client: 'Mahindra and Mahindra Lt', subsidiary: 'MLL Express Services Private Limited', scopeItem: 'Mahindra', scopeAreas: 'MLL Express Services Private Limited', billingAmount: 80000, billedAmount: 80000, amountReceipt: 0 },
-  { type: 'Internal Audit', client: 'Mahindra and Mahindra Lt', subsidiary: 'MLL Mobility Pvt. Ltd', scopeItem: 'Mahindra', scopeAreas: 'MLL Mobility Pvt. Ltd', billingAmount: 50000, billedAmount: 50000, amountReceipt: 0 },
+  { type: 'Internal Audit', client: 'Mah Logistics Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mah Logistics Ltd', billingAmount: 450000, billedAmount: 450000, amountReceipt: 0 },
+  { type: 'Internal Audit', client: 'Mah Accelo Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mah Accelo Ltd', billingAmount: 425000, billedAmount: 425000, amountReceipt: 0 },
+  { type: 'Internal Audit', client: 'Bristlecone India Ltd', scopeItem: 'Mahindra', scopeAreas: 'Bristlecone India Ltd', billingAmount: 250000, billedAmount: 250000, amountReceipt: 0 },
+  { type: 'Internal Audit', client: 'Mah Auto Steel Pvt Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mah Auto Steel Pvt Ltd', billingAmount: 250000, billedAmount: 250000, amountReceipt: 0 },
+  { type: 'Internal Audit', client: 'Mah Steel Service Center Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mah Steel Service Center Ltd', billingAmount: 150000, billedAmount: 150000, amountReceipt: 0 },
+  { type: 'Internal Audit', client: 'Mahindra MSTC Recycling Pvt. Ltd', scopeItem: 'Mahindra', scopeAreas: 'Mahindra MSTC Recycling Pvt. Ltd', billingAmount: 50000, billedAmount: 50000, amountReceipt: 0 },
+  { type: 'Internal Audit', client: 'LORDS Freight (India) Private Limited', scopeItem: 'Mahindra', scopeAreas: 'LORDS Freight (India) Private Limited', billingAmount: 50000, billedAmount: 50000, amountReceipt: 0 },
+  { type: 'Internal Audit', client: 'MLL Express Services Private Limited', scopeItem: 'Mahindra', scopeAreas: 'MLL Express Services Private Limited', billingAmount: 80000, billedAmount: 80000, amountReceipt: 0 },
+  { type: 'Internal Audit', client: 'MLL Mobility Pvt. Ltd', scopeItem: 'Mahindra', scopeAreas: 'MLL Mobility Pvt. Ltd', billingAmount: 50000, billedAmount: 50000, amountReceipt: 0 },
 ];
 
 async function main() {
@@ -52,9 +52,9 @@ async function main() {
     await client.query('BEGIN');
     console.log('🔓 Transaction started.');
 
-    // 1. Purge problematic placeholder profiles
-    await client.query("DELETE FROM profiles WHERE id::text LIKE '00000000-0000-0000-0000-%' OR email ILIKE '%@kirtanepandit.com'");
-    console.log('✅ Purged placeholder profiles and organizational emails.');
+    // 1. Purge problematic placeholder profiles (disabled to protect proposals)
+    // await client.query("DELETE FROM profiles WHERE id::text LIKE '00000000-0000-0000-0000-%' OR email ILIKE '%@kirtanepandit.com'");
+    console.log('✅ Skipped purging placeholder profiles.');
 
     // 2. Standardize Gmail Accounts
     const users = [

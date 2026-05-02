@@ -53,8 +53,7 @@ export const requireRole = (...roles: string[]) => {
 
 /**
  * Get the list of user IDs that the logged-in user is allowed to see data for.
- * - admin / partner → null (= no filter, see everything)
- * - director → [self, ...managers reporting to self]
+ * - admin / partner / director → null (= no filter, see everything)
  * - manager → [self]
  */
 export const getVisibleUserIds = async (user: AuthUser): Promise<string[] | null> => {

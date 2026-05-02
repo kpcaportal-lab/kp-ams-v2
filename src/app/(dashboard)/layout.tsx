@@ -43,7 +43,7 @@ export default function DashboardLayout({
               <div className="w-2 h-2 bg-[var(--brand-red)] rounded-full animate-pulse" />
             </div>
           </div>
-          <p className="mt-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] animate-pulse">Initializing Portal</p>
+          <p className="mt-6 text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.3em] animate-pulse">Initializing Portal</p>
         </div>
       </div>
     );

@@ -85,15 +85,15 @@ export default function ProfilePage() {
             >
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-6">
-                        <div className="w-20 h-20 rounded-none bg-white text-[var(--brand-navy)] flex items-center justify-center text-4xl font-black border-2 border-white shadow-none">
+                        <div className="w-20 h-20 rounded-none bg-white text-[var(--brand-navy)] flex items-center justify-center text-4xl font-extrabold border-2 border-white shadow-none">
                             {user?.full_name?.charAt(0)}
                         </div>
                         <div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase tracking-[0.2em] mb-2">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none bg-white/10 border border-white/20 text-white text-[10px] font-extrabold uppercase tracking-[0.2em] mb-2">
                                 <Sparkles size={14} className="text-brand-red" /> Institutional Account Profile
                             </div>
-                            <h1 className="text-3xl md:text-5xl font-black tracking-tight uppercase !text-white">{user?.full_name}</h1>
-                            <p className="text-white/60 text-[10px] font-black uppercase mt-1 tracking-widest">{user?.email}</p>
+                            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight uppercase !text-white">{user?.full_name}</h1>
+                            <p className="text-white/60 text-[10px] font-extrabold uppercase mt-1 tracking-widest">{user?.email}</p>
                         </div>
                     </div>
 
@@ -101,14 +101,14 @@ export default function ProfilePage() {
                         {!isEditing && (
                             <button 
                                 onClick={() => setIsEditing(true)}
-                                className="flex items-center gap-2 px-6 py-4 rounded-none bg-white/10 hover:bg-white/20 border border-white/10 text-[10px] font-black transition-all active:scale-95 uppercase tracking-widest"
+                                className="flex items-center gap-2 px-6 py-4 rounded-none bg-white/10 hover:bg-white/20 border border-white/10 text-[10px] font-extrabold transition-all active:scale-95 uppercase tracking-widest"
                             >
                                 <Edit2 size={16} /> Edit Profile
                             </button>
                         )}
                         <button 
                             onClick={handleLogout}
-                            className="flex items-center gap-2 px-6 py-4 rounded-none bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-black transition-all active:scale-95 uppercase tracking-widest"
+                            className="flex items-center gap-2 px-6 py-4 rounded-none bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-extrabold transition-all active:scale-95 uppercase tracking-widest"
                         >
                             <LogOut size={16} /> Logout
                         </button>
@@ -125,19 +125,19 @@ export default function ProfilePage() {
                     className="bg-white rounded-none border border-slate-200 shadow-none overflow-hidden"
                 >
                     <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/50">
-                        <h3 className="text-[10px] font-black text-slate-900 tracking-widest flex items-center gap-2 uppercase">
+                        <h3 className="text-[10px] font-extrabold text-slate-900 tracking-widest flex items-center gap-2 uppercase">
                             <UserCircle size={18} className="text-[var(--brand-navy)]" /> Profile Overview
                         </h3>
                     </div>
                     <div className="p-8 flex flex-col items-center text-center">
                         <div className="relative mb-6">
-                            <div className="w-24 h-24 rounded-none bg-[var(--brand-navy)] flex items-center justify-center text-white text-3xl font-black shadow-none border-4 border-brand-navy">
+                            <div className="w-24 h-24 rounded-none bg-[var(--brand-navy)] flex items-center justify-center text-white text-3xl font-extrabold shadow-none border-4 border-brand-navy">
                                 {user?.full_name?.charAt(0)}
                             </div>
                             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-600 border-[3px] border-white rounded-none" />
                         </div>
-                        <h2 className="text-xl font-black text-slate-900 mb-1 uppercase tracking-tight">{user?.full_name}</h2>
-                        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-none bg-brand-navy text-white text-[10px] font-black uppercase tracking-[0.2em] border border-brand-navy mb-8">
+                        <h2 className="text-xl font-extrabold text-slate-900 mb-1 uppercase tracking-tight">{user?.full_name}</h2>
+                        <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-none bg-brand-navy text-white text-[10px] font-extrabold uppercase tracking-[0.2em] border border-brand-navy mb-8">
                             <Shield size={10} /> {user?.role?.replace('_', ' ')}
                         </span>
 
@@ -147,8 +147,8 @@ export default function ProfilePage() {
                                     <Mail size={16} strokeWidth={2.5} />
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Authorized Email</div>
-                                    <div className="text-sm font-black text-slate-800 truncate">{user?.email}</div>
+                                    <div className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Authorized Email</div>
+                                    <div className="text-sm font-extrabold text-slate-800 truncate">{user?.email}</div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-4 text-left">
@@ -156,8 +156,8 @@ export default function ProfilePage() {
                                     <Phone size={16} strokeWidth={2.5} />
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Contact Extension</div>
-                                    <div className="text-sm font-black text-slate-800">{user?.phone_number || '—'}</div>
+                                    <div className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Contact Extension</div>
+                                    <div className="text-sm font-extrabold text-slate-800">{user?.phone_number || '—'}</div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-4 text-left">
@@ -165,8 +165,8 @@ export default function ProfilePage() {
                                     <Shield size={16} strokeWidth={2.5} />
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Privilege Designation</div>
-                                    <div className="text-sm font-black text-slate-800 uppercase">{user?.role?.replace('_', ' ')}</div>
+                                    <div className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest">Privilege Designation</div>
+                                    <div className="text-sm font-extrabold text-slate-800 uppercase">{user?.role?.replace('_', ' ')}</div>
                                 </div>
                             </div>
                         </div>
@@ -180,11 +180,11 @@ export default function ProfilePage() {
                     className="lg:col-span-2 bg-white rounded-none border border-slate-200 shadow-none overflow-hidden flex flex-col"
                 >
                     <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-                        <h3 className="text-[10px] font-black text-slate-900 tracking-widest flex items-center gap-2 uppercase">
+                        <h3 className="text-[10px] font-extrabold text-slate-900 tracking-widest flex items-center gap-2 uppercase">
                             <User size={18} className="text-[var(--brand-navy)]" /> Identity Management
                         </h3>
                         {isEditing && (
-                            <span className="text-[9px] font-black text-white uppercase tracking-[0.2em] bg-brand-navy px-3 py-1 rounded-none border border-brand-navy">Authorized Modification Mode</span>
+                            <span className="text-[9px] font-extrabold text-white uppercase tracking-[0.2em] bg-brand-navy px-3 py-1 rounded-none border border-brand-navy">Authorized Modification Mode</span>
                         )}
                     </div>
                     
@@ -193,29 +193,29 @@ export default function ProfilePage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {/* Full Name (read-only) */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Full Legal Name</label>
+                                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Full Legal Name</label>
                                     <div className="relative">
                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                         <input 
                                             type="text" 
-                                            className="w-full pl-11 pr-4 py-4 rounded-none border border-slate-200 bg-slate-50 text-sm font-black text-slate-400 cursor-not-allowed uppercase"
+                                            className="w-full pl-11 pr-4 py-4 rounded-none border border-slate-200 bg-slate-50 text-sm font-extrabold text-slate-400 cursor-not-allowed uppercase"
                                             value={user?.full_name || ''} 
                                             disabled 
                                         />
                                     </div>
-                                    <p className="text-[9px] text-slate-400 font-black flex items-center gap-1 px-1 uppercase tracking-widest mt-1">
+                                    <p className="text-[9px] text-slate-400 font-extrabold flex items-center gap-1 px-1 uppercase tracking-widest mt-1">
                                         <Shield size={10} /> Verified Record: Managed by Administration
                                     </p>
                                 </div>
 
                                 {/* Email (read-only) */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Authorized Email</label>
+                                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Authorized Email</label>
                                     <div className="relative">
                                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                         <input 
                                             type="text" 
-                                            className="w-full pl-11 pr-4 py-4 rounded-none border border-slate-200 bg-slate-50 text-sm font-black text-slate-400 cursor-not-allowed"
+                                            className="w-full pl-11 pr-4 py-4 rounded-none border border-slate-200 bg-slate-50 text-sm font-extrabold text-slate-400 cursor-not-allowed"
                                             value={user?.email || ''} 
                                             disabled 
                                         />
@@ -224,11 +224,11 @@ export default function ProfilePage() {
 
                                 {/* Display Name */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Display Designation</label>
+                                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Display Designation</label>
                                     <input 
                                         type="text" 
                                         className={cn(
-                                            "w-full px-4 py-4 rounded-none border text-sm font-black transition-all outline-none uppercase",
+                                            "w-full px-4 py-4 rounded-none border text-sm font-extrabold transition-all outline-none uppercase",
                                             isEditing 
                                                 ? "border-brand-navy bg-white text-slate-900 focus:border-brand-navy" 
                                                 : "border-slate-200 bg-slate-50 text-slate-600"
@@ -242,13 +242,13 @@ export default function ProfilePage() {
 
                                 {/* Phone Number */}
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Contact Extension</label>
+                                    <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Contact Extension</label>
                                     <div className="relative">
                                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                         <input 
                                             type="text" 
                                             className={cn(
-                                                "w-full pl-11 pr-4 py-4 rounded-none border text-sm font-black transition-all outline-none",
+                                                "w-full pl-11 pr-4 py-4 rounded-none border text-sm font-extrabold transition-all outline-none",
                                                 isEditing 
                                                     ? "border-brand-navy bg-white text-slate-900 focus:border-brand-navy" 
                                                     : "border-slate-200 bg-slate-50 text-slate-600"
@@ -264,13 +264,13 @@ export default function ProfilePage() {
 
                             {/* Work File URL */}
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">Credential Verification URL (External)</label>
+                                <label className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-1">Credential Verification URL (External)</label>
                                 <div className="relative">
                                     <ExternalLink className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                                     <input 
                                         type="url" 
                                         className={cn(
-                                            "w-full pl-11 pr-4 py-4 rounded-none border text-sm font-black transition-all outline-none",
+                                            "w-full pl-11 pr-4 py-4 rounded-none border text-sm font-extrabold transition-all outline-none",
                                             isEditing 
                                                 ? "border-brand-navy bg-white text-slate-900 focus:border-brand-navy" 
                                                 : "border-slate-200 bg-slate-50 text-slate-600"
@@ -281,7 +281,7 @@ export default function ProfilePage() {
                                         disabled={!isEditing}
                                     />
                                 </div>
-                                <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-1">
+                                <p className="text-[9px] text-slate-400 font-extrabold uppercase tracking-widest mt-1">
                                     Authorized external link to CV, certifications, or professional portfolio.
                                 </p>
                             </div>
@@ -294,15 +294,15 @@ export default function ProfilePage() {
                                             <ExternalLink size={20} />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Verification Link</p>
-                                            <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">Secure external document portal</p>
+                                            <p className="text-[10px] font-extrabold text-slate-900 uppercase tracking-widest">Verification Link</p>
+                                            <p className="text-[9px] text-slate-400 font-extrabold uppercase tracking-widest mt-0.5">Secure external document portal</p>
                                         </div>
                                     </div>
                                     <a 
                                         href={user?.work_file_url} 
                                         target="_blank" 
                                         rel="noopener noreferrer"
-                                        className="px-6 py-3 rounded-none bg-white border border-slate-200 text-[10px] font-black text-brand-navy hover:bg-brand-navy hover:text-white transition-all uppercase tracking-widest"
+                                        className="px-6 py-3 rounded-none bg-white border border-slate-200 text-[10px] font-extrabold text-brand-navy hover:bg-brand-navy hover:text-white transition-all uppercase tracking-widest"
                                     >
                                         Access Record
                                     </a>
@@ -321,7 +321,7 @@ export default function ProfilePage() {
                                 >
                                     <button 
                                         type="button" 
-                                        className="flex items-center gap-2 px-8 py-4 rounded-none border border-slate-200 text-[10px] font-black text-slate-500 hover:bg-slate-50 transition-all active:scale-95 uppercase tracking-widest"
+                                        className="flex items-center gap-2 px-8 py-4 rounded-none border border-slate-200 text-[10px] font-extrabold text-slate-500 hover:bg-slate-50 transition-all active:scale-95 uppercase tracking-widest"
                                         onClick={() => {
                                             setIsEditing(false);
                                             setDisplayName(user?.display_name || '');
@@ -333,7 +333,7 @@ export default function ProfilePage() {
                                     </button>
                                     <button 
                                         type="submit" 
-                                        className="flex items-center gap-2 px-8 py-4 rounded-none bg-brand-navy text-white text-[10px] font-black transition-all border-b-2 border-brand-red active:scale-95 disabled:opacity-50 uppercase tracking-widest"
+                                        className="flex items-center gap-2 px-8 py-4 rounded-none bg-brand-navy text-white text-[10px] font-extrabold transition-all border-b-2 border-brand-red active:scale-95 disabled:opacity-50 uppercase tracking-widest"
                                         disabled={loading}
                                     >
                                         {loading ? (

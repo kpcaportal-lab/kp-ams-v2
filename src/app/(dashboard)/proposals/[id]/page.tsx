@@ -253,14 +253,14 @@ export default function ProposalDetailsPage() {
         <div className="flex flex-col gap-3">
           <button 
             onClick={() => router.push('/proposals')}
-            className="flex items-center gap-2 text-slate-500 hover:text-brand-navy transition-all text-[10px] font-black uppercase tracking-widest w-fit group"
+            className="flex items-center gap-2 text-slate-500 hover:text-brand-navy transition-all text-[10px] font-extrabold uppercase tracking-widest w-fit group"
           >
             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" strokeWidth={3} /> Back to Strategic Dashboard
           </button>
           
           <div className="flex flex-wrap items-center gap-4">
-            <h1 className="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 leading-tight uppercase font-accent">{proposal.client_name}</h1>
-            <span className={`px-4 py-1 rounded-none text-[10px] font-black uppercase tracking-[0.2em] border ${
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tighter text-slate-900 leading-tight uppercase font-accent">{proposal.client_name}</h1>
+            <span className={`px-4 py-1 rounded-none text-[10px] font-extrabold uppercase tracking-[0.2em] border ${
               proposal.status === 'won' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 
               proposal.status === 'lost' ? 'bg-rose-50 text-rose-700 border-rose-200' : 
               proposal.status === 'revised' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' :
@@ -270,7 +270,7 @@ export default function ProposalDetailsPage() {
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 text-slate-500 text-[10px] font-black uppercase tracking-widest">
+          <div className="flex flex-wrap items-center gap-4 text-slate-500 text-[10px] font-extrabold uppercase tracking-widest">
             <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-none border border-slate-200">
               <FileText size={14} className="text-slate-400" strokeWidth={2.5} />
               <span className="font-mono tracking-tighter text-slate-900">{proposal.number}</span>
@@ -291,7 +291,7 @@ export default function ProposalDetailsPage() {
         <div className="flex flex-wrap items-center gap-3">
           <button 
             onClick={handleDownloadPDF}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-3 rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 hover:border-slate-400 transition-all shadow-none group active:scale-95"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-3 rounded-none text-[10px] font-extrabold uppercase tracking-widest hover:bg-slate-50 hover:border-slate-400 transition-all shadow-none group active:scale-95"
           >
             <Download size={18} className="text-slate-400 group-hover:text-brand-navy transition-colors" strokeWidth={2.5} />
             Download
@@ -299,7 +299,7 @@ export default function ProposalDetailsPage() {
           
           <button 
             onClick={handleExportPPTX}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-3 rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 hover:border-slate-400 transition-all shadow-none group active:scale-95"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-3 rounded-none text-[10px] font-extrabold uppercase tracking-widest hover:bg-slate-50 hover:border-slate-400 transition-all shadow-none group active:scale-95"
           >
             <Presentation size={18} className="text-slate-400 group-hover:text-brand-navy transition-colors" strokeWidth={2.5} />
             PPT Deck
@@ -309,21 +309,21 @@ export default function ProposalDetailsPage() {
             <>
               <button 
                 onClick={() => setIsRevisionModalOpen(true)}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-indigo-200 text-indigo-600 px-5 py-3 rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-indigo-50 hover:border-indigo-300 transition-all active:scale-95"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-indigo-200 text-indigo-600 px-5 py-3 rounded-none text-[10px] font-extrabold uppercase tracking-widest hover:bg-indigo-50 hover:border-indigo-300 transition-all active:scale-95"
               >
                 <RotateCcw size={18} strokeWidth={2.5} />
                 Revise
               </button>
               <button 
                 onClick={() => handleStatusUpdate('won')}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-emerald-600 border border-emerald-500 text-white px-5 py-3 rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-none active:scale-95"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-emerald-600 border border-emerald-500 text-white px-5 py-3 rounded-none text-[10px] font-extrabold uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-none active:scale-95"
               >
                 <CheckCircle2 size={18} strokeWidth={2.5} />
                 Mark as Won
               </button>
               <button 
                 onClick={() => handleStatusUpdate('lost')}
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-rose-200 text-rose-600 px-5 py-3 rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-rose-50 hover:border-rose-300 transition-all active:scale-95"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-rose-200 text-rose-600 px-5 py-3 rounded-none text-[10px] font-extrabold uppercase tracking-widest hover:bg-rose-50 hover:border-rose-300 transition-all active:scale-95"
               >
                 <XCircle size={18} strokeWidth={2.5} />
                 Lost
@@ -333,12 +333,12 @@ export default function ProposalDetailsPage() {
 
           <button 
             onClick={() => setIsEditModalOpen(true)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-3 rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 hover:border-slate-300 transition-all shadow-none active:scale-95"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-3 rounded-none text-[10px] font-extrabold uppercase tracking-widest hover:bg-slate-50 hover:border-slate-300 transition-all shadow-none active:scale-95"
           >
             <Edit2 size={18} className="text-slate-400" strokeWidth={2.5} />
             Edit
           </button>
-          <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-none text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-none active:scale-95">
+          <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-none text-[10px] font-extrabold uppercase tracking-widest hover:bg-slate-800 transition-all shadow-none active:scale-95">
             <Send size={18} strokeWidth={2.5} />
             Email
           </button>
@@ -355,15 +355,15 @@ export default function ProposalDetailsPage() {
             <FileCheck size={24} className="text-brand-red" strokeWidth={2.5} />
           </div>
           <div>
-            <p className="text-[9px] font-black text-brand-navy uppercase tracking-[0.2em]">Strategic Decision Matrix</p>
-            <p className="text-xs font-black text-slate-800 tracking-tight uppercase">Transition proposal status or initiate service delivery workflows.</p>
+            <p className="text-[9px] font-extrabold text-brand-navy uppercase tracking-[0.2em]">Strategic Decision Matrix</p>
+            <p className="text-xs font-extrabold text-slate-800 tracking-tight uppercase">Transition proposal status or initiate service delivery workflows.</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
           {proposal.status !== 'won' && (
             <button 
               onClick={() => handleStatusUpdate('won')}
-              className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black uppercase tracking-widest rounded-none transition-all shadow-none flex items-center gap-2 active:scale-95"
+              className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-none transition-all shadow-none flex items-center gap-2 active:scale-95"
             >
               <CheckCircle2 size={14} strokeWidth={3} /> Won
             </button>
@@ -371,14 +371,14 @@ export default function ProposalDetailsPage() {
           {proposal.status !== 'lost' && (
             <button 
               onClick={() => handleStatusUpdate('lost')}
-              className="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-black uppercase tracking-widest rounded-none transition-all shadow-none flex items-center gap-2 active:scale-95"
+              className="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-none transition-all shadow-none flex items-center gap-2 active:scale-95"
             >
               <XCircle size={14} strokeWidth={3} /> Lost
             </button>
           )}
           {proposal.status === 'won' && (
             <button 
-              className="px-6 py-2.5 bg-brand-navy hover:bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-none transition-all shadow-none flex items-center gap-2 active:scale-95 border border-brand-red/30"
+              className="px-6 py-2.5 bg-brand-navy hover:bg-slate-900 text-white text-[10px] font-extrabold uppercase tracking-widest rounded-none transition-all shadow-none flex items-center gap-2 active:scale-95 border border-brand-red/30"
               onClick={handleGenerateAssignments}
             >
               <RotateCcw size={14} strokeWidth={3} /> Sync Assignments
@@ -387,7 +387,7 @@ export default function ProposalDetailsPage() {
           <div className="h-8 w-px bg-slate-200 mx-2 hidden md:block"></div>
           <button 
             onClick={() => handleStatusUpdate('pending')}
-            className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-none transition-all active:scale-95"
+            className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-extrabold uppercase tracking-widest rounded-none transition-all active:scale-95"
           >
             Reset
           </button>
@@ -405,21 +405,21 @@ export default function ProposalDetailsPage() {
             <div className="absolute -top-10 -right-10 p-20 opacity-[0.03] text-slate-900 pointer-events-none group-hover:scale-110 transition-transform duration-1000">
               <IndianRupee size={200} />
             </div>
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
+            <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
               <IndianRupee size={16} className="text-brand-navy" strokeWidth={3} /> Commercial Structure
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div className="p-6 bg-slate-50 border border-slate-100 rounded-none transition-all hover:bg-slate-900 hover:border-brand-red group/fin">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 group-hover/fin:text-brand-red transition-colors">Strategic Valuation</p>
-                <p className="text-2xl md:text-3xl font-black text-slate-900 font-mono tracking-tighter group-hover/fin:text-white tabular-nums">{formatCurrency(proposal.quotation_amount)}</p>
+                <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 group-hover/fin:text-brand-red transition-colors">Strategic Valuation</p>
+                <p className="text-2xl md:text-3xl font-extrabold text-slate-900 font-mono tracking-tighter group-hover/fin:text-white tabular-nums">{formatCurrency(proposal.quotation_amount)}</p>
               </div>
               <div className="p-6 bg-slate-50 border border-slate-100 rounded-none transition-all hover:bg-slate-900 hover:border-brand-red group/fin">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 group-hover/fin:text-brand-red transition-colors">Fee Classification</p>
-                <p className="text-xl font-black text-slate-800 uppercase tracking-tight group-hover/fin:text-white">{proposal.fee_category}</p>
+                <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 group-hover/fin:text-brand-red transition-colors">Fee Classification</p>
+                <p className="text-xl font-extrabold text-slate-800 uppercase tracking-tight group-hover/fin:text-white">{proposal.fee_category}</p>
               </div>
               <div className="p-6 bg-slate-50 border border-slate-100 rounded-none transition-all hover:bg-slate-900 hover:border-brand-red group/fin">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2 group-hover/fin:text-brand-red transition-colors">Fiscal Period</p>
-                <p className="text-xl font-black text-slate-800 group-hover/fin:text-white tabular-nums">{proposal.fiscal_year}</p>
+                <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-2 group-hover/fin:text-brand-red transition-colors">Fiscal Period</p>
+                <p className="text-xl font-extrabold text-slate-800 group-hover/fin:text-white tabular-nums">{proposal.fiscal_year}</p>
               </div>
             </div>
 
@@ -430,9 +430,9 @@ export default function ProposalDetailsPage() {
                     <History size={20} strokeWidth={2.5} />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-[9px] font-black text-amber-900 uppercase tracking-widest mb-2">Revision Insights (v{proposal.version_number})</h4>
-                    <p className="text-sm text-amber-800 leading-relaxed font-black italic">&quot;{proposal.revision_details || proposal.increment_details}&quot;</p>
-                    <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 bg-amber-200/50 rounded-none text-[10px] font-black text-amber-900 border border-amber-300/50 shadow-none uppercase">
+                    <h4 className="text-[9px] font-extrabold text-amber-900 uppercase tracking-widest mb-2">Revision Insights (v{proposal.version_number})</h4>
+                    <p className="text-sm text-amber-800 leading-relaxed font-extrabold italic">&quot;{proposal.revision_details || proposal.increment_details}&quot;</p>
+                    <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 bg-amber-200/50 rounded-none text-[10px] font-extrabold text-amber-900 border border-amber-300/50 shadow-none uppercase">
                       <IndianRupee size={12} strokeWidth={3} />
                       Adjusted Fee: {formatCurrency(proposal.revised_fee || proposal.quotation_amount)}
                     </div>
@@ -444,20 +444,20 @@ export default function ProposalDetailsPage() {
 
           {/* Scope Card */}
           <motion.div variants={itemVariants} className="bg-white rounded-none border border-slate-200 p-8 shadow-none">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
+            <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
               <Briefcase size={16} className="text-brand-navy" strokeWidth={3} /> Strategic Scope of Governance
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 mb-10">
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Assignment Classification</p>
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Assignment Classification</p>
                 <p className="text-slate-900 font-bold text-lg leading-tight">{ASSIGNMENT_TYPE_LABELS[proposal.assignment_type]}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Strategic Nature</p>
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Strategic Nature</p>
                 <p className="text-slate-900 font-bold text-lg leading-tight uppercase">{proposal.proposal_type} Engagement</p>
               </div>
             </div>
-            <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed bg-slate-50 p-6 rounded-none border border-slate-200 font-black text-xs border-l-4 border-l-brand-navy uppercase tracking-tight">
+            <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed bg-slate-50 p-6 rounded-none border border-slate-200 font-extrabold text-xs border-l-4 border-l-brand-navy uppercase tracking-tight">
               {proposal.notes || "Scope details are standardized according to internal regulatory engagement protocols."}
             </div>
           </motion.div>
@@ -465,7 +465,7 @@ export default function ProposalDetailsPage() {
           {/* Versions Table */}
           <motion.div variants={itemVariants} className="bg-white rounded-none border border-slate-200 shadow-none overflow-hidden">
             <div className="p-8 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+              <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
                 <History size={16} className="text-brand-navy" strokeWidth={3} /> Forensic Version History
               </h3>
             </div>
@@ -473,10 +473,10 @@ export default function ProposalDetailsPage() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-slate-50/30">
-                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Version</th>
-                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Valuation</th>
-                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Status</th>
-                    <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Timestamp</th>
+                    <th className="px-8 py-5 text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Version</th>
+                    <th className="px-8 py-5 text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Valuation</th>
+                    <th className="px-8 py-5 text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Status</th>
+                    <th className="px-8 py-5 text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Timestamp</th>
                     <th className="px-8 py-5 text-right"></th>
                   </tr>
                 </thead>
@@ -485,16 +485,16 @@ export default function ProposalDetailsPage() {
                     <tr key={v.id} className={`group hover:bg-slate-50 transition-all ${v.id === proposal.id ? 'bg-brand-navy/[0.03]' : ''}`}>
                       <td className="px-8 py-5">
                         <div className="flex items-center gap-3">
-                          <span className={`w-8 h-8 rounded-none flex items-center justify-center text-[10px] font-black ${v.id === proposal.id ? 'bg-brand-navy text-brand-red' : 'bg-slate-100 text-slate-600 border border-slate-200'}`}>
+                          <span className={`w-8 h-8 rounded-none flex items-center justify-center text-[10px] font-extrabold ${v.id === proposal.id ? 'bg-brand-navy text-brand-red' : 'bg-slate-100 text-slate-600 border border-slate-200'}`}>
                             {v.version_number}
                           </span>
                         </div>
                       </td>
-                      <td className="px-8 py-5 text-sm font-black text-slate-900 font-mono">
+                      <td className="px-8 py-5 text-sm font-extrabold text-slate-900 font-mono">
                         {formatCurrency(v.revised_fee || v.quotation_amount)}
                       </td>
                       <td className="px-8 py-5">
-                        <span className={`text-[9px] font-black uppercase px-3 py-1 rounded-none border shadow-none tracking-widest ${
+                        <span className={`text-[9px] font-extrabold uppercase px-3 py-1 rounded-none border shadow-none tracking-widest ${
                           v.status === 'won' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 
                           v.status === 'lost' ? 'bg-rose-50 text-rose-700 border-rose-100' : 
                           v.status === 'revised' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' :
@@ -503,14 +503,14 @@ export default function ProposalDetailsPage() {
                           {v.status}
                         </span>
                       </td>
-                      <td className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest tabular-nums">
+                      <td className="px-8 py-5 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest tabular-nums">
                         {formatDate(v.updated_at || v.created_at)}
                       </td>
                       <td className="px-8 py-5 text-right">
                         {v.id !== proposal.id && (
                           <button 
                             onClick={() => router.push(`/proposals/${v.id}`)}
-                            className="bg-white border border-slate-200 text-[9px] font-black uppercase tracking-[0.2em] text-slate-700 px-4 py-2 rounded-none hover:bg-brand-navy hover:text-white hover:border-brand-navy transition-all shadow-none"
+                            className="bg-white border border-slate-200 text-[9px] font-extrabold uppercase tracking-[0.2em] text-slate-700 px-4 py-2 rounded-none hover:bg-brand-navy hover:text-white hover:border-brand-navy transition-all shadow-none"
                           >
                             Strategic Audit
                           </button>
@@ -528,45 +528,45 @@ export default function ProposalDetailsPage() {
         <div className="space-y-8">
           
           <motion.div variants={itemVariants} className="bg-white rounded-none p-8 border border-slate-200 shadow-none">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-10 flex items-center gap-2">
+            <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-10 flex items-center gap-2">
               <Users size={16} className="text-brand-navy" strokeWidth={3} /> Internal Governance
             </h3>
             
             <div className="space-y-8">
               <div className="flex items-center gap-5">
-                <div className="w-14 h-14 rounded-none bg-brand-navy text-brand-red flex items-center justify-center font-black text-2xl border-b-4 border-brand-red/30">
+                <div className="w-14 h-14 rounded-none bg-brand-navy text-brand-red flex items-center justify-center font-extrabold text-2xl border-b-4 border-brand-red/30">
                   {proposal.partner_name?.charAt(0) || 'P'}
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Lead Partner</p>
-                  <p className="font-black text-slate-900 text-lg leading-tight tracking-tighter uppercase">{proposal.partner_name}</p>
+                  <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Lead Partner</p>
+                  <p className="font-extrabold text-slate-900 text-lg leading-tight tracking-tighter uppercase">{proposal.partner_name}</p>
                 </div>
               </div>
               
               <div className="flex items-center gap-5">
-                <div className="w-14 h-14 rounded-none bg-white border border-slate-200 text-slate-900 flex items-center justify-center font-black text-2xl">
+                <div className="w-14 h-14 rounded-none bg-white border border-slate-200 text-slate-900 flex items-center justify-center font-extrabold text-2xl">
                   {proposal.prepared_by_name?.charAt(0) || 'M'}
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Mission Architect</p>
-                  <p className="font-black text-slate-900 text-lg leading-tight tracking-tighter uppercase">{proposal.prepared_by_name}</p>
+                  <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Mission Architect</p>
+                  <p className="font-extrabold text-slate-900 text-lg leading-tight tracking-tighter uppercase">{proposal.prepared_by_name}</p>
                 </div>
               </div>
             </div>
           </motion.div>
 
           <motion.div variants={itemVariants} className="bg-white rounded-none border border-slate-200 p-8 shadow-none">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
+            <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
               <Building2 size={16} className="text-brand-navy" strokeWidth={3} /> Institutional Client Intelligence
             </h3>
             <div className="space-y-6">
               <div className="p-5 bg-slate-50 border border-slate-100 rounded-none">
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2">Legal Record Name</p>
-                <p className="text-sm font-black text-slate-900 tracking-tight uppercase">{proposal.client_name}</p>
+                <p className="text-[9px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Legal Record Name</p>
+                <p className="text-sm font-extrabold text-slate-900 tracking-tight uppercase">{proposal.client_name}</p>
               </div>
               <div className="p-5 bg-slate-50 border border-slate-100 rounded-none">
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2">GST Identification (GSTIN)</p>
-                <p className="text-xs font-mono font-black text-slate-800 tracking-tight">{proposal.client_gstn || "09AAFCSXXXXX1ZA"}</p>
+                <p className="text-[9px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">GST Identification (GSTIN)</p>
+                <p className="text-xs font-mono font-extrabold text-slate-800 tracking-tight">{proposal.client_gstn || "09AAFCSXXXXX1ZA"}</p>
               </div>
             </div>
           </motion.div>
@@ -592,7 +592,7 @@ export default function ProposalDetailsPage() {
             >
               <div className="p-8 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
                 <div>
-                   <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase font-accent">Strategic Revision v{proposal.version_number + 1}</h3>
+                   <h3 className="text-xl font-extrabold text-slate-900 tracking-tighter uppercase font-accent">Strategic Revision v{proposal.version_number + 1}</h3>
                 </div>
                 <button onClick={() => setIsRevisionModalOpen(false)} className="w-10 h-10 flex items-center justify-center bg-white border border-slate-200 rounded-none hover:bg-brand-red hover:text-white hover:border-brand-red transition-all">
                   <ArrowLeft size={20} className="rotate-45" strokeWidth={3} />
@@ -601,9 +601,9 @@ export default function ProposalDetailsPage() {
               
               <div className="p-10 space-y-8">
                 <div className="space-y-3">
-                  <label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 block ml-1">Draft Revision Mandate</label>
+                  <label className="text-[9px] font-extrabold uppercase tracking-[0.3em] text-slate-400 block ml-1">Draft Revision Mandate</label>
                   <textarea 
-                    className="w-full bg-slate-50 border border-slate-200 rounded-none p-6 text-sm font-black text-slate-800 focus:ring-2 focus:ring-brand-navy focus:border-brand-navy transition-all outline-none resize-none min-h-[140px] uppercase tracking-tight" 
+                    className="w-full bg-slate-50 border border-slate-200 rounded-none p-6 text-sm font-extrabold text-slate-800 focus:ring-2 focus:ring-brand-navy focus:border-brand-navy transition-all outline-none resize-none min-h-[140px] uppercase tracking-tight" 
                     placeholder="Describe specific adjustments made..."
                     value={revisionDetails}
                     onChange={(e) => setRevisionDetails(e.target.value)}
@@ -611,14 +611,14 @@ export default function ProposalDetailsPage() {
                 </div>
                 
                 <div className="space-y-3">
-                  <label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 block ml-1">Corrected Strategic Valuation (₹)</label>
+                  <label className="text-[9px] font-extrabold uppercase tracking-[0.3em] text-slate-400 block ml-1">Corrected Strategic Valuation (₹)</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-brand-navy">
                       <IndianRupee size={24} strokeWidth={3} />
                     </div>
                     <input 
                       type="number" 
-                      className="w-full bg-slate-50 border border-slate-200 rounded-none py-6 pl-16 pr-6 text-3xl font-black text-slate-900 focus:ring-2 focus:ring-brand-navy focus:border-brand-navy transition-all outline-none tabular-nums" 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-none py-6 pl-16 pr-6 text-3xl font-extrabold text-slate-900 focus:ring-2 focus:ring-brand-navy focus:border-brand-navy transition-all outline-none tabular-nums" 
                       value={revisedFee}
                       onChange={(e) => setRevisedFee(Number(e.target.value))}
                     />
@@ -627,13 +627,13 @@ export default function ProposalDetailsPage() {
                 
                 <div className="grid grid-cols-2 gap-6 pt-4">
                   <button 
-                    className="py-5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-black rounded-none transition-all uppercase tracking-[0.2em] border border-slate-200"
+                    className="py-5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-extrabold rounded-none transition-all uppercase tracking-[0.2em] border border-slate-200"
                     onClick={() => setIsRevisionModalOpen(false)}
                   >
                     Abort Mission
                   </button>
                   <button 
-                    className="py-5 bg-brand-navy hover:bg-slate-900 text-white text-[10px] font-black rounded-none transition-all uppercase tracking-[0.2em] border border-brand-red/30 flex items-center justify-center gap-3 disabled:opacity-30 disabled:grayscale active:scale-95 shadow-none"
+                    className="py-5 bg-brand-navy hover:bg-slate-900 text-white text-[10px] font-extrabold rounded-none transition-all uppercase tracking-[0.2em] border border-brand-red/30 flex items-center justify-center gap-3 disabled:opacity-30 disabled:grayscale active:scale-95 shadow-none"
                     onClick={handleRevise}
                     disabled={!revisionDetails}
                   >

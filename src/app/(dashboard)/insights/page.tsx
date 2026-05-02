@@ -37,7 +37,9 @@ interface SummaryData {
     activeAssignments: number;
     totalBilled: number;
     totalBudget: number;
+    totalReceived: number;
     billingPct: number;
+    collectionPct: number;
 }
 
 interface LeaderData {
@@ -48,7 +50,9 @@ interface LeaderData {
     totalClients: number;
     totalBudget: number;
     totalBilling: number;
+    totalCollected: number;
     billingPct: number;
+    collectionPct: number;
 }
 
 export default function InsightsPage() {
@@ -192,7 +196,7 @@ export default function InsightsPage() {
             {leaders.length > 0 && (
                 <div className="mb-12">
                     <div className="flex items-center gap-4 mb-6">
-                        <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">Partner & Director Insights</h2>
+                        <h2 className="text-lg font-extrabold text-slate-900 uppercase tracking-tight">Partner & Director Insights</h2>
                         <div className="flex-1 h-[1px] bg-slate-200" />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -201,32 +205,41 @@ export default function InsightsPage() {
                             return (
                                 <div key={leader.id} className="bg-white p-6 rounded-none border border-slate-200 overflow-hidden" style={{ borderTop: '3px solid var(--kp-navy, var(--brand-navy))' }}>
                                     <div className="flex items-center gap-4 mb-5">
-                                        <div className="w-12 h-12 rounded-none bg-slate-50 flex items-center justify-center text-slate-500 shrink-0 border border-slate-200 text-sm font-black">
+                                        <div className="w-12 h-12 rounded-none bg-slate-50 flex items-center justify-center text-slate-500 shrink-0 border border-slate-200 text-sm font-extrabold">
                                             {leader.initials}
                                         </div>
                                         <div className="min-w-0">
                                             <h4 className="text-base font-bold text-slate-900 truncate">{leader.name}</h4>
-                                            <span className="font-black text-brand-navy uppercase text-[9px] bg-slate-50 px-1.5 py-0.5 rounded-none border border-slate-200 tracking-wider">
+                                            <span className="font-extrabold text-brand-navy uppercase text-[9px] bg-slate-50 px-1.5 py-0.5 rounded-none border border-slate-200 tracking-wider">
                                                 {leader.role.replace('_', ' ')}
                                             </span>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Clients</p>
-                                            <p className="text-sm font-black text-slate-900">{leader.totalClients}</p>
+                                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Total Clients</p>
+                                            <p className="text-sm font-extrabold text-slate-900">{leader.totalClients}</p>
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Budget</p>
-                                            <p className="text-sm font-black text-slate-900">{formatINR(leader.totalBudget)}</p>
+                                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Total Budget</p>
+                                            <p className="text-sm font-extrabold text-slate-900">{formatINR(leader.totalBudget)}</p>
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Billing</p>
-                                            <p className="text-sm font-black text-slate-900">{formatINR(leader.totalBilling)}</p>
+                                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Total Billed</p>
+                                            <p className="text-sm font-extrabold text-slate-900">{formatINR(leader.totalBilling)}</p>
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Billing %</p>
-                                            <p className="text-sm font-black" style={{ color: billingPercentColor(pct) }}>{pct}%</p>
+                                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Total Collected</p>
+                                            <p className="text-sm font-extrabold text-slate-900">{formatINR(leader.totalCollected)}</p>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <div className="flex justify-between items-center mb-1">
+                                                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Collection Efficiency</p>
+                                                <p className="text-xs font-extrabold" style={{ color: billingPercentColor(leader.collectionPct) }}>{leader.collectionPct}%</p>
+                                            </div>
+                                            <div className="w-full h-1 bg-slate-100 rounded-none overflow-hidden">
+                                                <div className="h-full rounded-none transition-all" style={{ width: `${Math.min(leader.collectionPct, 100)}%`, backgroundColor: billingPercentColor(leader.collectionPct) }} />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -245,7 +258,7 @@ export default function InsightsPage() {
             {/* Manager List Section */}
             <div className="space-y-2">
                 <div className="flex items-center justify-between mb-4 px-2">
-                    <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                    <h2 className="text-lg font-extrabold text-slate-900 uppercase tracking-tight flex items-center gap-2">
                         Manager Performance <span className="text-slate-300 text-sm font-bold font-mono">({filteredManagers.length})</span>
                     </h2>
                 </div>

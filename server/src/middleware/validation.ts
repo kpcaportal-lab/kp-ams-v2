@@ -1,13 +1,18 @@
 import { body, validationResult } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
 
+// Custom UUID regex that accepts ANY uuid-shaped string (including version-0 system IDs like 00000000-0000-0000-0000-000000000002)
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /**
  * Middleware to handle validation errors and respond with details
  */
 export const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log('Validation Error on', req.path, ':', JSON.stringify(errors.array(), null, 2));
+        console.log('❌ Validation Failed on:', req.method, req.path);
+        console.log('📦 Payload:', JSON.stringify(req.body, null, 2));
+        console.log('⚠️ Errors:', JSON.stringify(errors.array(), null, 2));
         return res.status(400).json({
             error: {
                 code: 'VALIDATION_ERROR',
@@ -27,7 +32,7 @@ export const handleValidationErrors = (req: Request, res: Response, next: NextFu
  */
 export const validateCreateProposal = [
     body('client_id')
-        .isUUID()
+        .matches(UUID_REGEX)
         .withMessage('client_id must be a valid UUID'),
     body('proposal_type')
         .isIn(['new', 'revision', 'renewal'])
@@ -61,8 +66,12 @@ export const validateCreateProposal = [
         .withMessage('proposal_date must be a valid ISO 8601 date'),
     body('responsible_partner')
         .optional({ values: 'falsy' })
-        .isUUID()
+        .matches(UUID_REGEX)
         .withMessage('responsible_partner must be a valid UUID'),
+    body('manager_id')
+        .optional({ values: 'falsy' })
+        .matches(UUID_REGEX)
+        .withMessage('manager_id must be a valid UUID'),
     body('revision_flag')
         .optional()
         .isBoolean()
@@ -80,8 +89,8 @@ export const validateCreateProposal = [
         .matches(/^\d{4}-\d{2}$/)
         .withMessage('fiscal_year must be in YYYY-YY format'),
     body('template_id')
-        .optional()
-        .isUUID()
+        .optional({ values: 'falsy' })
+        .matches(UUID_REGEX)
         .withMessage('template_id must be a valid UUID'),
     body('status')
         .optional()
@@ -109,7 +118,7 @@ export const validateUpdateProposal = [
         .withMessage('quotation_amount must be a positive number'),
     body('responsible_partner')
         .optional()
-        .isUUID()
+        .matches(UUID_REGEX)
         .withMessage('responsible_partner must be a valid UUID'),
     body('status')
         .optional()
@@ -124,7 +133,7 @@ export const validateUpdateProposal = [
 export const validateCreateAssignment = [
     body('proposal_id')
         .optional()
-        .isUUID()
+        .matches(UUID_REGEX)
         .withMessage('proposal_id must be a valid UUID'),
     body('client_id')
         .isString()
@@ -248,7 +257,7 @@ export const validateUpdateAssignment = [
  */
 export const validateCreateInvoice = [
     body('assignment_id')
-        .isUUID()
+        .matches(UUID_REGEX)
         .withMessage('assignment_id must be a valid UUID'),
     body('invoice_number')
         .isString()

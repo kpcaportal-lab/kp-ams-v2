@@ -43,7 +43,7 @@ export function ManagerCard({ manager, isExpanded, onToggle, fiscalYear }: Manag
                     <div className="min-w-0">
                         <h4 className="text-base font-bold text-slate-900 truncate">{manager.full_name}</h4>
                         <div className="flex items-center gap-2 text-[13px] text-slate-500">
-                            <span className="font-black text-brand-navy uppercase text-[9px] bg-slate-50 px-1.5 py-0.5 rounded-none border border-slate-200 tracking-wider">
+                            <span className="font-extrabold text-brand-navy uppercase text-[9px] bg-slate-50 px-1.5 py-0.5 rounded-none border border-slate-200 tracking-wider">
                                 {manager.role.replace('_', ' ')}
                             </span>
                             <span className="truncate flex items-center gap-1">
@@ -63,16 +63,34 @@ export function ManagerCard({ manager, isExpanded, onToggle, fiscalYear }: Manag
                     <div className="grid grid-cols-3 gap-4 lg:gap-8">
                         <StatItem icon={Wallet} label="Budget" value={manager.total_budget} color="navy" isCurrency />
                         <StatItem icon={IndianRupee} label="Billed" value={manager.billed_amount} color="navy" isCurrency />
-                        {/* Billing % with progress bar */}
+                        <StatItem icon={Wallet} label="Collected" value={(manager as any).collected_amount || 0} color="navy" isCurrency />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 lg:gap-8 mt-1">
+                        {/* Billing % */}
                         {(() => {
                             const pct = billingPercent(Number(manager.billed_amount || 0), Number(manager.total_budget || 0));
                             return (
                                 <div className="flex flex-col gap-1">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Billing %</p>
-                                    <p className="text-sm font-black" style={{ color: billingPercentColor(pct) }}>
-                                        {pct}%
-                                    </p>
-                                    <div className="w-full h-1 bg-slate-100 rounded-none overflow-hidden">
+                                    <div className="flex justify-between items-center">
+                                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Billing Efficiency</p>
+                                        <p className="text-[11px] font-extrabold" style={{ color: billingPercentColor(pct) }}>{pct}%</p>
+                                    </div>
+                                    <div className="w-full h-1.5 bg-slate-100 rounded-none overflow-hidden">
+                                        <div className="h-full rounded-none transition-all" style={{ width: `${Math.min(pct, 100)}%`, backgroundColor: billingPercentColor(pct) }} />
+                                    </div>
+                                </div>
+                            );
+                        })()}
+                        {/* Collection % */}
+                        {(() => {
+                            const pct = billingPercent(Number((manager as any).collected_amount || 0), Number(manager.billed_amount || 0));
+                            return (
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex justify-between items-center">
+                                        <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Collection Efficiency</p>
+                                        <p className="text-[11px] font-extrabold" style={{ color: billingPercentColor(pct) }}>{pct}%</p>
+                                    </div>
+                                    <div className="w-full h-1.5 bg-slate-100 rounded-none overflow-hidden">
                                         <div className="h-full rounded-none transition-all" style={{ width: `${Math.min(pct, 100)}%`, backgroundColor: billingPercentColor(pct) }} />
                                     </div>
                                 </div>
@@ -130,8 +148,8 @@ function StatItem({ icon: Icon, label, value, color, isCurrency = false }: StatI
                 <Icon size={16} />
             </div>
             <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
-                <p className="text-sm font-black text-slate-900">
+                <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">{label}</p>
+                <p className="text-sm font-extrabold text-slate-900">
                     {isCurrency ? formatINR(Number(value)) : value}
                 </p>
             </div>

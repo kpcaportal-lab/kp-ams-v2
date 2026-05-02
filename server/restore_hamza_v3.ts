@@ -1,9 +1,5 @@
 import pool from './src/db/pool.js';
 
-const MANAGER_ID = '00000000-0000-0000-0000-000000000012'; // Hamza Momin
-const PARTNER_ID = '00000000-0000-0000-0000-000000000005'; // Rishabh Thakkar
-const ADMIN_ID = '00000000-0000-0000-0000-000000000001';
-
 const spreadsheetData = [
   // Forensic Audits
   { type: 'Forensic Audits', client: 'Swadhar IDWC', scopeItem: 'Swadhar IDWC', scopeAreas: 'Embezzlement', billingAmount: 250000, billedAmount: 250000, amountReceipt: 250000 },
@@ -54,6 +50,18 @@ async function main() {
   try {
     console.log('Restoring Hamza Momin data (V3-Final-Fixed)...');
     await pool.query('BEGIN');
+
+    // Fetch dynamic IDs
+    const profilesResult = await pool.query("SELECT id, role, full_name FROM profiles");
+    const profiles = profilesResult.rows;
+    
+    const admin = profiles.find(p => p.role === 'admin') || profiles[0];
+    const partner = profiles.find(p => p.role === 'partner') || profiles[0];
+    const manager = profiles.find(p => p.role === 'manager' && p.full_name?.includes('Hamza')) || profiles.find(p => p.role === 'manager') || profiles[0];
+
+    const ADMIN_ID = admin.id;
+    const PARTNER_ID = partner.id;
+    const MANAGER_ID = manager.id;
 
     // 1. Delete existing for Hamza
     await pool.query('DELETE FROM invoices WHERE assignment_id IN (SELECT id FROM assignments WHERE manager_id = $1)', [MANAGER_ID]);

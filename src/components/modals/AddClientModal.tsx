@@ -55,7 +55,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
           />
-          
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -69,8 +69,8 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                   <Building2 className="text-white" size={20} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-white tracking-tight">Add Client</h2>
-                  <p className="text-[11px] text-white/60 mt-0.5 font-bold uppercase tracking-widest">K&P Registration Portal</p>
+                  <h2 className="text-xl font-extrabold !text-white tracking-tight">Add Client</h2>
+                  <p className="text-[11px] !text-slate-200 mt-0.5 font-bold uppercase tracking-widest">K&P Registration Portal</p>
                 </div>
               </div>
               <button
@@ -85,7 +85,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
               <div className="space-y-4">
                 {/* Client Name */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Legal Entity Name</label>
+                  <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Legal Entity Name</label>
                   <input
                     required
                     value={form.name}
@@ -98,12 +98,12 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                 <div className="grid grid-cols-2 gap-4">
                   {/* Industry */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Industry Vertical</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Industry Vertical</label>
                     <select
                       required
                       value={form.industry}
                       onChange={(e) => setForm({ ...form, industry: e.target.value })}
-                      className="w-full px-4 py-3 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-none border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none transition-all cursor-pointer appearance-none"
                     >
                       <option value="">Select Industry</option>
                       <option value="Manufacturing">Manufacturing</option>
@@ -114,11 +114,11 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
 
                   {/* Status */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Operational Status</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Operational Status</label>
                     <select
                       value={form.status}
                       onChange={(e) => setForm({ ...form, status: e.target.value as 'active' | 'inactive' })}
-                      className="w-full px-4 py-3 rounded-none border border-slate-200 bg-white text-sm font-black focus:border-brand-navy outline-none transition-all cursor-pointer appearance-none"
+                      className="w-full px-4 py-3 rounded-none border border-slate-200 bg-white text-sm font-extrabold focus:border-brand-navy outline-none transition-all cursor-pointer appearance-none"
                     >
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
@@ -129,7 +129,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                 <div className="grid grid-cols-2 gap-4">
                   {/* GSTN */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">GSTN / Tax ID</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">GSTN / Tax ID</label>
                     <input
                       value={form.gstn}
                       onChange={(e) => setForm({ ...form, gstn: e.target.value })}
@@ -140,7 +140,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
 
                   {/* Internal Notes */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Internal Reference</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Internal Reference</label>
                     <input
                       value={form.notes}
                       onChange={(e) => setForm({ ...form, notes: e.target.value })}
@@ -153,7 +153,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                 <div className="grid grid-cols-2 gap-4">
                   {/* Address */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Registered Address</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Registered Address</label>
                     <textarea
                       value={form.address}
                       onChange={(e) => setForm({ ...form, address: e.target.value })}
@@ -164,7 +164,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
 
                   {/* Billing Details */}
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Billing Instructions</label>
+                    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Billing Instructions</label>
                     <textarea
                       value={form.billing_details}
                       onChange={(e) => setForm({ ...form, billing_details: e.target.value })}
@@ -175,12 +175,12 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                 </div>
 
                 <div className="pt-4 border-t border-slate-100">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Single Point of Contact (SPOC)</h3>
-                  
+                  <h3 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-4">Single Point of Contact (SPOC)</h3>
+
                   <div className="space-y-4">
                     {/* SPOC Name */}
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Full Name</label>
+                      <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Full Name</label>
                       <input
                         required
                         value={form.spocName}
@@ -193,7 +193,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                     <div className="grid grid-cols-2 gap-4">
                       {/* SPOC Email */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Email Address</label>
+                        <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Email Address</label>
                         <input
                           type="email"
                           required
@@ -206,7 +206,7 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
 
                       {/* SPOC Phone */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Direct Phone</label>
+                        <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">Direct Phone</label>
                         <input
                           required
                           value={form.spocPhone}
@@ -225,13 +225,13 @@ export default function AddClientModal({ open, setOpen }: AddClientModalProps) {
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="flex-1 px-6 py-3.5 rounded-none border border-slate-200 text-xs font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all"
+                  className="flex-1 px-6 py-3.5 rounded-none border border-slate-200 text-xs font-extrabold text-slate-500 uppercase tracking-widest hover:bg-slate-50 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3.5 rounded-none bg-brand-navy text-white text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all border-b-2 border-brand-red flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3.5 rounded-none bg-brand-navy text-white text-xs font-extrabold uppercase tracking-widest hover:bg-slate-800 transition-all border-b-2 border-brand-red flex items-center justify-center gap-2"
                 >
                   <Save size={16} />
                   Save Record

@@ -12,7 +12,9 @@ interface KPIStripProps {
         activeAssignments: number;
         totalBilled: number;
         totalBudget?: number;
+        totalReceived?: number;
         billingPct?: number;
+        collectionPct?: number;
     } | null;
     isLoading: boolean;
     onCardClick?: (drillKey: string) => void;
@@ -52,22 +54,22 @@ export function KPIStrip({ data, isLoading, onCardClick, activeCard }: KPIStripP
             border: 'border-[var(--navy-100)]'
         },
         {
-            label: 'Total Billed',
-            value: data?.totalBilled ?? 0,
+            label: 'Total Budget',
+            value: data?.totalBudget ?? 0,
             isCurrency: true,
-            icon: IndianRupee,
-            drillKey: 'billed',
+            icon: Wallet,
+            drillKey: 'budget',
             color: 'navy',
             bg: 'bg-[var(--navy-50)]',
             text: 'text-[var(--brand-navy)]',
             border: 'border-[var(--navy-100)]'
         },
         {
-            label: 'Total Budget',
-            value: data?.totalBudget ?? 0,
+            label: 'Total Billed',
+            value: data?.totalBilled ?? 0,
             isCurrency: true,
-            icon: Wallet,
-            drillKey: 'budget',
+            icon: IndianRupee,
+            drillKey: 'billed',
             color: 'navy',
             bg: 'bg-[var(--navy-50)]',
             text: 'text-[var(--brand-navy)]',
@@ -83,11 +85,33 @@ export function KPIStrip({ data, isLoading, onCardClick, activeCard }: KPIStripP
             bg: 'bg-[var(--navy-50)]',
             text: 'text-[var(--brand-navy)]',
             border: 'border-[var(--navy-100)]'
+        },
+        {
+            label: 'Total Received',
+            value: data?.totalReceived ?? 0,
+            isCurrency: true,
+            icon: Wallet,
+            drillKey: 'received',
+            color: 'navy',
+            bg: 'bg-[var(--navy-50)]',
+            text: 'text-[var(--brand-navy)]',
+            border: 'border-[var(--navy-100)]'
+        },
+        {
+            label: 'Collection %',
+            value: data?.collectionPct ?? 0,
+            isPercent: true,
+            icon: TrendingUp,
+            drillKey: 'collection',
+            color: 'navy',
+            bg: 'bg-[var(--navy-50)]',
+            text: 'text-[var(--brand-navy)]',
+            border: 'border-[var(--navy-100)]'
         }
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {stats.map((stat, idx) => (
                 <motion.div
                     key={stat.label}
@@ -101,18 +125,18 @@ export function KPIStrip({ data, isLoading, onCardClick, activeCard }: KPIStripP
                     )}
                 >
                     <div className="flex flex-col gap-5 relative z-10">
-                        <div className={cn("w-12 h-12 rounded-none flex items-center justify-center border border-slate-100 transition-all group-hover:bg-brand-navy group-hover:border-brand-navy group-hover:text-white", stat.text)}>
-                            <stat.icon size={22} strokeWidth={2.5} />
+                        <div className={cn("w-10 h-10 rounded-none flex items-center justify-center border border-slate-100 transition-all group-hover:bg-brand-navy group-hover:border-brand-navy group-hover:text-white", stat.text)}>
+                            <stat.icon size={20} strokeWidth={2.5} />
                         </div>
                         <div>
                             {isLoading ? (
-                                <div className="h-10 w-32 bg-slate-100 animate-pulse rounded-none mb-2" />
+                                <div className="h-8 w-24 bg-slate-100 animate-pulse rounded-none mb-2" />
                             ) : (
-                                <h3 className="text-3xl font-black tracking-tighter mb-1 font-number" style={stat.isPercent ? { color: billingPercentColor(stat.value as number) } : undefined}>
+                                <h3 className="text-2xl font-extrabold tracking-tighter mb-1 font-number" style={stat.isPercent ? { color: billingPercentColor(stat.value as number) } : undefined}>
                                     {stat.isPercent ? `${stat.value}%` : stat.isCurrency ? formatINR(stat.value as number) : stat.value.toLocaleString()}
                                 </h3>
                             )}
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                            <p className="text-[10px] font-extrabold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
                                 {stat.label}
                             </p>
                             {stat.isPercent && !isLoading && (
@@ -128,10 +152,10 @@ export function KPIStrip({ data, isLoading, onCardClick, activeCard }: KPIStripP
                          <stat.icon size={64} className="translate-x-4 -translate-y-4" />
                     </div>
 
-                    <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between relative z-10">
-                        <div className="flex items-center gap-2 text-[10px] font-black text-emerald-600 bg-emerald-50/50 px-2 py-0.5 rounded-none border border-emerald-100">
+                    <div className="mt-4 pt-3 border-t border-slate-50 flex items-center justify-between relative z-10">
+                        <div className="flex items-center gap-2 text-[10px] font-extrabold text-emerald-600 bg-emerald-50/50 px-2 py-0.5 rounded-none border border-emerald-100">
                             <TrendingUp size={12} strokeWidth={3} />
-                            <span className="font-number">+12.4%</span>
+                            <span className="font-number">+0%</span>
                         </div>
                         <div className="w-1 h-1 bg-brand-red rounded-none" />
                     </div>

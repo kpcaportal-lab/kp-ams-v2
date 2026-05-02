@@ -90,8 +90,22 @@ router.get('/summary', async (req: Request, res: Response) => {
             totalBudget = parseFloat(budgetResult.rows[0]?.total || '0');
         } catch (e) {}
 
-        // 6. Billing Percentage
+        // 6. Total Received
+        let totalReceived = 0;
+        try {
+            let receivedQuery = `SELECT COALESCE(SUM(amount_receipt), 0) as total FROM assignments WHERE fiscal_year = $1`;
+            const receivedParams: any[] = [fiscal_year];
+            if (visibleIds !== null) {
+                receivedQuery += ` AND (manager_id = ANY($2) OR partner_id = ANY($2))`;
+                receivedParams.push(visibleIds);
+            }
+            const receivedResult = await pool.query(receivedQuery, receivedParams);
+            totalReceived = parseFloat(receivedResult.rows[0]?.total || '0');
+        } catch (e) {}
+
+        // 7. Percentages
         const billingPct = totalBudget > 0 ? Math.round((totalBilled / totalBudget) * 1000) / 10 : 0;
+        const collectionPct = totalBilled > 0 ? Math.round((totalReceived / totalBilled) * 1000) / 10 : 0;
 
         res.json({
             totalClients,
@@ -99,7 +113,9 @@ router.get('/summary', async (req: Request, res: Response) => {
             activeAssignments,
             totalBilled,
             totalBudget,
-            billingPct
+            totalReceived,
+            billingPct,
+            collectionPct
         });
     } catch (err) {
         console.error('Insights Summary Error:', err);
@@ -127,6 +143,7 @@ router.get('/managers', async (req: Request, res: Response) => {
                         LEFT JOIN invoices i ON i.assignment_id = a.id 
                         WHERE a.manager_id = p.id AND a.fiscal_year = $1
                     ) as billed_amount,
+                    (SELECT COALESCE(SUM(a.amount_receipt), 0) FROM assignments a WHERE a.manager_id = p.id AND a.fiscal_year = $1) as collected_amount,
                     (SELECT COALESCE(SUM(a.total_fees), 0) FROM assignments a WHERE a.manager_id = p.id AND a.fiscal_year = $1) as total_budget
                 FROM profiles p
                 WHERE p.role IN ('manager', 'assistant_manager', 'partner', 'director') 
@@ -169,7 +186,8 @@ router.get('/leaders', async (req: Request, res: Response) => {
                 UPPER(LEFT(p.full_name, 1) || COALESCE(SUBSTRING(p.full_name FROM POSITION(' ' IN p.full_name) + 1 FOR 1), '')) as initials,
                 (SELECT COUNT(DISTINCT a.client_id) FROM assignments a WHERE (a.partner_id = p.id OR a.manager_id = p.id) AND a.fiscal_year = $1) as "totalClients",
                 (SELECT COALESCE(SUM(a.total_fees), 0) FROM assignments a WHERE (a.partner_id = p.id OR a.manager_id = p.id) AND a.fiscal_year = $1) as "totalBudget",
-                (SELECT COALESCE(SUM(a.billed_amount), 0) FROM assignments a WHERE (a.partner_id = p.id OR a.manager_id = p.id) AND a.fiscal_year = $1) as "totalBilling"
+                (SELECT COALESCE(SUM(a.billed_amount), 0) FROM assignments a WHERE (a.partner_id = p.id OR a.manager_id = p.id) AND a.fiscal_year = $1) as "totalBilling",
+                (SELECT COALESCE(SUM(a.amount_receipt), 0) FROM assignments a WHERE (a.partner_id = p.id OR a.manager_id = p.id) AND a.fiscal_year = $1) as "totalCollected"
             FROM profiles p
             WHERE p.role IN ('partner', 'director') 
               AND p.is_active = true
@@ -192,8 +210,12 @@ router.get('/leaders', async (req: Request, res: Response) => {
             totalClients: parseInt(r.totalClients || '0'),
             totalBudget: parseFloat(r.totalBudget || '0'),
             totalBilling: parseFloat(r.totalBilling || '0'),
+            totalCollected: parseFloat(r.totalCollected || '0'),
             billingPct: parseFloat(r.totalBudget || '0') > 0 
                 ? Math.round((parseFloat(r.totalBilling || '0') / parseFloat(r.totalBudget || '0')) * 100) 
+                : 0,
+            collectionPct: parseFloat(r.totalBilling || '0') > 0
+                ? Math.round((parseFloat(r.totalCollected || '0') / parseFloat(r.totalBilling || '0')) * 100)
                 : 0
         }));
 
@@ -543,14 +565,12 @@ router.get('/:id/billing', async (req: Request, res: Response) => {
         const { period = '2025-26' } = req.query;
 
         // Billing chart data (last 10 months)
-        // Since we don't have a robust 'collected' column, we'll mock collected as 90% of billed for demo/req purposes
-        // Or we can just return billed for now.
         const chartQuery = `
             SELECT 
                 EXTRACT(MONTH FROM i.invoice_date) as month,
                 EXTRACT(YEAR FROM i.invoice_date) as year,
                 SUM(i.professional_fees) as billed,
-                SUM(i.professional_fees) * 0.9 as collected
+                SUM(i.professional_fees * (CASE WHEN a.billed_amount > 0 THEN a.amount_receipt / a.billed_amount ELSE 0 END)) as collected
             FROM invoices i
             JOIN assignments a ON a.id = i.assignment_id
             WHERE a.manager_id = $1 AND a.fiscal_year = $2
@@ -566,7 +586,7 @@ router.get('/:id/billing', async (req: Request, res: Response) => {
                 TO_CHAR(i.invoice_date, 'Month YYYY') as month_name,
                 COUNT(i.id) as invoice_count,
                 SUM(i.professional_fees) as amount_billed,
-                SUM(i.professional_fees) * 0.9 as amount_collected
+                SUM(i.professional_fees * (CASE WHEN a.billed_amount > 0 THEN a.amount_receipt / a.billed_amount ELSE 0 END)) as amount_collected
             FROM invoices i
             JOIN assignments a ON a.id = i.assignment_id
             WHERE a.manager_id = $1 AND a.fiscal_year = $2

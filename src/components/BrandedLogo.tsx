@@ -76,10 +76,10 @@ export function BrandedLogo({
       <KPMark size={52} />
       {!hideText && (
         <div className="flex flex-col text-left">
-          <span className={cn("font-black text-sm leading-none tracking-tight", isDark ? "text-white" : "text-brand-navy")}>
+          <span className={cn("font-extrabold text-sm leading-none tracking-tight", isDark ? "text-white" : "text-brand-navy")}>
             KIRTANE & PANDIT
           </span>
-          <span className="text-[8px] font-black text-brand-red uppercase tracking-[0.2em] mt-0.5">
+          <span className="text-[8px] font-extrabold text-brand-red uppercase tracking-[0.2em] mt-0.5">
             Management System
           </span>
         </div>

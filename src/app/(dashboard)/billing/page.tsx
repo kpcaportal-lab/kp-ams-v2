@@ -120,7 +120,7 @@ export default function BillingPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-brand-navy drop-shadow-sm font-accent">
+          <h1 className="text-3xl font-extrabold tracking-tight text-brand-navy drop-shadow-sm font-accent">
             Billing <span className="text-brand-red">& Revenue</span>
           </h1>
           <p className="text-slate-500 mt-1 font-medium italic">Unified financial oversight and performance tracking</p>
@@ -128,14 +128,14 @@ export default function BillingPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleExport}
-            className="flex items-center gap-2.5 px-6 py-3 rounded-none bg-white border border-slate-200 text-slate-700 text-sm font-black transition-all hover:bg-slate-50 shadow-none active:scale-95"
+            className="flex items-center gap-2.5 px-6 py-3 rounded-none bg-white border border-slate-200 text-slate-700 text-sm font-extrabold transition-all hover:bg-slate-50 shadow-none active:scale-95"
           >
             <Download size={18} strokeWidth={3} className="text-emerald-500" />
             Export Registry
           </button>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 rounded-none bg-brand-navy text-white text-sm font-black shadow-none transition-all border border-slate-800"
+            className="flex items-center gap-2 px-6 py-3 rounded-none bg-brand-navy text-white text-sm font-extrabold shadow-none transition-all border border-slate-800"
           >
             <Plus size={18} strokeWidth={3} className="text-brand-red" />
             Generate Invoice
@@ -160,7 +160,7 @@ export default function BillingPage() {
                  <kpi.icon size={28} className={kpi.color} strokeWidth={2.5} />
               </div>
               <div>
-                <div className="text-3xl font-black text-slate-900 tracking-tight">{kpi.isRaw ? kpi.value : formatIndianCurrency(Number(kpi.value || 0), true, true)}</div>
+                <div className="text-3xl font-extrabold text-slate-900 tracking-tight">{kpi.isRaw ? kpi.value : formatIndianCurrency(Number(kpi.value || 0), true, true)}</div>
                 <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">{kpi.label}</div>
               </div>
             </div>
@@ -176,7 +176,7 @@ export default function BillingPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "flex items-center gap-2.5 px-6 py-3 rounded-none text-sm font-black transition-all duration-300",
+                "flex items-center gap-2.5 px-6 py-3 rounded-none text-sm font-extrabold transition-all duration-300",
                 activeTab === tab.id 
                   ? "bg-brand-navy text-white shadow-none" 
                   : "text-slate-500 hover:text-slate-700 hover:bg-slate-50/50"
@@ -215,12 +215,12 @@ export default function BillingPage() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Date</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Client & Particulars</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Prof. Fees</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Net Amount</th>
-                    <th className="px-6 py-5 text-left text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">UDIN</th>
-                    <th className="px-6 py-5 text-right text-[10px] font-black text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Action</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Date</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Client & Particulars</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Prof. Fees</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Net Amount</th>
+                    <th className="px-6 py-5 text-left text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">UDIN</th>
+                    <th className="px-6 py-5 text-right text-[10px] font-extrabold text-white bg-brand-navy border-b border-white/5 uppercase tracking-[0.2em]">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -239,12 +239,12 @@ export default function BillingPage() {
                     >
                       <td className="px-6 py-5 text-sm font-bold text-slate-500">{formatDate(inv.invoice_date)}</td>
                       <td className="px-6 py-5">
-                        <div className="font-black text-slate-900 group-hover:text-brand-navy transition-colors">{inv.client_name}</div>
+                        <div className="font-extrabold text-slate-900 group-hover:text-brand-navy transition-colors">{inv.client_name}</div>
                         <div className="text-xs font-medium text-slate-400 mt-0.5 line-clamp-1 italic">{inv.narration}</div>
                       </td>
                       <td className="px-6 py-5 text-sm font-bold text-slate-700">{formatIndianCurrency(inv.professional_fees)}</td>
                       <td className="px-6 py-5">
-                        <div className="inline-flex items-center px-3 py-1 rounded-none bg-emerald-50 text-emerald-700 font-black text-xs border border-emerald-100 shadow-none">
+                        <div className="inline-flex items-center px-3 py-1 rounded-none bg-emerald-50 text-emerald-700 font-extrabold text-xs border border-emerald-100 shadow-none">
                           {formatIndianCurrency(Number(inv.net_amount || 0))}
                         </div>
                       </td>
@@ -289,18 +289,18 @@ export default function BillingPage() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-none bg-brand-navy text-brand-red flex items-center justify-center font-black text-xl shadow-none group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 rounded-none bg-brand-navy text-brand-red flex items-center justify-center font-extrabold text-xl shadow-none group-hover:scale-110 transition-transform">
                       {item.full_name.charAt(0)}
                     </div>
                     <div>
-                      <div className="font-black text-slate-900 text-lg tracking-tight font-accent">
+                      <div className="font-extrabold text-slate-900 text-lg tracking-tight font-accent">
                         {item.full_name}
                       </div>
-                      <div className="text-[10px] font-black text-brand-red uppercase tracking-[0.2em]">{item.role}</div>
+                      <div className="text-[10px] font-extrabold text-brand-red uppercase tracking-[0.2em]">{item.role}</div>
                     </div>
                   </div>
                   {item.full_name === 'Hamza Momin' && (
-                    <div className="px-3 py-1 rounded-none bg-brand-red/10 text-brand-red font-black text-[9px] uppercase tracking-widest border border-brand-red/20 animate-pulse">
+                    <div className="px-3 py-1 rounded-none bg-brand-red/10 text-brand-red font-extrabold text-[9px] uppercase tracking-widest border border-brand-red/20 animate-pulse">
                       Principal
                     </div>
                   )}
@@ -308,19 +308,19 @@ export default function BillingPage() {
 
                 <div className="flex items-end justify-between pt-4 border-t border-slate-50">
                   <div>
-                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Revenue</div>
-                    <div className="text-2xl font-black text-brand-navy tabular-nums">
+                    <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Total Revenue</div>
+                    <div className="text-2xl font-extrabold text-brand-navy tabular-nums">
                       {formatIndianCurrency(Number(item.billed || 0), true, true)}
                     </div>
                   </div>
                   {item.role === 'manager' && item.billing_pct !== undefined && (
                     <div className="text-right">
-                       <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Target Achievement</div>
+                       <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Target Achievement</div>
                        <div className="flex items-center gap-2">
                           <div className="h-1.5 w-20 bg-slate-100 rounded-none overflow-hidden border border-slate-200">
                              <div className="h-full bg-brand-red" style={{ width: `${Math.min(item.billing_pct, 100)}%` }} />
                           </div>
-                          <span className="font-black text-brand-red text-xs italic">{Number(item.billing_pct || 0).toFixed(0)}%</span>
+                          <span className="font-extrabold text-brand-red text-xs italic">{Number(item.billing_pct || 0).toFixed(0)}%</span>
                        </div>
                     </div>
                   )}
@@ -329,7 +329,7 @@ export default function BillingPage() {
             ))}
             {filteredBreakdown.length === 0 && (
               <div className="col-span-full p-20 text-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-none">
-                 <p className="text-slate-400 font-black italic">No revenue attribution data available</p>
+                 <p className="text-slate-400 font-extrabold italic">No revenue attribution data available</p>
               </div>
             )}
           </motion.div>
